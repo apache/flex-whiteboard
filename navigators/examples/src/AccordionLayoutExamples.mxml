@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:st="library://ns.tink.ws/flex/spark">
+	
+	<fx:Library>
+		<fx:Definition name="Divider">
+			<s:Graphic width="15" height="18">
+				<s:Rect width="15" height="18">
+					<s:fill>
+						<s:SolidColor alpha="0"/>
+					</s:fill>
+				</s:Rect>
+				<s:Line height="18" horizontalCenter="0">
+					<s:stroke>
+						<s:SolidColorStroke weight="2" color="0x000000" caps="none"/>
+					</s:stroke>
+				</s:Line>
+			</s:Graphic> 
+		</fx:Definition>
+	</fx:Library>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.effects.easing.Bounce;
+			import spark.effects.easing.Elastic;
+			import spark.effects.easing.Linear;
+			import spark.effects.easing.Power;
+			import spark.effects.easing.Sine;
+		]]>
+	</fx:Script>
+	
+	
+	<s:Scroller width="100%" height="100%">
+		
+		<s:VGroup horizontalAlign="center">
+			
+			<s:Label text="NavigatorGroup" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup width="400" height="300" gap="5" id="tester">
+				
+				<s:Scroller width="50%" height="100%">
+					<st:NavigatorGroup width="100%" height="100%">
+						
+						<st:layout>
+							<st:AccordionLayout buttonBar="{navigatorGroupButtonBar}" layoutAllButtonBarBounds="{layoutAllButtonBarBounds.selected}"
+												direction="{direction.selectedItem.label}" buttonRotation="{buttonRotation.selectedItem.label}"
+												minElementSize="{minElementSize.value}" useScrollRect="{useScrollRect.selected}"
+												easer="{easer.selectedItem.ease}" duration="{duration.value}"
+												useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+						</st:layout>
+						
+						<s:BorderContainer id="Item0" width="100%" height="100%" backgroundColor="0x0000ff">
+							<s:Label text="Accordion item 0" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+						</s:BorderContainer>
+						<s:BorderContainer id="Item1" width="100%" height="100%" backgroundColor="0xff0000">
+							<s:Label text="Accordion item 1" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+						</s:BorderContainer>
+						<s:BorderContainer id="Item2" width="100%" height="100%" backgroundColor="0x00ff00">
+							<s:Label text="Accordion item 2" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+						</s:BorderContainer>
+						
+					</st:NavigatorGroup>
+				</s:Scroller>
+				
+				<s:ButtonBar id="navigatorGroupButtonBar" width="50%" />
+				
+			</s:HGroup>
+			
+			<s:Label text="DataNavigatorGroup" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<s:Group width="400" height="300">
+				
+				<s:Scroller width="100%" height="100%">
+					<st:DataNavigatorGroup width="100%" height="100%">
+						
+						<st:layout>
+							<st:AccordionLayout buttonBar="{dataNavigatorGroupButtonBar}" layoutAllButtonBarBounds="{layoutAllButtonBarBounds.selected}"
+												useVirtualLayout="true"
+												direction="{direction.selectedItem.label}" buttonRotation="{buttonRotation.selectedItem.label}"
+												minElementSize="{minElementSize.value}" useScrollRect="{useScrollRect.selected}"
+												easer="{easer.selectedItem.ease}" duration="{duration.value}"
+												useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+						</st:layout>
+						
+						<st:dataProvider>
+							<s:ArrayList id="bob">
+								<fx:Object label="0" color="0xff0000"/>
+								<fx:Object label="1" color="0xffa500"/>
+								<fx:Object label="2" color="0xffff00"/>
+							</s:ArrayList>
+						</st:dataProvider>
+						
+						<st:itemRenderer>
+							<fx:Component>
+								<s:ItemRenderer width="100%" height="100%">
+									
+									<fx:Script>
+										<![CDATA[
+											
+											[Bindable]
+											private var _color:uint;
+											
+											override public function set data( value:Object ):void
+											{
+												super.data = value;
+												if( data ) _color = data.color
+											}
+											
+										]]>
+									</fx:Script>
+									
+									<s:Rect width="100%" height="100%">
+										<s:fill>
+											<s:SolidColor color="{_color}"/>
+										</s:fill>
+									</s:Rect>
+									
+									<s:Label text="DataAccordion item {itemIndex}" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+									
+								</s:ItemRenderer>
+							</fx:Component>
+						</st:itemRenderer>
+						
+					</st:DataNavigatorGroup>
+				</s:Scroller>
+				
+				<s:ButtonBar id="dataNavigatorGroupButtonBar" horizontalCenter="0" width="50%"/>
+				
+			</s:Group>
+			
+			<s:Label text="List (bound by selectedIndex) " fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			<s:Label text="If you make the minElementSize > 0, you can click on itemRenderers" fontWeight="bold" fontSize="8"/>
+			
+			<s:List id="list" width="400" height="300">
+				
+				<s:layout>
+					<st:AccordionLayout selectedIndex="{list.selectedIndex}"
+										direction="{direction.selectedItem.label}" buttonRotation="{buttonRotation.selectedItem.label}"
+										minElementSize="{minElementSize.value}" useScrollRect="{useScrollRect.selected}"
+										easer="{easer.selectedItem.ease}" duration="{duration.value}"
+										useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+				</s:layout>
+				
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:Object label="0" color="0xff0000"/>
+						<fx:Object label="1" color="0xffa500"/>
+						<fx:Object label="2" color="0xffff00"/>
+					</s:ArrayList>
+				</s:dataProvider>
+				
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer width="100%" height="100%">
+							
+							<fx:Script>
+								<![CDATA[
+									
+									[Bindable]
+									private var _color:uint;
+									
+									override public function set data( value:Object ):void
+									{
+										super.data = value;
+										if( data ) _color = data.color
+									}
+									
+								]]>
+							</fx:Script>
+							
+							<s:Rect width="100%" height="100%">
+								<s:fill>
+									<s:SolidColor color="{_color}"/>
+								</s:fill>
+							</s:Rect>
+							
+							<s:Label text="List item {itemIndex}" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+							
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+				
+			</s:List>
+			
+			<s:Label text="Group (hard coded ButtonBar)" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			<s:Scroller width="400" height="300">
+				<s:Group width="100%" height="100%">
+					
+					<s:layout>
+						<st:AccordionLayout selectedIndex="{groupButtonBar.selectedIndex}"
+											direction="{direction.selectedItem.label}" buttonRotation="{buttonRotation.selectedItem.label}"
+											minElementSize="{minElementSize.value}" useScrollRect="{useScrollRect.selected}"
+											easer="{easer.selectedItem.ease}" duration="{duration.value}"
+											useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+					</s:layout>
+					
+					<s:BorderContainer width="100%" height="100%" backgroundColor="0x0000ff">
+						<s:Label text="Accordion item 0" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="100%" height="100%" backgroundColor="0xff0000">
+						<s:Label text="Accordion item 1" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="100%" height="100%" backgroundColor="0x00ff00">
+						<s:Label text="Accordion item 2" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					
+				</s:Group>
+			</s:Scroller>
+			
+			<s:ButtonBar id="groupButtonBar" requireSelection="true">
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:Object label="0"/>
+						<fx:Object label="1"/>
+						<fx:Object label="2"/>
+					</s:ArrayList>
+				</s:dataProvider>
+			</s:ButtonBar>
+			
+			<s:Label text="AccordionLayout Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup verticalAlign="middle" gap="0">
+				
+				<s:Label text="direction:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="direction" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="vertical"/>
+							<fx:Object label="horizontal"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="buttonRotation:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="buttonRotation" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="none"/>
+							<fx:Object label="left"/>
+							<fx:Object label="right"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+			</s:HGroup>
+			
+			<s:HGroup verticalAlign="middle" gap="0">
+				
+				<s:Label text="minElementSize:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="minElementSize" value="0" minimum="0" maximum="50" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:CheckBox label="useScrollRect:" id="useScrollRect" selected="true" fontWeight="bold" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:CheckBox label="layoutAllButtonBarBounds:" id="layoutAllButtonBarBounds" selected="true" fontWeight="bold" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:Label text="AnimationNavigatorLayoutBase Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="easer:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="easer" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="Linear" ease="{new Linear( 0, 1 )}"/>
+							<fx:Object label="Bounce" ease="{new Bounce()}"/>
+							<fx:Object label="Sine" ease="{new Sine()}"/>
+							<fx:Object label="Power" ease="{new Power()}"/>
+							<fx:Object label="Elastic" ease="{new Elastic()}"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="duration:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="duration" minimum="200" value="700" maximum="3000" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:Label text="NavigatorLayoutBase Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:CheckBox label="useScrollBarForNavigation:" fontWeight="bold" id="useScrollBarForNavigation" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="scrollBarDirection:" fontWeight="bold" enabled="{useScrollBarForNavigation.selected}" fontSize="8"/>
+				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="vertical"/>
+							<fx:Object label="horizontal"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+			</s:HGroup>
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+</s:Application>

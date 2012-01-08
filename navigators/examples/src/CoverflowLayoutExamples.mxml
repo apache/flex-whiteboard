@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:st="library://ns.tink.ws/flex/spark">
+	
+	<fx:Library>
+		<fx:Definition name="Divider">
+			<s:Graphic width="15" height="18">
+				<s:Rect width="15" height="18">
+					<s:fill>
+						<s:SolidColor alpha="0"/>
+					</s:fill>
+				</s:Rect>
+				<s:Line height="18" horizontalCenter="0">
+					<s:stroke>
+						<s:SolidColorStroke weight="2" color="0x000000" caps="none"/>
+					</s:stroke>
+				</s:Line>
+			</s:Graphic> 
+		</fx:Definition>
+	</fx:Library>
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.effects.easing.Bounce;
+			import spark.effects.easing.Elastic;
+			import spark.effects.easing.Linear;
+			import spark.effects.easing.Power;
+			import spark.effects.easing.Sine;
+		]]>
+	</fx:Script>
+	
+	
+	<s:Scroller width="100%" height="100%">
+		<s:VGroup horizontalAlign="center">
+			
+			<s:Label text="NavigatorGroup (use ButtonBar to select)" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<s:Scroller width="400" height="300">
+				
+				<st:NavigatorGroup id="navigatorGroup">
+					
+					<st:layout>
+						<st:CoverflowLayout numUnselectedElements="{numUnselectedElements.value}" maximumZ="{maximumZ.value}"
+											rotationX="{rotationXX.value}" rotationY="{rotationYY.value}"
+											depthColor="{depthColor.selectedItem.value}" depthColorAlpha="{depthColorAlpha.value}"
+											horizontalAlign="{horizontalAlign.selectedItem.label}" verticalAlign="{verticalAlign.selectedItem.label}"
+											elementHorizontalAlign="{elementHorizontalAlign.selectedItem.label}" elementVerticalAlign="{elementVerticalAlign.selectedItem.label}"
+											horizontalAlignOffset="{horizontalAlignOffset.value}" verticalAlignOffset="{verticalAlignOffset.value}"
+											horizontalDisplacement="{horizontalDisplacement.value}" selectedHorizontalDisplacement="{selectedHorizontalDisplacement.value}"
+											verticalDisplacement="{verticalDisplacement.value}" selectedVerticalDisplacement="{selectedVerticalDisplacement.value}"
+											projectionCenterX="{projectionCenterX.value}" projectionCenterY="{projectionCenterY.value}" fieldOfView="{fieldOfView.value}"
+											easer="{easer.selectedItem.ease}" duration="{duration.value}"
+											useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+					</st:layout>
+					
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xff0000">
+						<s:Label text="0" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xffa500">
+						<s:Label text="1" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xffff00">
+						<s:Label text="2" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x008000">
+						<s:Label text="3" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x0000ff">
+						<s:Label text="4" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x4b0082">
+						<s:Label text="5" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xee82ee">
+						<s:Label text="6" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xff0000">
+						<s:Label text="7" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xffa500">
+						<s:Label text="8" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xffff00">
+						<s:Label text="9" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x008000">
+						<s:Label text="10" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x0000ff">
+						<s:Label text="11" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0x4b0082">
+						<s:Label text="12" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					<s:BorderContainer width="20%" height="20%" backgroundColor="0xee82ee">
+						<s:Label text="13" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+					</s:BorderContainer>
+					
+				</st:NavigatorGroup>
+			</s:Scroller>
+			
+			<s:ButtonBar width="400" dataProvider="{navigatorGroup}" labelField="label" fontSize="8"/>
+			
+			<s:Label text="List (click to select)" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<s:List id="list" width="400" height="300">
+				
+				<s:layout>
+					<st:CoverflowLayout selectedIndex="{list.selectedIndex}"
+										numUnselectedElements="{numUnselectedElements.value}" maximumZ="{maximumZ.value}"
+										rotationX="{rotationXX.value}" rotationY="{rotationYY.value}"
+										depthColor="{depthColor.selectedItem.value}" depthColorAlpha="{depthColorAlpha.value}"
+										horizontalAlign="{horizontalAlign.selectedItem.label}" verticalAlign="{verticalAlign.selectedItem.label}"
+										elementHorizontalAlign="{elementHorizontalAlign.selectedItem.label}" elementVerticalAlign="{elementVerticalAlign.selectedItem.label}"
+										horizontalAlignOffset="{horizontalAlignOffset.value}" verticalAlignOffset="{verticalAlignOffset.value}"
+										horizontalDisplacement="{horizontalDisplacement.value}" selectedHorizontalDisplacement="{selectedHorizontalDisplacement.value}"
+										verticalDisplacement="{verticalDisplacement.value}" selectedVerticalDisplacement="{selectedVerticalDisplacement.value}"
+										projectionCenterX="{projectionCenterX.value}" projectionCenterY="{projectionCenterY.value}" fieldOfView="{fieldOfView.value}"
+										easer="{easer.selectedItem.ease}" duration="{duration.value}"
+										useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+				</s:layout>
+				
+				<s:dataProvider>
+					<s:ArrayList>
+						<fx:Object label="0" color="0xff0000"/>
+						<fx:Object label="1" color="0xffa500"/>
+						<fx:Object label="2" color="0xffff00"/>
+						<fx:Object label="3" color="0x008000"/>
+						<fx:Object label="4" color="0x0000ff"/>
+						<fx:Object label="5" color="0x4b0082"/>
+						<fx:Object label="6" color="0xee82ee"/>
+						<fx:Object label="7" color="0xff0000"/>
+						<fx:Object label="8" color="0xffa500"/>
+						<fx:Object label="9" color="0xffff00"/>
+						<fx:Object label="10" color="0x008000"/>
+						<fx:Object label="11" color="0x0000ff"/>
+						<fx:Object label="12" color="0x4b0082"/>
+						<fx:Object label="13" color="0xee82ee"/>
+					</s:ArrayList>
+				</s:dataProvider>
+				
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer width="20%" height="20%">
+							
+							<fx:Script>
+								<![CDATA[
+									
+									[Bindable]
+									private var _color:uint;
+									
+									override public function set data( value:Object ):void
+									{
+										super.data = value;
+										if( data ) _color = data.color
+									}
+									
+								]]>
+							</fx:Script>
+							
+							<s:Rect width="100%" height="100%">
+								<s:fill>
+									<s:SolidColor color="{_color}"/>
+								</s:fill>
+							</s:Rect>
+							
+							<s:Label text="{itemIndex}" color="0xffffff" horizontalCenter="0" verticalCenter="0"/>
+							
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+				
+			</s:List>
+			
+			<s:Label text="CoverflowLayout Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="numUnselectedElements:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="numUnselectedElements" minimum="-1" maximum="3" value="-1" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="maximumZ:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="maximumZ" minimum="-100" maximum="200" value="100" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="rotationX:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="rotationXX" minimum="-90" maximum="90" value="0" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="rotationY:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="rotationYY" minimum="-90" maximum="90" value="45" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="depthColor:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="depthColor" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="white" value="0xffffff"/>
+							<fx:Object label="black" value="0x000000"/>
+							<fx:Object label="red" value="0xff0000"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="depthColorAlpha:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="depthColorAlpha" minimum="0" maximum="100" value="50" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="horizontalDisplacement:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="horizontalDisplacement" minimum="-100" maximum="100" value="30" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="selectedHorizontalDisplacement:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="selectedHorizontalDisplacement" minimum="-100" maximum="100" value="60" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="verticalDisplacement:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="verticalDisplacement" minimum="-100" maximum="100" value="0" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="selectedVerticalDisplacement:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="selectedVerticalDisplacement" minimum="-100" maximum="100" value="0" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="horizontalAlign:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="horizontalAlign" selectedIndex="1" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="left"/>
+							<fx:Object label="center"/>
+							<fx:Object label="right"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="verticalAlign:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="verticalAlign" selectedIndex="1" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="bottom"/>
+							<fx:Object label="middle"/>
+							<fx:Object label="top"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+			</s:HGroup>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="horizontalAlignOffset:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="horizontalAlignOffset" minimum="-300" maximum="300" value="0" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="verticalAlignOffset:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="verticalAlignOffset" minimum="-300" maximum="300" value="0" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="elementHorizontalAlign:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="elementHorizontalAlign" selectedIndex="1" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="left"/>
+							<fx:Object label="center"/>
+							<fx:Object label="right"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="elementVerticalAlign:" fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="elementVerticalAlign" selectedIndex="1" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="bottom"/>
+							<fx:Object label="middle"/>
+							<fx:Object label="top"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+			</s:HGroup>
+			
+			<s:Label text="PerspectiveAnimationNavigatorLayoutBase Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="projectionCenterX:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="projectionCenterX" minimum="0" maximum="400" value="200" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="projectionCenterY:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="projectionCenterY" minimum="0" maximum="300" value="150" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="fieldOfView:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="fieldOfView" minimum="1" maximum="179" value="55" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:Label text="AnimationNavigatorLayoutBase Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:Label text="easer:"  fontWeight="bold" fontSize="8"/>
+				<s:ButtonBar id="easer" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="Linear" ease="{new Linear( 0, 1 )}"/>
+							<fx:Object label="Bounce" ease="{new Bounce()}"/>
+							<fx:Object label="Sine" ease="{new Sine()}"/>
+							<fx:Object label="Power" ease="{new Power()}"/>
+							<fx:Object label="Elastic" ease="{new Elastic()}"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+				<fx:Divider/>
+				
+				<s:Label text="duration:" fontWeight="bold" fontSize="8"/>
+				<s:NumericStepper id="duration" minimum="200" value="700" maximum="3000" fontSize="8"/>
+				
+			</s:HGroup>
+			
+			<s:Label text="NavigatorLayoutBase Properties" fontWeight="bold" fontSize="13" height="30" verticalAlign="bottom"/>
+			
+			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
+				
+				<s:CheckBox label="useScrollBarForNavigation:" fontWeight="bold" id="useScrollBarForNavigation" fontSize="8"/>
+				
+				<fx:Divider/>
+				
+				<s:Label text="scrollBarDirection:" fontWeight="bold" enabled="{useScrollBarForNavigation.selected}" fontSize="8"/>
+				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8">
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:Object label="vertical"/>
+							<fx:Object label="horizontal"/>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:ButtonBar>
+				
+			</s:HGroup>
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+</s:Application>
