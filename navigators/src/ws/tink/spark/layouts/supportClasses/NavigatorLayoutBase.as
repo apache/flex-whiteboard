@@ -1174,7 +1174,7 @@ package ws.tink.spark.layouts.supportClasses
 		{
 			// When using virtualization, elements get created after updateElements()
 			// has been invoked as part of getVirtualItemAt(), therefore we must re-calculate them.
-			if( target is DataGroup && target.numChildren != _elements.length ) updateElements();
+			if( _elements && target is DataGroup && target.numChildren != _elements.length ) updateElements();
 			
 			for each( var element:IVisualElement in _elements )
 			{
