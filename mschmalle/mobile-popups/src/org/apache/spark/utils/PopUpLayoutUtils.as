@@ -1,6 +1,4 @@
 /*
-Copyright (c) 2011 Teoti Graphix, LLC - http://www.teotigraphix.com
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of 
 this software and associated documentation files (the "Software"), to deal in 
 the Software without restriction, including without limitation the rights to 
@@ -34,8 +32,6 @@ import org.apache.spark.components.supportClasses.PopUpLayoutPlacement;
 /**
  * @private 
  * 
- * @author Michael Schmalle
- * @copyright Teoti Graphix, LLC
  * @productversion 1.0
  */
 public class PopUpLayoutUtils
