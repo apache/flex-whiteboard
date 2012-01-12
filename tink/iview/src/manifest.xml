@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<componentPackage>
+
+	<!-- containers -->
+	<component id="ViewGroup" class="org.apache.spark.components.ViewGroup"/>
+	<component id="ViewNavigator" class="org.apache.spark.components.ViewNavigator"/>
+	<component id="ViewSkinnableComponent" class="org.apache.spark.components.ViewSkinnableComponent"/>
+	<component id="ViewSkinnableContainer" class="org.apache.spark.components.ViewSkinnableContainer"/>
+	<component id="SlideViewTransition" class="org.apache.spark.transitions.SlideViewTransition"/>
+	
+</componentPackage>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:sa="library://ns.apache.org/flex/spark"
+			   applicationDPI="160">
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Style>
+		@namespace sa "library://ns.apache.org/flex/spark";
+		@namespace local "*";
+		
+		local|ViewSkinnableComponentExample
+		{
+			skinClass:ClassReference("ViewSkinnableComponentExampleSkin")
+		}
+		
+		sa|ViewNavigator
+		{
+			skinClass:ClassReference("org.apache.spark.skins.mobile.ViewNavigatorSkin")
+		}
+	</fx:Style>
+	
+	<sa:ViewNavigator firstView="{ViewSkinnableContainerExample}" width="100%" height="100%"/>
+
+</s:Application>

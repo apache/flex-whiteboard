@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sa:ViewSkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			  xmlns:s="library://ns.adobe.com/flex/spark"
+			  xmlns:sa="library://ns.apache.org/flex/spark"
+			  title="ViewSkinnableContainerExample"
+			  width="100%" height="100%">
+	
+	<fx:Script>
+		<![CDATA[
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				navigator.pushView( ViewSkinnableComponentExample );
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:Rect width="100%" height="100%">
+		<s:fill>
+			<s:SolidColor color="0x0000ff"/>
+		</s:fill>
+	</s:Rect>
+	
+	<s:Button label="Goto ViewSkinnableComponentExample" click="button1_clickHandler(event)"
+			  horizontalCenter="0" verticalCenter="0"/>
+	
+	<sa:navigationContent>
+		<s:Button label="Back" click="navigator.popView()"/>
+	</sa:navigationContent>
+	
+</sa:ViewSkinnableContainer>

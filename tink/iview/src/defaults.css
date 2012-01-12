@@ -1,0 +1,8 @@
+/* CSS file */
+@namespace "library://ns.apache.org/flex/spark";
+
+ViewNavigator
+{
+	skinClass : ClassReference("org.apache.spark.skins.mobile.ViewNavigatorSkin")
+}
+

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<design>
+  <namespaces>
+    <namespace prefix="sa" uri="library://ns.apache.org/flex/spark"/>
+  </namespaces>
+</design>
