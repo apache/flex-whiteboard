@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:components="org.apache.spark.components.*"
+			   applicationDPI="160">
+	
+	<fx:Script>
+		<![CDATA[
+			import spark.events.IndexChangeEvent;
+			
+			protected function dropdownlist_changeHandler(event:IndexChangeEvent):void
+			{
+				trace( event.newIndex )
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<components:MobileDropDownList change="dropdownlist_changeHandler(event)">
+		<components:dataProvider>
+			<s:ArrayList>
+				<fx:Object label="test1"/>
+				<fx:Object label="test2"/>
+				<fx:Object label="test3"/>
+				<fx:Object label="test4"/>
+				<fx:Object label="test1"/>
+				<fx:Object label="test2"/>
+				<fx:Object label="test3"/>
+				<fx:Object label="test4"/>
+				<fx:Object label="test1"/>
+				<fx:Object label="test2"/>
+				<fx:Object label="test3"/>
+				<fx:Object label="test4"/>
+				<fx:Object label="test1"/>
+				<fx:Object label="test2"/>
+				<fx:Object label="test3"/>
+				<fx:Object label="test4"/>
+			</s:ArrayList>
+		</components:dataProvider>
+	</components:MobileDropDownList>
+	
+
+</s:Application>
