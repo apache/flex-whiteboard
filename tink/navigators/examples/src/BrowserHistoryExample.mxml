@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:st="library://ns.tink.ws/flex/spark"
+			   xmlns:controls="examples.controls.*"
+			   initialize="onInitialize(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.core.Singleton;
+			import mx.events.FlexEvent;
+			
+			import spark.components.supportClasses.GroupBase;
+			
+			import ws.tink.spark.layouts.supportClasses.INavigatorLayout;
+			import ws.tink.spark.managers.INavigatorBrowserManager;
+			import ws.tink.spark.managers.NavigatorBrowserManager;
+			
+			private var _navigatorBrowserManager:INavigatorBrowserManager;
+			
+
+			private function onInitialize(event:FlexEvent):void
+			{
+				Singleton.registerClass("ws.tink.spark.managers::INavigatorBrowserManager",
+					Class(getDefinitionByName("ws.tink.spark.managers::NavigatorBrowserManagerImpl")));
+				
+				_navigatorBrowserManager = NavigatorBrowserManager.getInstance();
+				_navigatorBrowserManager.fragmentFunction = fragmentFunction;
+			}
+			
+			private function fragmentFunction( item:Object ):String
+			{
+				var r:RegExp = new RegExp( "#" );
+				return item.id.toString().replace( r, "" );
+			}
+			
+			private function onNavigatorGroupCreationComplete( event:FlexEvent ):void
+			{
+				_navigatorBrowserManager.registerLayout( INavigatorLayout( GroupBase( event.currentTarget ).layout ) );
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<st:MenuBar dataProvider="{navigator}" labelField="id"/>
+	
+	<st:NavigatorGroup id="navigator" width="100%" height="100%" creationComplete="onNavigatorGroupCreationComplete(event)">
+		<controls:ColorSwatch data="0xffa500"/>
+		<controls:ColorSwatch data="0xffff00"/>
+		<st:NavigatorGroup id="level_0_0" width="100%" height="100%" creationComplete="onNavigatorGroupCreationComplete(event)">
+			<controls:ColorSwatch data="0xff0000"/>
+			<controls:ColorSwatch data="0xffa500"/>
+			<controls:ColorSwatch data="0xffff00"/>
+			<st:NavigatorGroup id="level_0_04" width="100%" height="100%" creationComplete="onNavigatorGroupCreationComplete(event)">
+				<controls:ColorSwatch data="0xff0000"/>
+				<controls:ColorSwatch data="0xffa500"/>
+				<controls:ColorSwatch data="0xffff00"/>
+				<st:NavigatorGroup id="level_0_03" width="100%" height="100%" creationComplete="onNavigatorGroupCreationComplete(event)">
+					<controls:ColorSwatch data="0xff0000"/>
+					<controls:ColorSwatch data="0xffa500"/>
+					<controls:ColorSwatch data="0xffff00"/>
+				</st:NavigatorGroup>
+			</st:NavigatorGroup>
+		</st:NavigatorGroup>
+		<controls:ColorSwatch data="0x008000"/>
+		<controls:ColorSwatch data="0x0000ff"/>
+		<controls:ColorSwatch data="0x4b0082"/>
+	</st:NavigatorGroup>
+	
+</s:Application>
