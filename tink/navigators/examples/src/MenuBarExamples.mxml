@@ -3,6 +3,20 @@
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:st="library://ns.tink.ws/flex/spark">
 		
+		<!--
+	
+			The MenuBar is basically a ButtonBar with DropDownList as its itemRenderer (MenuBarItemRenderer).
+	
+			The MenuBarItemRenderer opens on roll over instead of on mouse down.
+	
+			Each MenuBarItemRenderer has its itemRenderer property set to MenuBarItemRenderer, so they can
+	 		be infinitely nested.
+	
+			Via CSS the first level of MenuBarItemRenderer's display their list below them, subsequent lists
+	        display to the right.
+	
+		-->
+	
 		<fx:Library>
 			<fx:Definition name="Divider">
 				<s:Graphic width="15" height="18">
