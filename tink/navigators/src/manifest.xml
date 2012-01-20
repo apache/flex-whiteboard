@@ -12,7 +12,11 @@
 	<component id="DataAccordion" class="ws.tink.spark.controls.DataAccordion"/>
 	<component id="DataNavigator" class="ws.tink.spark.controls.DataNavigator"/>
 	<component id="DataNavigatorGroup" class="ws.tink.spark.controls.DataNavigatorGroup"/>
+	<component id="MenuBar" class="ws.tink.spark.controls.MenuBar"/>
     
+    <!-- itemRenderers -->
+	<component id="MenuBarItemRenderer" class="ws.tink.spark.itemRenderers.MenuBarItemRenderer"/>
+	
 	<!-- layouts -->
 	<component id="AccordionLayout" class="ws.tink.spark.layouts.AccordionLayout"/>
 	<component id="CarouselLayout" class="ws.tink.spark.layouts.CarouselLayout"/>
