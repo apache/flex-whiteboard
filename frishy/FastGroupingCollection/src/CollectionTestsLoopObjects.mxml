@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+               applicationComplete="application1_applicationCompleteHandler(event)">
+    <fx:Script>
+        <![CDATA[
+            import com.frishy.collections.FastGroupingCollection;
+            
+            import flash.utils.getTimer;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.ArrayList;
+            import mx.collections.IList;
+            import mx.collections.Sort;
+            import mx.collections.SortField;
+            import mx.events.FlexEvent;
+            
+            protected function application1_applicationCompleteHandler(event:FlexEvent):void
+            {
+                var fgc:FastGroupingCollection = new FastGroupingCollection();
+            }
+            
+            public static const NUM_ITEMS:int = 1000;
+            public static const NUM_ITER:int = 1000;
+            public var collectionTests:CollectionTest = new CollectionTest();
+            
+            public function test1():void
+            {
+                var list:IList = new ArrayCollection();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionBracketIndex(list, NUM_ITER);
+                test1Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test2():void
+            {
+                var list:IList = new ArrayCollection();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionForEach(list, NUM_ITER);
+                test2Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test3():void
+            {
+                var list:IList = new ArrayCollection();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionGetItemAt(list, NUM_ITER);
+                test3Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test4():void
+            {
+                var list:ArrayCollection = new ArrayCollection();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionView(list, NUM_ITER);
+                test4Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function testFilterFunction(item:Object):Boolean
+            {
+                return item.property0 > 0.8;
+            }
+            
+            public function getTestSort():Sort
+            {
+                var sort:Sort = new Sort();
+                sort.fields = [new SortField("property1")];
+                return sort;
+            }
+            
+            public function test5():void
+            {
+                var list:ArrayCollection = new ArrayCollection();
+                list.filterFunction = testFilterFunction;
+                list.sort = getTestSort();
+                list.refresh();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionBracketIndex(list, NUM_ITER);
+                test5Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test6():void
+            {
+                var list:ArrayCollection = new ArrayCollection();
+                list.filterFunction = testFilterFunction;
+                list.sort = getTestSort();
+                list.refresh();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionForEach(list, NUM_ITER);
+                test6Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test7():void
+            {
+                var list:ArrayCollection = new ArrayCollection();
+                list.filterFunction = testFilterFunction;
+                list.sort = getTestSort();
+                list.refresh();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionGetItemAt(list, NUM_ITER);
+                test7Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test8():void
+            {
+                var list:ArrayCollection = new ArrayCollection();
+                list.filterFunction = testFilterFunction;
+                list.sort = getTestSort();
+                list.refresh();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionView(list, NUM_ITER);
+                test8Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test9():void
+            {
+                var list:IList = new ArrayList();
+                collectionTests.fillCollectionNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsCollectionGetItemAt(list, NUM_ITER);
+                test9Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test10():void
+            {
+                var list:Array = new Array();
+                collectionTests.fillArrayNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsArrayFor(list, NUM_ITER);
+                test10Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test11():void
+            {
+                var list:Array = new Array();
+                collectionTests.fillArrayNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsArrayForEach(list, NUM_ITER);
+                test11Label.text += ": " + (getTimer() - startTime);
+            }
+
+            public function test12():void
+            {
+                var list:Vector.<Object> = new Vector.<Object>();
+                collectionTests.fillVectorNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsVectorForEach(list, NUM_ITER);
+                test12Label.text += ": " + (getTimer() - startTime);
+            }
+            
+            public function test13():void
+            {
+                var list:Vector.<Object> = new Vector.<Object>();
+                collectionTests.fillVectorNonBindable(list, NUM_ITEMS, true);
+                var startTime:Number = getTimer();
+                collectionTests.iterateOverAllElementsVectorForEach(list, NUM_ITER);
+                test13Label.text += ": " + (getTimer() - startTime);
+            }
+            
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- Place non-visual elements (e.g., services, value objects) here -->
+    </fx:Declarations>
+    <s:layout>
+        <s:VerticalLayout />
+    </s:layout>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test1Label" text="Loop ArrayCollection for and bracket" />
+            <s:Button click="test1()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test2Label" text="Loop ArrayCollection for each" />
+            <s:Button click="test2()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test3Label" text="Loop ArrayCollection for and getItem()" />
+            <s:Button click="test3()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test4Label" text="Loop ArrayCollection IViewCursor" />
+            <s:Button click="test4()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test5Label" text="Loop ArrayCollection (filter and sort) for and bracket" />
+            <s:Button click="test5()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test6Label" text="Loop ArrayCollection (filter and sort) for each" />
+            <s:Button click="test6()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test7Label" text="Loop ArrayCollection (filter and sort) for and getItem()" />
+            <s:Button click="test7()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test8Label" text="Loop ArrayCollection (filter and sort) IViewCursor" />
+            <s:Button click="test8()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test9Label" text="Loop ArrayList for and getItem()" />
+            <s:Button click="test9()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test10Label" text="Loop Array for and bracket" />
+            <s:Button click="test10()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test11Label" text="Loop Array for each" />
+            <s:Button click="test11()" />
+        </s:VGroup>
+    </s:HGroup>
+    <s:HGroup>
+        <s:VGroup>
+            <s:Label id="test12Label" text="Loop Vector for and bracket" />
+            <s:Button click="test12()" />
+        </s:VGroup>
+        <s:VGroup>
+            <s:Label id="test13Label" text="Loop Vector for each" />
+            <s:Button click="test13()" />
+        </s:VGroup>
+    </s:HGroup>
+</s:Application>

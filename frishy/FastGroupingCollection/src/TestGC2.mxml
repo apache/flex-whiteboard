@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" 
+               xmlns:fastdatagridhelpers="fastdatagridhelpers.*">
+    
+    <fx:Script>
+        <![CDATA[
+            import com.frishy.collections.FastGroupingCollection;
+            
+            import model.PropertyChangeBindableObject;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.Grouping;
+            import mx.collections.GroupingCollection2;
+            import mx.collections.GroupingField;
+            import mx.collections.SummaryField2;
+            import mx.collections.SummaryRow;
+            import mx.events.FlexEvent;
+            
+            private var ac:ArrayCollection;
+            private var gc2:GroupingCollection2;
+            
+            protected function addRandomItem():void
+            {
+                var item:PropertyChangeBindableObject = new PropertyChangeBindableObject();
+                item.fillAllProperties();
+                ac.addItem(item);
+            }
+            
+            protected function removeRandomItem():void
+            {
+                if (ac.length == 0)
+                    return;
+                
+                var indexToRemove:int = Math.floor(ac.length * Math.random());
+                ac.removeItemAt(indexToRemove);
+            }
+            
+            protected function adg_preinitializeHandler(event:FlexEvent):void
+            {
+                ac = new ArrayCollection();
+                
+                addRandomItem();
+                addRandomItem();
+                addRandomItem();
+                
+                gc2 = new GroupingCollection2();
+                gc2.source = ac;
+                gc2.grouping = getTestGrouping();
+                gc2.refresh();
+                
+                adg.dataProvider = gc2;
+            }
+            
+            private static const NUM_GROUPS:int = 3;
+            
+            private function testGroupingFunction(item:Object, field:GroupingField):String
+            {
+                var myNumber:Number = item[field.name] as Number;
+                var groupId:Number = Math.floor(myNumber * NUM_GROUPS);
+                return groupId.toString();
+            }
+            
+            private function getTestGrouping():Grouping
+            {
+                var grouping:Grouping = new Grouping();
+                var gf:GroupingField = new GroupingField("property3");
+                gf.groupingFunction = testGroupingFunction;
+                
+                var sr:SummaryRow = new SummaryRow();
+                var sf:SummaryField2 = new SummaryField2();
+                sf.dataField = "property9";
+                sf.summaryOperation = "SUM";
+                var sf2:SummaryField2 = new SummaryField2();
+                sf2.summaryOperation = "AVG";
+                sf2.dataField = "property6";
+                sr.fields = [sf, sf2];
+                gf.summaries = [sr];
+                
+                var gf2:GroupingField = new GroupingField("property6");
+                gf2.groupingFunction = testGroupingFunction;
+                grouping.fields = [gf, gf2];
+                
+                return grouping;
+            }
+            
+        ]]>
+    </fx:Script>
+    
+    <fx:Declarations>
+        <!-- Place non-visual elements (e.g., services, value objects) here -->
+    </fx:Declarations>
+    
+    <s:layout>
+        <s:VerticalLayout />
+    </s:layout>
+    
+    <s:Button label="add random item" click="addRandomItem()" />
+    
+    <s:Button label="remove random item" click="removeRandomItem()" />
+    
+    <fastdatagridhelpers:FastAdvancedDataGrid id="adg" height="600" width="1200" 
+                                              horizontalScrollPolicy="on" displayItemsExpanded="true"
+                                              preinitialize="adg_preinitializeHandler(event)">
+        <fastdatagridhelpers:columns>
+            <mx:AdvancedDataGridColumn dataField="property3" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property0" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property1" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property2" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property4" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property5" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property6" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property7" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property8" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property9" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property10" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property11" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property13" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property12" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property14" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property15" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property16" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property17" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property18" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property19" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property20" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property21" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property22" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property23" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property24" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property25" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property26" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property27" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property28" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property29" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+        </fastdatagridhelpers:columns>
+    </fastdatagridhelpers:FastAdvancedDataGrid>
+</s:Application>

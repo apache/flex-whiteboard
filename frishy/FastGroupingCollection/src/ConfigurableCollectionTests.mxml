@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+               applicationComplete="application1_applicationCompleteHandler(event)">
+    <fx:Script>
+        <![CDATA[
+            import flash.utils.getTimer;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.ArrayList;
+            import mx.collections.Grouping;
+            import mx.collections.GroupingCollection;
+            import mx.collections.GroupingCollection2;
+            import mx.collections.GroupingField;
+            import mx.collections.HierarchicalCollectionView;
+            import mx.collections.ICollectionView;
+            import mx.collections.IList;
+            import mx.collections.Sort;
+            import mx.collections.SortField;
+            import mx.events.FlexEvent;
+            
+            protected function application1_applicationCompleteHandler(event:FlexEvent):void
+            {
+                
+            }
+            
+            public var collectionTests:CollectionTest = new CollectionTest();
+            public var testResultsAdd:Array;
+            public var testResultsUpdate:Array;
+            
+            public static const NUM_ITERATIONS_PER_SECOND:int = 4;
+            
+            private static const NON_BINDABLE_OBJECT:int = 0;
+            private static const PROPERTY_CHANGE_BINDABLE_OBJECT:int = 1;
+            private static const SINGLE_VERSION_EVENT_BINDABLE_OBJECT:int = 2;
+            private static const UNIQUE_EVENT_BINDABLE_OBJECT:int = 3;
+            
+            private static const ARRAY_TYPE:int = 0;
+            private static const VECTOR_TYPE:int = 1;
+            private static const ARRAY_LIST_TYPE:int = 2;
+            private static const ARRAY_COLLECTION_TYPE:int = 3;
+            private static const ARRAY_COLLECTION_FILTER_TYPE:int = 4;
+            private static const ARRAY_COLLECTION_SORT_TYPE:int = 5;
+            private static const ARRAY_COLLECTION_FILTER_SORT_TYPE:int = 6;
+            
+            private static const WRAPPING_COLLECTION_NONE:int = 0;
+            private static const WRAPPING_COLLECTION_GC2_NO_GROUPING:int = 1;
+            private static const WRAPPING_COLLECTION_GC2_WITH_GROUPING:int = 2;
+            private static const WRAPPING_COLLECTION_HCV_NO_GROUPING:int = 3;
+            private static const WRAPPING_COLLECTION_HCV_WITH_GROUPING:int = 4;
+            
+            public function get numItemsToInitializeWith():int
+            {
+                return seedItemAmountInput.value;
+            }
+            
+            public function get fillSeedItems():Boolean
+            {
+                return fillSeedItemsInput.selected;
+            }
+            
+            public function get numIterations():int
+            {
+                return numSecondsInput.value * NUM_ITERATIONS_PER_SECOND;
+            }
+            
+            public function get numItemsToAddPerSecond():int
+            {
+                return numItemsToAddPerSecondInput.value;
+            }
+            
+            public function get fillObjectsInitially():Boolean
+            {
+                return fillObjectsInitiallyCheckBox.selected;
+            }
+            
+            public function get numItemsToUpdatePerSecond():int
+            {
+                return numItemsToUpdatePerSecondInput.value;
+            }
+            
+            public function get numPropertiesPerUpdate():int
+            {
+                return numPropsToUpdatePerObjectUpdateInput.value;
+            }
+            
+            public function runTest():void
+            {
+                
+                collectionTests.addEventListener(CollectionTest.TEST_COMPLETE, testCompleteHandler);
+                
+                switch (collectionToUseDropDownList.selectedIndex)
+                {
+                    case ARRAY_TYPE:
+                        startArrayTest();
+                        break;
+                    case VECTOR_TYPE:
+                        startVectorTest();
+                        break;
+                    case ARRAY_LIST_TYPE:
+                    case ARRAY_COLLECTION_TYPE:
+                    case ARRAY_COLLECTION_FILTER_TYPE:
+                    case ARRAY_COLLECTION_SORT_TYPE:
+                    case ARRAY_COLLECTION_FILTER_SORT_TYPE:
+                        startCollectionTest();
+                        break;
+                }
+            }
+            
+            private function startArrayTest():void
+            {
+                var myArray:Array = [];
+                
+                if (numItemsToInitializeWith > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            collectionTests.fillArrayNonBindable(myArray, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT:
+                            collectionTests.fillArrayPropertyChangeBindable(myArray, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillArrayUniqueEventBindable(myArray, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillArraySingleVersionEventBindable(myArray, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                    }
+                }
+                
+                if (numItemsToAddPerSecond > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsNonBindableArray(myArray, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsPropertyChangeBindableArray(myArray, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsUniqueEventBindableArray(myArray, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsSingleVersionEventBindableArray(myArray, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                    }
+                }
+                
+                if (numItemsToUpdatePerSecond > 0)
+                {
+                    testResultsUpdate = collectionTests.startRandomPropertyUpdatesArray(myArray, numIterations, numItemsToUpdatePerSecond, numPropertiesPerUpdate);
+                }
+            }
+            
+            private function startVectorTest():void
+            {
+                var myVector:Vector.<Object> = new Vector.<Object>();
+                
+                if (numItemsToInitializeWith > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            collectionTests.fillVectorNonBindable(myVector, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT:
+                            collectionTests.fillVectorPropertyChangeBindable(myVector, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillVectorUniqueEventBindable(myVector, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillVectorSingleVersionEventBindable(myVector, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                    }
+                }
+                
+                if (numItemsToAddPerSecond > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsNonBindableVector(myVector, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT: 
+                            testResultsAdd = collectionTests.startRandomAdditionsPropertyChangeBindableVector(myVector, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsUniqueEventBindableVector(myVector, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsSingleVersionEventBindableVector(myVector, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                    }
+                }
+                
+                if (numItemsToUpdatePerSecond > 0)
+                {
+                    testResultsUpdate = collectionTests.startRandomPropertyUpdatesVector(myVector, numIterations, numItemsToUpdatePerSecond, numPropertiesPerUpdate);
+                }
+            }
+            
+            private function startCollectionTest():void
+            {
+                var myList:IList = createCollectionObject();
+                
+                collectionWrapper = wrapInOtherCollectionIfNeeded(myList);
+                
+                applySortAndFilterIfNeeded(collectionWrapper, myList);
+                
+                if (numItemsToInitializeWith > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            collectionTests.fillCollectionNonBindable(myList, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT:
+                            collectionTests.fillCollectionPropertyChangeBindable(myList, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillCollectionUniqueEventBindable(myList, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            collectionTests.fillCollectionSingleVersionEventBindable(myList, numItemsToInitializeWith, fillSeedItems);
+                            break;
+                    }
+                }
+                
+                if (numItemsToAddPerSecond > 0)
+                {
+                    switch (objectToUseDropDownList.selectedIndex)
+                    {
+                        case NON_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsNonBindableCollection(myList, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case PROPERTY_CHANGE_BINDABLE_OBJECT: 
+                            testResultsAdd = collectionTests.startRandomAdditionsPropertyChangeBindableCollection(myList, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case UNIQUE_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsUniqueEventBindableCollection(myList, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                        case SINGLE_VERSION_EVENT_BINDABLE_OBJECT:
+                            testResultsAdd = collectionTests.startRandomAdditionsSingleVersionEventBindableCollection(myList, numIterations, numItemsToAddPerSecond, fillObjectsInitially);
+                            break;
+                    }
+                }
+                
+                if (numItemsToUpdatePerSecond > 0)
+                {
+                    testResultsUpdate = collectionTests.startRandomPropertyUpdatesCollection(myList, numIterations, numItemsToUpdatePerSecond, numPropertiesPerUpdate);
+                }
+            }
+            
+            private function createCollectionObject():IList
+            {
+                if (collectionToUseDropDownList.selectedIndex == ARRAY_LIST_TYPE)
+                    return new ArrayList();
+                else
+                    return new ArrayCollection();
+            }
+            
+            private function applySortAndFilterIfNeeded(
+                collectionWrapper:Object, 
+                underlyingCollection:IList):void
+            {
+                var collectionForFilterAndSort:ICollectionView = collectionWrapper as ICollectionView;
+                if (!collectionForFilterAndSort)
+                    collectionForFilterAndSort = underlyingCollection as ICollectionView;
+                
+                if (collectionToUseDropDownList.selectedIndex == ARRAY_COLLECTION_FILTER_TYPE ||
+                    collectionToUseDropDownList.selectedIndex == ARRAY_COLLECTION_FILTER_SORT_TYPE)
+                {
+                    collectionForFilterAndSort.filterFunction = testFilterFunction;
+                }
+                
+                if (collectionToUseDropDownList.selectedIndex == ARRAY_COLLECTION_SORT_TYPE ||
+                    collectionToUseDropDownList.selectedIndex == ARRAY_COLLECTION_FILTER_SORT_TYPE)
+                {
+                    collectionForFilterAndSort.sort = getTestSort();
+                }
+                
+                if (collectionToUseDropDownList.selectedIndex != ARRAY_COLLECTION_TYPE)
+                {
+                    collectionForFilterAndSort.refresh();
+                }
+            }
+            
+            private function wrapInOtherCollectionIfNeeded(myList:IList):Object
+            {
+                var gc2:GroupingCollection2;
+                var hcv:HierarchicalCollectionView;
+                
+                switch (wrappingCollectionToUseDropDownList.selectedIndex)
+                {
+                    case WRAPPING_COLLECTION_NONE:
+                        return myList;
+                    case WRAPPING_COLLECTION_HCV_NO_GROUPING:
+                        gc2 = new GroupingCollection2();
+                        gc2.source = myList;
+                        gc2.refresh();
+                        hcv = new HierarchicalCollectionView(gc2);
+                        return hcv;
+                    case WRAPPING_COLLECTION_HCV_WITH_GROUPING:
+                        gc2 = new GroupingCollection2();
+                        gc2.grouping = getTestGrouping();
+                        gc2.source = myList;
+                        gc2.refresh();
+                        hcv = new HierarchicalCollectionView(gc2);
+                        return hcv;
+                }
+                
+                return null;
+            }
+            
+            // just to make sure we hold a reference to these things..
+            private var collectionWrapper:Object;
+            
+            private function getTestGrouping():Grouping
+            {
+                var grouping:Grouping = new Grouping();
+                var gf:GroupingField = new GroupingField("property3");
+                gf.groupingFunction = testGroupingFunction;
+                grouping.fields = [gf];
+                
+                return grouping;
+            }
+            
+            [Bindable]
+            private var numGroupsForGroupingCollection:int = 10;
+            
+            private function testGroupingFunction(item:Object, field:GroupingField):String
+            {
+                var myNumber:Number = item[field.name] as Number;
+                var groupId:Number = Math.floor(myNumber * numGroupsForGroupingCollection);
+                return groupId.toString();
+            }
+            
+            private function testCompleteHandler(event:Event):void
+            {
+                // if haven't finished both tests, wait for next event
+                if (numItemsToAddPerSecond > 0 
+                    && numItemsToUpdatePerSecond > 0 
+                    && testResultsAdd.length != testResultsUpdate.length)
+                {
+                    return;
+                }
+                
+                var totalTime:int = 0;
+                var len:int = testResultsAdd ? testResultsAdd.length : 0;
+                for (var i:int = 0; i < len; i++)
+                {
+                    totalTime += testResultsAdd[i];
+                }
+                
+                len = testResultsUpdate ? testResultsUpdate.length : 0;
+                for (i = 0; i < len; i++)
+                {
+                    totalTime += testResultsUpdate[i];
+                }
+                
+                testResultsAdd = testResultsUpdate = null;
+                
+                resultLabel.text += ": " + totalTime;
+                collectionTests.removeEventListener(CollectionTest.TEST_COMPLETE, testCompleteHandler);
+            }
+            
+            [Bindable]
+            public var valToTestForGreaterThanInFilterFunction:Number = 0.8;
+            
+            public function testFilterFunction(item:Object):Boolean
+            {
+                return item.property0 > valToTestForGreaterThanInFilterFunction;
+            }
+            
+            public function getTestSort():Sort
+            {
+                var sort:Sort = new Sort();
+                sort.fields = [new SortField("property1")];
+                return sort;
+            }
+            
+            private function formatIntTo3Digits(value:int):String
+            {
+                if (value >= 100)
+                    return "" + value;
+                else if (value >= 10)
+                    return "0" + value;
+                else
+                    return "00" + value;
+            }
+            
+            private function formatIntTo5Digits(value:int):String
+            {
+                if (value >= 10000)
+                    return "" + value;
+                if (value >= 1000)
+                    return "0" + value;
+                if (value >= 100)
+                    return "00" + value;
+                else if (value >= 10)
+                    return "000" + value;
+                else
+                    return "0000" + value;
+            }
+            
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <!-- Place non-visual elements (e.g., services, value objects) here -->
+        <s:NumberFormatter id="decimalFormatterPrecision2" trailingZeros="true" leadingZero="true" fractionalDigits="2" />
+    </fx:Declarations>
+    <s:layout>
+        <s:VerticalLayout />
+    </s:layout>
+    
+    <s:FormItem label="Object to use">
+        <s:DropDownList id="objectToUseDropDownList" requireSelection="true" width="200">
+            <s:ArrayList>
+                <fx:String>NonBindableObject</fx:String>
+                <fx:String>PropertyChangeBindableObject</fx:String>
+                <fx:String>SingleVersionEventBindableObject</fx:String>
+                <fx:String>UniqueEventBindableObject</fx:String>
+            </s:ArrayList>
+        </s:DropDownList>
+    </s:FormItem>
+    
+    <s:HGroup>
+        <s:FormItem label="Collection to use">
+            <s:DropDownList id="collectionToUseDropDownList" requireSelection="true" width="200">
+                <s:ArrayList>
+                    <fx:String>Array</fx:String>
+                    <fx:String>Vector</fx:String>
+                    <fx:String>ArrayList</fx:String>
+                    <fx:String>ArrayCollection</fx:String>
+                    <fx:String>ArrayCollection + Filter</fx:String>
+                    <fx:String>ArrayCollection + Sort</fx:String>
+                    <fx:String>ArrayCollection + Filter + Sort</fx:String>
+                </s:ArrayList>
+            </s:DropDownList>
+        </s:FormItem>
+        <s:FormItem label="Wrapping Collection to use">
+            <s:DropDownList id="wrappingCollectionToUseDropDownList" requireSelection="true" width="200">
+                <s:ArrayList>
+                    <fx:String>None</fx:String>
+                    <fx:String>GroupingCollection2 no grouping</fx:String>
+                    <fx:String>GroupingCollection2 group by 1 field</fx:String>
+                    <fx:String>HCV wrapping GC2 no grouping</fx:String>
+                    <fx:String>HCV wrapping GC2 group by 1 field</fx:String>
+                </s:ArrayList>
+            </s:DropDownList>
+        </s:FormItem>
+    </s:HGroup>
+    
+    <s:HGroup>
+        <s:FormItem label="Seed with items ({formatIntTo5Digits(seedItemAmountInput.value)})" >
+            <s:NumericStepper id="seedItemAmountInput" minimum="10" maximum="1000000" value="100" stepSize="5"  />
+        </s:FormItem>
+        <s:FormItem label="Fill seed items">
+            <s:CheckBox id="fillSeedItemsInput" selected="false" />
+        </s:FormItem>
+    </s:HGroup>
+    
+    <s:FormItem label="Num Seconds ({formatIntTo3Digits(numSecondsInput.value)})" >
+        <s:NumericStepper id="numSecondsInput" minimum="5" maximum="300" value="20" snapInterval="5" stepSize="5" />
+    </s:FormItem>
+    
+    <s:HGroup>
+        <s:FormItem label="Num items to add per second ({formatIntTo3Digits(numItemsToAddPerSecondInput.value)})">
+            <s:NumericStepper id="numItemsToAddPerSecondInput" minimum="0" maximum="300" value="50" snapInterval="5" stepSize="5" />
+        </s:FormItem>
+        <s:FormItem label="Fill added objects initially">
+            <s:CheckBox id="fillObjectsInitiallyCheckBox" selected="false" />
+        </s:FormItem>
+    </s:HGroup>
+    
+    <s:HGroup>
+        <s:FormItem label="Num items to update per second ({formatIntTo3Digits(numItemsToUpdatePerSecondInput.value)})">
+            <s:NumericStepper id="numItemsToUpdatePerSecondInput" minimum="0" maximum="300" value="100" snapInterval="5" stepSize="5" />
+        </s:FormItem>
+        <s:FormItem label="Num props per update ({formatIntTo3Digits(numPropsToUpdatePerObjectUpdateInput.value)})">
+            <s:NumericStepper id="numPropsToUpdatePerObjectUpdateInput" minimum="0" maximum="30" value="10" snapInterval="5" stepSize="5" />
+        </s:FormItem> 
+    </s:HGroup>
+    
+    <s:HGroup>
+        <s:FormItem label="Value to test for greater than in filter function ({decimalFormatterPrecision2.format(valToTestForGreaterThanInFilterFunction)})">
+            <s:NumericStepper minimum="0" maximum="1" value="@{valToTestForGreaterThanInFilterFunction}" snapInterval="0.05" stepSize="0.05" />
+        </s:FormItem>
+        <s:FormItem label="Num groups to have if wrapping with a grouping collection ({formatIntTo3Digits(numGroupsForGroupingCollection)})">
+            <s:NumericStepper value="@{numGroupsForGroupingCollection}" minimum="1" maximum="200" snapInterval="1" stepSize="1" />
+        </s:FormItem>
+    </s:HGroup>
+    
+    
+    <s:HGroup>
+        <s:Button label="Run test" click="runTest()" />
+        <s:Label id="resultLabel" text="Result: " />
+    </s:HGroup>
+</s:Application>

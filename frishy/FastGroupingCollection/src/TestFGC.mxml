@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" 
+               xmlns:fastdatagridhelpers="fastdatagridhelpers.*">
+    
+    <fx:Script>
+        <![CDATA[
+            import com.frishy.collections.FastGroupingCollection;
+            
+            import model.NestedPropertyObject;
+            import model.PropertyChangeBindableObject;
+            import model.UniqueEventBindableObject;
+            
+            import mx.collections.ArrayCollection;
+            import mx.collections.Grouping;
+            import mx.collections.GroupingField;
+            import mx.collections.SummaryField2;
+            import mx.collections.SummaryRow;
+            import mx.events.FlexEvent;
+            
+            private var ac:ArrayCollection;
+            private var fgc:FastGroupingCollection;
+            
+            protected function addRandomItem():void
+            {
+                var item:NestedPropertyObject = new NestedPropertyObject();
+                
+                if (Math.random() < 0.5)
+                {
+                    var item2:Object = new PropertyChangeBindableObject();
+                    item.propertyChangeBindableObject = item2 as PropertyChangeBindableObject;
+                }
+                else
+                {
+                    item2 = new UniqueEventBindableObject();
+                    item.uniqueEventBindableObject = item2 as UniqueEventBindableObject;
+                }
+                
+                if (Math.random() < 0.5)
+                    item2.fillAllProperties();
+                
+                ac.addItem(item);
+            }
+            
+            protected function removeRandomItem():void
+            {
+                if (ac.length == 0)
+                    return;
+                
+                var indexToRemove:int = Math.floor(ac.length * Math.random());
+                ac.removeItemAt(indexToRemove);
+            }
+            
+            protected function changeRandomItem():void
+            {
+                if (ac.length == 0)
+                    return;
+                
+                var indexToChange:int = Math.floor(ac.length * Math.random());
+                //var item:PropertyChangeBindableObject = PropertyChangeBindableObject(ac.getItemAt(indexToChange));
+                
+                var item:NestedPropertyObject = NestedPropertyObject(ac.getItemAt(indexToChange));
+                
+                if (Math.random() < 0.5)
+                {
+                    if (item.propertyChangeBindableObject && Math.random() < 0.5)
+                    {
+                        item2 = item.propertyChangeBindableObject;
+                    }
+                    else
+                    {
+                        var item2:Object = new PropertyChangeBindableObject();
+                        item.propertyChangeBindableObject = item2 as PropertyChangeBindableObject;
+                    }
+                }
+                else
+                {
+                    if (item.uniqueEventBindableObject && Math.random() < 0.5)
+                    {
+                        item2 = item.uniqueEventBindableObject;
+                    }
+                    else
+                    {
+                        item2 = new UniqueEventBindableObject();
+                        item.uniqueEventBindableObject = item2 as UniqueEventBindableObject;
+                    }
+                }
+                
+                if (Math.random() < 0.5)
+                    item2.fillAllProperties();
+                else
+                    item2.property3 = Math.random();
+                
+                //item.property3 = Math.random();
+            }
+            
+            protected function adg_preinitializeHandler(event:FlexEvent):void
+            {
+                ac = new ArrayCollection();
+                fgc = new FastGroupingCollection();
+                fgc.source = ac;
+                fgc.grouping = getTestGrouping();
+                
+                adg.dataProvider = fgc;
+            }
+            
+            private static const NUM_GROUPS:int = 3;
+            
+            private function testGroupingFunction(item:Object, field:GroupingField):String
+            {
+                var myNumber:Number = item[field.name] as Number;
+                var groupId:Number = Math.floor(myNumber * NUM_GROUPS);
+                return groupId.toString();
+            }
+            
+            private function getTestGrouping():Grouping
+            {
+                var grouping:Grouping = new Grouping();
+                var gf:GroupingField = new GroupingField("uniqueEventBindableObject.property3");
+//                gf.groupingFunction = testGroupingFunction;
+                
+                var sr:SummaryRow = new SummaryRow();
+                var sf:SummaryField2 = new SummaryField2();
+                sf.dataField = "uniqueEventBindableObject.property9";
+                sf.summaryOperation = "SUM";
+                var sf2:SummaryField2 = new SummaryField2();
+                sf2.summaryOperation = "AVG";
+                sf2.dataField = "propertyChangeBindableObject.property6";
+                sr.fields = [sf, sf2];
+//                gf.summaries = [sr];
+                
+                var gf2:GroupingField = new GroupingField("propertyChangeBindableObject.property6");
+//                gf2.groupingFunction = testGroupingFunction;
+                grouping.fields = [gf, gf2];
+                
+                return grouping;
+            }
+            
+        ]]>
+    </fx:Script>
+    
+    <fx:Declarations>
+        <!-- Place non-visual elements (e.g., services, value objects) here -->
+    </fx:Declarations>
+    
+    <s:layout>
+        <s:VerticalLayout />
+    </s:layout>
+    
+    <s:Button label="add random item" click="addRandomItem()" />
+    
+    <s:Button label="remove random item" click="removeRandomItem()" />
+    
+    <s:Button label="change random item" click="changeRandomItem()" />
+    
+    <fastdatagridhelpers:FastAdvancedDataGrid id="adg" height="600" width="1200" 
+                                              horizontalScrollPolicy="on" displayItemsExpanded="true"
+                                              preinitialize="adg_preinitializeHandler(event)">
+        <fastdatagridhelpers:columns>
+            <mx:AdvancedDataGridColumn dataField="uniqueEventBindableObject.property3" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="propertyChangeBindableObject.property0" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="uniqueEventBindableObject.property1" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="propertyChangeBindableObject.property2" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="uniqueEventBindableObject.property4" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="propertyChangeBindableObject.property5" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="uniqueEventBindableObject.property6" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="propertyChangeBindableObject.property7" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="uniqueEventBindableObject.property8" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="propertyChangeBindableObject.property9" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <!--<mx:AdvancedDataGridColumn dataField="property10" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property11" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property13" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property12" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property14" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property15" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property16" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property17" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property18" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property19" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property20" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property21" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property22" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property23" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property24" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property25" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property26" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property27" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property28" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" />
+            <mx:AdvancedDataGridColumn dataField="property29" width="80" itemRenderer="fastdatagridhelpers.ChangeWatcherAdvancedDataGridItemRenderer" /> -->
+        </fastdatagridhelpers:columns>
+    </fastdatagridhelpers:FastAdvancedDataGrid>
+</s:Application>
