@@ -1,16 +1,19 @@
 package org.apache.flex.validators
 {
+	import mx.core.mx_internal;
 	import mx.validators.ValidationResult;
 
 	import spark.validators.supportClasses.GlobalizationValidatorBase;
+
+	use namespace mx_internal;
 
 	public class StringValidator extends GlobalizationValidatorBase
 	{
 		public static var DEFAULT_MIN_CHARS_ERROR:String = "The string does not meet the minimum character requirement.";
 		public static var DEFAULT_MAX_CHARS_ERROR:String = "The string exceeds the maximum character requirement.";
 
-		private var _maxChars:int;
-		private var _minChars:int;
+		private var _maxChars:int                        = -1;
+		private var _minChars:int                        = -1;
 		private var _minCharsError:String                = DEFAULT_MIN_CHARS_ERROR;
 		private var _maxCharsError:String                = DEFAULT_MAX_CHARS_ERROR;
 
@@ -101,6 +104,19 @@ package org.apache.flex.validators
 		protected function createMinCharValidationResult():ValidationResult
 		{
 			return new ValidationResult(true, "", "", minCharsError);
+		}
+
+		override mx_internal function createWorkingInstance():void
+		{
+		}
+
+		mx_internal function get g11nWorkingInstance():Object
+		{
+			return null;
+		}
+
+		mx_internal function set g11nWorkingInstance(sparkFormatter:Object):void
+		{
 		}
 	}
 }

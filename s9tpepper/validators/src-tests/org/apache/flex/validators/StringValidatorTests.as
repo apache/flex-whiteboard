@@ -66,6 +66,22 @@ package org.apache.flex.validators
 		}
 
 		[Test]
+		public function StringValidator_onInstantiation_maxCharsIsNegativeOne():void
+		{
+			const stringValidator:StringValidator = new StringValidator();
+
+			assertEquals(-1, stringValidator.maxChars);
+		}
+
+		[Test]
+		public function StringValidator_onInstantiation_minCharsIsNegativeOne():void
+		{
+			const stringValidator:StringValidator = new StringValidator();
+
+			assertEquals(-1, stringValidator.minChars);
+		}
+
+		[Test]
 		public function validate_sourcePropertyIsLessThanMinChars_ValidationResultEventResultsAreNotNull():void
 		{
 			const stringValidator:StringValidator             = setUpMinCharsErrorValidation();
