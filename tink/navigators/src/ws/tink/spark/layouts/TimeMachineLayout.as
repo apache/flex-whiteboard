@@ -226,6 +226,47 @@ package ws.tink.spark.layouts
 		
 		
 		//----------------------------------
+		//  depthColorAlpha
+		//----------------------------------  
+		
+		/**
+		 *  @private
+		 *  Storage property for depthColorAlpha.
+		 */
+		private var _depthColorAlpha		: Number = 1;
+		
+		[Inspectable(category="General", defaultValue="1")]
+		
+		/**
+		 *	The alpha to be used for the color tint that is applied to elements
+		 *	as their are moved back on the z axis.
+		 * 
+		 *  @default 1
+		 * 
+		 * 	@see #depthColor
+		 * 
+		 *  @langversion 3.0
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
+		 *  @productversion Flex 4
+		 */
+		public function get depthColorAlpha():Number
+		{
+			return _depthColorAlpha;
+		}
+		/**
+		 *  @private
+		 */
+		public function set depthColorAlpha( value:Number ) : void
+		{
+			if( _depthColorAlpha == value ) return;
+			
+			_depthColorAlpha = value;
+			invalidateTargetDisplayList();
+		}
+		
+		
+		//----------------------------------
 		//  verticalAlign
 		//---------------------------------- 
 		
@@ -592,7 +633,7 @@ package ws.tink.spark.layouts
 		 */
 		protected function transformElement( element:IVisualElement, viewIndex:int, indexOffset:Number, alphaDeltaOffset:Number, zDeltaOffset:Number, isFirst:Boolean ):void
 		{
-			var colorValue:Number = ( ( _colorDelta * viewIndex ) - alphaDeltaOffset );
+			var colorValue:Number = ( ( _colorDelta * viewIndex ) - alphaDeltaOffset ) * ( depthColorAlpha / 100 );
 			setElementLayoutBoundsSize( element, false );
 			element.depth = numIndicesInView - ( viewIndex + 1 );
 			
@@ -780,7 +821,6 @@ package ws.tink.spark.layouts
 		 */
 		override protected function updateDisplayListReal():void
 		{
-			trace( "real" );
 			super.updateDisplayListReal();
  			
 //			var prevVirtualElements:Vector.<IVisualElement> = ( _visibleElements ) ? _visibleElements.concat() : new Vector.<IVisualElement>();

@@ -3,8 +3,7 @@
 					   xmlns:s="library://ns.adobe.com/flex/spark" 
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
 					   xmlns:st="library://ns.tink.ws/flex/spark"
-					   xmlns:local="*" viewSourceURL="srcview/index.html"
-					   >
+					   viewSourceURL="srcview/index.html">
 	
 	<fx:Library>
 		<fx:Definition name="Divider">
@@ -44,9 +43,9 @@
 				<st:NavigatorGroup id="navigatorGroup">
 					
 					<st:layout>
-						<st:TimeMachineLayout numVisibleElements="{numVisibleElements.value}"
+						<st:TimeMachineLayout numVisibleElements="{numVisibleElements.value}" maximumZ="{maximumZ.value}"
 											  depthColor="{useDepthColor.selected ? depthColor.selectedColor : -1}"
-											  maximumZ="{maximumZ.value}"
+											  depthColorAlpha="{depthColorAlpha.value}"
 											  horizontalDisplacement="{horizontalDisplacement.value}"
 											  verticalDisplacement="{verticalDisplacement.value}"
 											  horizontalAlign="{horizontalAlign.selectedItem}"
@@ -109,9 +108,9 @@
 				
 				<s:layout>
 					<st:TimeMachineLayout selectedIndex="{list.selectedIndex}"
-										  numVisibleElements="{numVisibleElements.value}"
+										  numVisibleElements="{numVisibleElements.value}" maximumZ="{maximumZ.value}"
 										  depthColor="{useDepthColor.selected ? depthColor.selectedColor : -1}"
-										  maximumZ="{maximumZ.value}"
+										  depthColorAlpha="{depthColorAlpha.value}"
 										  horizontalDisplacement="{horizontalDisplacement.value}"
 										  verticalDisplacement="{verticalDisplacement.value}"
 										  horizontalAlign="{horizontalAlign.selectedItem}"
