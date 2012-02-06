@@ -32,6 +32,9 @@ package model
         private function fillARandomProperty():void
         {
             var propertyIndex:int = Math.floor(Math.random() * NUM_PROPERTIES);
+            if (propertyIndex == 3)
+                return;
+            
             fillProperty(propertyIndex);
         }
         

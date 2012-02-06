@@ -3,7 +3,6 @@ package com.frishy.collections
 import com.frishy.utils.LayoutManagerClientHelper;
 
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
 
 import mx.binding.utils.ChangeWatcher;
@@ -14,7 +13,6 @@ import mx.collections.GroupingField;
 import mx.collections.HierarchicalData;
 import mx.collections.ICollectionView;
 import mx.collections.IGroupingCollection2;
-import mx.collections.IHierarchicalCollectionView;
 import mx.collections.IList;
 import mx.collections.ISummaryCalculator;
 import mx.collections.IViewCursor;
@@ -49,7 +47,7 @@ public class FastGroupingCollection extends HierarchicalData
      *  @private
      *  Label to use when no grouping data can be found on a particular object
      */
-    private static const NO_VALID_GROUPING_FIELD_VALUE:String = "Not Available";
+    private static const DEFAULT_LABEL_FOR_INVALID_GROUPING_FIELD:String = "Not Available";
     
     //--------------------------------------------------------------------------
     //
@@ -215,6 +213,37 @@ public class FastGroupingCollection extends HierarchicalData
     //  Properties
     //
     //--------------------------------------------------------------------------   
+    
+    //---------------------------------- 
+    // defaultLabelForInvalidGroupingField 
+    //----------------------------------
+    
+    private var _defaultLabelForInvalidGroupingField:String = DEFAULT_LABEL_FOR_INVALID_GROUPING_FIELD;
+    
+    /** 
+     *  The grouping label to use when the grouping value for a particular object 
+     *  cannot be determined. 
+     * 
+     *  Changes to this property do not affect existing groups.  If you want that to 
+     *  happen, you can call refresh(). 
+     * 
+     *  @default "Not Available" 
+     */ 
+    public function get defaultLabelForInvalidGroupingField():String 
+    { 
+        return _defaultLabelForInvalidGroupingField; 
+    }
+    
+    /** 
+     *  @private 
+     */ 
+    public function set defaultLabelForInvalidGroupingField(value:String):void 
+    { 
+        if (value == _defaultLabelForInvalidGroupingField) 
+            return;
+        
+        _defaultLabelForInvalidGroupingField = value; 
+    }
     
     //----------------------------------
     // grouping
@@ -407,6 +436,8 @@ public class FastGroupingCollection extends HierarchicalData
         {
             for (var item:Object in itemsInNeedOfRegrouping)
             {
+                // TODO (frishbry): this could be optimized to see how grouping field differs from
+                // its current parent list
                 removeItemAndRemoveEmptyGroups(item);
                 insertItemAndCreateGroups(item);
             }
@@ -496,8 +527,9 @@ public class FastGroupingCollection extends HierarchicalData
      */
     protected function initializeVariables():void
     {
-        // clear out root node
-        ArrayCollection(rootItemLookupObject.node).removeAll();
+        // clear out root node.  it may have a filter, so go to the 
+        // underlying, unfiltered list and remove everything at that level
+        ArrayCollection(rootItemLookupObject.node).list.removeAll();
         
         // what about when sort is null?  Does that mean they explicitly don't want a sort, or that 
         // they want the "auto" behavior???  I think it's the former, and atleast that way, 
@@ -508,8 +540,8 @@ public class FastGroupingCollection extends HierarchicalData
                 ArrayCollection(rootItemLookupObject.node), -1);
         } 
         
-        rootItemLookupObject.childrenToItemLookup = new Dictionary();
-        itemToParentNode =  new Dictionary();
+        rootItemLookupObject.childrenToItemLookup = new Dictionary(false);
+        itemToParentNode =  new Dictionary(true);
         
         // clear out change watchers 
         if (itemToChangeWatchers) 
@@ -528,22 +560,22 @@ public class FastGroupingCollection extends HierarchicalData
                 } 
             } 
         } 
-        itemToChangeWatchers = new Dictionary(); 
+        itemToChangeWatchers = new Dictionary(true); 
 
         // handle summary fields
         prepareSummaryFields();
         
         if (hasSummaryFields)
         {
-            summariesTracker = new Dictionary();
+            summariesTracker = new Dictionary(true);
             
             if (internalGroupsInNeedOfSummaryRecalculation)
                 internalGroupsInNeedOfSummaryRecalculation.removeAll();
             else
                 internalGroupsInNeedOfSummaryRecalculation = new PriorityQueue();
             
-            leafGroupsInNeedOfSummaryCopy = new Dictionary();
-            leafGroupsInNeedOfSummaryRecalculation = new Dictionary();
+            leafGroupsInNeedOfSummaryCopy = new Dictionary(true);
+            leafGroupsInNeedOfSummaryRecalculation = new Dictionary(true);
             
             var groupingFieldLen:int = ((grouping && grouping.fields) ? grouping.fields.length : 0);
             if (groupingFieldLen == 0)
@@ -598,11 +630,7 @@ public class FastGroupingCollection extends HierarchicalData
         for (var i:int = 0; i < groupingFieldsLen; i++)
         {
             var groupingField:GroupingField = grouping.fields[i];
-            var dataField:String = groupingField.name;
             var value:String = getGroupingLabel(item, groupingField);
-            
-            if (!value)
-                return;
             
             // check to see if we have a parent group for this item at this level already
             if (!currentChildrenLookup[value])
@@ -735,8 +763,11 @@ public class FastGroupingCollection extends HierarchicalData
             {
                 // item may be filtered out at this exact moment, so try removing from underlying collection 
                 var currentItemIndexInChildrenCollection:int = currentChildrenCollection.list.getItemIndex(currentItem); 
-                // TODO (frishbry): should we add a check for -1 here? 
-                currentChildrenCollection.list.removeItemAt(currentItemIndexInChildrenCollection);
+                
+                // someone may have called hcv.remove() or removed it from its parent collection 
+                // before removing it from the underlying source collection 
+                if (currentItemIndexInChildrenCollection >= 0) 
+                    currentChildrenCollection.list.removeItemAt(currentItemIndexInChildrenCollection);
                 
                 delete itemToParentNode[currentItem];
                 
@@ -838,18 +869,28 @@ public class FastGroupingCollection extends HierarchicalData
      *  Get the grouping label for a particular GroupingField for 
      *  a data item
      */ 
-    private function getGroupingLabel(data:Object, field:GroupingField):String
-    {
+    private function getGroupingLabel(data:Object, field:GroupingField):String 
+    { 
+        var label:String; 
+        
         if (field.groupingFunction != null) 
-            return field.groupingFunction(data, field);
+        { 
+            label = field.groupingFunction(data, field); 
+        } 
+        else 
+        { 
+            var dataField:String = field.name; 
+            var dataFieldValue:Object = CollectionUtil.getDataFieldValue(data, dataField);
+            if (dataFieldValue != null) 
+                label = dataFieldValue.toString(); 
+        }
         
-        var dataField:String = field.name; 
-        var dataFieldValue:Object = CollectionUtil.getDataFieldValue(data, dataField);
-        
-        if (dataFieldValue != null) 
-            return dataFieldValue.toString();
-        
-        return NO_VALID_GROUPING_FIELD_VALUE; 
+        // if label is null or empty string, then let's use 
+        // our defaultLabelForInvalidGroupingField 
+        if (!label) 
+            return defaultLabelForInvalidGroupingField; 
+        else 
+            return label; 
     }
     
     /**
@@ -1048,8 +1089,8 @@ public class FastGroupingCollection extends HierarchicalData
         }
         
         internalGroupsInNeedOfSummaryRecalculation.removeAll();
-        leafGroupsInNeedOfSummaryCopy = new Dictionary();
-        leafGroupsInNeedOfSummaryRecalculation = new Dictionary();
+        leafGroupsInNeedOfSummaryCopy = new Dictionary(true);
+        leafGroupsInNeedOfSummaryRecalculation = new Dictionary(true);
         
         // TODO (frishbry): either make this a public event or make a specific event for each item changing, 
         // where the item that changed can be gotten through event.relatedObject, so people can check for 
@@ -1206,7 +1247,7 @@ public class FastGroupingCollection extends HierarchicalData
         var summaryField:SummaryField2;
         var summaryCalculator:ISummaryCalculator;
         var summaryObject:Object;
-        var summaryMap:Dictionary = new Dictionary(false);
+        var summaryMap:Dictionary = new Dictionary(true);
         
         var childrenCollection:ArrayCollection;
         
@@ -1426,14 +1467,12 @@ public class FastGroupingCollection extends HierarchicalData
                                      summaryObject:Object, summaryValue:Object):void
     {
         if (summariesTracker == null)
-            summariesTracker = new Dictionary(false);
+            summariesTracker = new Dictionary(true);
         
         var uniqueSummaryFieldLabel:String = getSummaryFieldLabel(summaryField);
         
         if (summariesTracker[node] == undefined)
             summariesTracker[node] = new Dictionary(false);
-        if (summariesTracker[node][uniqueSummaryFieldLabel] == undefined)
-            summariesTracker[node][uniqueSummaryFieldLabel] = new Dictionary(false);
         
         var summaryObjectHolder:SummaryObjectHolder = new SummaryObjectHolder(summaryObject, summaryValue);
         summariesTracker[node][uniqueSummaryFieldLabel] = summaryObjectHolder;
@@ -1490,9 +1529,11 @@ public class FastGroupingCollection extends HierarchicalData
      */
     private function prepareSummaryFields():void
     {
-        summaryFieldsByDepth = new Dictionary();
+        summaryFieldsByDepth = new Dictionary(true);
         var summaryFields:Array;
         var sr:SummaryRow;
+        
+        hasSummaryFields = false;
         
         // for root level summaries
         if (summaries != null)
@@ -1617,12 +1658,14 @@ public class FastGroupingCollection extends HierarchicalData
                 if (isComplex)
                 {
                     cw = ChangeWatcher.watch(item, dataField.split("."), 
-                        item_summaryField_changeWatcherHandlerForComplexItem(item));
+                            item_summaryField_changeWatcherHandlerForComplexItem(item),
+                            false, true);
                 }
                 else
                 {
                     cw = ChangeWatcher.watch(item, dataField, 
-                        item_summaryField_changeWatcherHandlerForSimpleItem);
+                            item_summaryField_changeWatcherHandlerForSimpleItem,
+                            false, true);
                 }
                 
                 changeWatchersArray.push(cw);
@@ -1649,12 +1692,14 @@ public class FastGroupingCollection extends HierarchicalData
                 if (isComplex)
                 {
                     cw = ChangeWatcher.watch(item, dataField.split("."), 
-                        item_groupingField_changeWatcherHandlerForComplexItem(item));
+                            item_groupingField_changeWatcherHandlerForComplexItem(item),
+                            false, true);
                 }
                 else
                 {
                     cw = ChangeWatcher.watch(item, dataField, 
-                        item_groupingField_changeWatcherHandlerForSimpleItem);
+                            item_groupingField_changeWatcherHandlerForSimpleItem,
+                            false, true);
                 }
                 
                 changeWatchersArray.push(cw);
@@ -1850,7 +1895,7 @@ public class FastGroupingCollection extends HierarchicalData
             return;
         
         if (!itemsInNeedOfRegrouping)
-            itemsInNeedOfRegrouping = new Dictionary();
+            itemsInNeedOfRegrouping = new Dictionary(true);
         
         itemsInNeedOfRegrouping[item] = true; // might not be real item but besubitem
         layoutManagerClientHelper.invalidateProperties();
@@ -1983,7 +2028,7 @@ import flash.utils.Dictionary;
 class ItemLookupObject
 {
     public var node:Object;
-    public var childrenToItemLookup:Dictionary = new Dictionary();
+    public var childrenToItemLookup:Dictionary = new Dictionary(false);
 }
 
 /**
