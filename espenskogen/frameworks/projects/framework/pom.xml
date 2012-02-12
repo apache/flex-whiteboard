@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.flex</groupId>
+        <artifactId>FlexSDK</artifactId>
+        <version>4.7.0.0</version>
+        <relativePath>../../</relativePath>
+    </parent>
+    <artifactId>framework</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.flexmojos</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>4.0-beta-3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <namespaces>
+                        <namespace>
+                            <uri>library://ns.adobe.com/flex/mx</uri>
+                            <manifest>${basedir}/manifest.xml</manifest>
+                        </namespace>
+                        <namespace>
+                            <uri>http://www.adobe.com/2006/mxml</uri>
+                            <manifest>${basedir}/manifest.xml</manifest>
+                        </namespace>
+                    </namespaces>
+                    <includeNamespaces>
+                        <namespace>library://ns.adobe.com/flex/mx</namespace>
+                    </includeNamespaces>
+                    <includeClasses>
+                        <class>FrameworkClasses</class>
+                    </includeClasses>
+                    <keepAs3Metadatas>
+                        <keepAs3Metadata>Bindable</keepAs3Metadata>
+                        <keepAs3Metadata>Managed</keepAs3Metadata>
+                        <keepAs3Metadata>ChangeEvent</keepAs3Metadata>
+                        <keepAs3Metadata>NonCommittingChangeEvent</keepAs3Metadata>
+                        <keepAs3Metadata>Transient</keepAs3Metadata>
+                    </keepAs3Metadatas>
+
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+
+</project>

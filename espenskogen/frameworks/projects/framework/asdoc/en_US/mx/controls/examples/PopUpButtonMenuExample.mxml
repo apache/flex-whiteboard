@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<!-- Simple example to demonstrate the Halo PopUpMenuButton control. -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:mx="library://ns.adobe.com/flex/mx">
+
+    <fx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.events.MenuEvent;
+
+            // Event handler, invoked when you select from the menu.
+            public function itemClickHandler(evt:MenuEvent):void {
+                Alert.show("Menu label: " + evt.label
+                    + "  \n menu item index within parent menu: " + evt.index);
+            }
+        ]]>
+    </fx:Script>
+
+    <fx:Declarations>
+        <!-- A an data provider in E4X format. -->
+        <fx:XMLList id="treeDP2">
+            <node label="Inbox"/>
+            <node label="Calendar"/>
+            <node label="Deleted Items"/>
+        </fx:XMLList>
+    </fx:Declarations>
+
+    <s:Panel title="Halo PopUpMenuButton Control Example"
+            width="75%" height="75%" 
+            horizontalCenter="0" verticalCenter="0">
+        <s:VGroup left="10" right="10" top="10" bottom="10">
+            <s:Label width="100%" color="blue"
+                    text="Click the down arrow to open the menu."/>
+
+            <mx:PopUpMenuButton id="p2" 
+                    dataProvider="{treeDP2}" 
+                    labelField="@label"
+                    itemClick="itemClickHandler(event);"/>
+        </s:VGroup>
+    </s:Panel>
+
+</s:Application>
