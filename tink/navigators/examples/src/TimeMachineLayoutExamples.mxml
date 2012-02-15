@@ -51,7 +51,12 @@
 											  horizontalAlign="{horizontalAlign.selectedItem}"
 											  verticalAlign="{verticalAlign.selectedItem}"
 											  horizontalOffset="{horizontalOffset.value}"
-											  verticalOffset="{verticalOffset.value}"/>
+											  verticalOffset="{verticalOffset.value}"
+											  useScrollBarForNavigation="{useScrollBarForNavigation.selected}"
+											  scrollBarDirection="{scrollBarDirection.selectedItem}"
+											  easer="{easer.selectedItem.ease}" duration="{duration.value}"
+											  projectionCenterX="{projectionCenterX.value}" projectionCenterY="{projectionCenterY.value}"
+											  fieldOfView="{fieldOfView.value}"/>
 					</st:layout>
 					
 					<s:BorderContainer width="80%" height="50%" backgroundColor="0xff0000">
@@ -116,7 +121,12 @@
 										  horizontalAlign="{horizontalAlign.selectedItem}"
 										  verticalAlign="{verticalAlign.selectedItem}"
 										  horizontalOffset="{horizontalOffset.value}"
-										  verticalOffset="{verticalOffset.value}"/>
+										  verticalOffset="{verticalOffset.value}"
+										  useScrollBarForNavigation="{useScrollBarForNavigation.selected}"
+										  scrollBarDirection="{scrollBarDirection.selectedItem}"
+										  easer="{easer.selectedItem.ease}" duration="{duration.value}"
+										  projectionCenterX="{projectionCenterX.value}" projectionCenterY="{projectionCenterY.value}"
+										  fieldOfView="{fieldOfView.value}"/>
 				</s:layout>
 				
 				<s:dataProvider>
@@ -275,7 +285,7 @@
 			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
 				
 				<s:Label text="easer:"  fontWeight="bold" fontSize="8"/>
-				<s:ButtonBar id="easer" fontSize="8">
+				<s:ButtonBar id="easer" fontSize="8" requireSelection="true">
 					<s:dataProvider>
 						<s:ArrayList>
 							<fx:Object label="Linear" ease="{new Linear( 0, 1 )}"/>
@@ -303,11 +313,12 @@
 				<fx:Divider/>
 				
 				<s:Label text="scrollBarDirection:" fontWeight="bold" enabled="{useScrollBarForNavigation.selected}" fontSize="8"/>
-				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8">
+				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8"
+							 requireSelection="true">
 					<s:dataProvider>
 						<s:ArrayList>
-							<fx:Object label="vertical"/>
-							<fx:Object label="horizontal"/>
+							<fx:String>vertical</fx:String>
+							<fx:String>horizontal</fx:String>
 						</s:ArrayList>
 					</s:dataProvider>
 				</s:ButtonBar>
