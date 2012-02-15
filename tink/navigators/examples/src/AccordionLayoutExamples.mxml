@@ -48,7 +48,7 @@
 												direction="{direction.selectedItem.label}" buttonRotation="{buttonRotation.selectedItem.label}"
 												minElementSize="{minElementSize.value}" useScrollRect="{useScrollRect.selected}"
 												easer="{easer.selectedItem.ease}" duration="{duration.value}"
-												useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem.label}"/>
+												useScrollBarForNavigation="{useScrollBarForNavigation.selected}" scrollBarDirection="{scrollBarDirection.selectedItem}"/>
 						</st:layout>
 						
 						<s:BorderContainer id="Item0" width="100%" height="100%" backgroundColor="0x0000ff">
@@ -268,7 +268,7 @@
 			<s:HGroup horizontalAlign="center" verticalAlign="middle" gap="0">
 				
 				<s:Label text="easer:" fontWeight="bold" fontSize="8"/>
-				<s:ButtonBar id="easer" fontSize="8">
+				<s:ButtonBar id="easer" fontSize="8" requireSelection="true">
 					<s:dataProvider>
 						<s:ArrayList>
 							<fx:Object label="Linear" ease="{new Linear( 0, 1 )}"/>
@@ -296,11 +296,11 @@
 				<fx:Divider/>
 				
 				<s:Label text="scrollBarDirection:" fontWeight="bold" enabled="{useScrollBarForNavigation.selected}" fontSize="8"/>
-				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8">
+				<s:ButtonBar id="scrollBarDirection" enabled="{useScrollBarForNavigation.selected}" fontSize="8" requireSelection="true">
 					<s:dataProvider>
 						<s:ArrayList>
-							<fx:Object label="vertical"/>
-							<fx:Object label="horizontal"/>
+							<fx:String>vertical</fx:String>
+							<fx:String>horizontal</fx:String>
 						</s:ArrayList>
 					</s:dataProvider>
 				</s:ButtonBar>
