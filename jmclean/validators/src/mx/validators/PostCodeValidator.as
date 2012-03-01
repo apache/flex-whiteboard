@@ -89,8 +89,13 @@ public class PostCodeValidator extends Validator
 		
 		var wrongLength:Boolean;
 		var invalidChar:Boolean;
-		var allInvalidFormat:Boolean;
 		var invalidFormat:Boolean;
+		
+		var allInvalidFormat:Boolean;
+		
+		var wrongLengthAdded:Boolean;
+		var invalidCharAdded:Boolean;
+		var invalidFormatAdded:Boolean;
 		
 		var digit:int;
 		
@@ -105,7 +110,7 @@ public class PostCodeValidator extends Validator
 				var formatChar:String = _formats[f].charAt(i);
 				
 				if (DECIMAL_DIGITS.indexOf(char) == -1
-					&& ROMAN_LETTERS.indexOf(char) && spacers.indexOf(char) != -1)
+					&& ROMAN_LETTERS.indexOf(char) == -1 && spacers.indexOf(char) == -1)
 				{
 					invalidChar = true;
 				}
@@ -119,35 +124,46 @@ public class PostCodeValidator extends Validator
 				}
 				else if (formatChar == "C")
 				{
-					if (digit >= 2 || !_countryCode || char != _countryCode[digit])
+					if (digit >= 2 || !_countryCode || char != _countryCode.charAt(digit))
 					{
 						invalidFormat = true;
 					}
 					digit++;
 				}
+				else if (spacers.indexOf(formatChar) >= 0 && formatChar != char) {
+					invalidFormat = true;
+				}
+			}
+			
+			// found a match so return without error
+			if (!invalidFormat && !invalidChar && (length == _formats[f].length)) {
+				return [];
 			}
 			
 			wrongLength = wrongLength || (length != _formats[f].length);
-			allInvalidFormat = allInvalidFormat && invalidFormat;
+			allInvalidFormat = allInvalidFormat || invalidFormat;
 		}
 		
-		if (invalidChar)
+		if (invalidChar && !invalidCharAdded)
 		{
+			invalidCharAdded = true;
 			results.push(new ValidationResult(
 				true, baseField, "invalidChar",
 				validator.invalidCharError));
 		}
         
-        if (wrongLength)
+        if (wrongLength && !wrongLengthAdded)
         {
+			wrongLengthAdded = true;
             results.push(new ValidationResult(
                 true, baseField, "wrongLength",
                 validator.wrongLengthError));
         }
         
-		if (allInvalidFormat)
+		if (allInvalidFormat && !invalidFormatAdded)
 		{
-      	  results.push(new ValidationResult(
+			invalidFormatAdded = true;
+      	 	results.push(new ValidationResult(
                 true, baseField, "wrongFormat",
                 validator.wrongFormatError));
 		}
