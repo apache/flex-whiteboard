@@ -144,12 +144,14 @@ public class PostCodeValidator extends Validator
 				return [];
 			}
 			
-			errors.push({invalidFormat:invalidFormat, invalidChar:invalidChar,
-				wrongLength:wrongLength, count:invalidFormat + invalidChar + wrongLength})
+			// We want invalid char and invalid format errors show in preference
+			// so give wong length errors a higher value
+			errors.push({invalidFormat:invalidFormat, invalidChar:invalidChar, wrongLength:wrongLength,
+				count:Number(invalidFormat) + Number(invalidChar) + Number(wrongLength)*1.5})
 		}
 		
 		// return result with least number of errors
-		// TODO return/remember closest format?
+		// TODO return/remember closest format or place in error string?
 		errors.sortOn("count", Array.NUMERIC);
 		
 		if (errors[0].invalidChar)

@@ -138,9 +138,7 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234^6", null);
 			assertTrue("Invalid Postcode", results.length == 1);
-			// This could be a wrong length or invalid char error
-			//TODO change so that invalid char or format error is more important than a wrong length error.
-			wrongLengthError(results);
+			invalidCharError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1-23", null);
 			assertTrue("Invalid Postcode", results.length == 1);
