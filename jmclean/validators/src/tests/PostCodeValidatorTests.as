@@ -1,6 +1,7 @@
 package tests
 {
 	import mx.validators.PostCodeValidator;
+	import mx.validators.ValidationResult;
 	
 	import org.flexunit.asserts.assertTrue;
 
@@ -52,6 +53,27 @@ package tests
 			assertTrue("Country code is correct", validator.countryCode = "AU");
 		}
 		
+		private function hasError(results:Array, errorCode:String):Boolean {
+			for each (var result:ValidationResult in results) {
+				if (result.errorCode == errorCode) {
+					return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		private function invalidFormatError(results:Array) {
+			assertTrue("Has format error", hasError(results, "wrongFormat"));
+		}
+		
+		private function wrongLengthError(results:Array) {
+			assertTrue("Has wrong length error", hasError(results, "wrongLength"));
+		}
+		
+		private function invalidCharError(results:Array) {
+			assertTrue("Has invalid character error", hasError(results, "invalidChar"));
+		}
 		
 		[Test]
 		public function fixedNumericPostcode():void {
@@ -64,18 +86,38 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "1-23", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "12&3", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidCharError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123456", null);
-			assertTrue("Invalid Postcode", results.length == 2);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123D", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234D", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "123D4", null);
 			assertTrue("Invalid Postcode", results.length == 2);
+			wrongLengthError(results);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "1*3D4", null);
+			assertTrue("Invalid Postcode", results.length == 3);
+			wrongLengthError(results);
+			invalidFormatError(results);
+			invalidCharError(results);
 		}
 		
 		[Test]
@@ -90,23 +132,50 @@ package tests
 			results = PostCodeValidator.validatePostCode(validator, "123456", null);
 			assertTrue("No errors", results.length == 0);
 			
+			results = PostCodeValidator.validatePostCode(validator, "12%4", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidCharError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "1234^6", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			// This could be a wrong length or invalid char error
+			//TODO change so that invalid char or format error is more important than a wrong length error.
+			wrongLengthError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "1-23", null);
-			assertTrue("Invalid Postcode", results.length == 2); //TODO should be one
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "1*23", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidCharError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "12345", null);
-			assertTrue("Invalid Postcode", results.length == 2); //TODO should be one
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234567", null);
-			assertTrue("Invalid Postcode", results.length == 2); //TODO should be one
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123D", null);
-			assertTrue("Invalid Postcode", results.length == 2); //TODO should be one
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1F234", null);
-			assertTrue("Invalid Postcode", results.length == 2);		
+			assertTrue("Invalid Postcode", results.length == 2);
+			invalidFormatError(results);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "1F2*4", null);
+			assertTrue("Invalid Postcode", results.length == 3);
+			invalidFormatError(results);
+			wrongLengthError(results);
+			invalidCharError(results);
 		}
 		
 		[Test]
@@ -121,18 +190,23 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "BB1234", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "AA123", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "AA12345", null);
-			assertTrue("Invalid Postcode", results.length == 2);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234AA", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "A1A234", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 		}
 		
 		[Test]
@@ -144,14 +218,28 @@ package tests
 			results = PostCodeValidator.validatePostCode(validator, "AB-12 34", null);
 			assertTrue("No errors", results.length == 0);
 			
+			results = PostCodeValidator.validatePostCode(validator, "AB#12 34", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidCharError(results);
+						
 			results = PostCodeValidator.validatePostCode(validator, "AB 12 34", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "AB-12-34", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "AB-12  34", null);
 			assertTrue("Invalid Postcode", results.length == 2);
+			invalidFormatError(results);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "AB-12$ 34", null);
+			assertTrue("Invalid Postcode", results.length == 3);
+			invalidFormatError(results);
+			wrongLengthError(results);
+			invalidCharError(results);
 		}
 		
 		[Test]
@@ -165,21 +253,27 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234-AB", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "AB 1234", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "12345AB", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "1234ABC", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "12345 AB", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123 AB", null);
 			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
 		}
 		
 		[Test]
