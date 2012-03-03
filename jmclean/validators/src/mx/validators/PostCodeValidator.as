@@ -83,31 +83,33 @@ public class PostCodeValidator extends Validator
 
         var postCode:String = String(value);
         var length:int = postCode.length;
+		var formatLength:int;
 		var noformats:int = _formats.length;
 		var validLetters:String = "CAN";
 		var spacers:String = " -";
 		
+		var errors:Array = [];
 		var wrongLength:Boolean;
 		var invalidChar:Boolean;
 		var invalidFormat:Boolean;
 		
-		var allInvalidFormat:Boolean;
-		
-		var wrongLengthAdded:Boolean;
-		var invalidCharAdded:Boolean;
-		var invalidFormatAdded:Boolean;
-		
-		var digit:int;
+		var countryDigit:int;
 		
 		for (var f:int = 0; f < noformats; f++)
 		{	
+			countryDigit = 0;
+			invalidChar = false;
 			invalidFormat = false;
-			digit = 0;
+			formatLength = _formats[f].length;
 			
 			for (var i:int = 0; i < length; i++)
 			{
 				var char:String = postCode.charAt(i);
 				var formatChar:String = _formats[f].charAt(i);
+				
+				if (i >= formatLength) {
+					break;
+				}
 				
 				if (DECIMAL_DIGITS.indexOf(char) == -1
 					&& ROMAN_LETTERS.indexOf(char) == -1 && spacers.indexOf(char) == -1)
@@ -124,45 +126,48 @@ public class PostCodeValidator extends Validator
 				}
 				else if (formatChar == "C")
 				{
-					if (digit >= 2 || !_countryCode || char != _countryCode.charAt(digit))
+					if (countryDigit >= 2 || !_countryCode || char != _countryCode.charAt(countryDigit))
 					{
 						invalidFormat = true;
 					}
-					digit++;
+					countryDigit++;
 				}
 				else if (spacers.indexOf(formatChar) >= 0 && formatChar != char) {
 					invalidFormat = true;
 				}
 			}
 			
+			wrongLength = (length != formatLength);
+			
 			// found a match so return without error
-			if (!invalidFormat && !invalidChar && (length == _formats[f].length)) {
+			if (!invalidFormat && !invalidChar && !wrongLength) {
 				return [];
 			}
 			
-			wrongLength = wrongLength || (length != _formats[f].length);
-			allInvalidFormat = allInvalidFormat || invalidFormat;
+			errors.push({invalidFormat:invalidFormat, invalidChar:invalidChar,
+				wrongLength:wrongLength, count:invalidFormat + invalidChar + wrongLength})
 		}
 		
-		if (invalidChar && !invalidCharAdded)
+		// return result with least number of errors
+		// TODO return/remember closest format?
+		errors.sortOn("count", Array.NUMERIC);
+		
+		if (errors[0].invalidChar)
 		{
-			invalidCharAdded = true;
 			results.push(new ValidationResult(
 				true, baseField, "invalidChar",
 				validator.invalidCharError));
 		}
         
-        if (wrongLength && !wrongLengthAdded)
+        if (errors[0].wrongLength)
         {
-			wrongLengthAdded = true;
             results.push(new ValidationResult(
                 true, baseField, "wrongLength",
                 validator.wrongLengthError));
         }
         
-		if (allInvalidFormat && !invalidFormatAdded)
+		if (errors[0].invalidFormat)
 		{
-			invalidFormatAdded = true;
       	 	results.push(new ValidationResult(
                 true, baseField, "wrongFormat",
                 validator.wrongFormatError));
@@ -264,7 +269,7 @@ public class PostCodeValidator extends Validator
 	 */
 	public function set countryCode(value:String):void
 	{
-		if (value && value.length == 2)
+		if (value == null || value && value.length == 2)
 		{
 			_countryCode = value;
 		}
