@@ -73,19 +73,14 @@ public class PostCodeValidator extends Validator
 	 *  @productversion ApacheFlex 4.8
      */
     public static function validatePostCode(validator:PostCodeValidator,
-                                           value:Object,
+                                           postCode:String,
                                            baseField:String):Array
     {
         var results:Array = [];
-    
-        // Resource-backed properties of the validator.
-        var resourceManager:IResourceManager = ResourceManager.getInstance();
 
-        var postCode:String = String(value);
         var length:int = postCode.length;
 		var formatLength:int;
-		var noformats:int = _formats.length;
-		var validLetters:String = "CAN";
+		var noformats:int = validator.formats.length;
 		var spacers:String = " -";
 		
 		var errors:Array = [];
@@ -100,13 +95,14 @@ public class PostCodeValidator extends Validator
 			countryDigit = 0;
 			invalidChar = false;
 			invalidFormat = false;
-			formatLength = _formats[f].length;
+			formatLength = validator.formats[f].length;
 			
 			for (var i:int = 0; i < length; i++)
 			{
 				var char:String = postCode.charAt(i);
-				var formatChar:String = _formats[f].charAt(i);
+				var formatChar:String = validator.formats[f].charAt(i);
 				
+				// ignore character past end of format string
 				if (i >= formatLength) {
 					break;
 				}
@@ -126,7 +122,7 @@ public class PostCodeValidator extends Validator
 				}
 				else if (formatChar == "C")
 				{
-					if (countryDigit >= 2 || !_countryCode || char != _countryCode.charAt(countryDigit))
+					if (countryDigit >= 2 || !validator.countryCode || char != validator.countryCode.charAt(countryDigit))
 					{
 						invalidFormat = true;
 					}
@@ -145,7 +141,7 @@ public class PostCodeValidator extends Validator
 			}
 			
 			// We want invalid char and invalid format errors show in preference
-			// so give wong length errors a higher value
+			// so give wrong length errors a higher value
 			errors.push({invalidFormat:invalidFormat, invalidChar:invalidChar, wrongLength:wrongLength,
 				count:Number(invalidFormat) + Number(invalidChar) + Number(wrongLength)*1.5})
 		}
@@ -206,13 +202,13 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 *  The two letter country code used in some postcode formats
 	 */
-	protected static var _countryCode:String;
+	private var _countryCode:String;
 	
 	/**
 	 *  @private
 	 *  An array of the postcode formats to check against.
 	 */
-	protected static var _formats:Array = [];
+	private var _formats:Array = [];
 	
 	/** 
 	 *  Format of postcode
@@ -488,7 +484,7 @@ public class PostCodeValidator extends Validator
         if (results.length > 0 || ((val.length == 0) && !required))
             return results;
         else
-            return PostCodeValidator.validatePostCode(this, value, null);
+            return PostCodeValidator.validatePostCode(this, String(value), null);
     }
 }
 
