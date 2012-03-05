@@ -13,10 +13,6 @@ package tests
 		public function setUp():void
 		{
 			validator = new PostCodeValidator();
-
-			// Currently stored in a static variables as the the doValidation method is static
-			validator.format = null;
-			validator.countryCode = null;
 		}
 		
 		[After]
@@ -63,15 +59,15 @@ package tests
 			return false;
 		}
 		
-		private function invalidFormatError(results:Array) {
+		private function invalidFormatError(results:Array):void {
 			assertTrue("Has format error", hasError(results, "wrongFormat"));
 		}
 		
-		private function wrongLengthError(results:Array) {
+		private function wrongLengthError(results:Array):void {
 			assertTrue("Has wrong length error", hasError(results, "wrongLength"));
 		}
 		
-		private function invalidCharError(results:Array) {
+		private function invalidCharError(results:Array):void {
 			assertTrue("Has invalid character error", hasError(results, "invalidChar"));
 		}
 		
@@ -266,12 +262,14 @@ package tests
 			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "12345 AB", null);
-			assertTrue("Invalid Postcode", results.length == 1);
+			assertTrue("Invalid Postcode", results.length == 2);
 			wrongLengthError(results);
+			invalidFormatError(results);
 			
 			results = PostCodeValidator.validatePostCode(validator, "123 AB", null);
-			assertTrue("Invalid Postcode", results.length == 1);
+			assertTrue("Invalid Postcode", results.length == 2);
 			wrongLengthError(results);
+			invalidFormatError(results);
 		}
 		
 		[Test]
@@ -325,6 +323,22 @@ package tests
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
 				assertTrue("Valid Postcode", results.length == 0);
 			}	
+		}
+		
+		[Test]
+		public function multipleFormats():void {
+			var validator1:PostCodeValidator = new PostCodeValidator();
+			var validator2:PostCodeValidator = new PostCodeValidator();
+			var results:Array = [];
+			
+			validator1.format = "AAAA";
+			validator2.format = "NNNNNN";
+			
+			results = PostCodeValidator.validatePostCode(validator1, "ABCD", null);
+			assertTrue("Valid Postcode", results.length == 0);
+			results = PostCodeValidator.validatePostCode(validator2, "123456", null);
+			assertTrue("Valid Postcode", results.length == 0);
+
 		}
 		
 	}
