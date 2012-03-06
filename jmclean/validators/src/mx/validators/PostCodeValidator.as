@@ -392,6 +392,11 @@ public class PostCodeValidator extends Validator
      */
     public function get invalidCharError():String
     {
+		if (invalidCharErrorOverride)
+		{
+			return invalidCharErrorOverride;
+		}
+		
         return _invalidCharError;
     }
 
@@ -437,6 +442,11 @@ public class PostCodeValidator extends Validator
      */
     public function get wrongLengthError():String
     {
+		if (wrongLengthErrorOverride)
+		{
+			return wrongLengthErrorOverride;
+		}
+		
         return _wrongLengthError;
     }
 
@@ -482,6 +492,11 @@ public class PostCodeValidator extends Validator
      */
     public function get wrongFormatError():String
     {
+		if (wrongFormatErrorOverride)
+		{
+			return wrongFormatErrorOverride;
+		}
+		
         return _wrongFormatError;
     }
 
