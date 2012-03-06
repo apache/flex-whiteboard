@@ -30,6 +30,44 @@ package tests
 		}
 		
 		[Test]
+		public function noRTEs():void
+		{
+			var results:Array;
+			
+			results = PostCodeValidator.validatePostCode(null, null, null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(null, "", null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(null, "2000", null);
+			assertTrue("No errors", results.length == 0);
+			
+			results = PostCodeValidator.validatePostCode(validator, null, null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(validator, "", null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(validator, "2000", null);
+			assertTrue("No errors", results.length == 0);
+			
+			validator.format = "NNNN";
+			
+			results = PostCodeValidator.validatePostCode(null, null, null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(null, "", null);
+			assertTrue("No errors", results.length == 0);
+			results = PostCodeValidator.validatePostCode(null, "2000", null);
+			assertTrue("No errors", results.length == 0);
+			
+			results = PostCodeValidator.validatePostCode(validator, null, null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			results = PostCodeValidator.validatePostCode(validator, "", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			results = PostCodeValidator.validatePostCode(validator, "2000", null);
+			assertTrue("Valid Postcode", results.length == 0);
+		}
+		
+		[Test]
 		public function setFormats():void {
 			validator.format = "NNNN";
 			assertTrue("Format is correct", validator.format = "NNNN");
@@ -318,6 +356,19 @@ package tests
 			var valid:Array = ["K0K 2T0", "V6Z 1T0", "B4V 2K4", "H0H 0H0"];
 			
 			validator.format = "ANA NAN";
+			
+			for each (var postcode:String in valid) {
+				results = PostCodeValidator.validatePostCode(validator, postcode, null);
+				assertTrue("Valid Postcode", results.length == 0);
+			}	
+		}
+		
+		[Test]
+		public function japanesePostcodes():void {
+			var results:Array;
+			var valid:Array = ["100-0006", "600-8216", "282-0004"];
+			
+			validator.format = "NNN-NNNN";
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);

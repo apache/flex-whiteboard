@@ -28,6 +28,18 @@ import mx.resources.ResourceManager;
 /**
  *  The PostCodeValidator class validates that a String
  *  has the correct length and format for a post code.
+ * 
+ *  Postcode format consists of CC,N,A and spaces or hyphens
+ *  CC is country code (required for some postcodes)
+ *	N is a number 0-9
+ *  A is a letter A-Z or a-z
+ * 
+ *  For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
+ *  followed by four digits and "AA NNNN" is two letters, followed by a space
+ *  followed by four digits.
+ * 
+ *  More than one format can be specified by setting the <code>formats</code>
+ *  property to an array of formats.
  *  
  *  @mxml
  *
@@ -37,7 +49,8 @@ import mx.resources.ResourceManager;
  *  
  *  <pre>
  *  &lt;mx:PostCodeValidator
- *    format="NNNN"
+ *    format="NNNNN"
+ *    formats="['NNNNN', 'NNNNN-NNNN']"
  *    invalidCharError="The post code contains invalid characters." 
  *    wrongLengthError="The post code is the wrong length" 
  *  /&gt;
@@ -86,9 +99,9 @@ public class PostCodeValidator extends Validator
     {
         var results:Array = [];
 
-        var length:int = postCode.length;
+        var length:int;
 		var formatLength:int;
-		var noformats:int = validator.formats.length;
+		var noformats:int;
 		var spacers:String = " -";
 		
 		var errors:Array = [];
@@ -98,12 +111,21 @@ public class PostCodeValidator extends Validator
 		
 		var countryDigit:int;
 		
+		if (validator)
+		{
+			noformats = validator.formats.length
+		}
+		
 		for (var f:int = 0; f < noformats; f++)
 		{	
 			countryDigit = 0;
 			invalidChar = false;
 			invalidFormat = false;
 			formatLength = validator.formats[f].length;
+			
+			if (postCode) {
+				length = postCode.length;
+			}
 			
 			for (var i:int = 0; i < length; i++)
 			{
@@ -158,25 +180,27 @@ public class PostCodeValidator extends Validator
 		// TODO return/remember closest format or place in error string?
 		errors.sortOn("count", Array.NUMERIC);
 		
-		if (errors[0].invalidChar)
-		{
-			results.push(new ValidationResult(
-				true, baseField, "invalidChar",
-				validator.invalidCharError));
-		}
-        
-        if (errors[0].wrongLength)
-        {
-            results.push(new ValidationResult(
-                true, baseField, "wrongLength",
-                validator.wrongLengthError));
-        }
-        
-		if (errors[0].invalidFormat)
-		{
-      	 	results.push(new ValidationResult(
-                true, baseField, "wrongFormat",
-                validator.wrongFormatError));
+		if (errors && errors.length > 0) {
+			if (errors[0].invalidChar)
+			{
+				results.push(new ValidationResult(
+					true, baseField, "invalidChar",
+					validator.invalidCharError));
+			}
+	        
+	        if (errors[0].wrongLength)
+	        {
+	            results.push(new ValidationResult(
+	                true, baseField, "wrongLength",
+	                validator.wrongLengthError));
+	        }
+	        
+			if (errors[0].invalidFormat)
+			{
+	      	 	results.push(new ValidationResult(
+	                true, baseField, "wrongFormat",
+	                validator.wrongFormatError));
+			}
 		}
 
         return results;
@@ -220,8 +244,8 @@ public class PostCodeValidator extends Validator
 	
 	/** 
 	 *  Format of postcode
-	 *  Format constist of CC,N,A and space
-	 *  CC is country code (rquired for some postcodes)
+	 *  Format consists of CC,N,A and spaces or hyphens
+	 *  CC is country code (required for some postcodes)
 	 *	N is a number 0-9
 	 *  A is a letter A-Z or a-z
 	 *
