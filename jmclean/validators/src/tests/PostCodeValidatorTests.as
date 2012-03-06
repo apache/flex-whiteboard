@@ -1,5 +1,7 @@
 package tests
 {
+	import mx.resources.IResourceManager;
+	import mx.resources.ResourceManager;
 	import mx.validators.PostCodeValidator;
 	import mx.validators.ValidationResult;
 	
@@ -461,6 +463,56 @@ package tests
 			}
 
 			return null;
+		}
+		
+		[Test]
+		public function errorOverrides():void {
+			var error:String = "New error";
+			var resourceManager:IResourceManager = ResourceManager.getInstance();
+			var resourcesUS:Object = resourceManager.getResourceBundle("en_US", "validators");
+			
+			assertTrue("Error not overridden", validator.invalidCharError == resourcesUS.content.invalidCharPostcodeError);
+			validator.invalidCharError = error;
+			assertTrue("Error overridden", validator.invalidCharError == error);
+			validator.invalidCharError = null;
+			assertTrue("Error not overridden", validator.invalidCharError == resourcesUS.content.invalidCharPostcodeError);
+			
+			assertTrue("Error not overridden", validator.wrongFormatError == resourcesUS.content.wrongFormatPostcodeError);
+			validator.wrongFormatError = error;
+			assertTrue("Error overridden", validator.wrongFormatError == error);
+			validator.wrongFormatError = null;
+			assertTrue("Error not overridden", validator.wrongFormatError == resourcesUS.content.wrongFormatPostcodeError);
+			
+			assertTrue("Error not overridden", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
+			validator.wrongLengthError = error;
+			assertTrue("Error overridden", validator.wrongLengthError == error);
+			validator.wrongLengthError = null;
+			assertTrue("Error not overridden", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
+		}
+		
+		// NOTE: To pass this test project must be compiled with option locale=en_US,en_AU
+		[Test]
+		public function changeLocale():void {
+			var resourceManager:IResourceManager = ResourceManager.getInstance();
+			var resourcesUS:Object = resourceManager.getResourceBundle("en_US", "validators");
+			var resourcesAU:Object = resourceManager.getResourceBundle("en_AU", "validators");
+				
+			assertTrue("en_US locale loaded", resourcesUS);
+			assertTrue("en_AU locale loaded", resourcesAU);
+			
+			assertTrue("US Error", validator.invalidCharError == resourcesUS.content.invalidCharPostcodeError);
+			assertTrue("US Error", validator.wrongFormatError == resourcesUS.content.wrongFormatPostcodeError);
+			assertTrue("US Error", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
+			
+			resourceManager.localeChain = ["en_AU"];
+			
+			assertTrue("Error changed", validator.invalidCharError != resourcesUS.content.invalidCharPostcodeError);
+			assertTrue("Error changed", validator.wrongFormatError != resourcesUS.content.wrongFormatPostcodeError);
+			assertTrue("Error changed", validator.wrongLengthError != resourcesUS.content.wrongLengthPostcodeError);
+		
+			assertTrue("AU Error", validator.invalidCharError == resourcesAU.content.invalidCharPostcodeError);
+			assertTrue("AU Error", validator.wrongFormatError == resourcesAU.content.wrongFormatPostcodeError);
+			assertTrue("AU Error", validator.wrongLengthError == resourcesAU.content.wrongLengthPostcodeError);
 		}
 
 	}
