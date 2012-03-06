@@ -389,8 +389,79 @@ package tests
 			assertTrue("Valid Postcode", results.length == 0);
 			results = PostCodeValidator.validatePostCode(validator2, "123456", null);
 			assertTrue("Valid Postcode", results.length == 0);
-
 		}
 		
+		[Test]
+		public function checkCanadianLetters():void {
+			var results:Array;
+			
+			validator.format = "ANA NAN";
+			validator.extraValidation = canadianLetters;
+			
+			results = PostCodeValidator.validatePostCode(validator, "K0K 2T0", null);
+			assertTrue("Valid Postcode", results.length == 0);
+			
+			results = PostCodeValidator.validatePostCode(validator, "K0D 2I0", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results); //TODO mark as user user?
+		}
+		
+		public function canadianLetters(postCode:String):String {
+			var notUsed:String = "DFIOQU";
+			var length:int = notUsed.length;
+			var char:String;
+			
+			for (var i:int = 0; i < length; i++) {
+				char = notUsed.charAt(i);
+				
+				if (postCode.indexOf(char) >= 0) {
+					return "Postcode containts an invalid character D,F,I,O,Q or U";
+				}
+			}
+			
+			return null;
+		}
+
+		[Test]
+		public function checkAustraliaPOBoxes():void {
+			var results:Array;
+			
+			validator.format = "NNNN";
+			validator.extraValidation = australiaPOBox;
+			
+			results = PostCodeValidator.validatePostCode(validator, "2010", null);
+			assertTrue("Valid Postcode", results.length == 0);
+			
+			results = PostCodeValidator.validatePostCode(validator, "0250", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results); //TODO mark as user user?
+			
+			results = PostCodeValidator.validatePostCode(validator, "5820", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results); //TODO mark as user user?
+		}
+		
+		public function australiaPOBox(postCode:String):String {
+			var postCodeNum:int = int(postCode);
+			var ranges:Array = [
+				{low:1000, high:1999},
+				{low:200, high:299},
+				{low:8000, high:8999},
+				{low:9000, high:9999},
+				{low:5800, high:5999},
+				{low:6800, high:6999},
+				{low:7800, high:7999}, 
+				{low:900, high:999}];
+			var length:int = ranges.length;
+			
+			for (var i:int = 0; i < length; i++) {	
+				if (postCodeNum >= ranges[i].low && postCodeNum <= ranges[i].high) {
+					return "Postcode is a PO Box number";
+				}
+			}
+
+			return null;
+		}
+
 	}
 }

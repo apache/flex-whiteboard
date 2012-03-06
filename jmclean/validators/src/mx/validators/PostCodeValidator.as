@@ -165,9 +165,10 @@ public class PostCodeValidator extends Validator
 			
 			wrongLength = (length != formatLength);
 			
-			// found a match so return without error
+			// found a match so no need to check further
 			if (!invalidFormat && !invalidChar && !wrongLength) {
-				return [];
+				errors = null;
+				break;
 			}
 			
 			// We want invalid char and invalid format errors show in preference
@@ -176,11 +177,21 @@ public class PostCodeValidator extends Validator
 				count:Number(invalidFormat) + Number(invalidChar) + Number(wrongLength)*1.5})
 		}
 		
-		// return result with least number of errors
-		// TODO return/remember closest format or place in error string?
-		errors.sortOn("count", Array.NUMERIC);
+		if (validator && validator.extraValidation)
+		{
+			var extraError:String = validator.extraValidation(postCode);
+			
+			if (extraError) {
+				results.push(new ValidationResult(
+					true, baseField, "wrongFormat", extraError));
+			}
+		}
 		
 		if (errors && errors.length > 0) {
+			// return result with least number of errors
+			// TODO return/remember closest format or place in error string?
+			errors.sortOn("count", Array.NUMERIC);
+			
 			if (errors[0].invalidChar)
 			{
 				results.push(new ValidationResult(
@@ -202,7 +213,7 @@ public class PostCodeValidator extends Validator
 	                validator.wrongFormatError));
 			}
 		}
-
+		
         return results;
     }
     
@@ -330,6 +341,22 @@ public class PostCodeValidator extends Validator
 	{
 		_formats = value;
 	}
+	
+	/** 
+	 *  extraValidation
+	 * 
+	 * A user supplied method that perform further validation on a postcode.
+	 * 
+	 * The user supplied method should take as a parameter a postcode (String)
+	 * and if the postcode is not valid return an error (String).
+	 *
+	 *  @default null
+	 *  
+	 *  @langversion 3.0
+	 *  @playerversion Flash 10.2
+	 *  @productversion ApacheFlex 4.8
+	 */
+	public var extraValidation:Function;
 
     //--------------------------------------------------------------------------
     //
