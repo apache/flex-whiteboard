@@ -514,6 +514,34 @@ package tests
 			assertTrue("AU Error", validator.wrongFormatError == resourcesAU.content.wrongFormatPostcodeError);
 			assertTrue("AU Error", validator.wrongLengthError == resourcesAU.content.wrongLengthPostcodeError);
 		}
+		
+		[Test]
+		public function suggestedFormat():void {
+			validator.suggestFormat("en_AU");
+			assertTrue("Australian format", validator.format == "NNNN");
+			
+			validator.suggestFormat("en-CA");
+			assertTrue("Australian format", validator.format == "ANA NAN");
+			
+			validator.suggestFormat("en_US");
+			assertTrue("US format", validator.formats[0] == "NNNNN");
+			assertTrue("US format", validator.formats[1] == "NNNNN-NNNN");
+			
+			validator.suggestFormat("it_IT");
+			assertTrue("IT format", validator.format == "NNNNN");
+			
+			validator.suggestFormat("fr_CA");
+			assertTrue("CA format", validator.format == "ANA NAN");
+			validator.suggestFormat("en_CA");
+			assertTrue("CA format", validator.format == "ANA NAN");
+			
+			validator.suggestFormat("en_NZ"); // not known
+			assertTrue("NZ format not known", validator.format == null);
+			
+			// may set format (based on user locale) to anything just check no RTE
+			// and returns something
+			assertTrue("User locale format", validator.suggestFormat() != null)
+		}
 
 	}
 }

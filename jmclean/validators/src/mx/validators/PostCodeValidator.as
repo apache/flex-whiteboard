@@ -20,6 +20,9 @@
 package mx.validators
 {
 
+import flash.globalization.LocaleID;
+import flash.globalization.StringTools;
+
 import mx.resources.IResourceManager;
 import mx.resources.ResourceManager;
 
@@ -177,7 +180,7 @@ public class PostCodeValidator extends Validator
 				count:Number(invalidFormat) + Number(invalidChar) + Number(wrongLength)*1.5})
 		}
 		
-		if (validator && validator.extraValidation)
+		if (validator && validator.extraValidation != null)
 		{
 			var extraError:String = validator.extraValidation(postCode);
 			
@@ -560,6 +563,87 @@ public class PostCodeValidator extends Validator
         else
             return PostCodeValidator.validatePostCode(this, String(value), null);
     }
+
+	/** 
+	 *  Sets the suggested format for postcodes for a
+	 *  given <code>locale</code>.
+	 * 
+	 *  If no locale is suplied the default locale is used.
+	 * 
+	 *  Currenly only a limited set of locales are supported.
+	 * 
+	 *  @return The suggested format or an empty array if the
+	 *  locale is not supported. 
+	 *  
+	 *  @langversion 3.0
+	 *  @playerversion Flash 10.2
+	 *  @productversion ApacheFlex 4.8
+	 */
+	public function suggestFormat(locale:String = null):Array {
+		var localeID:LocaleID;
+		var region:String;
+		
+		if (!locale)
+		{		
+			var tool:StringTools = new StringTools(LocaleID.DEFAULT);			
+			localeID = new LocaleID(tool.actualLocaleIDName);
+		}
+		else
+		{
+			localeID = new LocaleID(locale);
+		}
+		region = localeID.getRegion();
+			
+		formats = [];
+		
+		switch (region) {
+			case "AU":
+			case "DK":
+			case "NO":
+				formats = ["NNNN"];
+				break;
+			case "BR":
+				formats = ["NNNNN-NNN"];
+				break;	
+			case "CN":
+			case "DE":
+				formats = ["NNNNNN"];
+				break;	
+			case "CA":
+				formats = ["ANA NAN"];
+				break;
+			case "ES":
+			case "FI":
+			case "FR":
+			case "IT":
+			case "TW":
+				formats = ["NNNNN"];
+				break;	
+			case "GB":
+				formats = ["AN NAA", "ANN NAA", "AAN NAA", "ANA NAA", "AANN NAA", "AANA NAA"];
+				break;
+			case "JP":
+				formats = ["NNNNNNN","NNN-NNNN"];
+				break;
+			case "KR":
+				formats = ["NNNNNN","NNN-NNN"];
+				break;
+			case "NL":
+				formats = ["NNNN AA"];
+				break;
+			case "RU":
+				formats = ["NNNNNN"];
+				break;	
+			case "SE":
+				formats = ["NNNNN","NNN NN"];
+				break;			
+			case "US":
+				formats = ["NNNNN", "NNNNN-NNNN"];
+				break;
+		}
+		
+		return formats;
+	}
 }
 
 }
