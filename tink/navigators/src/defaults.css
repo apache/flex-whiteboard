@@ -32,6 +32,11 @@ DataNavigator
 	skinClass: ClassReference("ws.tink.spark.skins.controls.DataNavigatorSkin");
 }
 
+InlineScroller
+{
+	skinClass: ClassReference("ws.tink.spark.skins.controls.InlineScrollerSkin");
+}
+
 MenuBar
 {
 	skinClass: ClassReference("ws.tink.spark.skins.controls.MenuBarSkin");
