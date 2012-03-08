@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:st="library://ns.tink.ws/flex/spark">
+	
+	<s:Scroller width="100%" height="100%">
+		<s:VGroup horizontalAlign="center">
+			
+			<s:Label text="Navigator StackLayout" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<st:InlineScroller width="400" height="300">
+				<st:NavigatorGroup>
+					<st:layout>
+						<st:StackLayout horizontalAlign="justify" verticalAlign="justify"
+										useScrollBarForNavigation="true" scrollBarDirection="vertical"/>
+					</st:layout>
+					<s:BorderContainer backgroundColor="0xff0000"/>
+					<s:BorderContainer backgroundColor="0xffff00"/>
+					<s:BorderContainer backgroundColor="0xff00ff"/>
+					<s:BorderContainer backgroundColor="0x0000ff"/>
+				</st:NavigatorGroup>
+			</st:InlineScroller>
+			
+			<s:Label text="Navigator CoverflowLayout" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<st:InlineScroller width="400" height="300">
+				<st:NavigatorGroup>
+					<st:layout>
+						<st:CoverflowLayout useScrollBarForNavigation="true" scrollBarDirection="horizontal"/>
+					</st:layout>
+					<s:BorderContainer backgroundColor="0xff0000" width="50%" height="50%"/>
+					<s:BorderContainer backgroundColor="0xffff00" width="50%" height="50%"/>
+					<s:BorderContainer backgroundColor="0xff00ff" width="50%" height="50%"/>
+					<s:BorderContainer backgroundColor="0x0000ff" width="50%" height="50%"/>
+				</st:NavigatorGroup>
+			</st:InlineScroller>
+			
+			<s:Label text="DataGroup VerticalLayout" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<st:InlineScroller width="400" height="300">
+				<s:DataGroup id="dataGroup" itemRenderer="spark.skins.spark.DefaultItemRenderer">
+					<s:layout>
+						<s:VerticalLayout gap="0" horizontalAlign="contentJustify"/>
+					</s:layout>
+					<s:dataProvider>
+						<s:ArrayList>
+							<fx:String>Item 1</fx:String>
+							<fx:String>Item 2</fx:String>
+							<fx:String>Item 3</fx:String>
+							<fx:String>Item 4</fx:String>
+							<fx:String>Item 5</fx:String>
+							<fx:String>Item 6</fx:String>
+							<fx:String>Item 7</fx:String>
+							<fx:String>Item 8</fx:String>
+							<fx:String>Item 9</fx:String>
+							<fx:String>Item 10</fx:String>
+							<fx:String>Item 11</fx:String>
+							<fx:String>Item 12</fx:String>
+							<fx:String>Item 13</fx:String>
+							<fx:String>Item 14</fx:String>
+							<fx:String>Item 15</fx:String>
+							<fx:String>Item 16</fx:String>
+							<fx:String>Item 17</fx:String>
+							<fx:String>Item 18</fx:String>
+							<fx:String>Item 19</fx:String>
+						</s:ArrayList>
+					</s:dataProvider>
+				</s:DataGroup>
+			</st:InlineScroller>
+			
+			<s:Label text="Group BasicLayout" fontWeight="bold" fontSize="16" height="30" verticalAlign="bottom"/>
+			
+			<st:InlineScroller width="400" height="300">
+				<s:Group>
+					<s:layout>
+						<s:BasicLayout/>
+					</s:layout>
+					<s:BorderContainer backgroundColor="0xff0000" width="300" height="200"
+									   x="0" y="0"/>
+					<s:BorderContainer backgroundColor="0xffff00" width="300" height="200"
+									   x="300" y="0"/>
+					<s:BorderContainer backgroundColor="0xff00ff" width="300" height="200"
+									   x="0" y="200"/>
+					<s:BorderContainer backgroundColor="0x0000ff" width="300" height="200"
+									   x="300" y="200"/>
+				</s:Group>
+			</st:InlineScroller>
+			
+		</s:VGroup>
+	</s:Scroller>
+	
+</s:Application>
