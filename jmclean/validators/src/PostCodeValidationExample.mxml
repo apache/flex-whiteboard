@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:validators="mx.validators.*" xmlns:formatters="mx.formatters.*"
+			   width="100%">
+	<s:layout>
+		<s:VerticalLayout gap="10" paddingLeft="20" paddingTop="20" />
+	</s:layout>
+	
+	<fx:Declarations>
+		<validators:PostCodeValidator id="pcv" formats="{postCodeFormats}" source="{postcode}" property="text" />
+		<formatters:PostCodeFormatter id="pcf" formats="{postCodeFormats}" />
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayList;
+			import mx.events.ValidationResultEvent;
+			import mx.validators.ValidationResult;
+			
+			[Bindable] protected var postCodeFormats:Array = ["AA-NNNN"];		
+			[Bindable] protected var countries:ArrayList = new ArrayList([
+				{country:"Australia", locale:"en_AU"},
+				{country:"Canada", locale:"en_CA"},
+				{country:"United Kingdom", locale:"en_GB"},
+				{country:"United States", locale:"en_US"}
+				]);
+			
+			protected function validate(event:Event):void {
+				var result:ValidationResultEvent = pcv.validate();
+				
+				errors.dataProvider = new ArrayList(result.results);
+				
+				formatted.text = pcf.format(postcode.text);
+			}
+			
+			protected function displayError(data:Object):String {
+				var error:ValidationResult = data as ValidationResult;
+				
+				if (error) {
+					return error.errorCode + ": " + error.errorMessage;
+				}
+				
+				return "";
+			}
+			
+			protected function changeCountry(event:Event):void {
+				postCodeFormats = pcv.suggestFormat(country.selectedItem.locale);
+				validate(event);
+			}
+		]]>
+	</fx:Script>
+
+	<s:Form>
+		<s:FormItem label="Select Country">
+			<s:List id="country" dataProvider="{countries}" labelField="country" change="changeCountry(event)" />	
+		</s:FormItem>
+		<s:FormItem label="Enter Format">
+			<s:TextInput id="format" text="{postCodeFormats.toString()}" restrict="AN -" change="postCodeFormats = [format.text.split()]"  />
+		</s:FormItem>
+		<s:FormItem label="Enter Postcode">
+			<s:TextInput id="postcode" change="validate(event)"  />
+		</s:FormItem>
+		<s:FormItem label="Formatted Postcode">
+			<s:Label id="formatted" />
+		</s:FormItem>
+		<s:FormItem label="Errors">
+			<s:List id="errors" labelFunction="displayError" />	
+		</s:FormItem>
+	</s:Form>
+
+</s:Application>
