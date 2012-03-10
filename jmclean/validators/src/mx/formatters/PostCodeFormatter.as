@@ -33,8 +33,8 @@ import mx.validators.ValidationResult;
  *  based on a user-supplied <code>formatString</code> or
  *  <code>formats</code> property.
  *  
- *  Postcode format consists of CC,N,A and spaces or hyphens
- *  CC is country code (required for some postcodes)
+ *  Postcode format consists of C,N,A and spaces or hyphens
+ *  C or CC is country code (required for some postcodes)
  *	N is a number 0-9
  *  A is a letter A-Z or a-z
  * 
@@ -45,13 +45,15 @@ import mx.validators.ValidationResult;
  *  More than one format can be specified by setting the <code>formats</code>
  *  property to an array of formats.
  *  
- *  <p>Spaces and hypens will be added if missing to format the postcode.</p>
+ *  <p>Spaces and hypens will be added if missing to format the postcode correctly.</p>
  *
  *  <p>If an error occurs, an empty String is returned and a String that  
  *  describes the error is saved to the <code>error</code> property.  
  *  The <code>error</code> property can have one of the following values:</p>
  *
  *  <ul>
+ *    <li><code>"invalidFormat"</code> means the format constants an invalid
+ *    character.</li>
  *    <li><code>"wrongFormat"</code> means the postcode has an invalid format.</li>
  *    <li><code>"wrongLength"</code> means the postcode is not a valid length.</li>
  *    <li><code>"invalidChar"</code> means the postcode contains an invalid
@@ -145,13 +147,13 @@ public class PostCodeFormatter extends Formatter
 	 */
 	public function set formatString(value:String):void
 	{
-		if (value)
+		if (value != null)
 		{
 			_formats = [value];
 		}
 		else
 		{
-			_formats = []
+			_formats = [];
 		}
 	}
 	
@@ -187,16 +189,6 @@ public class PostCodeFormatter extends Formatter
 	//
 	//--------------------------------------------------------------------------
 
-    /**
-	 *  @private    
-     */
-	override protected function resourcesChanged():void
-	{
-		super.resourcesChanged();
-		
-		//TODO may not be required
-	}
-
  	/**
 	 *  Formats the value by using the specified format(s).
 	 *  If the value cannot be formatted this method returns an empty String 
@@ -215,7 +207,6 @@ public class PostCodeFormatter extends Formatter
 	{
 		var postCode:String = value as String;
 		var formatted:String = "";
-		var spacers:String = " -";
 		var validator:PostCodeValidator = new PostCodeValidator();
 		var errors:Array;
 		
@@ -233,24 +224,11 @@ public class PostCodeFormatter extends Formatter
 		// Check and add missing (or convert) padding characters
 		for each (var format:String in formats)
 		{
-			var condensedFormat:String = format;
-			var condensedPostcode:String = postCode;
+			var condensedPostcode:String = condensedFormat(postCode);
+			var condensedFormat:String = condensedFormat(format);
 			var char:String;
-			var length:int = spacers.length;
+			var length:int = format.length;
 			var condensedErrors:Array;
-			
-			for (var i:int = 0; i < length; i++)
-			{
-				char = spacers.charAt(i);
-				if (condensedFormat)
-				{
-					condensedFormat = condensedFormat.split(char).join("");
-				}
-				if (condensedPostcode)
-				{
-					condensedPostcode = condensedPostcode.split(char).join("");
-				}
-			}
 			
 			validator.format = condensedFormat;
 			
@@ -260,31 +238,56 @@ public class PostCodeFormatter extends Formatter
 			{
 				var pos:int = 0;
 				
-				length = format.length;
-				
-				for (i = 0; i < length; i++)
+				for (var i:int = 0; i < length; i++)
 				{
 					char = format.charAt(i);
 					
-					if (spacers.indexOf(char) >= 0)
+					if (PostCodeValidator.FORMAT_SPACERS.indexOf(char) >= 0)
 					{
 						formatted += char;
 					}
-					else {
+					else
+					{
 						formatted += condensedPostcode.charAt(pos++);
 					}
 				}
+				//TODO may want to return the longest match?
+				errors = [];
 				break;
 			}
 		}
 		
-		if (!formatted && errors.length > 0)
+		if (errors.length > 0)
 		{
 			error = (errors[0] as ValidationResult).errorCode;
 		}
 
 		return formatted;
 	}
+	
+	/**
+	 *  @private
+	 * 
+	 *  Take a format or paostCode and strips all spacing characters
+	 *  out of it.
+	 *
+	 */
+	protected function condensedFormat(postCode:String):String {
+		var condensed:String = postCode;
+		var length:int;
+	
+		if (postCode) {
+			length = postCode.length;
+		}
+		for (var i:int = 0; i < length; i++)
+		{
+			var char:String = PostCodeValidator.FORMAT_SPACERS.charAt(i);
+			
+			condensed = condensed.split(char).join("");
+		}
+		
+		return condensed;
+	}
+	
 }
-
 }

@@ -32,14 +32,16 @@ import mx.resources.ResourceManager;
  *  The PostCodeValidator class validates that a String
  *  has the correct length and format for a post code.
  * 
- *  Postcode format consists of CC,N,A and spaces or hyphens
- *  CC is country code (required for some postcodes)
+ *  Postcode format consists of C,N,A and spaces or hyphens
+ *  CC or C is country code (required for some postcodes)
  *	N is a number 0-9
  *  A is a letter A-Z or a-z
  * 
  *  For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
  *  followed by four digits and "AA NNNN" is two letters, followed by a space
  *  followed by four digits.
+ * 
+ *  Country codes one be one or two digits.
  * 
  *  More than one format can be specified by setting the <code>formats</code>
  *  property to an array of formats.
@@ -52,10 +54,13 @@ import mx.resources.ResourceManager;
  *  
  *  <pre>
  *  &lt;mx:PostCodeValidator
+ *    countryCode="CC"
  *    format="NNNNN"
  *    formats="['NNNNN', 'NNNNN-NNNN']"
- *    invalidCharError="The post code contains invalid characters." 
- *    wrongLengthError="The post code is the wrong length" 
+ *    wrongFromatError="The postcode code must be correctly formatted."
+ *    invalidFormatError="The postcode format string is incorrect."
+ *    invalidCharError="The postcode contains invalid characters." 
+ *    wrongLengthError="The postcode is the wrong length." 
  *  /&gt;
  *  </pre>
  *  
@@ -74,10 +79,10 @@ public class PostCodeValidator extends Validator
 	
 	public static const ERROR_INCORRECT_FORMAT:String = "incorrectFormat";
 
-	protected static const FORMAT_NUMBER:String = "N";
-	protected static const FORMAT_LETTER:String = "A";
-	protected static const FORMAT_COUNTRY_CODE:String = "C";
-	protected static const FORMAT_SPACERS:String = " -";
+	public static const FORMAT_NUMBER:String = "N";
+	public static const FORMAT_LETTER:String = "A";
+	public static const FORMAT_COUNTRY_CODE:String = "C";
+	public static const FORMAT_SPACERS:String = " -";
 	
 	protected static const FULL_WIDTH_DIGITS:String = "０１２３４５６７８９";
 
@@ -87,7 +92,14 @@ public class PostCodeValidator extends Validator
     //
     //--------------------------------------------------------------------------
 
-	private static function notFormatChar(char:String):Boolean
+	/**
+	 *  @private
+	 * 
+	 *  @param char to check
+	 *  @return true if the char is not a valid format character
+	 *
+	 */
+	protected static function notFormatChar(char:String):Boolean
 	{
 		return FORMAT_SPACERS.indexOf(char) == -1
 			&& char != FORMAT_NUMBER
@@ -95,22 +107,52 @@ public class PostCodeValidator extends Validator
 			&& char != FORMAT_COUNTRY_CODE;
 	}
 	
-	private static function noDecimalDigits(char:String):Boolean
+	/**
+	 *  @private
+	 * 
+	 *  @param char to check
+	 *  @return true if the char is not a valid digit
+	 *
+	 */
+	protected static function noDecimalDigits(char:String):Boolean
 	{
-		return DECIMAL_DIGITS.indexOf(char) == -1 && FULL_WIDTH_DIGITS.indexOf(char) == -1;
+		return DECIMAL_DIGITS.indexOf(char) == -1
+			&& FULL_WIDTH_DIGITS.indexOf(char) == -1;
 	}
 	
-	private static function noRomanLetters(char:String):Boolean
+	/**
+	 *  @private
+	 * 
+	 *  @param char to check
+	 *  @return true if the char is not a valid letter
+	 *
+	 */
+	protected static function noRomanLetters(char:String):Boolean
 	{
 		return ROMAN_LETTERS.indexOf(char) == -1;
 	}
 	
-	private static function noSpacers(char:String):Boolean
+	/**
+	 *  @private
+	 * 
+	 *  @param char to check
+	 *  @return true if the char is not a valid spacer
+	 *
+	 */
+	protected static function noSpacers(char:String):Boolean
 	{
 		return FORMAT_SPACERS.indexOf(char) == -1;
 	}
-	
-	private static function userValidationResults(validator:PostCodeValidator,
+
+	/**
+	 *  @private
+	 * 
+	 *  A wrong format ValidationResult is added to the results array
+	 *  if the extraValidation user supplied function returns an errors.
+	 *  ie There is a user defined issue with the supplied postCode.
+	 *
+	 */
+	protected static function userValidationResults(validator:PostCodeValidator,
 												 baseField:String,
 												 postCode:String,
 												 results:Array):void
@@ -127,12 +169,28 @@ public class PostCodeValidator extends Validator
 		}
 	}
 	
-	private static function errorValidationResults(validator:PostCodeValidator,
+	/**
+	 *  @private
+	 * 
+	 *  Based on flags in the error object new ValidationResults are
+	 *  added the the results array.
+	 * 
+	 *  Note that the only first ValidationResult by default is shown
+	 *  in validation errors.
+	 *
+	 */
+	protected static function errorValidationResults(validator:PostCodeValidator,
 												  baseField:String,
 												  error:Object,
 												  results:Array):void
 	{
-		if (error) {			
+		if (error) {
+			if (error.incorrectFormat)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_INCORRECT_FORMAT,
+					validator.incorrectFormatError));
+			}
 			if (error.invalidChar)
 			{
 				results.push(new ValidationResult(
@@ -153,17 +211,19 @@ public class PostCodeValidator extends Validator
 					true, baseField, ERROR_WRONG_FORMAT,
 					validator.wrongFormatError));
 			}
-			
-			if (error.incorrectFormat)
-			{
-				results.push(new ValidationResult(
-					true, baseField, ERROR_INCORRECT_FORMAT,
-					validator.incorrectFormatError));
-			}
 		}
 	}
 	
-	private static function checkPostCodeFormat(postCode:String,
+	/**
+	 *  @private
+	 * 
+	 *  Check thats a postCode is valid and matches a certain format.
+	 * 
+	 *  @return An error object containing flags for each type of error
+	 *  and an indication of invalidness (used to later sort errors)
+	 *
+	 */
+	protected static function checkPostCodeFormat(postCode:String,
 											   format:String,
 											   countryCode:String):Object
 	{
@@ -246,7 +306,7 @@ public class PostCodeValidator extends Validator
 					incorrectFormat:incorrectFormat,
 					invalidChar:invalidChar,
 					wrongLength:wrongLength,
-					count:Number(invalidFormat) + Number(invalidChar)
+					invalidness:Number(invalidFormat) + Number(invalidChar)
 						+ Number(incorrectFormat) + Number(wrongLength) * 1.5};
 		}
 		else
@@ -308,7 +368,7 @@ public class PostCodeValidator extends Validator
 		}
 
 		// return result with least number of errors
-		errors.sortOn("count", Array.NUMERIC);
+		errors.sortOn("invalidness", Array.NUMERIC);
 		
 		userValidationResults(validator, baseField, postCode, results);
 
@@ -393,7 +453,7 @@ public class PostCodeValidator extends Validator
 	}
 
 	/** 
-	 *  Optional 2 letter country code in postcode format
+	 *  Optional 1 or 2 letter country code in postcode format
 	 *
 	 *  @default null
 	 *  
@@ -419,11 +479,10 @@ public class PostCodeValidator extends Validator
 	}
 
 	/** 
-	 *  Formats of postcode
+	 *  Multiple postcode formats
 	 *  Sets an array of valid formats, use for locales
-	 *  where more than one format is required. eg en_UK
-	 *  See format for format.
-	 * 
+	 *  where more than one poscode format exists. eg en_UK
+	 *  See format for details of teh postcode format.
 	 *
 	 *  @default []
 	 *  
@@ -516,7 +575,8 @@ public class PostCodeValidator extends Validator
     {
         invalidCharErrorOverride = value;
 
-        if (!value) {
+        if (!value)
+		{
 			_invalidCharError =  resourceManager.getString("validators",
 				"invalidCharPostcodeError");
 		}
@@ -616,7 +676,8 @@ public class PostCodeValidator extends Validator
 	{
 		wrongFormatErrorOverride = value;
 		
-		if (!value) {
+		if (!value)
+		{
 			_wrongFormatError = resourceManager.getString("validators",
 				"wrongFormatPostcodeError");
 		}
@@ -665,7 +726,8 @@ public class PostCodeValidator extends Validator
 	{
 		incorrectFormatErrorOverride = value;
 		
-		if (!value) {
+		if (!value)
+		{
 			_incorrectFormatError = resourceManager.getString("validators",
 				"incorrectFormatPostcodeError");
 		}
@@ -687,6 +749,7 @@ public class PostCodeValidator extends Validator
         invalidCharError = invalidCharErrorOverride;
         wrongLengthError = wrongLengthErrorOverride;
         wrongFormatError = wrongFormatErrorOverride;    
+		incorrectFormatError = incorrectFormatErrorOverride;
     }
 
     /**
@@ -722,11 +785,20 @@ public class PostCodeValidator extends Validator
 	
 	//--------------------------------------------------------------------------
 	//
-	//  methods
+	//  Methods
 	//
 	//--------------------------------------------------------------------------
 
-	private function getRegion(locale:String):String {
+	/**
+	 *  @private
+	 *  Returns the region (usually country) from a locale string.
+	 *  If no loacle is provided the default locale is used.
+	 * 
+	 *  @param locale locale to obtain region from.
+	 *  @return Region string.
+	 *
+	 */
+	protected function getRegion(locale:String):String {
 		var localeID:LocaleID;
 		
 		if (locale == null)
@@ -741,6 +813,7 @@ public class PostCodeValidator extends Validator
 		
 		return localeID.getRegion();
 	}
+	
 	/** 
 	 *  Sets the suggested format for postcodes for a
 	 *  given <code>locale</code>.
@@ -748,6 +821,8 @@ public class PostCodeValidator extends Validator
 	 *  If no locale is suplied the default locale is used.
 	 * 
 	 *  Currenly only a limited set of locales are supported.
+	 * 
+	 *  @param locale locale to obtain format for.
 	 * 
 	 *  @return The suggested format or an empty array if the
 	 *  locale is not supported. 
@@ -761,7 +836,8 @@ public class PostCodeValidator extends Validator
 			
 		formats = [];
 		
-		switch (region) {
+		switch (region)
+		{
 			case "AU":
 			case "DK":
 			case "NO":
@@ -818,7 +894,9 @@ public class PostCodeValidator extends Validator
 	 * 
 	 *  Currenly only a limited set of locales are supported.
 	 * 
-	 *  @return The suggested format or an empty array if the
+	 *  @param locale locale to obtain country code for.
+	 * 
+	 *  @return The suggested code or an null string if the
 	 *  locale is not supported. 
 	 *  
 	 *  @langversion 3.0
@@ -828,9 +906,11 @@ public class PostCodeValidator extends Validator
 	public function suggestCountryCode(locale:String = null):String {
 		var region:String = getRegion(locale);
 		
-		if (region == "JP") {
+		if (region == "JP")
+		{
 			countryCode = "〒";
 		}
+		
 		return countryCode;
 	}
 }

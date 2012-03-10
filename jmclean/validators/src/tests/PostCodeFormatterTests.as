@@ -1,6 +1,7 @@
 package tests
 {
 	import mx.formatters.PostCodeFormatter;
+	import mx.validators.PostCodeValidator;
 	
 	import org.flexunit.asserts.assertTrue;
 
@@ -42,15 +43,39 @@ package tests
 		}
 		
 		private function invalidFormatError(error:String):void {
-			assertTrue("Has format error", error == "wrongFormat");
+			assertTrue("Has format error", error == PostCodeValidator.ERROR_WRONG_FORMAT);
+		}
+		
+		private function incorrectFormatError(error:String):void {
+			assertTrue("Has incorrect format", error == PostCodeValidator.ERROR_INCORRECT_FORMAT);
 		}
 		
 		private function wrongLengthError(error:String):void {
-			assertTrue("Has wrong length error", error == "wrongLength");
+			assertTrue("Has wrong length error", error == PostCodeValidator.ERROR_WRONG_LENGTH);
 		}
 		
 		private function invalidCharError(error:String):void {
-			assertTrue("Has invalid character error", error == "invalidChar");
+			assertTrue("Has invalid character error", error == PostCodeValidator.ERROR_INVALID_CHAR);
+		}
+		
+		[Test]
+		public function blankFormat():void {
+			formatter.formatString = "";
+			
+			assertTrue("Format is incorrect", formatter.format("1234") == "");
+			incorrectFormatError(formatter.error);	
+		}
+		
+		[Test]
+		public function incorrectFormats():void
+		{
+			formatter.formatString = "NZZN";
+			
+			assertTrue("Format is incorrect", formatter.format("1234") == "");
+			incorrectFormatError(formatter.error);
+			
+			assertTrue("Format is incorrect", formatter.format("ABCD") == "");
+			incorrectFormatError(formatter.error);
 		}
 
 		
