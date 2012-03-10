@@ -70,12 +70,16 @@ public class PostCodeValidator extends Validator
 	
 	public static const ERROR_INVALID_CHAR:String = "invalidChar";
 	public static const ERROR_WRONG_LENGTH:String = "wrongLength";
-	public static const ERROR_WRONG_FORMAT:String = "wrongFormat";
+	public static const ERROR_WRONG_FORMAT:String = "wrongFormat"; 
 	
+	public static const ERROR_INCORRECT_FORMAT:String = "incorrectFormat";
+
 	protected static const FORMAT_NUMBER:String = "N";
 	protected static const FORMAT_LETTER:String = "A";
 	protected static const FORMAT_COUNTRY_CODE:String = "C";
 	protected static const FORMAT_SPACERS:String = " -";
+	
+	protected static const FULL_WIDTH_DIGITS:String = "０１２３４５６７８９";
 
     //--------------------------------------------------------------------------
     //
@@ -83,9 +87,17 @@ public class PostCodeValidator extends Validator
     //
     //--------------------------------------------------------------------------
 
+	private static function notFormatChar(char:String):Boolean
+	{
+		return FORMAT_SPACERS.indexOf(char) == -1
+			&& char != FORMAT_NUMBER
+			&& char != FORMAT_LETTER
+			&& char != FORMAT_COUNTRY_CODE;
+	}
+	
 	private static function noDecimalDigits(char:String):Boolean
 	{
-		return DECIMAL_DIGITS.indexOf(char) == -1;
+		return DECIMAL_DIGITS.indexOf(char) == -1 && FULL_WIDTH_DIGITS.indexOf(char) == -1;
 	}
 	
 	private static function noRomanLetters(char:String):Boolean
@@ -141,6 +153,13 @@ public class PostCodeValidator extends Validator
 					true, baseField, ERROR_WRONG_FORMAT,
 					validator.wrongFormatError));
 			}
+			
+			if (error.incorrectFormat)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_INCORRECT_FORMAT,
+					validator.incorrectFormatError));
+			}
 		}
 	}
 	
@@ -151,16 +170,24 @@ public class PostCodeValidator extends Validator
 		var invalidChar:Boolean;
 		var invalidFormat:Boolean;
 		var wrongLength:Boolean;
+		var incorrectFormat:Boolean;
 		var formatLength:int;
 		var postCodeLength:int;
 		var noChars:int;
 		var countryIndex:int;
 		
-		if (format) {
+		if (format)
+		{
 			formatLength = format.length;
 		}
 		
-		if (postCode) {
+		if (formatLength == 0)
+		{
+			incorrectFormat = true;
+		}
+		
+		if (postCode)
+		{
 			postCodeLength = postCode.length;
 		}
 		
@@ -176,9 +203,17 @@ public class PostCodeValidator extends Validator
 				char = postCode.charAt(postcodeIndex);
 			}
 			
+			if (notFormatChar(formatChar))
+			{
+				incorrectFormat = true;
+			}
+			
 			if (noDecimalDigits(char) && noRomanLetters(char) && noSpacers(char))
 			{
-				invalidChar = true;
+				if (!countryCode || countryCode.indexOf(char) == -1)
+				{
+					invalidChar = true;
+				}
 			}
 			else if (formatChar == FORMAT_NUMBER && noDecimalDigits(char))
 			{
@@ -205,12 +240,14 @@ public class PostCodeValidator extends Validator
 		
 		// We want invalid char and invalid format errors to show in preference
 		// so give wrong length errors a higher value
-		if (invalidFormat || invalidChar || wrongLength)
+		if (incorrectFormat || invalidFormat || invalidChar || wrongLength)
 		{
 			return {invalidFormat:invalidFormat,
-					invalidChar:invalidChar, wrongLength:wrongLength,
+					incorrectFormat:incorrectFormat,
+					invalidChar:invalidChar,
+					wrongLength:wrongLength,
 					count:Number(invalidFormat) + Number(invalidChar)
-						+ Number(wrongLength) * 1.5};
+						+ Number(incorrectFormat) + Number(wrongLength) * 1.5};
 		}
 		else
 		{
@@ -319,8 +356,8 @@ public class PostCodeValidator extends Validator
 	
 	/** 
 	 *  Format of postcode
-	 *  Format consists of CC,N,A and spaces or hyphens
-	 *  CC is country code (required for some postcodes)
+	 *  Format consists of C,N,A and spaces or hyphens
+	 *  CC or C is country code (required for some postcodes)
 	 *	N is a number 0-9
 	 *  A is a letter A-Z or a-z
 	 *
@@ -345,7 +382,7 @@ public class PostCodeValidator extends Validator
 	 */
 	public function set format(value:String):void
 	{
-		if (value)
+		if (value != null)
 		{
 			_formats = [value];
 		}
@@ -374,7 +411,8 @@ public class PostCodeValidator extends Validator
 	 */
 	public function set countryCode(value:String):void
 	{
-		if (value == null || value && value.length == 2)
+		// Length is usually 2 character but can use 〒 in Japan
+		if (value == null || value && value.length <= 2)
 		{
 			_countryCode = value;
 		}
@@ -411,10 +449,17 @@ public class PostCodeValidator extends Validator
 	 * 
 	 * A user supplied method that perform further validation on a postcode.
 	 * 
-	 * The user supplied method should take as a parameter a postcode (String)
-	 * and if the postcode is not valid return an error (String).
-	 *
-	 *  @default null
+	 * The user supplied method should  haver the following signature:
+	 * <code>function validatePostcode(postcode:String):String</code>
+	 * 
+	 * The method is passed the postcode to be validated and should
+	 * return either:
+	 * 1. null indicating the postcode is valid
+	 * 2. A non empty string describing why the postcode is invalid
+	 * 
+	 * The error string will be converted into a ValidationResult when
+	 * doValidation is called by Flex as part of the normal validation
+	 * process.
 	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10.2
@@ -528,54 +573,103 @@ public class PostCodeValidator extends Validator
 		}
     }
     
-    //----------------------------------
-    //  wrongFormatError
-    //----------------------------------
-
-    /**
-     *  @private
-     *  Storage for the wrongFormatError property.
-     */
-    private var _wrongFormatError:String;
-    
-    /**
-     *  @private
-     */
-    private var wrongFormatErrorOverride:String;
-
-    [Inspectable(category="Errors", defaultValue="null")]
-
-    /** 
-     *  Error message for an incorrectly formatted postcode.
-     *
-     *  @default "The postcode code must be correctly formatted."
-     *  
+	//----------------------------------
+	//  wrongFormatError
+	//----------------------------------
+	
+	/**
+	 *  @private
+	 *  Storage for the wrongFormatError property.
+	 */
+	private var _wrongFormatError:String;
+	
+	/**
+	 *  @private
+	 */
+	private var wrongFormatErrorOverride:String;
+	
+	[Inspectable(category="Errors", defaultValue="null")]
+	
+	/** 
+	 *  Error message for an incorrectly formatted postcode.
+	 *
+	 *  @default "The postcode code must be correctly formatted."
+	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10.2
 	 *  @productversion ApacheFlex 4.8
-     */
-    public function get wrongFormatError():String
-    {
+	 */
+	public function get wrongFormatError():String
+	{
 		if (wrongFormatErrorOverride)
 		{
 			return wrongFormatErrorOverride;
 		}
 		
-        return _wrongFormatError;
-    }
-
-    /**
-     *  @private
-     */
-    public function set wrongFormatError(value:String):void
-    {
-        wrongFormatErrorOverride = value;
-
+		return _wrongFormatError;
+	}
+	
+	/**
+	 *  @private
+	 */
+	public function set wrongFormatError(value:String):void
+	{
+		wrongFormatErrorOverride = value;
+		
 		if (!value) {
-        	_wrongFormatError = resourceManager.getString("validators",
+			_wrongFormatError = resourceManager.getString("validators",
 				"wrongFormatPostcodeError");
 		}
-    }
+	}
+
+	//----------------------------------
+	//  incorrectFormatError
+	//----------------------------------
+	
+	/**
+	 *  @private
+	 *  Storage for the incorrectFormatError property.
+	 */
+	private var _incorrectFormatError:String;
+	
+	/**
+	 *  @private
+	 */
+	private var incorrectFormatErrorOverride:String;
+	
+	[Inspectable(category="Errors", defaultValue="null")]
+	
+	/** 
+	 *  Error message for an incorrect format string.
+	 *
+	 *  @default "The postcode format string is incorrect"
+	 *  
+	 *  @langversion 3.0
+	 *  @playerversion Flash 10.2
+	 *  @productversion ApacheFlex 4.8
+	 */
+	public function get incorrectFormatError():String
+	{
+		if (incorrectFormatErrorOverride)
+		{
+			return incorrectFormatErrorOverride;
+		}
+		
+		return _incorrectFormatError;
+	}
+	
+	/**
+	 *  @private
+	 */
+	public function set incorrectFormatError(value:String):void
+	{
+		incorrectFormatErrorOverride = value;
+		
+		if (!value) {
+			_incorrectFormatError = resourceManager.getString("validators",
+				"incorrectFormatPostcodeError");
+		}
+	}
 
     //--------------------------------------------------------------------------
     //
@@ -622,7 +716,7 @@ public class PostCodeValidator extends Validator
         if (results.length > 0 || ((val.length == 0) && !required))
             return results;
         else
-            return PostCodeValidator.validatePostCode(this, String(value), null);
+            return PostCodeValidator.validatePostCode(this, val, null);
     }
 	
 	
@@ -632,6 +726,21 @@ public class PostCodeValidator extends Validator
 	//
 	//--------------------------------------------------------------------------
 
+	private function getRegion(locale:String):String {
+		var localeID:LocaleID;
+		
+		if (locale == null)
+		{		
+			var tool:StringTools = new StringTools(LocaleID.DEFAULT);			
+			localeID = new LocaleID(tool.actualLocaleIDName);
+		}
+		else
+		{
+			localeID = new LocaleID(locale);
+		}
+		
+		return localeID.getRegion();
+	}
 	/** 
 	 *  Sets the suggested format for postcodes for a
 	 *  given <code>locale</code>.
@@ -648,19 +757,7 @@ public class PostCodeValidator extends Validator
 	 *  @productversion ApacheFlex 4.8
 	 */
 	public function suggestFormat(locale:String = null):Array {
-		var localeID:LocaleID;
-		var region:String;
-		
-		if (!locale)
-		{		
-			var tool:StringTools = new StringTools(LocaleID.DEFAULT);			
-			localeID = new LocaleID(tool.actualLocaleIDName);
-		}
-		else
-		{
-			localeID = new LocaleID(locale);
-		}
-		region = localeID.getRegion();
+		var region:String = getRegion(locale);
 			
 		formats = [];
 		
@@ -691,7 +788,7 @@ public class PostCodeValidator extends Validator
 				formats = ["AN NAA", "ANN NAA", "AAN NAA", "ANA NAA", "AANN NAA", "AANA NAA"];
 				break;
 			case "JP":
-				formats = ["NNNNNNN","NNN-NNNN"];
+				formats = ["NNNNNNN","NNN-NNNN","C NNNNNNN","C NNN-NNNN"];
 				break;
 			case "KR":
 				formats = ["NNNNNN","NNN-NNN"];
@@ -711,6 +808,30 @@ public class PostCodeValidator extends Validator
 		}
 		
 		return formats;
+	}
+	
+	/** 
+	 *  Sets the suggested country code for postcodes for a
+	 *  given <code>locale</code>.
+	 * 
+	 *  If no locale is suplied the default locale is used.
+	 * 
+	 *  Currenly only a limited set of locales are supported.
+	 * 
+	 *  @return The suggested format or an empty array if the
+	 *  locale is not supported. 
+	 *  
+	 *  @langversion 3.0
+	 *  @playerversion Flash 10.2
+	 *  @productversion ApacheFlex 4.8
+	 */
+	public function suggestCountryCode(locale:String = null):String {
+		var region:String = getRegion(locale);
+		
+		if (region == "JP") {
+			countryCode = "〒";
+		}
+		return countryCode;
 	}
 }
 

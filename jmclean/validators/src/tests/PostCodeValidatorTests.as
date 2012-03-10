@@ -73,10 +73,37 @@ package tests
 		public function emptyFormat():void {
 			var results:Array;
 			
+			validator.formats = ["NNNN",""];
+			
+			results = PostCodeValidator.validatePostCode(validator, "", null);
+			assertTrue("Incorrect format error", results.length == 1);
+			incorrectFormatError(results);
+			
 			validator.format = "";
 			
 			results = PostCodeValidator.validatePostCode(validator, "", null);
-			assertTrue("No errors", results.length == 0);		
+			assertTrue("Incorrect format error", results.length == 1);
+			incorrectFormatError(results);
+		}
+		
+		[Test]
+		public function invalidFormat():void {
+			var results:Array;
+			
+			validator.format = "ZZZZ";
+			results = PostCodeValidator.validatePostCode(validator, "1234", null);
+			assertTrue("Invalid format", results.length == 1);
+			incorrectFormatError(results);
+			
+			validator.format = "CCAA%NN";
+			results = PostCodeValidator.validatePostCode(validator, "AABBC12", null);
+			assertTrue("Invalid format", results.length == 2);
+			incorrectFormatError(results);			
+			
+			validator.format = "99NN";
+			results = PostCodeValidator.validatePostCode(validator, "9912", null);
+			assertTrue("Invalid format", results.length == 1);
+			incorrectFormatError(results);
 		}
 		
 		[Test]
@@ -110,15 +137,19 @@ package tests
 		}
 		
 		private function invalidFormatError(results:Array):void {
-			assertTrue("Has format error", hasError(results, "wrongFormat"));
+			assertTrue("Has format error", hasError(results, PostCodeValidator.ERROR_WRONG_FORMAT));
+		}
+		
+		private function incorrectFormatError(results:Array):void {
+			assertTrue("Has format error", hasError(results, PostCodeValidator.ERROR_INCORRECT_FORMAT));
 		}
 		
 		private function wrongLengthError(results:Array):void {
-			assertTrue("Has wrong length error", hasError(results, "wrongLength"));
+			assertTrue("Has wrong length error", hasError(results, PostCodeValidator.ERROR_WRONG_LENGTH));
 		}
 		
 		private function invalidCharError(results:Array):void {
-			assertTrue("Has invalid character error", hasError(results, "invalidChar"));
+			assertTrue("Has invalid character error", hasError(results, PostCodeValidator.ERROR_INVALID_CHAR));
 		}
 		
 		[Test]
@@ -130,7 +161,14 @@ package tests
 			results = PostCodeValidator.validatePostCode(validator, "1234", null);
 			assertTrue("No errors", results.length == 0);
 			
+			results = PostCodeValidator.validatePostCode(validator, "１２３４", null);
+			assertTrue("No errors", results.length == 0);
+			
 			results = PostCodeValidator.validatePostCode(validator, "1-23", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "１-３４", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidFormatError(results);
 			
@@ -138,7 +176,15 @@ package tests
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidCharError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "１２&４", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidCharError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "123", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "１２３", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			wrongLengthError(results);
 			
@@ -146,11 +192,23 @@ package tests
 			assertTrue("Invalid Postcode", results.length == 1);
 			wrongLengthError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "０１２３４５６", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "123D", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidFormatError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "１２３D", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "1234D", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "１２３４D", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			wrongLengthError(results);
 			
@@ -159,7 +217,18 @@ package tests
 			wrongLengthError(results);
 			invalidFormatError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "１２３D４", null);
+			assertTrue("Invalid Postcode", results.length == 2);
+			wrongLengthError(results);
+			invalidFormatError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "1*3D4", null);
+			assertTrue("Invalid Postcode", results.length == 3);
+			wrongLengthError(results);
+			invalidFormatError(results);
+			invalidCharError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "１*３D４", null);
 			assertTrue("Invalid Postcode", results.length == 3);
 			wrongLengthError(results);
 			invalidFormatError(results);
@@ -327,7 +396,7 @@ package tests
 			var results:Array;
 			var valid:Array = ["2000","3000", "2010", "2462"];
 			
-			validator.format = "NNNN";
+			validator.suggestFormat("en_AU");
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
@@ -340,7 +409,7 @@ package tests
 			var results:Array;
 			var valid:Array = ["10003", "90036", "95124", "94117", "20500"];
 			
-			validator.formats = ["NNNNN", "NNNNN-NNNN"];
+			validator.suggestFormat("en_US");
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
@@ -352,9 +421,8 @@ package tests
 		public function unitedKindomPostcodes():void {
 			var results:Array;
 			var valid:Array = ["M1 1AA", "B33 8TH", "CR2 6XH", "DN55 1PT", "W1A 1HQ", "EC1A 1BB", "E98 1NW", "SW1A 0PW"];
-
-			//TODO Double check formats correct
-			validator.formats = ["AN NAA", "ANN NAA", "AAN NAA", "ANA NAA", "AANN NAA", "AANA NAA"];
+			
+			validator.suggestFormat("en_UK");
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
@@ -362,12 +430,13 @@ package tests
 			}
 		}
 		
+		
 		[Test]
 		public function canadianPostcodes():void {
 			var results:Array;
 			var valid:Array = ["K0K 2T0", "V6Z 1T0", "B4V 2K4", "H0H 0H0"];
 			
-			validator.format = "ANA NAN";
+			validator.suggestFormat("en_CA");
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
@@ -378,9 +447,10 @@ package tests
 		[Test]
 		public function japanesePostcodes():void {
 			var results:Array;
-			var valid:Array = ["100-0006", "600-8216", "282-0004"];
+			var valid:Array = ["〒 100-0006", "100-0006", "600-8216", "282-0004"];
 			
-			validator.format = "NNN-NNNN";
+			validator.suggestFormat("ja_JP");
+			validator.countryCode = "〒";
 			
 			for each (var postcode:String in valid) {
 				results = PostCodeValidator.validatePostCode(validator, postcode, null);
@@ -498,7 +568,13 @@ package tests
 			assertTrue("Error overridden", validator.wrongLengthError == error);
 			validator.wrongLengthError = null;
 			assertTrue("Error not overridden", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
-		}
+
+			assertTrue("Error not overridden", validator.incorrectFormatError == resourcesUS.content.incorrectFormatPostcodeError);
+			validator.incorrectFormatError = error;
+			assertTrue("Error overridden", validator.incorrectFormatError == error);
+			validator.incorrectFormatError = null;
+			assertTrue("Error not overridden", validator.incorrectFormatError == resourcesUS.content.incorrectFormatPostcodeError);
+	}
 		
 		// NOTE: To pass this test project must be compiled with option locale=en_US,en_AU
 		[Test]
