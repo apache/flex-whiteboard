@@ -277,7 +277,8 @@ public class PostCodeFormatter extends Formatter
 		var condensed:String = postCode;
 		var length:int;
 	
-		if (postCode) {
+		if (postCode)
+		{
 			length = postCode.length;
 		}
 		
