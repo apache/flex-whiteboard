@@ -67,6 +67,15 @@ import mx.resources.ResourceManager;
 public class PostCodeValidator extends Validator
 {
     include "../core/Version.as";
+	
+	public static const ERROR_INVALID_CHAR:String = "invalidChar";
+	public static const ERROR_WRONG_LENGTH:String = "wrongLength";
+	public static const ERROR_WRONG_FORMAT:String = "wrongFormat";
+	
+	protected static const FORMAT_NUMBER:String = "N";
+	protected static const FORMAT_LETTER:String = "A";
+	protected static const FORMAT_COUNTRY_CODE:String = "C";
+	protected static const FORMAT_SPACERS:String = " -";
 
     //--------------------------------------------------------------------------
     //
@@ -74,6 +83,141 @@ public class PostCodeValidator extends Validator
     //
     //--------------------------------------------------------------------------
 
+	private static function noDecimalDigits(char:String):Boolean
+	{
+		return DECIMAL_DIGITS.indexOf(char) == -1;
+	}
+	
+	private static function noRomanLetters(char:String):Boolean
+	{
+		return ROMAN_LETTERS.indexOf(char) == -1;
+	}
+	
+	private static function noSpacers(char:String):Boolean
+	{
+		return FORMAT_SPACERS.indexOf(char) == -1;
+	}
+	
+	private static function userValidationResults(validator:PostCodeValidator,
+												 baseField:String,
+												 postCode:String,
+												 results:Array):void
+	{
+		if (validator && validator.extraValidation != null)
+		{
+			var extraError:String = validator.extraValidation(postCode);
+			
+			if (extraError)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_WRONG_FORMAT, extraError));
+			}
+		}
+	}
+	
+	private static function errorValidationResults(validator:PostCodeValidator,
+												  baseField:String,
+												  error:Object,
+												  results:Array):void
+	{
+		if (error) {			
+			if (error.invalidChar)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_INVALID_CHAR,
+					validator.invalidCharError));
+			}
+			
+			if (error.wrongLength)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_WRONG_LENGTH,
+					validator.wrongLengthError));
+			}
+			
+			if (error.invalidFormat)
+			{
+				results.push(new ValidationResult(
+					true, baseField, ERROR_WRONG_FORMAT,
+					validator.wrongFormatError));
+			}
+		}
+	}
+	
+	private static function checkPostCodeFormat(postCode:String,
+											   format:String,
+											   countryCode:String):Object
+	{
+		var invalidChar:Boolean;
+		var invalidFormat:Boolean;
+		var wrongLength:Boolean;
+		var formatLength:int;
+		var postCodeLength:int;
+		var noChars:int;
+		var countryIndex:int;
+		
+		if (format) {
+			formatLength = format.length;
+		}
+		
+		if (postCode) {
+			postCodeLength = postCode.length;
+		}
+		
+		noChars = Math.min(formatLength,postCodeLength);
+		
+		for (var postcodeIndex:int = 0; postcodeIndex < noChars; postcodeIndex++)
+		{
+			var char:String = postCode.charAt(postcodeIndex);
+			var formatChar:String = format.charAt(postcodeIndex);
+			
+			if  (postcodeIndex < postCodeLength) 
+			{
+				char = postCode.charAt(postcodeIndex);
+			}
+			
+			if (noDecimalDigits(char) && noRomanLetters(char) && noSpacers(char))
+			{
+				invalidChar = true;
+			}
+			else if (formatChar == FORMAT_NUMBER && noDecimalDigits(char))
+			{
+				invalidFormat = true;
+			}
+			else if (formatChar == FORMAT_LETTER && noRomanLetters(char))
+			{
+				invalidFormat = true;
+			}
+			else if (formatChar == FORMAT_COUNTRY_CODE)
+			{
+				if (countryIndex >= 2 || !countryCode || char != countryCode.charAt(countryIndex))
+				{
+					invalidFormat = true;
+				}
+				countryIndex++;
+			}
+			else if (FORMAT_SPACERS.indexOf(formatChar) >= 0 && formatChar != char) {
+				invalidFormat = true;
+			}
+		}
+		
+		wrongLength = (postCodeLength != formatLength);
+		
+		// We want invalid char and invalid format errors to show in preference
+		// so give wrong length errors a higher value
+		if (invalidFormat || invalidChar || wrongLength)
+		{
+			return {invalidFormat:invalidFormat,
+					invalidChar:invalidChar, wrongLength:wrongLength,
+					count:Number(invalidFormat) + Number(invalidChar)
+						+ Number(wrongLength) * 1.5};
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
     /**
      *  Convenience method for calling a validator.
      *  Each of the standard Flex validators has a similar convenience method.
@@ -100,122 +244,39 @@ public class PostCodeValidator extends Validator
                                            postCode:String,
                                            baseField:String):Array
     {
+		var validPostCode:Boolean = true;
+		var numberFormats:int;
+		var errors:Array = [];
         var results:Array = [];
 
-        var length:int;
-		var formatLength:int;
-		var noformats:int;
-		var spacers:String = " -";
-		
-		var errors:Array = [];
-		var wrongLength:Boolean;
-		var invalidChar:Boolean;
-		var invalidFormat:Boolean;
-		
-		var countryDigit:int;
-		
 		if (validator)
 		{
-			noformats = validator.formats.length
+			numberFormats = validator.formats.length
 		}
 		
-		for (var f:int = 0; f < noformats; f++)
+		for (var formatIndex:int = 0; formatIndex < numberFormats; formatIndex++)
 		{	
-			countryDigit = 0;
-			invalidChar = false;
-			invalidFormat = false;
-			formatLength = validator.formats[f].length;
-			
-			if (postCode) {
-				length = postCode.length;
-			}
-			
-			for (var i:int = 0; i < length; i++)
+			var error:Object = checkPostCodeFormat(postCode,
+				validator.formats[formatIndex], validator.countryCode);
+				
+			if (error)
 			{
-				var char:String = postCode.charAt(i);
-				var formatChar:String = validator.formats[f].charAt(i);
-				
-				// ignore character past end of format string
-				if (i >= formatLength) {
-					break;
-				}
-				
-				if (DECIMAL_DIGITS.indexOf(char) == -1
-					&& ROMAN_LETTERS.indexOf(char) == -1 && spacers.indexOf(char) == -1)
-				{
-					invalidChar = true;
-				}
-				else if (formatChar == "N" && DECIMAL_DIGITS.indexOf(char) == -1)
-				{
-					invalidFormat = true;
-				}
-				else if (formatChar == "A" && ROMAN_LETTERS.indexOf(char) == -1)
-				{
-					invalidFormat = true;
-				}
-				else if (formatChar == "C")
-				{
-					if (countryDigit >= 2 || !validator.countryCode || char != validator.countryCode.charAt(countryDigit))
-					{
-						invalidFormat = true;
-					}
-					countryDigit++;
-				}
-				else if (spacers.indexOf(formatChar) >= 0 && formatChar != char) {
-					invalidFormat = true;
-				}
+				errors.push(error);
 			}
-			
-			wrongLength = (length != formatLength);
-			
-			// found a match so no need to check further
-			if (!invalidFormat && !invalidChar && !wrongLength) {
-				errors = null;
+			else
+			{
+				errors = [];
 				break;
 			}
-			
-			// We want invalid char and invalid format errors show in preference
-			// so give wrong length errors a higher value
-			errors.push({invalidFormat:invalidFormat, invalidChar:invalidChar, wrongLength:wrongLength,
-				count:Number(invalidFormat) + Number(invalidChar) + Number(wrongLength)*1.5})
 		}
+
+		// return result with least number of errors
+		errors.sortOn("count", Array.NUMERIC);
 		
-		if (validator && validator.extraValidation != null)
-		{
-			var extraError:String = validator.extraValidation(postCode);
-			
-			if (extraError) {
-				results.push(new ValidationResult(
-					true, baseField, "wrongFormat", extraError));
-			}
-		}
-		
-		if (errors && errors.length > 0) {
-			// return result with least number of errors
-			// TODO return/remember closest format or place in error string?
-			errors.sortOn("count", Array.NUMERIC);
-			
-			if (errors[0].invalidChar)
-			{
-				results.push(new ValidationResult(
-					true, baseField, "invalidChar",
-					validator.invalidCharError));
-			}
-	        
-	        if (errors[0].wrongLength)
-	        {
-	            results.push(new ValidationResult(
-	                true, baseField, "wrongLength",
-	                validator.wrongLengthError));
-	        }
-	        
-			if (errors[0].invalidFormat)
-			{
-	      	 	results.push(new ValidationResult(
-	                true, baseField, "wrongFormat",
-	                validator.wrongFormatError));
-			}
-		}
+		userValidationResults(validator, baseField, postCode, results);
+
+		// TODO return/remember closest format or place in results?
+		errorValidationResults(validator, baseField, errors[0], results);
 		
         return results;
     }
@@ -563,6 +624,13 @@ public class PostCodeValidator extends Validator
         else
             return PostCodeValidator.validatePostCode(this, String(value), null);
     }
+	
+	
+	//--------------------------------------------------------------------------
+	//
+	//  methods
+	//
+	//--------------------------------------------------------------------------
 
 	/** 
 	 *  Sets the suggested format for postcodes for a

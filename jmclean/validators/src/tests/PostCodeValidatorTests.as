@@ -70,6 +70,16 @@ package tests
 		}
 		
 		[Test]
+		public function emptyFormat():void {
+			var results:Array;
+			
+			validator.format = "";
+			
+			results = PostCodeValidator.validatePostCode(validator, "", null);
+			assertTrue("No errors", results.length == 0);		
+		}
+		
+		[Test]
 		public function setFormats():void {
 			validator.format = "NNNN";
 			assertTrue("Format is correct", validator.format = "NNNN");
@@ -405,7 +415,7 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "K0D 2I0", null);
 			assertTrue("Invalid Postcode", results.length == 1);
-			invalidFormatError(results); //TODO mark as user user?
+			invalidFormatError(results); //TODO mark as user error?
 		}
 		
 		public function canadianLetters(postCode:String):String {
@@ -436,11 +446,11 @@ package tests
 			
 			results = PostCodeValidator.validatePostCode(validator, "0250", null);
 			assertTrue("Invalid Postcode", results.length == 1);
-			invalidFormatError(results); //TODO mark as user user?
+			invalidFormatError(results); //TODO mark as user error?
 			
 			results = PostCodeValidator.validatePostCode(validator, "5820", null);
 			assertTrue("Invalid Postcode", results.length == 1);
-			invalidFormatError(results); //TODO mark as user user?
+			invalidFormatError(results); //TODO mark as user error?
 		}
 		
 		public function australiaPOBox(postCode:String):String {
