@@ -272,13 +272,15 @@ public class PostCodeFormatter extends Formatter
 	 *  out of it.
 	 *
 	 */
-	protected function condensedFormat(postCode:String):String {
+	protected function condensedFormat(postCode:String):String
+	{
 		var condensed:String = postCode;
 		var length:int;
 	
 		if (postCode) {
 			length = postCode.length;
 		}
+		
 		for (var i:int = 0; i < length; i++)
 		{
 			var char:String = PostCodeValidator.FORMAT_SPACERS.charAt(i);
