@@ -20,6 +20,7 @@
 package mx.validators
 {
 
+import flash.globalization.Collator;
 import flash.globalization.LocaleID;
 import flash.globalization.StringTools;
 
@@ -83,8 +84,6 @@ public class PostCodeValidator extends Validator
 	public static const FORMAT_LETTER:String = "A";
 	public static const FORMAT_COUNTRY_CODE:String = "C";
 	public static const FORMAT_SPACERS:String = " -";
-	
-	protected static const FULL_WIDTH_DIGITS:String = "０１２３４５６７８９";
 
     //--------------------------------------------------------------------------
     //
@@ -94,6 +93,45 @@ public class PostCodeValidator extends Validator
 
 	/**
 	 *  @private
+	 *  Simulate String.indexOf but ignore wide characters.
+	 * 
+	 *  @return index of char in string or -1 if char not in string
+	 *
+	 */
+	protected static function indexOf(string:String, char:String):int {
+		var length:int = string.length;
+		var collate:Collator = new Collator(LocaleID.DEFAULT);
+		
+		collate.ignoreCharacterWidth = true;
+		
+		for (var i:int =0 ; i < length; i++)
+		{
+			if (collate.equals(string.charAt(i), char))
+			{
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 *  @private
+	 *  Compares if two characters are equal ignoring wide characters.
+	 * 
+	 *  @return true is char are the same, false if they are not.
+	 *
+	 */
+	protected static function equals(charA:String, charB:String):Boolean {
+		var collate:Collator = new Collator(LocaleID.DEFAULT);
+		
+		collate.ignoreCharacterWidth = true;
+	
+		return collate.equals(charA, charB);
+	}
+	
+	/**
+	 *  @private
 	 * 
 	 *  @param char to check
 	 *  @return true if the char is not a valid format character
@@ -101,7 +139,8 @@ public class PostCodeValidator extends Validator
 	 */
 	protected static function notFormatChar(char:String):Boolean
 	{
-		return FORMAT_SPACERS.indexOf(char) == -1
+
+		return indexOf(FORMAT_SPACERS, char) == -1
 			&& char != FORMAT_NUMBER
 			&& char != FORMAT_LETTER
 			&& char != FORMAT_COUNTRY_CODE;
@@ -116,8 +155,7 @@ public class PostCodeValidator extends Validator
 	 */
 	protected static function noDecimalDigits(char:String):Boolean
 	{
-		return DECIMAL_DIGITS.indexOf(char) == -1
-			&& FULL_WIDTH_DIGITS.indexOf(char) == -1;
+		return indexOf(DECIMAL_DIGITS, char) == -1;
 	}
 	
 	/**
@@ -129,7 +167,7 @@ public class PostCodeValidator extends Validator
 	 */
 	protected static function noRomanLetters(char:String):Boolean
 	{
-		return ROMAN_LETTERS.indexOf(char) == -1;
+		return indexOf(ROMAN_LETTERS, char) == -1;
 	}
 	
 	/**
@@ -141,7 +179,7 @@ public class PostCodeValidator extends Validator
 	 */
 	protected static function noSpacers(char:String):Boolean
 	{
-		return FORMAT_SPACERS.indexOf(char) == -1;
+		return indexOf(FORMAT_SPACERS, char) == -1;
 	}
 
 	/**
@@ -270,7 +308,7 @@ public class PostCodeValidator extends Validator
 			
 			if (noDecimalDigits(char) && noRomanLetters(char) && noSpacers(char))
 			{
-				if (!countryCode || countryCode.indexOf(char) == -1)
+				if (!countryCode || indexOf(countryCode,char) == -1)
 				{
 					invalidChar = true;
 				}
@@ -285,13 +323,13 @@ public class PostCodeValidator extends Validator
 			}
 			else if (formatChar == FORMAT_COUNTRY_CODE)
 			{
-				if (countryIndex >= 2 || !countryCode || char != countryCode.charAt(countryIndex))
+				if (countryIndex >= 2 || !countryCode || !equals(char, countryCode.charAt(countryIndex)))
 				{
 					invalidFormat = true;
 				}
 				countryIndex++;
 			}
-			else if (FORMAT_SPACERS.indexOf(formatChar) >= 0 && formatChar != char) {
+			else if (indexOf(FORMAT_SPACERS, formatChar) >= 0 && !equals(formatChar, char)) {
 				invalidFormat = true;
 			}
 		}
