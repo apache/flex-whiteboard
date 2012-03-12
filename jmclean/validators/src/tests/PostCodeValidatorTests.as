@@ -301,7 +301,14 @@ package tests
 			results = PostCodeValidator.validatePostCode(validator, "AA1234", null);
 			assertTrue("No errors", results.length == 0);
 			
+			results = PostCodeValidator.validatePostCode(validator, "ＡＡ１２３４", null);
+			assertTrue("No errors", results.length == 0);
+			
 			results = PostCodeValidator.validatePostCode(validator, "BB1234", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "ＢＢ１２３４", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidFormatError(results);
 			
@@ -309,7 +316,15 @@ package tests
 			assertTrue("Invalid Postcode", results.length == 1);
 			wrongLengthError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "ＡＡ１２３", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "AA12345", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			wrongLengthError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "ＡＡ１２３４５", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			wrongLengthError(results);
 			
@@ -317,7 +332,15 @@ package tests
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidFormatError(results);
 			
+			results = PostCodeValidator.validatePostCode(validator, "１２３４ＡＡ", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
 			results = PostCodeValidator.validatePostCode(validator, "A1A234", null);
+			assertTrue("Invalid Postcode", results.length == 1);
+			invalidFormatError(results);
+			
+			results = PostCodeValidator.validatePostCode(validator, "Ａ１Ａ２３４", null);
 			assertTrue("Invalid Postcode", results.length == 1);
 			invalidFormatError(results);
 		}
