@@ -1,51 +1,60 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><!-- saved from url=(0014)about:internet --><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><link rel="stylesheet" href="../../style.css" type="text/css" media="screen"><link rel="stylesheet" href="../../print.css" type="text/css" media="print"><link rel="stylesheet" href="../../override.css" type="text/css"><meta name="keywords" content="PostCodeFormatter,mx.formatters.PostCodeFormatter,formatString,formats,format"><title>mx.formatters.PostCodeFormatter</title></head><body><script language="javascript" type="text/javascript" src="../../asdoc.js"></script><script language="javascript" type="text/javascript" src="../../help.js"></script><script language="javascript" type="text/javascript" src="../../cookies.js"></script><script language="javascript" type="text/javascript"><!--
-				asdocTitle = 'PostCodeFormatter - Postcode Validator and Formatter';
+				asdocTitle = 'PostCodeFormatter - PostCode Classes';
 				var baseRef = '../../';
 				window.onload = configPage;
 			--></script>
 <script type="text/javascript">
 			scrollToNameAnchor();
-		</script><table class="titleTable" cellpadding="0" cellspacing="0" id="titleTable" style="display:none"><tr><td class="titleTableTitle" align="left">Postcode Validator and Formatter</td><td class="titleTableTopNav" align="right"><a href="../../package-summary.html" onclick="loadClassListFrame('../../all-classes.html')">All Packages</a>&nbsp;|&nbsp;<a href="../../class-summary.html" onclick="loadClassListFrame('../../all-classes.html')">All Classes</a>&nbsp;|&nbsp;<a href="../../all-index-A.html" onclick="loadClassListFrame('../../index-list.html')">Index</a>&nbsp;|&nbsp;<a id="framesLink1" href="../../index.html?mx/formatters/PostCodeFormatter.html&amp;mx/formatters/class-list.html">Frames</a><a id="noFramesLink1" style="display:none" href="" onclick="parent.location=document.location"> No Frames </a></td><td class="titleTableLogo" align="right" rowspan="3"><img src="../../images/logo.jpg" class="logoImage" alt=" Adobe Logo " title=" Adobe Logo "></td></tr><tr class="titleTableRow2"><td class="titleTableSubTitle" id="subTitle" align="left">PostCodeFormatter</td><td class="titleTableSubNav" id="subNav" align="right"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td></tr><tr class="titleTableRow3"><td colspan="3">&nbsp;</td></tr></table><script language="javascript" type="text/javascript" xml:space="preserve">
+		</script><table class="titleTable" cellpadding="0" cellspacing="0" id="titleTable" style="display:none"><tr><td class="titleTableTitle" align="left">PostCoseValidator and PostCodeformatter</td><td class="titleTableTopNav" align="right"><a href="../../package-summary.html" onclick="loadClassListFrame('../../all-classes.html')">All Packages</a>&nbsp;|&nbsp;<a href="../../class-summary.html" onclick="loadClassListFrame('../../all-classes.html')">All Classes</a>&nbsp;|&nbsp;<a href="../../all-index-A.html" onclick="loadClassListFrame('../../index-list.html')">Index</a>&nbsp;|&nbsp;<a id="framesLink1" href="../../index.html?mx/formatters/PostCodeFormatter.html&amp;mx/formatters/class-list.html">Frames</a><a id="noFramesLink1" style="display:none" href="" onclick="parent.location=document.location"> No Frames </a></td><td class="titleTableLogo" align="right" rowspan="3"><img src="../../images/logo.jpg" class="logoImage" alt=" Adobe Logo " title=" Adobe Logo "></td></tr><tr class="titleTableRow2"><td class="titleTableSubTitle" id="subTitle" align="left">PostCodeFormatter</td><td class="titleTableSubNav" id="subNav" align="right"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td></tr><tr class="titleTableRow3"><td colspan="3">&nbsp;</td></tr></table><script language="javascript" type="text/javascript" xml:space="preserve">
 				<!--
 				
 					if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PostCodeFormatter"); titleBar_setSubNav(false,true,false,false,false,false,false,false,true,false,false	,false,false,false,false,false);}	
 				-->
 			</script><div xmlns:fn="http://www.w3.org/2005/xpath-functions" class="MainContent"><table class="classHeaderTable" cellpadding="0" cellspacing="0"><tr><td class="classHeaderTableLabel">Package</td><td><a href="package-detail.html" onclick="javascript:loadClassListFrame('class-list.html')">mx.formatters</a></td></tr><tr><td class="classHeaderTableLabel">Class</td><td class="classSignature">public  class  PostCodeFormatter</td></tr><tr><td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">PostCodeFormatter  <img src="../../images/inherit-arrow.gif" title="Inheritance" alt="Inheritance" class="inheritArrow"> mx.formatters.Formatter</td></tr></table><p></p><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Language Version :&nbsp;</b></td><td>ActionScript 3.0</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Product Version :&nbsp;</b></td><td>ApacheFlex 4.8</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Runtime Versions :&nbsp;</b></td><td>AIR 1.0, Flash Player  10.2</td></tr></table><p></p><p></p><p></p>
-  The PostCodeFormatter class formats a valid number
-  based on a user-supplied <code>formatString</code> or
+  The PostCodeFormatter class formats a valid postcode
+  based on a user set <code>formatString</code> or
   <code>formats</code> property.
   
-  Postcode format consists of C,N,A and spaces or hyphens
-  C or CC is country code (required for some postcodes)
- N is a number 0-9
-  A is a letter A-Z or a-z
+  <p>Postcode formats consists of the letters C, N, A and spaces or hyphens
+  <ul>
+                     <li>CC or C is the country code (required for some postcodes).</li>
+                     <li>N is a number 0-9.</li>
+                     <li>A is a letter A-Z or a-z,</li>
+                  </ul>
+               </p>
  
-  For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
-  followed by four digits and "AA NNNN" is two letters, followed by a space
-  followed by four digits.
+               <p>Country codes one be one or two digits.</p>
  
-  More than one format can be specified by setting the <code>formats</code>
-  property to an array of formats.
+               <p>For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
+  followed by four digits and "AA NNNN" is two letters, followed by a space then
+  followed by four digits.</p>
+ 
+               <p>More than one format can be specified by setting the <code>formats</code>
+  property to an array of format strings.</p>
   
-  <p>Spaces and hypens will be added if missing to format the postcode correctly.</p>
+               <p>Spaces and hypens will be added if missing to format the postcode correctly.</p>
  
                <p>If an error occurs, an empty String is returned and a String that  
   describes the error is saved to the <code>error</code> property.  
-  The <code>error</code> property can have one of the following values:</p>
- 
-               <ul>
-                  <li>
-                     <code>"invalidFormat"</code> means the format constants an invalid
+  The <code>error</code> property can have one of the following values:
+  <ul>
+                     <li>
+                        <code>"invalidFormat"</code> means the format constants an invalid
     character.</li>
-                  <li>
-                     <code>"wrongFormat"</code> means the postcode has an invalid format.</li>
-                  <li>
-                     <code>"wrongLength"</code> means the postcode is not a valid length.</li>
-                  <li>
-                     <code>"invalidChar"</code> means the postcode contains an invalid
+                     <li>
+                        <code>"wrongFormat"</code> means the postcode has an invalid format.</li>
+                     <li>
+                        <code>"wrongLength"</code> means the postcode is not a valid length.</li>
+                     <li>
+                        <code>"invalidChar"</code> means the postcode contains an invalid
     character.</li>
-               </ul>
+                  </ul>
+               </p>
   
+               <p>Fullwidth numbers and letters are supported in postcodes by ignoring character
+  width via the <code>flash.globalization.Collator</code> 
+                  <code>equals</code> method.</p>
+ 
             <p></p><a name="mxmlSyntaxSummary"></a><span class="classHeaderTableLabel">MXML Syntax</span><span id="showMxmlLink" style="display:none"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../images/collapsed.gif" title="collapsed" alt="collapsed" class="collapsedImage">Show MXML Syntax</a><br/></span><span id="hideMxmlLink"><a href="#mxmlSyntaxSummary" onclick="toggleMXMLOnly();"><img src="../../images/expanded.gif" title="expanded" alt="expanded" class="expandedImage">Hide MXML Syntax</a></span><div id="mxmlSyntax" class="mxmlSyntax">
   
   <p>The <code>&lt;mx:PostCodeFormatter&gt;</code> tag
@@ -59,48 +68,48 @@
   />
   </pre>
   
-  
   </div><script language="javascript" type="text/javascript"><!--
 								setMXMLOnly();
-								--></script><br/><hr></div><a name="propertySummary"></a><div class="summarySection"><div class="summaryTableTitle">Public Properties</div><table cellspacing="0" cellpadding="3" class="summaryTable " id="summaryTableProperty"><tr><th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined By</th></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a href="#formats" class="signatureLink">formats</a> : Array<div class="summaryTableDescription"> 
-	  Formats of postcode
-	  Sets an array of valid formats, use for locales
-	  where more than one format is required.</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a href="#formatString" class="signatureLink">formatString</a> : String<div class="summaryTableDescription"> 
-	  Format of postcode
-	  Format consists of CC,N,A and spaces or hyphens
-	  CC is country code (required for some postcodes)
-	 N is a number 0-9
-	  A is a letter A-Z or a-z
-	 
-	  </div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr></table></div><a name="methodSummary"></a><div class="summarySection"><div class="summaryTableTitle">Public Methods </div><table cellspacing="0" cellpadding="3" class="summaryTable " id="summaryTableMethod"><tr><th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined By</th></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><div class="summarySignature"><a href="#PostCodeFormatter()" class="signatureLink">PostCodeFormatter</a>()</div><div class="summaryTableDescription">
+								--></script><p><span class="classHeaderTableLabel">See also</span></p><div class="seeAlso"><a href="../../mx/validators/PostCodeValidator.html" target="">mx.validators.PostCodeValidator</a></div><br/><hr></div><a name="propertySummary"></a><div class="summarySection"><div class="summaryTableTitle">Public Properties</div><table cellspacing="0" cellpadding="3" class="summaryTable " id="summaryTableProperty"><tr><th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined By</th></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a href="#formats" class="signatureLink">formats</a> : Array<div class="summaryTableDescription"> 
+	  An array of format strings to format the postcode in.</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a href="#formatString" class="signatureLink">formatString</a> : String<div class="summaryTableDescription"> 
+	  Format string to format the postcode in.</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr></table></div><a name="methodSummary"></a><div class="summarySection"><div class="summaryTableTitle">Public Methods </div><table cellspacing="0" cellpadding="3" class="summaryTable " id="summaryTableMethod"><tr><th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined By</th></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><div class="summarySignature"><a href="#PostCodeFormatter()" class="signatureLink">PostCodeFormatter</a>()</div><div class="summaryTableDescription">
 	  Constructor.</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr><tr class=""><td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><div class="summarySignature"><a href="#format()" class="signatureLink">format</a>(value:Object):String</div><div class="summaryTableDescription">[override] 
-	  Formats the value by using the specified format(s).</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr></table></div><script language="javascript" type="text/javascript"><!--
+	  Formats the value by using the format set in formatString
+	  or formats.</div></td><td class="summaryTableOwnerCol">PostCodeFormatter</td></tr></table></div><script language="javascript" type="text/javascript"><!--
 										showHideInherited();
 										--></script><div class="MainContent"><div class="detailSectionHeader">Property Detail</div><a name="propertyDetail"></a><a name="formats"></a><table class="detailHeader" cellpadding="0" cellspacing="0"><tr><td class="detailHeaderName">formats</td><td class="detailHeaderType">property</td></tr></table><div class="detailBody"><code>formats:Array</code><p></p><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Language Version :&nbsp;</b></td><td>ActionScript 3.0</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Product Version :&nbsp;</b></td><td>ApacheFlex 4.8</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Runtime Versions :&nbsp;</b></td><td>AIR 1.0, Flash Player  10.2</td></tr></table><p></p><p></p><p> 
-	  Formats of postcode
-	  Sets an array of valid formats, use for locales
-	  where more than one format is required. eg en_UK
-	  See format for format.
+	  An array of format strings to format the postcode in.
 	 
+	  <p>Use for locales where more than one format is required.
+	  eg en_UK</p>
+	 
+	  <p>See <code>formatString</code> for format of the format
+	  strings.</p>
 	 
 	  </p><p> The default value is <code>[]</code>.</p><br/><span class="label"> Implementation </span><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;public function get formats():Array</code><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;public function set formats(value:Array):void</code><br/></div><a name="propertyDetail"></a><a name="formatString"></a><table class="detailHeader" cellpadding="0" cellspacing="0"><tr><td class="detailHeaderName">formatString</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td></tr></table><div class="detailBody"><code>formatString:String</code><p></p><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Language Version :&nbsp;</b></td><td>ActionScript 3.0</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Product Version :&nbsp;</b></td><td>ApacheFlex 4.8</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Runtime Versions :&nbsp;</b></td><td>AIR 1.0, Flash Player  10.2</td></tr></table><p></p><p></p><p> 
-	  Format of postcode
-	  Format consists of CC,N,A and spaces or hyphens
-	  CC is country code (required for some postcodes)
-	 N is a number 0-9
-	  A is a letter A-Z or a-z
+	  Format string to format the postcode in.
+	 
+	  <p>The format string consists of the letters C, N, A and spaces
+	  or hyphens:
+	  <ul>
+	  <li>CC or C is country code (required for some postcodes).</li>
+	 <li>N is a number 0-9.</li>
+	  <li>A is a letter A-Z or a-z.</li>
+	  </ul></p>
 	 
 	  </p><p> The default value is <code>null</code>.</p><br/><span class="label"> Implementation </span><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;public function get formatString():String</code><br/><code>&nbsp;&nbsp;&nbsp;&nbsp;public function set formatString(value:String):void</code><br/></div><a name="constructorDetail"></a><div class="detailSectionHeader">Constructor Detail</div><a name="PostCodeFormatter()"></a><table class="detailHeader" cellpadding="0" cellspacing="0"><tr><td class="detailHeaderName">PostCodeFormatter</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">Constructor</td></tr></table><div class="detailBody"><code>public function PostCodeFormatter()</code><p></p><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Language Version :&nbsp;</b></td><td>ActionScript 3.0</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Product Version :&nbsp;</b></td><td>ApacheFlex 4.8</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Runtime Versions :&nbsp;</b></td><td>AIR 1.0, Flash Player  10.2</td></tr></table><p></p><p>
 	  Constructor.
 	  
 	  </p></div><a name="methodDetail"></a><div class="detailSectionHeader">Method Detail</div><a name="format()"></a><a name="format(Object)"></a><table class="detailHeader" cellpadding="0" cellspacing="0"><tr><td class="detailHeaderName">format</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td></tr></table><div class="detailBody"><code>override public function format(value:Object):String</code><p></p><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Language Version :&nbsp;</b></td><td>ActionScript 3.0</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Product Version :&nbsp;</b></td><td>ApacheFlex 4.8</td></tr></table><table cellpadding="0" cellspacing="0" border="0"><tr><td style="white-space:nowrap" valign="top"><b> Runtime Versions :&nbsp;</b></td><td>AIR 1.0, Flash Player  10.2</td></tr></table><p></p><p></p><p>
-	  Formats the value by using the specified format(s).
-	  If the value cannot be formatted this method returns an empty String 
-	  and write a description of the error to the <code>error</code> property.
+	  Formats the value by using the format set in <code>formatString</code>
+	  or <code>formats</code>.
+	 
+	  <p>If the value cannot be formatted this method returns an empty String 
+	  and write a description of the error to the <code>error</code> property.</p>
 	 
 	  </p><p><span class="label"> Parameters </span><table cellpadding="0" cellspacing="0" border="0"><tr><td width="20px"></td><td><code><span class="label">value</span>:Object</code> &mdash; Value to format.
 	 
 	  </td></tr></table></p><p></p><span class="label">Returns</span><table cellpadding="0" cellspacing="0" border="0"><tr><td width="20"></td><td><code>String</code> &mdash; Formatted String. Empty if an error occurs. A description 
 	  of the error condition is written to the <code>error</code> property.
 	  
-	  </td></tr></table></div><br/><br/><hr><br/><p></p><center class="copyright"><footer></footer><br/>Mon Mar 12 2012, 10:59 AM +11:00  </center></div></body></html><!--<br/>Mon Mar 12 2012, 10:59 AM +11:00  -->
+	  </td></tr></table></div><br/><br/><hr><br/><p></p><center class="copyright"><footer></footer><br/>Mon Mar 12 2012, 05:10 PM +11:00  </center></div></body></html><!--<br/>Mon Mar 12 2012, 05:10 PM +11:00  -->
