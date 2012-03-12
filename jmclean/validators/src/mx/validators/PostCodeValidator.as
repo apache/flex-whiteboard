@@ -142,7 +142,7 @@ public class PostCodeValidator extends Validator
 	 *  @return Index of char in string or -1 if char not in string.
 	 *
 	 */
-	protected static function indexOf(string:String, char:String):int {
+	protected function indexOf(string:String, char:String):int {
 		var length:int = string.length;
 		var collate:Collator = new Collator(LocaleID.DEFAULT);
 		
@@ -167,7 +167,7 @@ public class PostCodeValidator extends Validator
 	 *  @return True is charA is the same as charB, false if they are not.
 	 *
 	 */
-	protected static function equals(charA:String, charB:String):Boolean {
+	protected function equals(charA:String, charB:String):Boolean {
 		var collate:Collator = new Collator(LocaleID.DEFAULT);
 		
 		collate.ignoreCharacterWidth = true;
@@ -182,7 +182,7 @@ public class PostCodeValidator extends Validator
 	 *  @return True if the char is not a valid format character.
 	 *
 	 */
-	protected static function notFormatChar(char:String):Boolean
+	protected function notFormatChar(char:String):Boolean
 	{
 		return indexOf(FORMAT_SPACERS, char) == -1
 			&& char != FORMAT_NUMBER
@@ -197,7 +197,7 @@ public class PostCodeValidator extends Validator
 	 *  @return True if the char is not a valid digit.
 	 *
 	 */
-	protected static function noDecimalDigits(char:String):Boolean
+	protected function noDecimalDigits(char:String):Boolean
 	{
 		return indexOf(DECIMAL_DIGITS, char) == -1;
 	}
@@ -209,7 +209,7 @@ public class PostCodeValidator extends Validator
 	 *  @return True if the char is not a valid letter.
 	 *
 	 */
-	protected static function noRomanLetters(char:String):Boolean
+	protected function noRomanLetters(char:String):Boolean
 	{
 		return indexOf(ROMAN_LETTERS, char) == -1;
 	}
@@ -221,7 +221,7 @@ public class PostCodeValidator extends Validator
 	 *  @return True if the char is not a valid spacer.
 	 *
 	 */
-	protected static function noSpacers(char:String):Boolean
+	protected function noSpacers(char:String):Boolean
 	{
 		return indexOf(FORMAT_SPACERS, char) == -1;
 	}
@@ -235,7 +235,7 @@ public class PostCodeValidator extends Validator
 	 *  supplied postCode.
 	 *
 	 */
-	protected static function userValidationResults(validator:PostCodeValidator,
+	protected function userValidationResults(validator:PostCodeValidator,
 												 baseField:String,
 												 postCode:String,
 												 results:Array):void
@@ -262,7 +262,7 @@ public class PostCodeValidator extends Validator
 	 *  to the user in validation errors.
 	 *
 	 */
-	protected static function errorValidationResults(validator:PostCodeValidator,
+	protected function errorValidationResults(validator:PostCodeValidator,
 												  baseField:String,
 												  error:Object,
 												  results:Array):void
@@ -306,7 +306,7 @@ public class PostCodeValidator extends Validator
 	 *  and an indication of invalidness (used later to sort errors).
 	 *
 	 */
-	protected static function checkPostCodeFormat(postCode:String,
+	protected function checkPostCodeFormat(postCode:String,
 											   format:String,
 											   countryCode:String):Object
 	{
@@ -424,7 +424,6 @@ public class PostCodeValidator extends Validator
                                            postCode:String,
                                            baseField:String):Array
     {
-		var validPostCode:Boolean = true;
 		var numberFormats:int;
 		var errors:Array = [];
         var results:Array = [];
@@ -436,7 +435,7 @@ public class PostCodeValidator extends Validator
 		
 		for (var formatIndex:int = 0; formatIndex < numberFormats; formatIndex++)
 		{	
-			var error:Object = checkPostCodeFormat(postCode,
+			var error:Object = validator.checkPostCodeFormat(postCode,
 				validator.formats[formatIndex], validator.countryCode);
 				
 			if (error)
@@ -453,10 +452,10 @@ public class PostCodeValidator extends Validator
 		// return result with least number of errors
 		errors.sortOn("invalidness", Array.NUMERIC);
 		
-		userValidationResults(validator, baseField, postCode, results);
+		validator.userValidationResults(validator, baseField, postCode, results);
 
 		// TODO return/remember closest format or place in results?
-		errorValidationResults(validator, baseField, errors[0], results);
+		validator.errorValidationResults(validator, baseField, errors[0], results);
 		
         return results;
     }
@@ -923,9 +922,7 @@ public class PostCodeValidator extends Validator
 	 */
 	public function suggestFormat(locale:String = null):Array {
 		var region:String = getRegion(locale);
-			
-		formats = [];
-		
+
 		switch (region)
 		{
 			case "AU":
@@ -970,6 +967,9 @@ public class PostCodeValidator extends Validator
 				break;			
 			case "US":
 				formats = ["NNNNN", "NNNNN-NNNN"];
+				break;
+			default:
+				formats = [];
 				break;
 		}
 		
