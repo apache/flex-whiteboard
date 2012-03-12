@@ -428,11 +428,12 @@ public class PostCodeValidator extends Validator
 		var errors:Array = [];
         var results:Array = [];
 
-		if (validator)
+		if (!validator)
 		{
-			numberFormats = validator.formats.length
+			return [];
 		}
-		
+
+		numberFormats = validator.formats.length;
 		for (var formatIndex:int = 0; formatIndex < numberFormats; formatIndex++)
 		{	
 			var error:Object = validator.checkPostCodeFormat(postCode,
