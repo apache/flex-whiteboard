@@ -29,28 +29,31 @@ import mx.validators.ValidationResult;
 [ResourceBundle("formatters")]
 
 /**
- *  The PostCodeFormatter class formats a valid number
- *  based on a user-supplied <code>formatString</code> or
+ *  The PostCodeFormatter class formats a valid postcode
+ *  based on a user set <code>formatString</code> or
  *  <code>formats</code> property.
  *  
- *  Postcode format consists of C,N,A and spaces or hyphens
- *  C or CC is country code (required for some postcodes)
- *	N is a number 0-9
- *  A is a letter A-Z or a-z
+ *  <p>Postcode formats consists of the letters C, N, A and spaces or hyphens
+ *  <ul>
+ *  <li>CC or C is the country code (required for some postcodes).</li>
+ *	<li>N is a number 0-9.</li>
+ *  <li>A is a letter A-Z or a-z,</li>
+ *  </ul></p>
  * 
- *  For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
- *  followed by four digits and "AA NNNN" is two letters, followed by a space
- *  followed by four digits.
+ *  <p>Country codes one be one or two digits.</p>
  * 
- *  More than one format can be specified by setting the <code>formats</code>
- *  property to an array of formats.
+ *  <p>For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
+ *  followed by four digits and "AA NNNN" is two letters, followed by a space then
+ *  followed by four digits.</p>
+ * 
+ *  <p>More than one format can be specified by setting the <code>formats</code>
+ *  property to an array of format strings.</p>
  *  
  *  <p>Spaces and hypens will be added if missing to format the postcode correctly.</p>
  *
  *  <p>If an error occurs, an empty String is returned and a String that  
  *  describes the error is saved to the <code>error</code> property.  
- *  The <code>error</code> property can have one of the following values:</p>
- *
+ *  The <code>error</code> property can have one of the following values:
  *  <ul>
  *    <li><code>"invalidFormat"</code> means the format constants an invalid
  *    character.</li>
@@ -58,8 +61,11 @@ import mx.validators.ValidationResult;
  *    <li><code>"wrongLength"</code> means the postcode is not a valid length.</li>
  *    <li><code>"invalidChar"</code> means the postcode contains an invalid
  *    character.</li>
- *  </ul>
+ *  </ul></p>
  *  
+ *  <p>Fullwidth numbers and letters are supported in postcodes by ignoring character
+ *  width via the <code>flash.globalization.Collator</code> <code>equals</code> method.</p>
+ * 
  *  @mxml
  *  
  *  <p>The <code>&lt;mx:PostCodeFormatter&gt;</code> tag
@@ -73,6 +79,7 @@ import mx.validators.ValidationResult;
  *  />
  *  </pre>
  *  
+ *  @see mx.validators.PostCodeValidator
  *  
  *  @langversion 3.0
  *  @playerversion Flash 10.2
@@ -120,12 +127,16 @@ public class PostCodeFormatter extends Formatter
 	[Inspectable(category="General", defaultValue="null")]
 
 	/** 
-	 *  Format of postcode
-	 *  Format consists of CC,N,A and spaces or hyphens
-	 *  CC is country code (required for some postcodes)
-	 *	N is a number 0-9
-	 *  A is a letter A-Z or a-z
-	 *
+	 *  Format string to format the postcode in.
+	 * 
+	 *  <p>The format string consists of the letters C, N, A and spaces
+	 *  or hyphens:
+	 *  <ul>
+	 *  <li>CC or C is country code (required for some postcodes).</li>
+	 *	<li>N is a number 0-9.</li>
+	 *  <li>A is a letter A-Z or a-z.</li>
+	 *  </ul></p>
+	 * 
 	 *  @default null
 	 *  
 	 *  @langversion 3.0
@@ -158,11 +169,13 @@ public class PostCodeFormatter extends Formatter
 	}
 	
 	/** 
-	 *  Formats of postcode
-	 *  Sets an array of valid formats, use for locales
-	 *  where more than one format is required. eg en_UK
-	 *  See format for format.
+	 *  An array of format strings to format the postcode in.
 	 * 
+	 *  <p>Use for locales where more than one format is required.
+	 *  eg en_UK</p>
+	 * 
+	 *  <p>See <code>formatString</code> for format of the format
+	 *  strings.</p>
 	 *
 	 *  @default []
 	 *  
@@ -190,9 +203,11 @@ public class PostCodeFormatter extends Formatter
 	//--------------------------------------------------------------------------
 
  	/**
-	 *  Formats the value by using the specified format(s).
-	 *  If the value cannot be formatted this method returns an empty String 
-	 *  and write a description of the error to the <code>error</code> property.
+	 *  Formats the value by using the format set in <code>formatString</code>
+	 *  or <code>formats</code>.
+	 * 
+	 *  <p>If the value cannot be formatted this method returns an empty String 
+	 *  and write a description of the error to the <code>error</code> property.</p>
 	 *
 	 *  @param value Value to format.
 	 *
@@ -268,7 +283,7 @@ public class PostCodeFormatter extends Formatter
 	/**
 	 *  @private
 	 * 
-	 *  Take a format or paostCode and strips all spacing characters
+	 *  Take a format or paostCode and strip all spacing characters
 	 *  out of it.
 	 *
 	 */

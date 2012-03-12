@@ -33,19 +33,31 @@ import mx.resources.ResourceManager;
  *  The PostCodeValidator class validates that a String
  *  has the correct length and format for a post code.
  * 
- *  Postcode format consists of C,N,A and spaces or hyphens
- *  CC or C is country code (required for some postcodes)
- *	N is a number 0-9
- *  A is a letter A-Z or a-z
+ *  <p>Postcode formats consists of the letters C, N, A and spaces or hyphens
+ *  <ul>
+ *  <li>CC or C is the country code (required for some postcodes).</li>
+ *	<li>N is a number 0-9.</li>
+ *  <li>A is a letter A-Z or a-z.</li>
+ *  </ul></p>
  * 
- *  For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
- *  followed by four digits and "AA NNNN" is two letters, followed by a space
- *  followed by four digits.
+ *  <p>Country codes one be one or two digits.</p>
  * 
- *  Country codes one be one or two digits.
+ *  <p>For example "NNNN" is a four digit numeric postcode, "CCNNNN" is country code
+ *  followed by four digits and "AA NNNN" is two letters, followed by a space then
+ *  followed by four digits.</p>
  * 
- *  More than one format can be specified by setting the <code>formats</code>
- *  property to an array of formats.
+ *  <p>More than one format can be specified by setting the <code>formats</code>
+ *  property to an array of format Strings.</p>
+ * 
+ *  <p>The validator can suggest postcode formats for small set of know locales by calling the
+ *  <code>suggestFormat</code> method.</p>
+ * 
+ *  <p>Postcodes can be further validated by setting the <code>extraValidation</code>
+ *  property to a user defined method that performs further checking on the postcode
+ *  digits.</p>
+ * 
+ *  <p>Fullwidth numbers and letters are supported in postcodes by ignoring character
+ *  width via the <code>flash.globalization.Collator</code> <code>equals</code> method.</p>
  *  
  *  @mxml
  *
@@ -65,6 +77,7 @@ import mx.resources.ResourceManager;
  *  /&gt;
  *  </pre>
  *  
+ *  @see mx.formatters.PostCodeFormatter
  *  
  *  @langversion 3.0
  *  @playerversion Flash 10.2
@@ -74,15 +87,45 @@ public class PostCodeValidator extends Validator
 {
     include "../core/Version.as";
 	
+	/**
+	 * Value <code>errorCode</code> of a ValidationResult is set to when
+	 * the postcode contains an invalid charater.
+	 */
 	public static const ERROR_INVALID_CHAR:String = "invalidChar";
+	
+	/**
+	 * Value <code>errorCode</code> of a ValidationResult is set to when
+	 * the postcode is of the wrong length.
+	 */
 	public static const ERROR_WRONG_LENGTH:String = "wrongLength";
+	/**
+	 * Value <code>errorCode</code> of a ValidationResult is set to when
+	 * the postcode is of the wrong format.
+	 */
 	public static const ERROR_WRONG_FORMAT:String = "wrongFormat"; 
 	
+	/**
+	 * Value <code>errorCode</code> of a ValidationResult is set to when
+	 * the format contains unknown format characters.
+	 */
 	public static const ERROR_INCORRECT_FORMAT:String = "incorrectFormat";
 
+	/**
+	 * Symbol used in postcode formats representing a single digit.
+	 */
 	public static const FORMAT_NUMBER:String = "N";
+	/**
+	 * Symbol used in postcode formats representing a single character.
+	 */
 	public static const FORMAT_LETTER:String = "A";
+	/**
+	 * Symbol used in postcode formats representing a letter of a country
+	 * code.
+	 */
 	public static const FORMAT_COUNTRY_CODE:String = "C";
+	/**
+	 * Valid spacer character in postcode formats.
+	 */
 	public static const FORMAT_SPACERS:String = " -";
 
     //--------------------------------------------------------------------------
@@ -94,8 +137,9 @@ public class PostCodeValidator extends Validator
 	/**
 	 *  @private
 	 *  Simulate String.indexOf but ignore wide characters.
+	 *  TODO move to StringValidator or Collator?
 	 * 
-	 *  @return index of char in string or -1 if char not in string
+	 *  @return Index of char in string or -1 if char not in string.
 	 *
 	 */
 	protected static function indexOf(string:String, char:String):int {
@@ -118,8 +162,9 @@ public class PostCodeValidator extends Validator
 	/**
 	 *  @private
 	 *  Compares if two characters are equal ignoring wide characters.
+	 *  TODO move to StringValidator or Collator?
 	 * 
-	 *  @return true is char are the same, false if they are not.
+	 *  @return True is charA is the same as charB, false if they are not.
 	 *
 	 */
 	protected static function equals(charA:String, charB:String):Boolean {
@@ -134,12 +179,11 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 * 
 	 *  @param char to check
-	 *  @return true if the char is not a valid format character
+	 *  @return True if the char is not a valid format character.
 	 *
 	 */
 	protected static function notFormatChar(char:String):Boolean
 	{
-
 		return indexOf(FORMAT_SPACERS, char) == -1
 			&& char != FORMAT_NUMBER
 			&& char != FORMAT_LETTER
@@ -150,7 +194,7 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 * 
 	 *  @param char to check
-	 *  @return true if the char is not a valid digit
+	 *  @return True if the char is not a valid digit.
 	 *
 	 */
 	protected static function noDecimalDigits(char:String):Boolean
@@ -162,7 +206,7 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 * 
 	 *  @param char to check
-	 *  @return true if the char is not a valid letter
+	 *  @return True if the char is not a valid letter.
 	 *
 	 */
 	protected static function noRomanLetters(char:String):Boolean
@@ -174,7 +218,7 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 * 
 	 *  @param char to check
-	 *  @return true if the char is not a valid spacer
+	 *  @return True if the char is not a valid spacer.
 	 *
 	 */
 	protected static function noSpacers(char:String):Boolean
@@ -186,8 +230,9 @@ public class PostCodeValidator extends Validator
 	 *  @private
 	 * 
 	 *  A wrong format ValidationResult is added to the results array
-	 *  if the extraValidation user supplied function returns an errors.
-	 *  ie There is a user defined issue with the supplied postCode.
+	 *  if the extraValidation user supplied function returns an error.
+	 *  An error is added when there is a user defined issue with the
+	 *  supplied postCode.
 	 *
 	 */
 	protected static function userValidationResults(validator:PostCodeValidator,
@@ -213,8 +258,8 @@ public class PostCodeValidator extends Validator
 	 *  Based on flags in the error object new ValidationResults are
 	 *  added the the results array.
 	 * 
-	 *  Note that the only first ValidationResult by default is shown
-	 *  in validation errors.
+	 *  Note that the only first ValidationResult is typically shown
+	 *  to the user in validation errors.
 	 *
 	 */
 	protected static function errorValidationResults(validator:PostCodeValidator,
@@ -258,7 +303,7 @@ public class PostCodeValidator extends Validator
 	 *  Check thats a postCode is valid and matches a certain format.
 	 * 
 	 *  @return An error object containing flags for each type of error
-	 *  and an indication of invalidness (used to later sort errors)
+	 *  and an indication of invalidness (used later to sort errors).
 	 *
 	 */
 	protected static function checkPostCodeFormat(postCode:String,
@@ -453,12 +498,16 @@ public class PostCodeValidator extends Validator
 	private var _formats:Array = [];
 	
 	/** 
-	 *  Format of postcode
-	 *  Format consists of C,N,A and spaces or hyphens
-	 *  CC or C is country code (required for some postcodes)
-	 *	N is a number 0-9
-	 *  A is a letter A-Z or a-z
-	 *
+	 *  Valid postcode format that postcodes will be compaired against.
+	 * 
+	 *  <p>The format string consists of the letters C, N, A and spaces
+	 *  or hyphens:
+	 *  <ul>
+	 *  <li>CC or C is country code (required for some postcodes).</li>
+	 *	<li>N is a number 0-9.</li>
+	 *  <li>A is a letter A-Z or a-z.</li>
+	 *  </ul></p>
+	 * 
 	 *  @default null
 	 *  
 	 *  @langversion 3.0
@@ -517,10 +566,13 @@ public class PostCodeValidator extends Validator
 	}
 
 	/** 
-	 *  Multiple postcode formats
-	 *  Sets an array of valid formats, use for locales
-	 *  where more than one poscode format exists. eg en_UK
-	 *  See format for details of teh postcode format.
+	 *  An array of valid format strings to compare postcodes against.
+	 * 
+	 *  <p>Use for locales where more than one format is required.
+	 *  eg en_UK</p>
+	 * 
+	 *  <p>See <code>format</code> for format of the format
+	 *  strings.</p>
 	 *
 	 *  @default []
 	 *  
@@ -541,22 +593,22 @@ public class PostCodeValidator extends Validator
 		_formats = value;
 	}
 	
-	/** 
-	 *  extraValidation
+	/**
+	 *  A user supplied method that performs further validation on a postcode.
 	 * 
-	 * A user supplied method that perform further validation on a postcode.
+	 *  <p>The user supplied method should have the following signature:
+	 *  <code>function validatePostcode(postcode:String):String</code></p>
 	 * 
-	 * The user supplied method should  haver the following signature:
-	 * <code>function validatePostcode(postcode:String):String</code>
+	 *  <p>The method is passed the postcode to be validated and should
+	 *  return either:
+	 *  <ol>
+	 *  <li>A null string indicating the postcode is valid.</li>
+	 *  <li>A non empty string describing why the postcode is invalid.</li>
+	 *  </ol></p>
 	 * 
-	 * The method is passed the postcode to be validated and should
-	 * return either:
-	 * 1. null indicating the postcode is valid
-	 * 2. A non empty string describing why the postcode is invalid
-	 * 
-	 * The error string will be converted into a ValidationResult when
-	 * doValidation is called by Flex as part of the normal validation
-	 * process.
+	 *  <p>The error string will be converted into a ValidationResult when
+	 *  doValidation is called by Flex as part of the normal validation
+	 *  process.</p>
 	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10.2
@@ -778,7 +830,8 @@ public class PostCodeValidator extends Validator
     //--------------------------------------------------------------------------
    
     /**
-     *  @private    
+     *  @private   
+	 *  Changes error strings when the locale changes. 
      */
     override protected function resourcesChanged():void
     {
@@ -796,7 +849,7 @@ public class PostCodeValidator extends Validator
      *
      *  <p>You do not call this method directly;
      *  Flex calls it as part of performing a validation.
-     *  If you create a custom Validator class, you must implement this method. </p>
+     *  If you create a custom Validator class, you must implement this method.</p>
      *
      *  @param value Object to validate.
      *
@@ -853,17 +906,16 @@ public class PostCodeValidator extends Validator
 	}
 	
 	/** 
-	 *  Sets the suggested format for postcodes for a
-	 *  given <code>locale</code>.
+	 *  Sets the suggested postcode formats for a given <code>locale</code>.
 	 * 
-	 *  If no locale is suplied the default locale is used.
+	 *  <p>If no locale is suplied the default locale is used.</p>
 	 * 
-	 *  Currenly only a limited set of locales are supported.
+	 *  <p>Currenly only a limited set of locales are supported.</p>
 	 * 
-	 *  @param locale locale to obtain format for.
+	 *  @param locale Locale to obtain formats for.
 	 * 
-	 *  @return The suggested format or an empty array if the
-	 *  locale is not supported. 
+	 *  @return The suggested format (an array of strings) or an empty
+	 *  array if the locale is not supported. 
 	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10.2
@@ -925,17 +977,16 @@ public class PostCodeValidator extends Validator
 	}
 	
 	/** 
-	 *  Sets the suggested country code for postcodes for a
-	 *  given <code>locale</code>.
+	 *  Sets the suggested country code for for a given <code>locale</code>.
 	 * 
-	 *  If no locale is suplied the default locale is used.
+	 *  <p>If no locale is suplied the default locale is used.</p>
 	 * 
-	 *  Currenly only a limited set of locales are supported.
+	 *  <p>Currenly only a limited set of locales are supported.</p>
 	 * 
-	 *  @param locale locale to obtain country code for.
+	 *  @param Locale Locale to obtain country code for.
 	 * 
 	 *  @return The suggested code or an null string if the
-	 *  locale is not supported. 
+	 *  locale is not supported or has no country code. 
 	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10.2
