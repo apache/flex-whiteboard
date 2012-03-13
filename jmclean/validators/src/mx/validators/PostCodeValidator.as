@@ -154,8 +154,10 @@ public class PostCodeValidator extends Validator
         collate.ignoreCharacterWidth = true;
 
         for (var i:int = 0; i < length; i++)
+		{
             if (collate.equals(string.charAt(i), char))
                 return i;
+		}
 
         return -1;
     }
