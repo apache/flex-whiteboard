@@ -2,9 +2,11 @@ package tests
 {
 	import mx.resources.IResourceManager;
 	import mx.resources.ResourceManager;
-	import mx.validators.PostCodeValidator;
 	import mx.validators.ValidationResult;
 	
+	import org.apache.flex.validators.PostCodeValidator;
+	
+	import org.flexunit.asserts.assertEquals;
 	import org.flexunit.asserts.assertTrue;
 
 	public class PostCodeValidatorTests
@@ -482,6 +484,19 @@ package tests
 		}
 		
 		[Test]
+		public function portuguesePostCodes():void {
+			var results:Array;
+			var valid:Array = ["4770-459", "4770 459", "4770"];
+			
+			validator.suggestFormat("pt_PT");
+			
+			for each (var postcode:String in valid) {
+				results = PostCodeValidator.validatePostCode(validator, postcode, null);
+				assertTrue("Valid Postcode", results.length == 0);
+			}
+		}
+		
+		[Test]
 		public function multipleFormats():void {
 			var validator1:PostCodeValidator = new PostCodeValidator();
 			var validator2:PostCodeValidator = new PostCodeValidator();
@@ -631,6 +646,11 @@ package tests
 			
 			validator.suggestFormat("en-CA");
 			assertTrue("Australian format", validator.format == "ANA NAN");
+			
+			validator.suggestFormat("pt_PT");
+			assertEquals("PT format", "NNNN-NNN", validator.formats[0]);
+			assertEquals("PT format", "NNNN NNN", validator.formats[1]);
+			assertEquals("PT format", "NNNN", validator.formats[2]);
 			
 			validator.suggestFormat("en_US");
 			assertTrue("US format", validator.formats[0] == "NNNNN");

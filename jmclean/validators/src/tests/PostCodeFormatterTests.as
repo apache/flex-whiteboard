@@ -1,7 +1,7 @@
 package tests
 {
-	import mx.formatters.PostCodeFormatter;
-	import mx.validators.PostCodeValidator;
+	import org.apache.flex.formatters.PostCodeFormatter;
+	import org.apache.flex.validators.PostCodeValidator;
 	
 	import org.flexunit.asserts.assertTrue;
 
