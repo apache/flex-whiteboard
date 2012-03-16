@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   xmlns:components="org.apache.spark.components.*">
+	
+	<fx:Script>
+		<![CDATA[
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				popup.open( this, modal.selected );
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<components:PopUpComponent id="popup" skinClass="org.apache.spark.skins.PopUpSkin"
+								   x="{popupX.value}" y="{popupY.value}"
+								   width="{popupWidth.value}" height="{popupHeight.value}"
+								   centerPopUp="{centerPopUp.selected}"/>
+		
+		<!--modalTransparency="{modalTransparency.value/100)}"
+		modalTransparencyColor="{modalTransparencyColor.selectedColor}"
+		modalTransparencyDuration="{modalTransparencyDuration.value}"
+		modalTransparencyBlur="{modalTransparencyBlur.value}"-->
+		
+	</fx:Declarations>
+	
+	<s:layout>
+		<s:VerticalLayout paddingTop="20" horizontalAlign="center"/>
+	</s:layout>
+	
+	<s:HGroup>
+		<s:CheckBox id="modal" label="modal"/>
+		<s:Button label="Open" click="button1_clickHandler(event)"
+				  enabled="{!popup.isOpen}"/>
+	</s:HGroup>
+	
+	
+	<s:HGroup>
+		<s:Label text="width"/>
+		<s:HSlider id="popupWidth" minimum="50" maximum="300" value="100"/>
+		<s:Label text="height"/>
+		<s:HSlider id="popupHeight" minimum="50" maximum="300" value="100"/>
+	</s:HGroup>	
+	
+	<s:HGroup>
+		<s:CheckBox id="centerPopUp" label="Keep centered"/>
+		<s:Label text="x" alpha="{centerPopUp.selected ? 0.5 : 1}"/>
+		<s:HSlider id="popupX" minimum="0" maximum="300" value="0"
+				   enabled="{!centerPopUp.selected}"/>
+		<s:Label text="y" alpha="{centerPopUp.selected ? 0.5 : 1}"/>
+		<s:HSlider id="popupY" minimum="0" maximum="300" value="0"
+				   enabled="{!centerPopUp.selected}"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="modalTransparency"/>
+		<s:HSlider id="modalTransparency" minimum="0" maximum="100" value="0.5"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="modalTransparencyColor"/>
+		<mx:ColorPicker id="modalTransparencyColor" selectedColor="0xDDDDDD"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="modalTransparencyDuration"/>
+		<s:HSlider id="modalTransparencyDuration" minimum="0" maximum="1000" value="150"/>
+	</s:HGroup>
+	
+	<s:HGroup>
+		<s:Label text="modalTransparencyBlur"/>
+		<s:HSlider id="modalTransparencyBlur" minimum="0" maximum="10" value="3"/>
+	</s:HGroup>
+	
+</s:Application>
