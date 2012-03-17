@@ -31,11 +31,12 @@ package org.apache.spark.components
 	import mx.resources.ResourceManager;
 	
 	import org.apache.spark.components.skins.AndroidAlertSkin;
+	import org.apache.spark.components.skins.AppleOSAlertSkin;
+	import org.apache.spark.components.supportClasses.SkinnablePopUpComponent;
 	
 	import spark.components.Button;
 	import spark.components.Group;
 	import spark.components.Image;
-	import spark.components.SkinnablePopUpContainer;
 	import spark.core.IDisplayText;
 	
 	
@@ -74,7 +75,7 @@ package org.apache.spark.components
 	 *  @playerversion AIR 3.0
 	 *  @productversion Flex 4.6
 	 */
-	public class MobileAlert extends SkinnablePopUpContainer
+	public class MobileAlert extends SkinnablePopUpComponent
 	{
 
 		//----------------------------------------------------
@@ -82,8 +83,8 @@ package org.apache.spark.components
 		//----------------------------------------------------
 		[SkinPart(required="true")] public var titleDisplay:IDisplayText;
 		[SkinPart(required="true")] public var messageDisplay:IDisplayText;
-		[SkinPart(required="true")] public var icon:Image;
-		[SkinPart] public var buttonBarGroup:Group;
+		[SkinPart(required="false")] public var icon:Image;
+		[SkinPart(required="true")] public var buttonBarGroup:Group;
 		
 		//-----------------------------------------------
 		// Static Properties
@@ -274,7 +275,7 @@ package org.apache.spark.components
 				if(os.indexOf('iphone') !=-1 || os.indexOf('ipad') !=-1 || os.indexOf('ipod') !=-1)
 				{
 					// we are on an iOS device
-
+					forcedSkin = AppleOSAlertSkin;
 				}
 				else
 				{

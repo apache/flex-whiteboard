@@ -29,6 +29,11 @@ identical to the mx component, with the following exception :
   
 If you use this in other locales other than en_US, you will need to add the proper resource bundles.
 
+3/17/2012 Notes :
+  - iOS Skin now included.  Still need to commit the button skins.
+  - Now extens SkinnablePopUpComponent rather than SkinnablePopUpContainer contributed by Tink.  Still need
+     to work on Modal stuff, but this is much ligher weight. 
+
 3/15/2012 Notes :
   - iOS Skin was not included.  It will be during a later push
   - Android Skin needs some touching in order to make it look right on all dpi's

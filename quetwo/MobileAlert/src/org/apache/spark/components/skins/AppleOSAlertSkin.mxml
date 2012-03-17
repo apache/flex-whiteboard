@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+-->
+
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+        xmlns:fb="http://ns.adobe.com/flashbuilder/2009" alpha.disabled="0.5">
+    
+    <fx:Metadata>
+    <![CDATA[ 
+        [HostComponent("org.apache.spark.components.MobileAlert")]
+    ]]>
+    </fx:Metadata> 
+    
+    <fx:Script fb:purpose="styling">
+        <![CDATA[         
+
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number) : void
+            {
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+				glossPath.width = unscaledWidth-1;
+				glossPath.height = 30;
+            }
+        ]]>        
+    </fx:Script>
+    
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="disabled"/>
+		<s:State name="closed" />
+    </s:states>
+    
+    <!-- Transitions for open and close -->
+    <s:transitions>
+        <s:Transition fromState="closed" toState="normal" autoReverse="true">
+            <s:Fade duration="150" target="{chrome}"/>
+        </s:Transition>
+
+        <s:Transition fromState="disabledAndClosed" toState="disabled" autoReverse="true">
+            <s:Fade duration="150" target="{chrome}"/>
+        </s:Transition>
+        
+        <s:Transition fromState="normal" toState="closed" autoReverse="true">
+            <s:Fade duration="150" target="{chrome}"/>
+        </s:Transition>
+
+        <s:Transition fromState="disabled" toState="disabledAndClosed" autoReverse="true">
+            <s:Fade duration="150" target="{chrome}"/>
+        </s:Transition>
+    </s:transitions>
+        
+    <!--- Defines the background and content group used by this skin. -->
+    <s:Group id="chrome" left="0" right="0" top="0" bottom="0">
+		
+		<s:Rect id="shadow" left="0" right="0" top="0" bottom="0" radiusX="8">
+			<s:filters>
+				<s:DropShadowFilter blurX="20" blurY="20" alpha="0.4" distance="5" angle="90" knockout="true" />
+			</s:filters>
+			<s:fill>
+				<!--- @private -->
+				<s:SolidColor color="#424542"/>
+			</s:fill>
+		</s:Rect>
+		
+        <!--- Defines the appearance of the SkinnablePopUpContainer class's background. -->
+        <s:Rect id="background" left="0" right="0" top="0" bottom="0" radiusX="8">
+            <s:fill>
+                <!--- @private -->
+                <s:SolidColor id="bgFill" color="#0b1b44" alpha=".8"/>
+            </s:fill>
+			<s:stroke>
+				<s:LinearGradientStroke weight="2" rotation="90">
+					<s:GradientEntry color="#e2e3e4" ratio="0" />
+					<s:GradientEntry color="#b2b7c2" ratio=".2" />
+				</s:LinearGradientStroke>
+			</s:stroke>
+        </s:Rect>		
+				
+		<s:Path id="glossPath" x="0" width="0" y="0" winding="evenOdd" data="M 529.2 -0.1 L 22.8 -0.1 C 11.75 -0.1 0.05 12.45 0.05 23.5 L 0.05 39.8 C 88.7 50.95 185.2 60.35 280.7 60.35 C 375.7 60.35 463.7 51 551.95 39.95 L 551.95 23.5 C 551.95 12.45 540.25 -0.1 529.2 -0.1">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry color="#cacaca" ratio="0" alpha=".5" />
+					<s:GradientEntry color="#555555" ratio="1" alpha=".5" />
+				</s:LinearGradient>
+			</s:fill>
+		</s:Path>
+		
+    </s:Group>
+	
+	<s:Group id="contents" top="0" left="0" right="0" bottom="0">
+		
+		<s:layout>
+			<s:VerticalLayout gap="0" horizontalAlign="justify" />
+		</s:layout>
+		
+		<s:Group id="informationDisplay" width="100%" height="100%" minWidth="0" minHeight="0">	
+		
+			<s:Label id="titleDisplay" maxDisplayedLines="1"
+					 left="5" right="5" top="8" minHeight="30"
+					 verticalAlign="middle" textAlign="center" fontWeight="bold" color="#ffffff" />
+			
+			<s:Label id="messageDisplay" left="10" right="10" top="45" minHeight="30" color="#ffffff" paddingBottom="5"
+					 textAlign="center" verticalAlign="middle" fontSize="14" maxWidth="{Math.max(titleDisplay.width + 46,200)}" />
+			
+		</s:Group>
+		
+		<s:Group id="buttonBar" minWidth="0" minHeight="0" bottom="0" left="0" right="0" height="36">
+			
+			<s:Group id="buttonBarGroup" left="0" right="0" top="1" height="36" minHeight="36">
+				<s:layout>
+					<s:HorizontalLayout gap="4"  paddingLeft="4" paddingRight="4" paddingTop="2"
+										horizontalAlign="center" verticalAlign="top"/>
+				</s:layout>
+			</s:Group>
+			
+		</s:Group>
+	</s:Group>
+    
+</s:Skin>
