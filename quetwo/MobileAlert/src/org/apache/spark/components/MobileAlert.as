@@ -31,6 +31,7 @@ package org.apache.spark.components
 	import mx.resources.ResourceManager;
 	
 	import org.apache.spark.components.skins.AndroidAlertSkin;
+	import org.apache.spark.components.skins.AndroidButtonSkin;
 	import org.apache.spark.components.skins.AppleOSAlertSkin;
 	import org.apache.spark.components.supportClasses.SkinnablePopUpComponent;
 	
@@ -241,7 +242,8 @@ package org.apache.spark.components
 									iconClass:Class = null,
 									defaultButtonIndex:uint = 0,
 									modal:Boolean = true,
-									forcedSkin:Class = null):MobileAlert
+									forcedSkin:Class = null,
+									buttonSkin:Class = null):MobileAlert
 		{
 			var mobileAlert:MobileAlert = new MobileAlert();
 			mobileAlert.title = title;
@@ -276,11 +278,20 @@ package org.apache.spark.components
 				{
 					// we are on an iOS device
 					forcedSkin = AppleOSAlertSkin;
+					
 				}
 				else
 				{
 					// we are assumed to be on an android device.
 					forcedSkin = AndroidAlertSkin;
+					mobileAlert.buttonStyle = AndroidButtonSkin;
+				}
+			}
+			else
+			{
+				if (buttonSkin != null)
+				{
+					mobileAlert.buttonStyle = buttonSkin;
 				}
 			}
 			
@@ -378,6 +389,7 @@ package org.apache.spark.components
 		private var _buttons:Vector.<Button>;
 		private var _title:String = "";
 		private var _message:String = "";
+		private var _buttonStyle:Class;
 		
 		/**
 		 *  The title to display in this alert dialog box.
@@ -488,6 +500,26 @@ package org.apache.spark.components
 			invalidateSkinState();
 		}
 		
+		/**
+		 *  The style class to set the buttons to.
+		 *
+		 *  @default null
+		 *
+		 *  @langversion 3.0
+		 *  @playerversion Flash 9
+		 *  @playerversion AIR 1.1
+		 *  @productversion Flex 3
+		 */
+		public function get buttonStyle():Class
+		{
+			return _buttonStyle;
+		}
+		
+		public function set buttonStyle(value:Class):void
+		{
+			_buttonStyle = value;
+		}
+		
 		//-----------------------------------------------------
 		// Private functions used by other functions within this component
 		//-----------------------------------------------------
@@ -531,10 +563,11 @@ package org.apache.spark.components
 			
 			for (var i:int = 0; i < _buttons.length ; i++)
 			{
+				if (_buttonStyle != null)
+				  _buttons[i].setStyle("skinClass",_buttonStyle);
 				_buttons[i].buttonMode = true;
 				_buttons[i].height = buttonBarGroup.height - 7;
 				_buttons[i].percentWidth = 50;
-				_buttons[i].setStyle("fontSize",12); // I should not be doing this.  Will need to create a buttonSkin to contain some of these properties.
 				_buttons[i].addEventListener(MouseEvent.CLICK, onButtonTouch, false, 0, true);
 				buttonBarGroup.addElement(_buttons[i]);
 			}

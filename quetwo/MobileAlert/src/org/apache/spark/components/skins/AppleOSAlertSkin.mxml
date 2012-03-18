@@ -92,7 +92,7 @@ limitations under the License.
 			</s:stroke>
         </s:Rect>		
 				
-		<s:Path id="glossPath" x="0" width="0" y="0" winding="evenOdd" data="M 529.2 -0.1 L 22.8 -0.1 C 11.75 -0.1 0.05 12.45 0.05 23.5 L 0.05 39.8 C 88.7 50.95 185.2 60.35 280.7 60.35 C 375.7 60.35 463.7 51 551.95 39.95 L 551.95 23.5 C 551.95 12.45 540.25 -0.1 529.2 -0.1">
+		<s:Path blendMode="screen" id="glossPath" x="0" width="0" y="0" winding="evenOdd" data="M 529.2 -0.1 L 22.8 -0.1 C 11.75 -0.1 0.05 12.45 0.05 23.5 L 0.05 39.8 C 88.7 50.95 185.2 60.35 280.7 60.35 C 375.7 60.35 463.7 51 551.95 39.95 L 551.95 23.5 C 551.95 12.45 540.25 -0.1 529.2 -0.1">
 			<s:fill>
 				<s:LinearGradient rotation="90">
 					<s:GradientEntry color="#cacaca" ratio="0" alpha=".5" />
@@ -100,6 +100,15 @@ limitations under the License.
 				</s:LinearGradient>
 			</s:fill>
 		</s:Path>
+		
+		<s:Rect id="border" left="0" right="0" top="0" bottom="0" radiusX="8">
+			<s:stroke>
+				<s:LinearGradientStroke weight="2" rotation="90">
+					<s:GradientEntry color="#e2e3e4" ratio="0" />
+					<s:GradientEntry color="#b2b7c2" ratio=".2" />
+				</s:LinearGradientStroke>
+			</s:stroke>
+		</s:Rect>	
 		
     </s:Group>
 	
@@ -113,10 +122,18 @@ limitations under the License.
 		
 			<s:Label id="titleDisplay" maxDisplayedLines="1"
 					 left="5" right="5" top="8" minHeight="30"
-					 verticalAlign="middle" textAlign="center" fontWeight="bold" color="#ffffff" />
+					 verticalAlign="middle" textAlign="center" fontWeight="bold" color="#ffffff">
+				<s:filters>
+					<s:DropShadowFilter alpha="1" angle="-90" color="0x000000" distance="1" blurX="1" />
+				</s:filters>
+			</s:Label>
 			
 			<s:Label id="messageDisplay" left="10" right="10" top="45" minHeight="30" color="#ffffff" paddingBottom="5"
-					 textAlign="center" verticalAlign="middle" fontSize="14" maxWidth="{Math.max(titleDisplay.width + 46,200)}" />
+					 textAlign="center" verticalAlign="middle" fontSize="14" maxWidth="{Math.max(titleDisplay.width + 46,200)}">
+				<s:filters>
+					<s:DropShadowFilter alpha="1" angle="-90" color="0x000000" distance="1" blurX="1" />
+				</s:filters>
+			</s:Label>
 			
 		</s:Group>
 		
