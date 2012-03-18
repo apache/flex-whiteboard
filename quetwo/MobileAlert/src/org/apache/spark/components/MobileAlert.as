@@ -33,6 +33,7 @@ package org.apache.spark.components
 	import org.apache.spark.components.skins.AndroidAlertSkin;
 	import org.apache.spark.components.skins.AndroidButtonSkin;
 	import org.apache.spark.components.skins.AppleOSAlertSkin;
+	import org.apache.spark.components.skins.AppleOSButtonSkin;
 	import org.apache.spark.components.supportClasses.SkinnablePopUpComponent;
 	
 	import spark.components.Button;
@@ -278,6 +279,7 @@ package org.apache.spark.components
 				{
 					// we are on an iOS device
 					forcedSkin = AppleOSAlertSkin;
+					mobileAlert.buttonStyle = AppleOSButtonSkin;
 					
 				}
 				else
