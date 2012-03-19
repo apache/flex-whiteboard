@@ -627,16 +627,19 @@ package tests
 			assertTrue("US Error", validator.invalidCharError == resourcesUS.content.invalidCharPostcodeError);
 			assertTrue("US Error", validator.wrongFormatError == resourcesUS.content.wrongFormatPostcodeError);
 			assertTrue("US Error", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
+			assertTrue("US Error", validator.incorrectFormatError == resourcesUS.content.incorrectFormatPostcodeError);
 			
 			resourceManager.localeChain = ["en_AU"];
 			
 			assertTrue("Error changed", validator.invalidCharError != resourcesUS.content.invalidCharPostcodeError);
 			assertTrue("Error changed", validator.wrongFormatError != resourcesUS.content.wrongFormatPostcodeError);
 			assertTrue("Error changed", validator.wrongLengthError != resourcesUS.content.wrongLengthPostcodeError);
+			assertTrue("Error changed", validator.incorrectFormatError != resourcesUS.content.incorrectFormatPostcodeError);
 		
 			assertTrue("AU Error", validator.invalidCharError == resourcesAU.content.invalidCharPostcodeError);
 			assertTrue("AU Error", validator.wrongFormatError == resourcesAU.content.wrongFormatPostcodeError);
 			assertTrue("AU Error", validator.wrongLengthError == resourcesAU.content.wrongLengthPostcodeError);
+			assertTrue("AU Error", validator.incorrectFormatError == resourcesAU.content.incorrectFormatPostcodeError);
 		}
 		
 		[Test]
@@ -648,29 +651,62 @@ package tests
 			assertTrue("Australian format", validator.format == "ANA NAN");
 			
 			validator.suggestFormat("pt_PT");
-			assertEquals("PT format", "NNNN-NNN", validator.formats[0]);
-			assertEquals("PT format", "NNNN NNN", validator.formats[1]);
-			assertEquals("PT format", "NNNN", validator.formats[2]);
+			assertEquals("Portuguese format", "NNNN-NNN", validator.formats[0]);
+			assertEquals("Portuguese format", "NNNN NNN", validator.formats[1]);
+			assertEquals("Portuguese format", "NNNN", validator.formats[2]);
 			
 			validator.suggestFormat("en_US");
 			assertTrue("US format", validator.formats[0] == "NNNNN");
 			assertTrue("US format", validator.formats[1] == "NNNNN-NNNN");
 			
 			validator.suggestFormat("it_IT");
-			assertTrue("IT format", validator.format == "NNNNN");
+			assertTrue("Italian format", validator.format == "NNNNN");
 			
 			validator.suggestFormat("fr_CA");
-			assertTrue("CA format", validator.format == "ANA NAN");
+			assertTrue("Candian format", validator.format == "ANA NAN");
 			validator.suggestFormat("en_CA");
-			assertTrue("CA format", validator.format == "ANA NAN");
+			assertTrue("Candian format", validator.format == "ANA NAN");
 			
 			validator.suggestFormat("en_NZ"); // not known
-			assertTrue("NZ format not known", validator.format == null);
+			assertTrue("New Zealand format not known", validator.format == null);
+			
+			validator.suggestFormat("en-IE"); // no postcodes
+			assertTrue("Irish format", validator.format == null);
 			
 			// may set format (based on user locale) to anything just check no RTE
 			// and returns something
 			assertTrue("User locale format", validator.suggestFormat() != null)
 		}
+		
+		// NOTE: To pass this test project must be compiled with option locale=en_US,en_AU
+		[Test]
+		public function suggestedFormatLocaleChange():void
+		{
+			var resourceManager:IResourceManager = ResourceManager.getInstance();
+			var resourcesUS:Object = resourceManager.getResourceBundle("en_US", "validators");
+			var resourcesAU:Object = resourceManager.getResourceBundle("en_AU", "validators");
 
+			assertTrue("AU Error", validator.invalidCharError == resourcesAU.content.invalidCharPostcodeError);
+			assertTrue("AU Error", validator.wrongFormatError == resourcesAU.content.wrongFormatPostcodeError);
+			assertTrue("AU Error", validator.wrongLengthError == resourcesAU.content.wrongLengthPostcodeError);
+			assertTrue("AU Error", validator.incorrectFormatError == resourcesAU.content.incorrectFormatPostcodeError);
+
+			validator.suggestFormat("en_US");
+			assertTrue("US format", validator.formats[0] == "NNNNN");
+			assertTrue("US format", validator.formats[1] == "NNNNN-NNNN");
+			
+			// format changed but errors still AU errors
+			assertTrue("AU Error", validator.invalidCharError == resourcesAU.content.invalidCharPostcodeError);
+			assertTrue("AU Error", validator.wrongFormatError == resourcesAU.content.wrongFormatPostcodeError);
+			assertTrue("AU Error", validator.wrongLengthError == resourcesAU.content.wrongLengthPostcodeError);
+			assertTrue("AU Error", validator.incorrectFormatError == resourcesAU.content.incorrectFormatPostcodeError);
+			
+			validator.suggestFormat("en_US", true);
+			
+			assertTrue("US Error", validator.invalidCharError == resourcesUS.content.invalidCharPostcodeError);
+			assertTrue("US Error", validator.wrongFormatError == resourcesUS.content.wrongFormatPostcodeError);
+			assertTrue("US Error", validator.wrongLengthError == resourcesUS.content.wrongLengthPostcodeError);
+			assertTrue("US Error", validator.incorrectFormatError == resourcesUS.content.incorrectFormatPostcodeError);
+		}
 	}
 }
