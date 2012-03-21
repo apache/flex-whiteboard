@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		xmlns:mx="library://ns.adobe.com/flex/mx">
+	
+	<!-- host component -->
+	<fx:Metadata>
+		/** 
+		*  @copy spark.skins.spark.ApplicationSkin#hostComponent
+		*/
+		[HostComponent("org.apache.spark.components.Alert")]
+	</fx:Metadata>
+	
+	<!-- states -->
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="closed" />
+	</s:states>
+	
+	<!-- Transitions for open and close -->
+	<s:transitions>
+		<s:Transition fromState="closed" toState="normal" autoReverse="true">
+			<s:Fade duration="150" target="{this}"/>
+		</s:Transition>
+
+		<s:Transition fromState="normal" toState="closed" autoReverse="true">
+			<s:Fade duration="150" target="{this}"/>
+		</s:Transition>
+	</s:transitions>
+	
+	
+	<!-- drop shadow can't be hittable so it stays sibling of other graphics -->
+	<!--- @private -->
+	<s:RectangularDropShadow id="dropShadow" blurX="20" blurY="20" alpha="0.32" distance="11" 
+							 angle="90" color="#000000" left="0" top="0" right="0" bottom="0"/>
+	
+	<!-- drop shadow can't be hittable so all other graphics go in this group -->
+	<s:Group left="0" right="0" top="0" bottom="0">
+		
+		<!-- layer 1: border -->
+		<!--- @private -->
+		<s:Rect id="border" left="0" right="0" top="0" bottom="0" >
+			<s:stroke>
+				<!--- @private -->
+				<s:SolidColorStroke id="borderStroke" weight="1" />
+			</s:stroke>
+		</s:Rect>
+		
+		<!-- layer 2: background fill -->
+		<!--- Defines the appearance of the PanelSkin class's background. -->
+		<s:Rect id="background" left="1" top="1" right="1" bottom="1">
+			<s:fill>
+				<!--- @private
+				Defines the  PanelSkin class's background fill. The default color is 0xFFFFFF. -->
+				<s:SolidColor id="backgroundFill" color="#FFFFFF"/>
+			</s:fill>
+		</s:Rect>
+		
+		<s:Group left="1" right="1" top="1" bottom="1" maxWidth="200">
+			<s:layout>
+				<s:VerticalLayout gap="0" horizontalAlign="justify" />
+			</s:layout>
+			
+			<!--- @private -->
+			<s:Group id="topGroup" width="100%">
+				
+				<!-- layer 0: title bar fill -->
+				<!--- @private -->
+				<s:Rect id="tbFill" left="0" right="0" top="0" bottom="1">
+					<s:fill>
+						<s:LinearGradient rotation="90">
+							<s:GradientEntry color="0xE2E2E2" />
+							<s:GradientEntry color="0xD9D9D9" />
+						</s:LinearGradient>
+					</s:fill>
+				</s:Rect>
+				
+				<!-- layer 1: title bar highlight -->
+				<!--- @private -->
+				<s:Rect id="tbHilite" left="0" right="0" top="0" bottom="0">
+					<s:stroke>
+						<s:LinearGradientStroke rotation="90" weight="1">
+							<s:GradientEntry color="0xEAEAEA" />
+							<s:GradientEntry color="0xD9D9D9" />
+						</s:LinearGradientStroke>
+					</s:stroke>
+				</s:Rect>
+				
+				<!-- layer 2: title bar divider -->
+				<!--- @private -->
+				<s:Rect id="tbDiv" left="0" right="0" height="1" bottom="0">
+					<s:fill>
+						<s:SolidColor color="0xC0C0C0" />
+					</s:fill>
+				</s:Rect>
+				
+				<!-- layer 3: text -->
+				<!--- @copy spark.components.Panel#titleDisplay -->
+				<s:Label id="titleDisplay" maxDisplayedLines="1"
+						 left="9" right="3" top="1" bottom="0" minHeight="30"
+						 verticalAlign="middle" textAlign="start" fontWeight="bold">
+				</s:Label>
+			</s:Group>
+		
+			<!--- @copy spark.components.Panel#messageDisplay -->
+			<s:Label id="messageDisplay" left="9" right="3" maxDisplayedLines="-1"/>
+				
+			<!--- @copy spark.components.Panel#buttonBar -->
+			<s:ButtonBar id="buttonBar" left="9" right="3" />
+			
+			
+		</s:Group>
+	</s:Group>
+	
+</s:Skin>
