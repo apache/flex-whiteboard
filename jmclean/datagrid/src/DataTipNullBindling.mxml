@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" initialize="init(event)">
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			/*
+			* ISSUE: data tips show for all lines when showDataTips="true" and should only show up for long lines
+			*
+			* WORKAROUND: dataTipField="{null}" in MXML or adg.dataTipField = null in AS
+			*
+			* Note mx:DataGrid and mx:List have the same issue
+			*/
+			
+			[Bindable] public var strings:ArrayCollection = new ArrayCollection(["one","two","a long line for the number three","four","five","six","seven","eight","nine","ten"]);		
+			[Bindable] public var objects:ArrayCollection = new ArrayCollection();
+			
+			protected function init(event:FlexEvent):void {
+				for each (var label:String in strings) {
+			 		objects.addItem({label:label});
+				}
+			}			
+		]]>
+	</fx:Script>
+	
+	<mx:AdvancedDataGrid dataProvider="{strings}" showDataTips="true" dataTipField="{null}" />
+	
+	<mx:DataGrid dataProvider="{strings}" showDataTips="true" dataTipField="{null}" />
+	
+	<mx:List dataProvider="{strings}" showDataTips="true" dataTipField="{null}" />
+	
+</s:Application>
