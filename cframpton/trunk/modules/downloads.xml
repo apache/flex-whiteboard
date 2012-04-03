@@ -78,7 +78,6 @@
 	-->
 	
    <target name="clean" depends="batik-sources-clean, velocity-sources-clean" description="Removes all thirdparty downloads.">
-        <delete dir="${download.dir}" failonerror="false"/>
         <delete file="${FLEX_LIB}/commons-collections.jar"/>
         <delete file="${FLEX_LIB}/commons-discovery.jar"/>
         <delete file="${FLEX_LIB}/commons-logging.jar"/>
@@ -88,73 +87,117 @@
         <delete file="${FLEX_LIB}/xalan.jar"/>
         <delete file="${FLEX_LIB}/xercesImpl.jar"/>
         <delete file="${FLEX_LIB}/xml-apis.jar"/>
-        <delete includeEmptyDirs="true">
+        <delete includeEmptyDirs="true" failonerror="false">
             <fileset dir="${FLEX_LIB}">
                 <include name="*-LICENSE*"/>
                 <include name="*-NOTICE*/**"/>
-                <exclude name="flex-messaging-common-LICENSE*"/>
             </fileset>
-        </delete>
-   </target>
+        </delete>        
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${download.dir}" >
+                <include name="batik*/**"/>
+                <include name="commons-*/**"/>
+                <include name="fds*/**"/>
+                <include name="javacc*/**"/>
+                <include name="saxonb9*/**"/>
+                <include name="velocity*/**"/>
+                <include name="xalan*/**"/>
+                <include name="Xerces*/**"/>
+            </fileset>
+        </delete>        
+    </target>
+
+    <!--
+        FixMe: do.download can only be set once so if even called multiple times it only prompts once
+    -->
+    <macrodef name="prompt" description="Prompt the user to allow download of thirdparty code">
+        <attribute name="url"/>
+        <sequential>
+        <echo message="You are about to download "/>
+        <echo message="    @{url}"/>
+        <echo message="which is not licensed by The Apache Software Foundation"/>
+        <echo message="but is compatible with The Apache Software Foundation license."/>
+        <input
+            message="Would you like to continue (y/n)?"
+            validargs="y,n"
+            addproperty="do.download"/>
+        <condition property="do.abort">
+            <equals arg1="n" arg2="${do.download}"/>
+        </condition>
+        <fail if="do.abort">Build aborted by user.</fail>
+        </sequential>
+    </macrodef>
 
 	<!--
 	    Download thirdparty JARs    
 	-->
 
     <!--
-        ToDo: convert this to a macro
-
+        download-zip
+        
         Params are:
+            [downloadDir] - directory to copy the zip and unpack it (default is ${download.dir})
             srcUrl
             zipFile - a .gz file for untar with gzip, else unzip
             [md5]
             [srcJarPath] - both src and dest required for the copy
             [destJarFile]
     -->
-    <target name="download-zip" 
-        description="Downloads and copies jar to the lib directory and verifies the checksum, if there is one.">                
-        
-        <mkdir dir="${download.dir}"/>        
-    	
-        <get src="${srcUrl}/${zipFile}" dest="${download.dir}/${zipFile}"/>
+    <macrodef name="download-zip"
+        description="Download a .gz or .zip file.  Optionally compare md5 and/or copy the jar somewhere">
+    
+        <attribute name="downloadDir" default="${download.dir}"/>
+        <attribute name="srcUrl"/>
+        <attribute name="zipFile"/>
+        <attribute name="md5" default=""/>
+        <attribute name="srcJarPath" default=""/>
+        <attribute name="destJarFile" default=""/>
+        <sequential>            
+            <mkdir dir="@{downloadDir}"/>        
+            
+            <get src="@{srcUrl}/@{zipFile}" dest="@{downloadDir}/@{zipFile}"/>
+    
+            <if>
+                <matches string="@{zipFile}" pattern="^*.gz$"/>
+                <then>
+                    <untar src="@{downloadDir}/@{zipFile}" dest="@{downloadDir}" compression="gzip"/>
+                    <basename file="@{downloadDir}/@{zipFile}" property="expanded.dir" suffix=".zip"/>
+                </then>
+                <else>
+                    <unzip src="@{downloadDir}/@{zipFile}" dest="@{downloadDir}"/>
+                    <basename file="@{downloadDir}/@{zipFile}" property="expanded.dir" suffix=".gz"/>
+                </else>
+            </if>
+             
+             <!-- if checksum specified, check it and fail if mismatch -->
+            <if>
+                <and>
+                    <matches string="@{md5}" pattern="^.+$"/>
+                    <not><checksum file="@{downloadDir}/@{zipFile}" algorithm="MD5" property="@{md5}"/></not>
+                </and>
+                <then>
+                    <delete dir="@{downloadDir}/${expanded.dir}" failonerror="true"/>
+                    <fail message="Checksum mismatch for @{downloadDir}/@{zipFile}"/>
+                 </then>
+            </if>
+    
+            <!-- if jar should be copied to new location, do it -->
+            <if>
+                <and>
+                    <matches string="@{srcJarPath}" pattern="^.+$"/>
+                    <matches string="@{destJarFile}" pattern="^.+$"/>
+                </and>
+                <then>
+                    <copy file="@{downloadDir}/@{srcJarPath}" 
+                          toFile="${FLEX_LIB}/@{destJarFile}" 
+                          verbose="true"/> 
+                 </then>
+            </if>
+        </sequential>
+    </macrodef>
 
-    	<if>
-            <matches string="${zipFile}" pattern="^*.gz$"/>
-            <then>
-                <untar src="${download.dir}/${zipFile}" dest="${download.dir}" compression="gzip"/>
-            </then>
-        	<else>
-                <unzip src="${download.dir}/${zipFile}" dest="${download.dir}"/>
-        	</else>
-        </if>
-
-        <if>
-            <and>
-                <isset property="md5"/>
-                <not><checksum file="${download.dir}/${zipFile}"
-                    algorithm="MD5"
-                    property="${md5}"/></not>
-            </and>
-            <then>
-                <fail message="Checksum mismatch for ${download.dir}/${zipFile}"/>
-             </then>
-        </if>
-
-    	<if>
-    		<and>
-                <isset property="srcJarPath"/>
-                <isset property="destJarFile"/>
-    		</and>
-    		<then>
-                <copy file="${download.dir}/${srcJarPath}" 
-            	      toFile="${FLEX_LIB}/${destJarFile}" 
-            	      verbose="true"/> 
-    	     </then>
-    	</if>
-    </target>
-    	
     <!--
-        ToDo: convert this to a macro
+        download-jar
         
         Params are:
             srcUrl
@@ -162,23 +205,25 @@
             destJarFile
             [md5]
     -->
-    <target name="download-jar" 
-    	description="Downloads the jar to the FLEX_LIB directory and verifies the checksum, if there is one.">                
+    <macrodef name="download-jar" 
+    	description="Downloads the jar to the FLEX_LIB directory and verifies the checksum, if there is one.">                        
+        <attribute name="srcUrl"/>
+        <attribute name="srcJarFile"/>
+        <attribute name="destJarFile"/>
         
-    	<get src="${srcUrl}/${srcJarFile}" dest="${FLEX_LIB}/${destJarFile}"/>
-    	
+        <sequential>
+    	<get src="@{srcUrl}/@{srcJarFile}" dest="${FLEX_LIB}/@{destJarFile}"/>    	
         <if>
             <and>
-                <isset property="md5"/>
-                <not><checksum file="${FLEX_LIB}/${destJarFile}"
-                    algorithm="MD5"
-                    property="${md5}"/></not>
+                <matches string="@{md5}" pattern="^.+$"/>
+                <not><checksum file="${FLEX_LIB}/@{destJarFile}" algorithm="MD5" property="@{md5}"/></not>
             </and>
             <then>
-                <fail message="Checksum mismatch for ${FLEX_LIB}/${destJarFile}"/>
+                <fail message="Checksum mismatch for ${FLEX_LIB}/@{destJarFile}"/>
             </then>
         </if>
-   </target>
+        </sequential>
+    </macrodef>
 
 	<target name="commons-jars" depends="commons-collections-jar,commons-discovery-jar,commons-logging-jar" />
 
@@ -195,11 +240,10 @@
     <target name="batik-sources" depends="batik-sources-check" unless="batik.src.exists"
         description="Downloads and copies the batik sources.">
                 
-        <antcall target="download-zip">
-            <param name="srcUrl" value="http://archive.apache.org/dist/xmlgraphics/batik"/>
-            <param name="zipFile" value="batik-src-1.6.zip"/>
-            <param name="md5" value="b65e12f520f8342605f700204c96cd2b"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/xmlgraphics/batik"
+            zipFile="batik-src-1.6.zip"
+            md5="b65e12f520f8342605f700204c96cd2b" />
         
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/xml-batik">
@@ -210,7 +254,7 @@
         </copy>
     </target>
     
-    <target name="batik-merge-sources" depends="batik-sources-clean"
+    <target name="batik-merge-sources" depends="batik-sources-clean,batik-sources"
         description="Merges the batik files from the distro with the files changed by Flex.">
 
     	<copy todir="${batik.dir}/merged" preservelastmodified="true">
@@ -249,22 +293,20 @@
     <target name="blazeds-jar" depends="blazeds-jar-check" unless="blazeds.jar.exists" 
         description="Downloads and copies flex-messaging-common.jar to the lib directory.">
 
-        <antcall target="download-zip">
-          <param name="download.dir" value="${download.dir}"/>
-          <param name="srcUrl" value="http://download.macromedia.com/pub/security/bulletins"/>
-          <param name="zipFile" value="fds201_hf_308104.zip"/>
-          <param name="srcJarPath" value="fds201_hf_308104/flex-messaging-common.jar"/>
-          <param name="destJarFile" value="flex-messaging-common.jar"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://download.macromedia.com/pub/security/bulletins"
+            zipFile="fds201_hf_308104.zip"
+            srcJarPath="fds201_hf_308104/flex-messaging-common.jar"
+            destJarFile="flex-messaging-common.jar"/>
+        <delete dir="${download.dir}/fds201_hf_308104"/>
         
         <!--
-        <antcall target="download-zip">
-          <param name="download.dir" value="${download.dir}/adobe_flex_sdk_4.6"/>
-          <param name="srcUrl" value="http://download.macromedia.com/pub/flex/sdk"/>
-          <param name="zipFile" value="flex_sdk_4.6.zip"/>
-          <param name="srcJarPath" value="lib/flex-messaging-common.jar"/>
+        <download-zip
+          downloadDir="${download.dir}/adobe_flex_sdk_4.6"
+          srcUrl="http://download.macromedia.com/pub/flex/sdk"
+          zipFile="flex_sdk_4.6.zip"
+          <param name="srcJarPath" value="lib/flex-messaging-common.jar"
           <param name="destJarFile" value="flex-messaging-common.jar"/>
-        </antcall>
         -->
     </target>
 
@@ -279,19 +321,20 @@
     <target name="commons-collections-jar" depends="commons-collections-jar-check" unless="commons.collections.jar.exists" 
         description="Downloads and copies common-collections.jar to the lib directory.">
                 
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://archive.apache.org/dist/commons/collections/binaries"/>
-          <param name="zipFile" value="${commons-collections.name}.tar.gz"/>
-          <param name="md5" value="a1df53801d2c73670314958fa0aeec8b"/>
-          <param name="srcJarPath" value="${commons-collections.name}/${commons-collections.name}.jar"/>
-          <param name="destJarFile" value="commons-collections.jar"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/commons/collections/binaries"
+            zipFile="${commons-collections.name}.tar.gz"
+            md5="a1df53801d2c73670314958fa0aeec8b"
+            srcJarPath="${commons-collections.name}/${commons-collections.name}.jar"
+            destJarFile="commons-collections.jar"/>
+          
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/${commons-collections.name}">
                 <include name="LICENSE.txt"/>
             </fileset>            
             <globmapper from="*" to="commons-collections-*"/>
         </copy>
+        <delete dir="${download.dir}/${commons-collections.name}"/>
     </target>
 
     <!--
@@ -306,19 +349,20 @@
         unless="commons.discovery.jar.exists" 
         description="Copies commons-discovery.jar to the lib directory.">
                 
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://archive.apache.org/dist/commons/discovery/binaries"/>
-          <param name="zipFile" value="${commons-discovery.name}.tar.gz"/>
-          <param name="md5" value="2273f5f83a477f4f18fccf3a00e2b48c"/>
-          <param name="srcJarPath" value="${commons-discovery.name}/commons-discovery.jar"/>
-          <param name="destJarFile" value="commons-discovery.jar"/>
-        </antcall>
+        <download-zip
+          srcUrl="http://archive.apache.org/dist/commons/discovery/binaries"
+          zipFile="${commons-discovery.name}.tar.gz"
+          md5="2273f5f83a477f4f18fccf3a00e2b48c"
+          srcJarPath="${commons-discovery.name}/commons-discovery.jar"
+          destJarFile="commons-discovery.jar"/>
+          
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/${commons-discovery.name}">
                 <include name="LICENSE"/>
             </fileset>            
             <globmapper from="*" to="commons-discovery-*"/>
         </copy>
+        <delete dir="${download.dir}/${commons-discovery.name}"/>
     </target>
 	
     <!--
@@ -333,13 +377,13 @@
     	unless="commons.logging.jar.exists" 
         description="Downloads and copies commons.logging.jar to the lib directory.">
 
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://archive.apache.org/dist/commons/logging/binaries"/>
-          <param name="zipFile" value="${commons-logging.name}.tar.gz"/>
-          <param name="md5" value="6f80ac1fb5f568feb94dd4fdb6b9f7de"/>
-          <param name="srcJarPath" value="${commons-logging.name}/commons-logging.jar"/>
-          <param name="destJarFile" value="commons-logging.jar"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/commons/logging/binaries"
+            zipFile="${commons-logging.name}.tar.gz"
+            md5="6f80ac1fb5f568feb94dd4fdb6b9f7de"
+            srcJarPath="${commons-logging.name}/commons-logging.jar"
+            destJarFile="commons-logging.jar"/>
+            
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/${commons-logging.name}">
                 <include name="LICENSE.txt"/>
@@ -347,6 +391,7 @@
             </fileset>            
             <globmapper from="*" to="commons-logging-*"/>
         </copy>
+        <delete dir="${download.dir}/${commons-logging.name}"/>
     </target>
 
 	<!--
@@ -364,18 +409,19 @@
         unless="javacc.jar.exists" 
         description="Downloads and copies javacc.jar to the lib directory.">
 
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://java.net/projects/javacc/downloads/download"/>
-          <param name="zipFile" value="javacc-5.0.tar.gz"/>
-          <param name="srcJarPath" value="javacc-5.0/bin/lib/javacc.jar"/>
-          <param name="destJarFile" value="javacc.jar"/>
-        </antcall>
+        <download-zip
+              srcUrl="http://java.net/projects/javacc/downloads/download"
+              zipFile="javacc-5.0.tar.gz"
+              srcJarPath="javacc-5.0/bin/lib/javacc.jar"
+              destJarFile="javacc.jar"/>
+              
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/javacc-5.0">
                 <include name="LICENSE"/>
             </fileset>            
             <globmapper from="*" to="javacc-*"/>
         </copy>
+        <delete dir="${download.dir}/javacc-5.0"/>
     </target>
 
 	<!--
@@ -389,7 +435,10 @@
     <target name="saxon9-jar" depends="saxon9-jar-check" unless="saxon9.jar.exists" 
         description="Copies sax9.jar to the lib directory.">
 
-        <get src="http://sourceforge.net/projects/saxon/files/Saxon-B/9.1.0.8/${saxon9.bin.zip}/download" 
+        <property name="saxon9.url" 
+            value="http://sourceforge.net/projects/saxon/files/Saxon-B/9.1.0.8/${saxon9.bin.zip}/download"/>
+        
+        <get src="${saxon9.url}" 
             dest="${download.dir}/${saxon9.bin.zip}" 
             verbose="false"/>   
 
@@ -401,6 +450,8 @@
         <copy todir="${FLEX_LIB}/saxon9-NOTICES">
             <fileset dir="${download.dir}/${saxon9.jar.dir}/notices" includes="**"/>
         </copy>
+        
+        <delete dir="${download.dir}/${saxon9.jar.dir}"/>
     </target>
 
     <!--
@@ -414,11 +465,10 @@
 	<target name="velocity-sources" depends="velocity-sources-check" unless="velocity.src.exists" 
         description="Downloads and copies the velocity build jars.">
                 
-        <antcall target="download-zip">
-            <param name="srcUrl" value="http://archive.apache.org/dist/velocity/engine/1.4"/>
-        	<param name="zipFile" value="${velocity.src.dir}.tar.gz"/>
-        	<param name="md5" value="f280fee7ddb5eac5b354f6dea39a2f51"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/velocity/engine/1.4"
+        	zipFile="${velocity.src.dir}.tar.gz"
+        	md5="f280fee7ddb5eac5b354f6dea39a2f51"/>
     	        
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/${velocity.src.dir}">
@@ -429,7 +479,7 @@
         </copy>
     </target>
 	
-    <target name="velocity-merge-sources" depends="velocity-sources-clean"
+    <target name="velocity-merge-sources" depends="velocity-sources-clean,velocity-sources"
         description="Merges the velocity files from the distro with the files changed by Flex.">
 
         <copy todir="${velocity.dir}/merged" preservelastmodified="true">
@@ -464,12 +514,11 @@
     <target name="xalan-jar" depends="xalan-jar-check" unless="xalan.jar.exists" 
         description="Downloads and copies xalan.jar to the lib directory.">
                 
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://archive.apache.org/dist/xml/xalan-j/binaries"/>
-          <param name="zipFile" value="xalan-j_2_6_0-bin.tar.gz"/>
-          <param name="srcJarPath" value="xalan-j_2_6_0/bin/xalan.jar"/>
-          <param name="destJarFile" value="xalan.jar"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/xml/xalan-j/binaries"
+            zipFile="xalan-j_2_6_0-bin.tar.gz"
+            srcJarPath="xalan-j_2_6_0/bin/xalan.jar"
+            destJarFile="xalan.jar"/>
         
         <copy todir="${FLEX_LIB}">
             <fileset dir="${download.dir}/xalan-j_2_6_0">
@@ -478,6 +527,8 @@
             </fileset>            
             <globmapper from="*" to="javacc-*"/>
         </copy>
+        
+        <delete dir="${download.dir}/xalan-j_2_6_0"/>
     </target>
 
     <!--
@@ -496,13 +547,12 @@
     <target name="xerces-jars" depends="xerces-jars-check" unless="xercesImpl.jar.exists" 
         description="Downloads and copies xercesImpl.jar and xml-api.jars to the lib directory.">
           
-        <antcall target="download-zip">
-          <param name="srcUrl" value="http://archive.apache.org/dist/xerces/j"/>
-          <param name="zipFile" value="Xerces-J-bin.2.9.1.zip"/>
-          <param name="srcJarPath" value="${xerces.dir}/xercesImpl.jar"/>
-          <param name="destJarFile" value="xercesImpl.jar"/>
-          <param name="md5" value="a0e07ede1c3bd5231fe15eae24032b2e"/>
-        </antcall>
+        <download-zip
+            srcUrl="http://archive.apache.org/dist/xerces/j"
+            zipFile="Xerces-J-bin.2.9.1.zip"
+            srcJarPath="${xerces.dir}/xercesImpl.jar"
+            destJarFile="xercesImpl.jar"
+            md5="a0e07ede1c3bd5231fe15eae24032b2e"/>
 
         <copy toDir="${FLEX_LIB}" file="${download.dir}/${xerces.dir}/xml-apis.jar" />
         
@@ -514,6 +564,8 @@
             </fileset>            
             <globmapper from="*" to="xerces-NOTICES/*"/>
         </copy>
+        
+        <delete dir="${download.dir}/${xerces.dir}"/>
     </target>
 		
 	<!--
