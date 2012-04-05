@@ -1,0 +1,20 @@
+ext.buildDirName = 'build'
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath group: 'org.gradlefx', name: 'gradlefx', version: '0.4.2'
+	}
+}
+
+plugins.apply('gradlefx')
+
+dependencies {
+	merged files("C:/Users/mh/Desktop/flex/frameworks/projects/framework/src")
+}
+
+type = "swc"
+
+ext.additionalCompilerOptions = ['+configname=air']
