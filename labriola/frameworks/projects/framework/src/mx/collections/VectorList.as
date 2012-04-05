@@ -27,6 +27,15 @@ import mx.core.IPropertyChangeNotifier;
 import mx.events.CollectionEvent;
 import mx.utils.UIDUtil;
 
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
+import flash.utils.getQualifiedClassName;
+
+import mx.events.CollectionEventKind;
+import mx.events.PropertyChangeEvent;
+import mx.events.PropertyChangeEventKind;
+import mx.resources.IResourceManager;
+import mx.resources.ResourceManager;
 //--------------------------------------
 //  Events
 //--------------------------------------
@@ -71,15 +80,6 @@ public class VectorList extends EventDispatcher
         enableEvents();
         _uid = UIDUtil.createUID();
     }
-import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.getQualifiedClassName;
-
-import mx.events.CollectionEventKind;
-import mx.events.PropertyChangeEvent;
-import mx.events.PropertyChangeEventKind;
-import mx.resources.IResourceManager;
-import mx.resources.ResourceManager;
 
 	/**
 	 *  @private
