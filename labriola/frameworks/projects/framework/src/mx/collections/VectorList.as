@@ -21,21 +21,21 @@ package mx.collections {
     
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
+import flash.net.registerClassAlias;
+import flash.utils.IDataInput;
+import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
+import flash.utils.getQualifiedClassName;
 
 import mx.core.IPropertyChangeNotifier;
 import mx.events.CollectionEvent;
-import mx.utils.UIDUtil;
-
-import flash.utils.IDataInput;
-import flash.utils.IDataOutput;
-import flash.utils.getQualifiedClassName;
-
 import mx.events.CollectionEventKind;
 import mx.events.PropertyChangeEvent;
 import mx.events.PropertyChangeEventKind;
 import mx.resources.IResourceManager;
 import mx.resources.ResourceManager;
+import mx.utils.UIDUtil;
+
 //--------------------------------------
 //  Events
 //--------------------------------------
@@ -61,6 +61,29 @@ import mx.resources.ResourceManager;
  */
 public class VectorList extends EventDispatcher
 	   implements IList, IExternalizable, IPropertyChangeNotifier {
+	   
+    //--------------------------------------------------------------------------
+    //
+    // Static Initializer
+    // 
+    //--------------------------------------------------------------------------
+    {
+        //If one attempt to serialize a Vector in any way, the type of the Vector is not retained unless the types are also aliased
+        //This should really be handled in the VM in my opinion, however, it is being done here to make it more pay as you go
+        //Unfortunately the consequence is that one must either do this manually or in some way reference a VectorList to ensure
+        //proper serialization of their Vectors
+        registerClassAlias( "Boolean", Boolean );
+        registerClassAlias( "int", int );
+        registerClassAlias( "Number", Number );
+        registerClassAlias( "String", String );
+        registerClassAlias( "uint", uint );
+
+        registerClassAlias( "Array", Array );
+        registerClassAlias( "Date", Date );
+
+        registerClassAlias( "Vector", Vector );
+    }
+	   
     //--------------------------------------------------------------------------
     //
     // Constructor
