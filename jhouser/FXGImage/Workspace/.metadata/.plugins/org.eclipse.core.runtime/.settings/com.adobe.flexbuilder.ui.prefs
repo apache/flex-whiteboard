@@ -1,0 +1,6 @@
+#Fri Apr 06 10:24:23 EDT 2012
+com.adobe.flexbuilder.ui.fileExclusion.Extensions=,.java,.class,.properties,.mxml,.as,.swc,.fxg,
+com.adobe.flexbuilder.ui.fileExclusion.Files=,.classpath,flex-config.xml,air-config.xml,services-config.xml,remoting-config.xml,proxy-config.xml,messaging-config.xml,data-management-config.xml,
+workspace.used=true
+flash.perspective.restored=true
+eclipse.preferences.version=1

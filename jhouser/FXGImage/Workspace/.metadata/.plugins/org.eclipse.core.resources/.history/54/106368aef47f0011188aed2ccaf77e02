@@ -1,0 +1,12 @@
+package org.apache.utils
+{
+	import mx.core.UIComponent;
+	
+	public class FXGImage extends UIComponent
+	{
+		public function FXGImage()
+		{
+			super();
+		}
+	}
+}

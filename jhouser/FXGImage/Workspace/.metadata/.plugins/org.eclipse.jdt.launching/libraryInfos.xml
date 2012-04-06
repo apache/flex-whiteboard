@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<libraryInfos>
+<libraryInfo home="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6" version="1.6.0_16">
+<bootpath>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\resources.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\rt.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\sunrsasign.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\jsse.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\jce.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\charsets.jar"/>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\classes"/>
+</bootpath>
+<extensionDirs>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\ext"/>
+<entry path="C:\Windows\Sun\Java\lib\ext"/>
+</extensionDirs>
+<endorsedDirs>
+<entry path="C:\Program Files (x86)\Adobe\Adobe Flash Builder 4.6\jre\lib\endorsed"/>
+</endorsedDirs>
+</libraryInfo>
+</libraryInfos>

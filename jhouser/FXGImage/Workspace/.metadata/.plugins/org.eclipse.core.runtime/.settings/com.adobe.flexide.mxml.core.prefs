@@ -1,0 +1,8 @@
+#Fri Apr 06 10:24:25 EDT 2012
+expandStateFiltered=Flextras\:_custom_\:controls_combined\:layout_combined\:navigators_combined\:z_charts\:
+com.adobe.flexide.mxml.core.filetemplates.=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+eclipse.preferences.version=1
+markMXMLOccurences=false
+com.adobe.flexide.mxml.core.codetemplates.=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+newAppLayout=absolute
+mxmlCycling=[cycle.templates,true,2][cycle.all,true,3][cycle.properties,true,4][cycle.events,true,5][cycle.effects,true,6][cycle.styles,true,7]

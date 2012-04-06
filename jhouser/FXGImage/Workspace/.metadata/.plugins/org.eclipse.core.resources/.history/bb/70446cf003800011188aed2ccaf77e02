@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:local="*" 
+			   xmlns:utils="org.apache.utils.*">
+	
+	<fx:Script>
+		<![CDATA[
+			protected function onXPositionSliderChange(event:Event):void
+			{
+				flexLogo.x = xPositionSlider.value;
+			}
+			
+			protected function onYPositionSliderChange(event:Event):void
+			{
+				flexLogo.y = yPositionSlider.value;
+			}
+			
+			protected function onHeightSliderChange(event:Event):void
+			{
+				flexLogo.height = this.heightSlider.value;
+			}
+			
+			protected function onWidthSliderChange(event:Event):void
+			{
+				flexLogo.width = this.widthSlider.value;
+			}
+
+			protected function onYOffsetSliderChange(event:Event):void
+			{
+				flexLogo.yOffset = this.yOffSetSlider.value;
+			}
+			
+			protected function onXOffsetSliderChange(event:Event):void
+			{
+				flexLogo.xOffset = this.xOffSetSlider.value;
+			}
+			
+			protected function onHeightIncrementSliderChange(event:Event):void
+			{
+				flexLogo.heightIncrement = this.heightIncrementSlider.value;
+			}
+			
+			protected function onWidthIncrementSliderChange(event:Event):void
+			{
+				flexLogo.widthIncrement = this.widthIncrementSlider.value;
+			}
+			
+			protected function onReset(event:MouseEvent):void
+			{
+				this.xPositionSlider.value = 0;
+				this.onXPositionSliderChange(event);
+				this.yPositionSlider.value = 0;
+				this.onYPositionSliderChange(event);
+
+				this.xOffSetSlider.value = 0;
+				this.onXOffsetSliderChange(event);
+				this.yOffSetSlider.value = 0;
+				this.onYOffsetSliderChange(event);
+
+				this.heightSlider.value = 168;
+				this.onHeightSliderChange(event);
+				this.widthSlider.value = 283;
+				this.onWidthSliderChange(event);
+
+				this.widthIncrementSlider.value = 0;
+				this.onWidthIncrementSliderChange(event);
+				this.heightIncrementSlider.value = 0;
+				this.onHeightIncrementSliderChange(event);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	
+	<s:HGroup width="100%" height="100%">
+		<s:Form>
+			<s:FormItem label="x" >
+				<s:HSlider id="xPositionSlider" value="0" minimum="0" maximum="{imageGroup.width}" change="onXPositionSliderChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="y" >
+				<s:HSlider id="yPositionSlider" value="0" minimum="0" maximum="{imageGroup.height}"  change="onYPositionSliderChange(event)"/>
+			</s:FormItem>
+			<s:FormItem label="xOffset" >
+				<s:HSlider id="xOffSetSlider" value="0" minimum="-100" maximum="100"  change="onXOffsetSliderChange(event)"/>
+			</s:FormItem>
+			<s:FormItem label="yOffset" >
+				<s:HSlider id="yOffSetSlider" value="0" minimum="-100" maximum="100"  change="onYOffsetSliderChange(event)"/>
+			</s:FormItem>
+			<s:FormItem label="width" >
+				<s:HSlider id="widthSlider" value="283" minimum="0" maximum="{imageGroup.width}" change="onWidthSliderChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="height" >
+				<s:HSlider id="heightSlider" value="168" minimum="0" maximum="{imageGroup.height}"  change="onHeightSliderChange(event)"/>
+			</s:FormItem>
+			<s:FormItem label="width Increment" >
+				<s:HSlider id="widthIncrementSlider" value="0" minimum="-100" maximum="100" change="onWidthIncrementSliderChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="heightIncrement" >
+				<s:HSlider id="heightIncrementSlider" value="0" minimum="-100" maximum="100"  change="onHeightIncrementSliderChange(event)"/>
+			</s:FormItem>
+
+			<s:FormItem >
+				<s:Button label="reset" click="onReset(event)" />
+			</s:FormItem>
+		</s:Form>
+		
+		
+		<s:Group width="100%" height="100%" id="imageGroup">
+			<utils:FXGImage source="org.apache.assets.apacheLogo.ApacheFlexLogo" id="flexLogo" width="283" height="168"  />
+		</s:Group>
+		
+	</s:HGroup>
+	
+
+
+</s:Application>

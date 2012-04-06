@@ -1,0 +1,25 @@
+#Fri Apr 06 10:24:25 EDT 2012
+content_assist_proposals_foreground=0,0,0
+spelling_locale_initialized=true
+spelling_ignore_urls=true
+spelling_ignore_non_letters=true
+spelling_ignore_ampersand_in_properties=true
+useAnnotationsPrefPage=true
+eclipse.preferences.version=1
+org.eclipse.jface.textfont=1|Consolas|11.25|0|WINDOWS|1|-15|0|0|0|400|0|0|0|0|3|2|1|49|Consolas;
+tabWidthPropagated=true
+org.eclipse.jdt.ui.editor.tab.width=
+spelling_ignore_single_letters=true
+fontPropagated=true
+org.eclipse.jdt.ui.javadoclocations.migrated=true
+proposalOrderMigrated=true
+spelling_user_dictionary_encoding=Cp1252
+spelling_ignore_mixed=true
+spelling_ignore_java_strings=true
+content_assist_proposals_background=255,255,255
+org.eclipse.jdt.ui.formatterprofiles.version=12
+content_assist_number_of_computers=12
+spelling_ignore_digits=true
+spelling_ignore_upper=true
+useQuickDiffPrefPage=true
+spelling_ignore_sentence=true

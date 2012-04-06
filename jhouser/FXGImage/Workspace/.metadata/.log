@@ -1,0 +1,281 @@
+!SESSION 2012-04-06 10:23:18.136 -----------------------------------------------
+eclipse.buildId=I20100608-0911
+java.version=1.6.0_16
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86 -data C:\Users\jhouser\Documents\career\clients\ActiveClients\ApacheFlex\Development\Source\WhiteBoard\jhouser\FXGImage\Workspace"
+
+!ENTRY org.eclipse.ui 2 0 2012-04-06 10:23:22.549
+!MESSAGE Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points.
+!SUBENTRY 1 org.eclipse.ui 2 0 2012-04-06 10:23:22.549
+!MESSAGE Commands should really have a category: plug-in='com.qnx.flashbuilder.multiplatform.qnx.ui', id='com.qnx.flashbuilder.multiplatform.qnx.ui.commands.OpenInfoCenter', categoryId='com.qnx.flashbuilder.multiplatform.qnx.ui.commands.category.help'
+
+!ENTRY org.eclipse.ui 2 0 2012-04-06 10:23:22.598
+!MESSAGE Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point
+!SUBENTRY 1 org.eclipse.ui 2 0 2012-04-06 10:23:22.598
+!MESSAGE Cannot bind to an undefined command: plug-in='com.adobe.ide.coldfusion.search', id='com.adobe.ide.command.coldfusion.search'
+
+!ENTRY com.adobe.flexbuilder.ui 4 1 2012-04-06 10:23:26.590
+!MESSAGE Product = CS55 version = 460 edition = prem
+
+!ENTRY org.eclipse.ui 2 0 2012-04-06 10:24:20.367
+!MESSAGE Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point
+!SUBENTRY 1 org.eclipse.ui 2 0 2012-04-06 10:24:20.367
+!MESSAGE Cannot bind to an undefined command: plug-in='com.adobe.ide.coldfusion.search', id='com.adobe.ide.command.coldfusion.search'
+
+!ENTRY org.eclipse.jface 2 0 2012-04-06 10:27:20.644
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2012-04-06 10:27:20.644
+!MESSAGE A conflict occurred for CTRL+G:
+Binding(CTRL+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.declarations.in.workspace,Find All Declarations In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		LegacyHandlerWrapper(ActionHandler(action=com.adobe.flexbuilder.as.editor.ui.actions.FindAllDeclarationsAction@2d0f1d)),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexide.editorcore.flexEditorScope,,,system)
+Binding(CTRL+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.declarations.in.workspace,Find All Declarations In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		LegacyHandlerWrapper(ActionHandler(action=com.adobe.flexbuilder.as.editor.ui.actions.FindAllDeclarationsAction@2d0f1d)),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexbuilder.as.editor.context.packageexplorer,,,system)
+Binding(CTRL+G,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.edit.text.java.search.declarations.in.workspace,Declaration in Workspace,
+		Search for declarations of the selected element in the workspace,
+		Category(org.eclipse.search.ui.category.search,Search,Search command category,true),
+		,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2012-04-06 10:27:20.644
+!MESSAGE A conflict occurred for CTRL+SHIFT+G:
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.references.in.workspace,Find All References In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		LegacyHandlerWrapper(ActionHandler(action=com.adobe.flexbuilder.as.editor.ui.actions.FindAllReferencesAction@3b3d1c)),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexide.editorcore.flexEditorScope,,,system)
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.references.in.workspace,Find All References In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		LegacyHandlerWrapper(ActionHandler(action=com.adobe.flexbuilder.as.editor.ui.actions.FindAllReferencesAction@3b3d1c)),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexbuilder.as.editor.context.packageexplorer,,,system)
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.edit.text.java.search.references.in.workspace,References in Workspace,
+		Search for references to the selected element in the workspace,
+		Category(org.eclipse.search.ui.category.search,Search,Search command category,true),
+		,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY org.eclipse.ui 4 4 2012-04-06 10:28:58.999
+!MESSAGE An internal error has occurred.
+!STACK 0
+java.lang.NullPointerException
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.getMXMLDesignView4Commander(MXMLDesignView4Controller.java:2398)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.handleInvalid(MXMLDesignView4Controller.java:2304)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.processEvent(MXMLDesignView4Controller.java:2193)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.modelChanged(MXMLDesignView4Controller.java:2141)
+	at com.adobe.flexbuilder.designmodel.DesignModel.doNotifyChanged(DesignModel.java:361)
+	at com.adobe.flexbuilder.designmodel.DesignModel.notifyChanged(DesignModel.java:276)
+	at com.adobe.flexbuilder.designmodel.DesignModel.endNotificationBatch(DesignModel.java:201)
+	at com.adobe.flexbuilder.mxmlmodel.inlinestates.internal.SMXMLModel$MyBaseModelListener.modelChanged(SMXMLModel.java:336)
+	at com.adobe.flexbuilder.designmodel.WeakModelListener.modelChanged(WeakModelListener.java:79)
+	at com.adobe.flexbuilder.designmodel.DesignModel.doNotifyChanged(DesignModel.java:361)
+	at com.adobe.flexbuilder.designmodel.DesignModel.notifyChanged(DesignModel.java:276)
+	at com.adobe.flexbuilder.designmodel.DesignModel.endNotificationBatch(DesignModel.java:201)
+	at com.adobe.flexbuilder.designmodel.DesignModel.endEditBatch(DesignModel.java:236)
+	at com.adobe.flexbuilder.designmodel.DesignModel.refresh(DesignModel.java:72)
+	at com.adobe.flexbuilder.mxmlmodel.inlinestates.internal.SMXMLModel.refresh(SMXMLModel.java:113)
+	at com.adobe.flexbuilder.mxml.editor.design.MXMLDesignEditor.refreshSkins(MXMLDesignEditor.java:1873)
+	at com.adobe.flexbuilder.mxml.editor.design.MXMLDesignEditor.checkProjectSettings(MXMLDesignEditor.java:3380)
+	at com.adobe.flexbuilder.mxml.editor.design.MXMLDesignEditor.access$26(MXMLDesignEditor.java:3277)
+	at com.adobe.flexbuilder.mxml.editor.design.MXMLDesignEditor$10.runInUIThread(MXMLDesignEditor.java:3269)
+	at org.eclipse.ui.progress.UIJob$1.run(UIJob.java:95)
+	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:4140)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3757)
+	at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2696)
+	at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2660)
+	at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2494)
+	at org.eclipse.ui.internal.Workbench$7.run(Workbench.java:674)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:667)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at com.adobe.flexbuilder.standalone.FlashBuilderApplication.start(FlashBuilderApplication.java:108)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+
+!ENTRY com.adobe.flexbuilder.project 4 43 2012-04-06 10:29:10.739
+!MESSAGE Error
+!STACK 0
+java.lang.NullPointerException
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.getMXMLDesignView4Commander(MXMLDesignView4Controller.java:2398)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.handleInvalid(MXMLDesignView4Controller.java:2304)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.processEvent(MXMLDesignView4Controller.java:2193)
+	at com.adobe.flexbuilder.mxml.editor.design.internal.MXMLDesignView4Controller.modelChanged(MXMLDesignView4Controller.java:2141)
+	at com.adobe.flexbuilder.designmodel.DesignModel.doNotifyChanged(DesignModel.java:361)
+	at com.adobe.flexbuilder.designmodel.DesignModel.notifyChanged(DesignModel.java:276)
+	at com.adobe.flexbuilder.designmodel.DesignModel.endNotificationBatch(DesignModel.java:201)
+	at com.adobe.flexbuilder.mxmlmodel.inlinestates.internal.SMXMLModel$MyBaseModelListener.modelChanged(SMXMLModel.java:336)
+	at com.adobe.flexbuilder.designmodel.WeakModelListener.modelChanged(WeakModelListener.java:79)
+	at com.adobe.flexbuilder.designmodel.DesignModel.doNotifyChanged(DesignModel.java:361)
+	at com.adobe.flexbuilder.designmodel.DesignModel.notifyChanged(DesignModel.java:276)
+	at com.adobe.flexbuilder.designmodel.DesignModel.endNotificationBatch(DesignModel.java:201)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.endBatch(DocumentTextProvider.java:531)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.doProcessCodeEvents(DocumentTextProvider.java:577)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.access$1(DocumentTextProvider.java:536)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider$EventQueueProcessor.run(DocumentTextProvider.java:237)
+	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:4140)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3757)
+	at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2696)
+	at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2660)
+	at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2494)
+	at org.eclipse.ui.internal.Workbench$7.run(Workbench.java:674)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:667)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at com.adobe.flexbuilder.standalone.FlashBuilderApplication.start(FlashBuilderApplication.java:108)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+
+!ENTRY com.adobe.flexbuilder.project 4 43 2012-04-06 10:29:10.741
+!MESSAGE batch nesting error
+!STACK 0
+java.lang.Exception
+	at com.adobe.flexbuilder.designmodel.DesignModel.endNotificationBatch(DesignModel.java:191)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.endBatch(DocumentTextProvider.java:531)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.doProcessCodeEvents(DocumentTextProvider.java:603)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider.access$1(DocumentTextProvider.java:536)
+	at com.adobe.flexbuilder.designmodel.DocumentTextProvider$EventQueueProcessor.run(DocumentTextProvider.java:237)
+	at org.eclipse.swt.widgets.RunnableLock.run(RunnableLock.java:35)
+	at org.eclipse.swt.widgets.Synchronizer.runAsyncMessages(Synchronizer.java:135)
+	at org.eclipse.swt.widgets.Display.runAsyncMessages(Display.java:4140)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:3757)
+	at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2696)
+	at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2660)
+	at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2494)
+	at org.eclipse.ui.internal.Workbench$7.run(Workbench.java:674)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:332)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:667)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at com.adobe.flexbuilder.standalone.FlashBuilderApplication.start(FlashBuilderApplication.java:108)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:196)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:344)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:179)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:622)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:577)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1410)
+!SESSION 2012-04-06 12:30:42.724 -----------------------------------------------
+eclipse.buildId=I20100608-0911
+java.version=1.6.0_16
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86 -data C:\Users\jhouser\Documents\career\clients\ActiveClients\ApacheFlex\Development\Source\WhiteBoard\jhouser\FXGImage\Workspace"
+
+!ENTRY org.eclipse.ui 2 0 2012-04-06 12:30:46.154
+!MESSAGE Warnings while parsing the commands from the 'org.eclipse.ui.commands' and 'org.eclipse.ui.actionDefinitions' extension points.
+!SUBENTRY 1 org.eclipse.ui 2 0 2012-04-06 12:30:46.154
+!MESSAGE Commands should really have a category: plug-in='com.qnx.flashbuilder.multiplatform.qnx.ui', id='com.qnx.flashbuilder.multiplatform.qnx.ui.commands.OpenInfoCenter', categoryId='com.qnx.flashbuilder.multiplatform.qnx.ui.commands.category.help'
+
+!ENTRY org.eclipse.ui 2 0 2012-04-06 12:30:46.204
+!MESSAGE Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point
+!SUBENTRY 1 org.eclipse.ui 2 0 2012-04-06 12:30:46.204
+!MESSAGE Cannot bind to an undefined command: plug-in='com.adobe.ide.coldfusion.search', id='com.adobe.ide.command.coldfusion.search'
+
+!ENTRY com.adobe.flexbuilder.ui 4 1 2012-04-06 12:30:48.429
+!MESSAGE Product = CS55 version = 460 edition = prem
+
+!ENTRY org.eclipse.jface 2 0 2012-04-06 12:48:30.046
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2012-04-06 12:48:30.046
+!MESSAGE A conflict occurred for CTRL+G:
+Binding(CTRL+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.declarations.in.workspace,Find All Declarations In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		ActionHandler(com.adobe.flexbuilder.as.editor.ui.packageexplorer.actions.FlexPackageExplorerFindAllDeclarationsAction@1378d8e),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexide.editorcore.flexEditorScope,,,system)
+Binding(CTRL+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.declarations.in.workspace,Find All Declarations In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		ActionHandler(com.adobe.flexbuilder.as.editor.ui.packageexplorer.actions.FlexPackageExplorerFindAllDeclarationsAction@1378d8e),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexbuilder.as.editor.context.packageexplorer,,,system)
+Binding(CTRL+G,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.edit.text.java.search.declarations.in.workspace,Declaration in Workspace,
+		Search for declarations of the selected element in the workspace,
+		Category(org.eclipse.search.ui.category.search,Search,Search command category,true),
+		,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2012-04-06 12:48:30.046
+!MESSAGE A conflict occurred for CTRL+SHIFT+G:
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.references.in.workspace,Find All References In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		ActionHandler(com.adobe.flexbuilder.as.editor.ui.packageexplorer.actions.FlexPackageExplorerFindAllReferencesAction@2e9157),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexide.editorcore.flexEditorScope,,,system)
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(com.adobe.flexbuilder.as.editor.find.all.references.in.workspace,Find All References In Workspace,
+		,
+		Category(com.adobe.flexbuilder.editorcore.navigation.category,Navigation,null,true),
+		ActionHandler(com.adobe.flexbuilder.as.editor.ui.packageexplorer.actions.FlexPackageExplorerFindAllReferencesAction@2e9157),
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	com.adobe.flexbuilder.as.editor.context.packageexplorer,,,system)
+Binding(CTRL+SHIFT+G,
+	ParameterizedCommand(Command(org.eclipse.jdt.ui.edit.text.java.search.references.in.workspace,References in Workspace,
+		Search for references to the selected element in the workspace,
+		Category(org.eclipse.search.ui.category.search,Search,Search command category,true),
+		,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)

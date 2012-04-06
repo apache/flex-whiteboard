@@ -1,0 +1,8 @@
+#Fri Apr 06 10:24:21 EDT 2012
+com.adobe.flexide.as.core.filetemplates.=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+removeUnused=false
+com.adobe.flexide.as.core.codetemplates.generated.=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
+eclipse.preferences.version=1
+asCycling=[cycle.templates,true,2][cycle.variables,true,3][cycle.functions,true,4][cycle.class,true,5][cycle.package,true,6][cycle.namespaces,true,7]
+markASOccurencesVal=false
+com.adobe.flexide.as.core.codetemplates.=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates><template autoinsert\="true" context\="com.adobe.flexide.as.core.codetemplates.action_script" deleted\="false" description\="Insert commitProperties() Method" enabled\="true" name\="cp">/**&\#13;\r\n * @private&\#13;\r\n */&\#13;\r\n protected function commitProperties()\:void{&\#13;\r\n \tsuper.commitProperties();&\#13;\r\n \t${cursor}&\#13;\r\n }</template></templates>

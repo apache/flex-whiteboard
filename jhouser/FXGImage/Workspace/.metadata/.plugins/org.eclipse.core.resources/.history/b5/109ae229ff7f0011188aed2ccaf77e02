@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:local="*" 
+			   xmlns:utils="org.apache.utils.*">
+	
+	<fx:Script>
+		<![CDATA[
+			protected function onXPositionChange(event:Event):void
+			{
+				flexLogo.x = xPosition.value;
+			}
+			
+			protected function onYPositionChange(event:Event):void
+			{
+				flexLogo.y = yPosition.value;
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				trace(flexLogo.width);
+				trace(flexLogo.height);
+				trace(imageGroup.width);
+				trace(imageGroup.height);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	
+	<s:HGroup width="100%" height="100%">
+		<s:Form>
+			<s:FormItem label="x" >
+				<s:HSlider id="xPosition" value="0" minimum="0" maximum="{imageGroup.width}" change="onXPositionChange(event)" />
+			</s:FormItem>
+			<s:FormItem label="y" >
+				<s:HSlider id="yPosition" value="0" minimum="0" maximum="{imageGroup.height}"  change="onYPositionChange(event)"/>
+			</s:FormItem>
+			<s:FormItem >
+				<s:Button click="button1_clickHandler(event)" />
+			</s:FormItem>
+		</s:Form>
+		
+		
+		<s:Group width="100%" height="100%" id="imageGroup">
+			<utils:FXGImage source="org.apache.assets.apacheLogo.ApacheFlexLogo" id="flexLogo"  />
+		</s:Group>
+		
+	</s:HGroup>
+	
+
+
+</s:Application>

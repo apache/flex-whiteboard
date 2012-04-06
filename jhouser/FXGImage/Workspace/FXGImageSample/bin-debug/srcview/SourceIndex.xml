@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of FXGImageSample</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node icon="cssIcon" label="history.css" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node icon="htmlIcon" label="historyFrame.html" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node icon="htmlIcon" label="index.template.html" url="source/html-template/index.template.html"/>
+			<node icon="swfIcon" label="playerProductInstall.swf" url="source/html-template/playerProductInstall.swf"/>
+			<node label="swfobject.js" url="source/html-template/swfobject.js.txt"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src">
+			<node label="org">
+				<node label="apache">
+					<node label="assets">
+						<node label="apacheLogo">
+							<node label="ApacheFlexLogo.fxg" url="source/org/apache/assets/apacheLogo/ApacheFlexLogo.fxg"/>
+						</node>
+					</node>
+				</node>
+			</node>
+			<node icon="mxmlAppIcon" selected="true" label="FXGImageSample.mxml" url="source/FXGImageSample.mxml.html"/>
+		</node>
+	</nodes>
+	<zipfile label="Download source (ZIP, 39K)" url="FXGImageSample.zip">
+	</zipfile>
+	<sdklink label="Download Flex SDK" url="http://www.adobe.com/go/flex451_sdk_download">
+	</sdklink>
+</index>
