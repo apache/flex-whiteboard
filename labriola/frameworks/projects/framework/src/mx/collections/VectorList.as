@@ -22,9 +22,11 @@ package mx.collections {
 import flash.events.EventDispatcher;
 import flash.events.IEventDispatcher;
 import flash.net.registerClassAlias;
+import flash.system.ApplicationDomain;
 import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
+import flash.utils.describeType;
 import flash.utils.getQualifiedClassName;
 
 import mx.core.IPropertyChangeNotifier;
@@ -83,7 +85,10 @@ public class VectorList extends EventDispatcher
 
         registerClassAlias( "Vector", Vector );
     }
-	   
+	 
+	private static const VECTOR_PREFIX:String = "__AS3__.vec::Vector.";
+	private var fixedLengthVector:Boolean = false;
+
     //--------------------------------------------------------------------------
     //
     // Constructor
@@ -94,7 +99,7 @@ public class VectorList extends EventDispatcher
      *  Construct a new VectorList using the specified Vector as its source.
      *  If no source is specified an empty Vector of type * will be used.
      */
-    public function VectorList(source:Vector.<*> = null)
+    public function VectorList(source:* = null)
     {
 		super();
 
@@ -130,10 +135,7 @@ public class VectorList extends EventDispatcher
      */
     public function get length():int
     {
-    	if (source)
-        	return source.length;
-        else
-        	return 0;
+       	return source.length;
     }
     
     //----------------------------------
@@ -151,12 +153,12 @@ public class VectorList extends EventDispatcher
      *
 	 *  @return An Vector that represents the underlying source.
      */
-    public function get source():Vector.<*>
+    public function get source():*
     {
         return _source;
     }
     
-    public function set source(s:Vector.<*>):void
+    public function set source(s:*):void
     {
         var i:int;
         var len:int;
@@ -168,7 +170,18 @@ public class VectorList extends EventDispatcher
                 stopTrackUpdates(_source[i]);
             }
         }
-        _source  = s ? s : new Vector.<*>();
+		
+		if ( s && !isVector( s ) ) {
+			//Move me to the resource manager
+			throw new TypeError("The source of a VectorList must be a Vector" );
+		} 
+
+		_source  = s ? s : new Vector.<*>();
+
+		if ( _source.fixed ) {
+			fixedLengthVector = true;
+		}
+		
         len = _source.length;
         for (i = 0; i < len; i++)
         {
@@ -208,7 +221,14 @@ public class VectorList extends EventDispatcher
     // Methods
     // 
     //--------------------------------------------------------------------------
+	private function isVector( value:* ):Boolean {
+		//I am rather ashamed of doing this, but it seems the only reliable way we have to ensure we were given a Vector 
+		//is to compare it against a string
+		var sourceClassName:String = getQualifiedClassName( value );
 
+		return ( sourceClassName.indexOf( VECTOR_PREFIX ) >= 0 );
+	}
+	
     /**
      *  Get the item at the specified index.
      * 
@@ -313,7 +333,12 @@ public class VectorList extends EventDispatcher
      */
     public function addItemAt(item:Object, index:int):void
     {
-        if (index < 0 || index > length) 
+		if ( fixedLengthVector ) {
+			//Make a message in manager
+			throw new RangeError( "Fixed Length Vector");
+		}
+
+		if ( index < 0 || index > length) 
 		{
 			var message:String = resourceManager.getString(
 				"collections", "outOfBounds", [ index ]);
@@ -485,10 +510,7 @@ public class VectorList extends EventDispatcher
      */
     override public function toString():String
 	{
-		if (source)
-			return source.toString();
-		else
-			return getQualifiedClassName(this);	
+		return source.toString();
 	}	
     
     //--------------------------------------------------------------------------
@@ -614,7 +636,7 @@ public class VectorList extends EventDispatcher
 	 *  events should be dispatched. 
 	 */
 	private var _dispatchEvents:int = 0;
-    private var _source:Vector.<*>;
+    private var _source:*;
     private var _uid:String;
 }
 

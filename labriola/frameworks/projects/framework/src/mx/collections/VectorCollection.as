@@ -91,16 +91,8 @@ public class VectorCollection extends ListCollectionView implements ICollectionV
      */
     public function set source(s:*):void
     {		
-		if ( s is Vector.<*> ) {
-			//Wraps provided Vectors in a VectorList implementation
-			list = new VectorList(s);			
-		} else if ( !s ) {
-			//Provides a default VectorList
-			list = new VectorList();
-		} else {
-			//Need this because of our unfortunate requirement to take an * as the type to get around the compiler
-			throw new Error("The source of a VectorCollection must be a Vector" );
-		}
+		//Provides a default VectorList
+		list = new VectorList( s );
     }
 
     //--------------------------------------------------------------------------
