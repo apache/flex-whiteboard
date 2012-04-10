@@ -92,7 +92,7 @@ import mx.utils.UIDUtil;
 public class ArrayList extends EventDispatcher
        implements IList, IExternalizable, IPropertyChangeNotifier
 {
-    include "../core/Version.as";
+    //include "../core/Version.as";
 
     //--------------------------------------------------------------------------
     //

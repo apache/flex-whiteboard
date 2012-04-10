@@ -60,7 +60,15 @@ package mx.collections.tests.vectorList {
 			
 			vectorList.addItemAt( value, 0 );
 		}
-		
+
+		[Test(expects="RangeError")]
+		public function shouldReceiveErrorAttemptingToRemoveItemAtToFixedLengthVector():void {
+			var vector:Vector.<int> = new Vector.<int>( 1, true );
+			var vectorList:VectorList = new VectorList( vector );
+			
+			vectorList.removeItemAt( 0 );
+		}
+
 		[Test]
 		public function removeItemAtShouldRemoveItemFromVector():void {
 			const value:int = 5;

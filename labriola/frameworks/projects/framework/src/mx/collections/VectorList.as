@@ -397,7 +397,12 @@ public class VectorList extends EventDispatcher
      */
     public function removeItemAt(index:int):Object
     {
-        if (index < 0 || index >= length)
+		if ( fixedLengthVector ) {
+			//Make a message in manager
+			throw new RangeError( "Fixed Length Vector");
+		}
+
+		if (index < 0 || index >= length)
 		{
 			var message:String = resourceManager.getString(
 				"collections", "outOfBounds", [ index ]);
