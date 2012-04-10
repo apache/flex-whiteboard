@@ -62,19 +62,21 @@ import mx.utils.UIDUtil;
  *  is possible that a subclass might.
  */
 public class VectorList extends EventDispatcher
-	   implements IList, IExternalizable, IPropertyChangeNotifier {
+	   implements IList, IPropertyChangeNotifier {
 	   
     //--------------------------------------------------------------------------
     //
     // Static Initializer
     // 
     //--------------------------------------------------------------------------
-    {
+	   /*    {
         //If one attempt to serialize a Vector in any way, the type of the Vector is not retained unless the types are also aliased
         //This should really be handled in the VM in my opinion, however, it is being done here to make it more pay as you go
         //Unfortunately the consequence is that one must either do this manually or in some way reference a VectorList to ensure
         //proper serialization of their Vectors
-        registerClassAlias( "Boolean", Boolean );
+
+	//This is commented out pending the outcome of discussion abotu serialization	
+		registerClassAlias( "Boolean", Boolean );
         registerClassAlias( "int", int );
         registerClassAlias( "Number", Number );
         registerClassAlias( "String", String );
@@ -85,7 +87,7 @@ public class VectorList extends EventDispatcher
 
         registerClassAlias( "Vector", Vector );
     }
-	 
+		*/	 
 	private static const VECTOR_PREFIX:String = "__AS3__.vec::Vector.";
 	private var fixedLengthVector:Boolean = false;
 
@@ -233,11 +235,8 @@ public class VectorList extends EventDispatcher
      *  Get the item at the specified index.
      * 
      *  @param 	index the index in the list from which to retrieve the item
-     *  @param	prefetch int indicating both the direction and amount of items
-     *			to fetch during the request should the item not be local.
+     *  @param	Not used in this implementation at this time
      *  @return the item at that index, null if there is none
-     *  @throws ItemPendingError if the data for that index needs to be 
-     *                           loaded from a remote location
      *  @throws RangeError if the index < 0 or index >= length
      */
     public function getItemAt(index:int, prefetch:int = 0):Object
@@ -486,24 +485,6 @@ public class VectorList extends EventDispatcher
 
         return ar;
     }
-    
-    /**
-     *  Ensures that only the source property is seralized.
-     *  @private
-     */
-    public function readExternal(input:IDataInput):void
-    {
-    	source = input.readObject();
-    }
-    
-    /**
-     *  Ensures that only the source property is serialized.
-     *  @private
-     */
-    public function writeExternal(output:IDataOutput):void
-    {
-    	output.writeObject(_source);
-    }
 
 	/**
      *  Pretty prints the contents of this VectorList to a string and returns it.
@@ -588,7 +569,7 @@ public class VectorList extends EventDispatcher
     	if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
     	{
     		var objEvent:PropertyChangeEvent = PropertyChangeEvent(event.clone());
-    		var index:uint = getItemIndex(event.target);
+    		var index:int = getItemIndex(event.target);
     		objEvent.property = index.toString() + "." + event.property;
     		dispatchEvent(objEvent);
     	}

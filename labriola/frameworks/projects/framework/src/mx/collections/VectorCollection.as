@@ -24,16 +24,13 @@ import flash.utils.IDataInput;
 import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
 
-import mx.collections.ICollectionView;
-import mx.collections.ListCollectionView;
-import mx.collections.VectorList;
 import mx.core.mx_internal;
 
 use namespace mx_internal;
 
 [DefaultProperty("source")]
 
-public class VectorCollection extends ListCollectionView implements ICollectionView, IExternalizable
+public class VectorCollection extends ListCollectionView implements ICollectionView
 {
 
     //--------------------------------------------------------------------------
@@ -94,37 +91,6 @@ public class VectorCollection extends ListCollectionView implements ICollectionV
 		//Provides a default VectorList
 		list = new VectorList( s );
     }
-
-    //--------------------------------------------------------------------------
-    //
-    //  Methods
-    //
-    //--------------------------------------------------------------------------
-
-    /**
-     *  @private
-     *  Ensures that only the source property is serialized.
-     */
-    public function readExternal(input:IDataInput):void
-    {
-        if (list is IExternalizable)
-            IExternalizable(list).readExternal(input);
-        else
-            source = input.readObject();
-    }
-
-    /**
-     *  @private
-     *  Ensures that only the source property is serialized.
-     */
-    public function writeExternal(output:IDataOutput):void
-    {
-        if (list is IExternalizable)
-            IExternalizable(list).writeExternal(output);
-        else
-            output.writeObject(source);
-    }
-
 }
 
 }
