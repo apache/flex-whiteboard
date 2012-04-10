@@ -231,8 +231,9 @@ package mx.collections.tests.vectorList {
 			eventDispatcher.dispatchEvent( PropertyChangeEvent.createUpdateEvent( eventDispatcher, propertyName , propertyOldVal, propertyNewVal ) );
 		}
 		
-		[Test(description="We should really consider if this is the behavior we want here. Right now mimics fixed ArrayList")]
+		[Test]
 		public function itemUpdatedShouldDispatchPropertyChangeEvent():void {
+			const index:int = 1;
 			const propertyName:String = "dummy";
 			const propertyOldVal:String = "dummyOldVal";
 			const propertyNewVal:String = "dummyNewVal";
@@ -241,7 +242,8 @@ package mx.collections.tests.vectorList {
 			var eventDispatcher:EventDispatcher = new EventDispatcher();
 			var vectorList:VectorList = new VectorList( vector );
 			
-			vectorList.addItem( eventDispatcher );
+			vectorList.addItem( new EventDispatcher() );
+			vectorList.addItemAt( eventDispatcher, index );
 			
 			expectEvent.from( vectorList ).
 				hasType( PropertyChangeEvent.PROPERTY_CHANGE ).
@@ -249,7 +251,7 @@ package mx.collections.tests.vectorList {
 				hasPropertyWithValue( "kind", PropertyChangeEventKind.UPDATE ).
 				hasPropertyWithValue( "newValue", propertyNewVal ). 
 				hasPropertyWithValue( "oldValue", propertyOldVal ). 
-				hasPropertyWithValue( "property", "-1" + '.' + propertyName ). 
+				hasPropertyWithValue( "property", index + '.' + propertyName ). 
 				hasPropertyWithValue( "source", eventDispatcher ). 
 				once();
 

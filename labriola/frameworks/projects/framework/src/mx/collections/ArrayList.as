@@ -568,8 +568,17 @@ public class ArrayList extends EventDispatcher
         event.property = property;
         event.oldValue = oldValue;
         event.newValue = newValue;
-        
-        itemUpdateHandler(event);        
+
+		//This handler was intended to handle events from child objects, not to be called directly
+		//itemUpdateHandler(event);        
+
+		internalDispatchEvent(CollectionEventKind.UPDATE, event);
+		
+		// need to dispatch object event now
+		if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
+		{
+			dispatchPropertyChangeEventClone( event, item );
+		}
     }    
     
     /**
@@ -633,6 +642,26 @@ public class ArrayList extends EventDispatcher
     // Internal Methods
     // 
     //--------------------------------------------------------------------------
+
+	/**
+	 *  Dispatches a PropertyChangeEvent clone either from a child object whose event needs to be redispatched
+	 *  or when a PropertyChangeEvent is faked inside of this class for the purposes of informing the view
+	 *  of an update to underlying data.
+	 *
+	 *  @param event The PropertyChangeEvent to be cloned and dispatched
+	 *  @param item The item within the view that was updated.
+	 *
+	 *  @see mx.core.IPropertyChangeNotifier
+	 *  @see mx.events.PropertyChangeEvent
+	 */
+	
+	private function dispatchPropertyChangeEventClone( event:PropertyChangeEvent, item:Object ):void {
+		var objEvent:PropertyChangeEvent = PropertyChangeEvent(event.clone());
+		
+		var index:int = getItemIndex( item );
+		objEvent.property = index.toString() + "." + event.property;
+		dispatchEvent(objEvent);
+	} 
 
     /**
      *  Enables event dispatch for this list.
@@ -721,17 +750,12 @@ public class ArrayList extends EventDispatcher
     protected function itemUpdateHandler(event:PropertyChangeEvent):void
     {
         internalDispatchEvent(CollectionEventKind.UPDATE, event);
-        // need to dispatch object event now
-        if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
-        {
-            var objEvent:PropertyChangeEvent = PropertyChangeEvent(event.clone());
-			//When itemUpdated is called, there is no event target. This means getItemIndex returns a -1
-			//Since this was originally cast as a uint, this caused many strange results. Changing it to
-			//an int to be consistent throughout other uses of this event
-            var index:int = getItemIndex(event.target);
-            objEvent.property = index.toString() + "." + event.property;
-            dispatchEvent(objEvent);
-        }
+
+		// need to dispatch object event now
+		if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
+		{
+			dispatchPropertyChangeEventClone( event, event.target );
+		}
     }
     
     /** 

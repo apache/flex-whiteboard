@@ -470,9 +470,15 @@ public class VectorList extends EventDispatcher
         event.oldValue = oldValue;
         event.newValue = newValue;
         
-		itemUpdateHandler(event);        
+		internalDispatchEvent(CollectionEventKind.UPDATE, event);
+		
+		// need to dispatch object event now
+		if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
+		{
+			dispatchPropertyChangeEventClone( event, item );
+		}
     }    
-    
+
     /**
      *  Return an Vector that is populated in the same order as the IList
      *  implementation.  
@@ -504,6 +510,26 @@ public class VectorList extends EventDispatcher
     // Internal Methods
     // 
     //--------------------------------------------------------------------------
+
+	/**
+	 *  Dispatches a PropertyChangeEvent clone either from a child object whose event needs to be redispatched
+	 *  or when a PropertyChangeEvent is faked inside of this class for the purposes of informing the view
+	 *  of an update to underlying data.
+	 *
+	 *  @param event The PropertyChangeEvent to be cloned and dispatched
+	 *  @param item The item within the view that was updated.
+	 *
+	 *  @see mx.core.IPropertyChangeNotifier
+	 *  @see mx.events.PropertyChangeEvent
+	 */
+	
+	private function dispatchPropertyChangeEventClone( event:PropertyChangeEvent, item:Object ):void {
+		var objEvent:PropertyChangeEvent = PropertyChangeEvent(event.clone());
+		
+		var index:int = getItemIndex( item );
+		objEvent.property = index.toString() + "." + event.property;
+		dispatchEvent(objEvent);
+	} 
 
 	/**
 	 *  Enables event dispatch for this list.
@@ -573,10 +599,7 @@ public class VectorList extends EventDispatcher
 		// need to dispatch object event now
     	if (_dispatchEvents == 0 && hasEventListener(PropertyChangeEvent.PROPERTY_CHANGE))
     	{
-    		var objEvent:PropertyChangeEvent = PropertyChangeEvent(event.clone());
-    		var index:int = getItemIndex(event.target);
-    		objEvent.property = index.toString() + "." + event.property;
-    		dispatchEvent(objEvent);
+			dispatchPropertyChangeEventClone( event, event.target );
     	}
     }
     

@@ -233,6 +233,7 @@ package mx.collections.tests.arrayList {
 		
 		[Test(description="This test relies upon the patched version of ArrayList in my whiteboard")]
 		public function itemUpdatedShouldDispatchPropertyChangeEvent():void {
+			const index:int = 1;
 			const propertyName:String = "dummy";
 			const propertyOldVal:String = "dummyOldVal";
 			const propertyNewVal:String = "dummyNewVal";
@@ -241,7 +242,8 @@ package mx.collections.tests.arrayList {
 			var eventDispatcher:EventDispatcher = new EventDispatcher();
 			var arrayList:ArrayList = new ArrayList( array );
 			
-			arrayList.addItem( eventDispatcher );
+			arrayList.addItem( new EventDispatcher() );
+			arrayList.addItemAt( eventDispatcher, index );
 			
 			expectEvent.from( arrayList ).
 				hasType( PropertyChangeEvent.PROPERTY_CHANGE ).
@@ -249,7 +251,7 @@ package mx.collections.tests.arrayList {
 				hasPropertyWithValue( "kind", PropertyChangeEventKind.UPDATE ).
 				hasPropertyWithValue( "newValue", propertyNewVal ). 
 				hasPropertyWithValue( "oldValue", propertyOldVal ). 
-				hasPropertyWithValue( "property", "-1" + '.' + propertyName ). 
+				hasPropertyWithValue( "property", index + '.' + propertyName ). 
 				hasPropertyWithValue( "source", eventDispatcher ). 
 				once();
 
