@@ -1,0 +1,34 @@
+<languageVersion : 1.0;>
+
+kernel Crossfade
+<   namespace : "flex";
+    vendor : "Adobe Systems";
+    version : 1;
+    description : "Crossfade between two images, for use with Flex effects"; >
+{
+   parameter float progress;
+   parameter float width;
+   parameter float height;
+
+   // First parameter is unused in AnimateTransitionShader effect
+   input image4 src0;
+   input image4 from;
+   input image4 to;
+   output pixel4 dst;
+   
+   void evaluatePixel()
+   {
+        // Acquire the pixel values from both images at the current location
+        float2 coord = outCoord();
+        float4 color0 = sampleNearest(src0, coord);
+        float4 fromPixel = sampleNearest(from, coord);
+        float4 toPixel = sampleNearest(to, coord);
+        float prog = progress;
+        
+        // Output equals mixture of two pixels, according to progress value
+        dst = mix(fromPixel, toPixel, progress);
+        // workaround for Flash filter bug that replicates last column/row
+        if (coord.x >= width || coord.y >= height)
+            dst.a = 0.0;
+   }
+}
