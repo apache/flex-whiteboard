@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" title="HomeView" xmlns:components="org.apache.components.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<!-- 
+		these are styles copied from default.css of Mobile Theme Project and explicitly to be applied to our custom ToggleSwitch 
+		Since this is a new component; it won't inherit these styles automatically.  This effectively makes our custom component styles on parity with the 'release' ToggleButton
+		If we were to change the actual framework code ToggleSwitch this wouldn't be needed in order to get 'functionality parity
+	-->
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		
+		.toggleSwitchAlternate
+		{
+			accentColor: #3F7FBA;
+			color: #FFFFFF;
+			fontSize: 27;
+			skinClass: ClassReference("org.apache.skins.ToggleSwitchSkin");
+			slideDuration: 125;
+			textShadowAlpha: .65;
+			textShadowColor: #000000;
+			/* added by JH DotComIt 
+			chromeColor : #484848;*/
+		}		
+		
+		@media (application-dpi: 160)
+		{
+			.toggleSwitchAlternate
+			{
+				fontSize: 18;
+			}
+
+		}
+		@media (application-dpi: 320)
+		{
+			.toggleSwitchAlternate
+			{
+				fontSize: 36;
+			}
+		}
+		
+	</fx:Style>		
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
+	
+	<s:Form width="100%">
+		<s:FormItem label="Default Toggle Switch" width="100%">
+			<s:ToggleSwitch />
+		</s:FormItem>
+		<s:FormItem label="Toggle Switch with Easily Editable Labels" width="100%">
+			<components:ToggleSwitch id="ts" styleName="toggleSwitchAlternate" />
+		</s:FormItem>
+		<s:FormItem label="Selected Label" width="100%">
+			<s:TextInput id="selectedLabelText" text="@{ts.selectedLabel}"/>
+		</s:FormItem>
+		<s:FormItem label="Unselected Label" width="100%">
+			<s:TextInput id="unselectedLabelText" text="@{ts.unselectedLabel}"  />
+		</s:FormItem>
+	</s:Form>
+	
+	
+</s:View>
