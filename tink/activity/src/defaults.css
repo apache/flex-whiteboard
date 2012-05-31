@@ -1,0 +1,12 @@
+/* CSS file */
+@namespace "library://ns.tink.ws/flex/spark";
+
+ActivityIndicator
+{
+	skinClass: ClassReference("ws.tink.spark.skins.controls.ActivityIndicatorSkin");
+}
+
+Rotator
+{
+	skinClass: ClassReference("ws.tink.spark.skins.controls.RotatorSkin");
+}

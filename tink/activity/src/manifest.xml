@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<componentPackage>
+	
+	<!-- controls -->
+	<component id="ActivityIndicator" class="ws.tink.spark.controls.ActivityIndicator"/>
+	<component id="Rotator" class="ws.tink.spark.controls.Rotator"/>
+	
+</componentPackage>
