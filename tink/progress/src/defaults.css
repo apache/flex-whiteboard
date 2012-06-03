@@ -1,0 +1,18 @@
+/* CSS file */
+@namespace "library://ns.tink.ws/flex/spark";
+
+ProgressIndicator
+{
+	skinClass : ClassReference("ws.tink.spark.skins.controls.ProgressIndicatorResizeSkin");
+}
+
+ProgressResize
+{
+	skinClass : ClassReference("ws.tink.spark.skins.controls.ProgressResizeSkin");
+}
+
+ProgressWedge
+{
+	skinClass : ClassReference("ws.tink.spark.skins.controls.ProgressWedgeSkin");
+}
+

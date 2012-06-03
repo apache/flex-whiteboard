@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:st="library://ns.tink.ws/flex/spark"
+		minWidth="100">
+	
+	<fx:Metadata>
+		<![CDATA[ 
+		/** 
+		* @copy spark.skins.spark.ApplicationSkin#hostComponent
+		*/
+		[HostComponent("ws.tink.spark.controls.ProgressIndicator")]
+		]]>
+	</fx:Metadata> 
+	
+	<s:layout>
+		<s:HorizontalLayout verticalAlign="middle"/>
+	</s:layout>
+	
+	<!--- @copy ws.tink.spark.controls.ProgressIndicator#progressDisplay -->
+	<st:ProgressResize id="progressDisplay" width="100%"/>
+	
+	<!--- @copy ws.tink.spark.controls.ProgressIndicator#labelDisplay -->
+	<s:Label id="labelDisplay"/>
+	
+</s:Skin>

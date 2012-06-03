@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<componentPackage>
+	
+	<!-- controls -->
+	<component id="ProgressIndicator" class="ws.tink.spark.controls.ProgressIndicator"/>
+	<component id="ProgressResize" class="ws.tink.spark.controls.ProgressResize"/>
+	<component id="ProgressWedge" class="ws.tink.spark.controls.ProgressWedge"/>
+	
+	<!-- layouts -->
+	<component id="EllipseLayout" class="ws.tink.spark.layouts.EllipseLayout"/>
+	<component id="ProgressLayout" class="ws.tink.spark.layouts.ProgressLayout"/>
+	
+	<!-- primitives -->
+	<component id="Wedge" class="ws.tink.spark.primitives.Wedge"/>
+	
+</componentPackage>
