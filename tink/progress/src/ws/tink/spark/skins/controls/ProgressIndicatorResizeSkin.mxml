@@ -14,13 +14,13 @@
 	</fx:Metadata> 
 	
 	<s:layout>
-		<s:HorizontalLayout verticalAlign="middle"/>
+		<s:VerticalLayout horizontalAlign="center"/>
 	</s:layout>
-	
-	<!--- @copy ws.tink.spark.controls.ProgressIndicator#progressDisplay -->
-	<st:ProgressResize id="progressDisplay" width="100%"/>
 	
 	<!--- @copy ws.tink.spark.controls.ProgressIndicator#labelDisplay -->
 	<s:Label id="labelDisplay"/>
+	
+	<!--- @copy ws.tink.spark.controls.ProgressIndicator#progressDisplay -->
+	<st:ProgressResize id="progressDisplay" width="100%"/>
 	
 </s:Skin>
