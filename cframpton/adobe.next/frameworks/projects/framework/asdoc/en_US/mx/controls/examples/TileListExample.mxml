@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<!-- Simple example to demonstrate the Halo TileList Control. -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:mx="library://ns.adobe.com/flex/mx">
+
+    <fx:Script>
+        <![CDATA[
+             [Embed(source="assets/Product1.png")]
+             public const phone1:Class;
+
+             [Embed(source="assets/Product2.png")]
+             public const phone2:Class;
+
+             [Embed(source="assets/Product3.png")]
+             public const phone3:Class;
+
+             [Embed(source="assets/Product4.png")]
+             public const phone4:Class;
+
+             [Embed(source="assets/Product5.png")]
+             public const phone5:Class;
+        ]]>
+    </fx:Script>
+
+    <s:Panel title="Halo TileList Control Example"
+            width="75%" height="75%" 
+            horizontalCenter="0" verticalCenter="0">
+        <s:VGroup left="10" right="10" top="10" bottom="10">
+            <s:Label width="100%" color="blue" 
+                    text="A TileList control displays items in rows and columns."/>
+
+            <mx:TileList id="CameraSelection" height="250" width="300" 
+                    maxColumns="2" rowHeight="225" columnWidth="125">
+                <mx:dataProvider>
+                    <fx:Array>
+                        <fx:Object label="Product 1" icon="{phone1}"/>
+                        <fx:Object label="Product 2" icon="{phone2}"/>
+                        <fx:Object label="Product 3" icon="{phone3}"/>
+                        <fx:Object label="Product 4" icon="{phone4}"/>
+                        <fx:Object label="Product 5" icon="{phone5}"/>
+                    </fx:Array>
+                </mx:dataProvider>
+            </mx:TileList>
+        </s:VGroup>
+    </s:Panel>
+
+</s:Application>
