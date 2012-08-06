@@ -37,7 +37,6 @@ package mx.automation.delegates.core
 	import mx.automation.IAutomationObjectHelper;
 	import mx.automation.delegates.DragManagerAutomationImpl;
 	import mx.automation.events.AutomationDragEvent;
-	import mx.core.Container;
 	import mx.core.EventPriority;
 	import mx.core.IUIComponent;
 	import mx.core.UIComponent;
@@ -131,22 +130,13 @@ package mx.automation.delegates.core
 		protected function addMouseEvent(obj:DisplayObject, event:String, handler:Function , 
 										 useCapture:Boolean = false , priority:int = 0, useWeekRef:Boolean = false):void
 		{
-			if (obj is Container) 
-				Container(obj).$addEventListener(event, handler, useCapture,priority, useWeekRef);
-				// special addevent listener on the container, which does not add the mouse shield.
-			else
-				obj.addEventListener(event, handler, useCapture,priority, useWeekRef);
+			obj.addEventListener(event, handler, useCapture,priority, useWeekRef);
 			
 		} 
 		
 		protected function removeMouseEvent(obj:DisplayObject, event:String, handler:Function, useCapture:Boolean = false):void
 		{
-			if (obj is Container) 
-				Container(obj).$removeEventListener(event, handler,useCapture);
-				// special remove event listener on the container, corresponds to the special $addEventListener
-				// which does not add the mouse shield.
-			else
-				obj.removeEventListener(event, handler,useCapture);
+			obj.removeEventListener(event, handler,useCapture);
 		} 
 		
 		//--------------------------------------------------------------------------

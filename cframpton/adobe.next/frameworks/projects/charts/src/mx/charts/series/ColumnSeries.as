@@ -2129,14 +2129,14 @@ public class ColumnSeries extends Series implements IColumn,IStackable2
                     stackedValue = 0;
                 }
 				if (yValue != 0)
-				{
-					chartItem.yValue = yValue + stackedValue;
-					chartItem.minValue = stackedValue;
+                {
+                    chartItem.yValue = yValue + stackedValue;
+                    chartItem.minValue = stackedValue;
 					
-					yValue += stackedValue;
-					stackedXValueDictionary[xValue] = yValue;
-					chartItem.xValue = xValue;
-					maxValue = Math.max(maxValue,yValue);
+                yValue += stackedValue;
+                stackedXValueDictionary[xValue] = yValue;
+                chartItem.xValue = xValue;
+                maxValue = Math.max(maxValue,yValue);
 				}
                 i++;
                 cursor.moveNext();              

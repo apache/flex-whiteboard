@@ -365,13 +365,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
     private static var focusedStageText:StageText = null;
     
     /**
-     *  A StageText corresponding to a control that was programmatically focused
-     *  while the StageText was unable to take focus. Focus should be set to
-     *  this StageText once it is able to take focus.
-     */
-    private static var pendingFocusedStageText:StageText = null;
-    
-    /**
      *  Text measuring behavior needs to be slightly different on Android
      *  devices to account for its native text being slightly taller. Without
      *  this adjustment, single-line text on Android will be clipped or will
@@ -1419,13 +1412,8 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
         // by a proxy image). This component may be in a form that is lower in
         // z-order than the topmost form and we cannot allow the StageText,
         // which cannot clip, to appear above the topmost form.
-        if (effectiveEnabled && stageText != null)
-        {
-            if (stageText.visible)
-                stageText.assignFocus();
-            else
-                pendingFocusedStageText = stageText;
-        }
+        if (effectiveEnabled && stageText != null && stageText.visible)
+            stageText.assignFocus();
     }
     
     /**
@@ -1599,13 +1587,10 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
                         // well if the soft keyboard is open. (If the soft keyboard is not
                         // open, do not restore focus because doing so will force the soft
                         // keyboard to open.)
-                        if (stageText.visible)
+                        if (stageText.visible && stageText == focusedStageText && 
+                            stage.softKeyboardRect.height > 0)
                         {
-                            if (stageText == focusedStageText && stage.softKeyboardRect.height > 0 ||
-                                stageText == pendingFocusedStageText)
-                            {
-                                stageText.assignFocus();
-                            }
+                            stageText.assignFocus();
                         }
                         
                         // Do not remove the proxy bitmap until after stageText has been
@@ -2289,7 +2274,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
             
             if (newWatchedAncestors.indexOf(ancestor) == -1)
             {
-                ancestor.removeEventListener(FlexEvent.CREATION_COMPLETE, ancestor_creationCompleteHandler);
                 ancestor.removeEventListener(MoveEvent.MOVE, ancestor_moveHandler);
                 ancestor.removeEventListener(ResizeEvent.RESIZE, ancestor_resizeHandler);
                 ancestor.removeEventListener(FlexEvent.SHOW, ancestor_showHandler);
@@ -2299,8 +2283,7 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
             }
         }
         
-        var foundUninitialized:Boolean = false;
-        for (i = newWatchedAncestors.length - 1; i >= 0; i--)
+        for (i = 0; i < newWatchedAncestors.length; i++)
         {
             var newAncestor:UIComponent = newWatchedAncestors[i];
             
@@ -2315,12 +2298,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
                 {
                     newAncestor.addEventListener(PopUpEvent.CLOSE, ancestor_closeHandler, false, 0, true);
                     newAncestor.addEventListener(PopUpEvent.OPEN, ancestor_openHandler, false, 0, true);
-                }
-                
-                if (!newAncestor.initialized && !foundUninitialized)
-                {
-                    foundUninitialized = true;
-                    newAncestor.addEventListener(FlexEvent.CREATION_COMPLETE, ancestor_creationCompleteHandler, false, 0, true);
                 }
             }
         }
@@ -2370,7 +2347,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
         {
             var ancestor:UIComponent = watchedAncestors.pop();
             
-            ancestor.removeEventListener(FlexEvent.CREATION_COMPLETE, ancestor_creationCompleteHandler);
             ancestor.removeEventListener(MoveEvent.MOVE, ancestor_moveHandler);
             ancestor.removeEventListener(ResizeEvent.RESIZE, ancestor_resizeHandler);
             ancestor.removeEventListener(FlexEvent.SHOW, ancestor_showHandler);
@@ -2468,15 +2444,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
         ancestorsVisible = false;
         invalidateAncestorsVisibleFlag = false;
         invalidateProperties();
-    }
-    
-    private function ancestor_creationCompleteHandler(event:FlexEvent):void
-    {
-        if (!invalidateAncestorsVisibleFlag)
-        {
-            invalidateAncestorsVisibleFlag = true;
-            invalidateProperties();
-        }
     }
     
     private function ancestor_hideHandler(event:FlexEvent):void
@@ -2625,7 +2592,6 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
     private function stageText_focusInHandler(event:FocusEvent):void
     {
         focusedStageText = stageText;
-        pendingFocusedStageText = null;
         
         // Focus events are documented as bubbling. However, all events coming
         // from StageText are set to not bubble. So we need to create an
@@ -2926,13 +2892,10 @@ public class StyleableStageText extends UIComponent implements IEditableText, IS
             // well if the soft keyboard is open. (If the soft keyboard is not
             // open, do not restore focus because doing so will force the soft
             // keyboard to open.)
-            if (stageTextVisible)
+            if (stageTextVisible && stageText == focusedStageText && 
+                stage.softKeyboardRect.height > 0)
             {
-                if (stageText == focusedStageText && stage.softKeyboardRect.height > 0 ||
-                    stageText == pendingFocusedStageText)
-                {
-                    stageText.assignFocus();
-                }
+                stageText.assignFocus();
             }
             
             // Do not remove the proxy bitmap until after stageText has been
@@ -3088,11 +3051,6 @@ class StageTextPool
             // overwrite during its initialization. This is necessary because this
             // object pool "recycles" StageTexts and we need to ensure that those
             // StageTexts are clean when they are reused.
-            // While the "editable" property is set in commitProperties, there is a
-            // bug on Android devices where setting editable to false fails to make
-            // the StageText read-only if it's already false. So, make sure
-            // "editable" is one of the properties that gets restored to its
-            // default value.
             if (!cleanProperties)
             {
                 cleanProperties = new Object();
@@ -3101,7 +3059,7 @@ class StageTextPool
                 cleanProperties["autoCorrect"] = result.autoCorrect;
                 //cleanProperties["color"] = result.color;              // Set in commitStyles
                 cleanProperties["displayAsPassword"] = result.displayAsPassword;
-                cleanProperties["editable"] = result.editable;
+                //cleanProperties["editable"] = result.editable;        // Set in commitProperties
                 //cleanProperties["fontFamily"] = result.fontFamily;    // Set in commitStyles
                 //cleanProperties["fontPosture"] = result.fontPosture;  // Set in commitStyles
                 //cleanProperties["fontSize"] = result.fontSize;        // Set in commitStyles

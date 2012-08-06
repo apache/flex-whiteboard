@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<s:SkinnableContainer 
+    xmlns:fx="http://ns.adobe.com/mxml/2009"
+    xmlns:s="library://ns.adobe.com/flex/spark"
+    xmlns:mx="library://ns.adobe.com/flex/mx"                >
+    
+    <fx:Script>
+        <![CDATA[
+            
+            import mx.collections.*;
+            import mx.controls.*;
+            import mx.events.*;
+            import mx.managers.*;
+        ]]>
+    </fx:Script>
+    <fx:Declarations>
+        <fx:Vector type = "int" id = "testVector" fixed="false">
+            <fx:int>-1</fx:int>
+            <fx:int>-2</fx:int>
+            <fx:int>1</fx:int>
+            <fx:int>2</fx:int>
+            <fx:int>3</fx:int>
+        </fx:Vector>
+    </fx:Declarations>
+    <s:layout>
+        <s:HorizontalLayout>
+            
+        </s:HorizontalLayout>
+    </s:layout>
+
+    <s:BorderContainer minWidth = "0" minHeight = "0" borderWeight="5">
+        <s:Accordion id="v_accordion" resizeToContent="true" requireSelection="false" selectedIndex="1">
+            <s:AccordionContent id = "sc1" label="v_content1" elementDestructionPolicy="always">
+                <s:layout>
+                    <s:VerticalLayout paddingTop="5" gap = "5">
+                        
+                    </s:VerticalLayout>
+                </s:layout>
+                <s:Label text="Accordion container panel 1"/>
+                <s:Button id = "next" label = "Click me" width = "100" height = "50"/>
+            </s:AccordionContent>
+            <s:AccordionContent id = "sc2" label="v_content2" elementDestructionPolicy="never">
+                <s:Scroller width = "100%" height = "100%">
+                    
+                    <s:Group width = "200" height = "200">
+                        <s:layout>
+                            <s:VerticalLayout paddingTop="5" paddingBottom="5" gap="0"  />
+                        </s:layout>
+                        <s:VGroup width="100%" height="100%">
+                            
+                            <s:Label text="Accordion container panel 3"/>
+                            
+                            
+                            <s:TextInput id = "ti3" text = "omg"/>
+                            <s:DataGrid id="dataGrid"  left="10" right="10" editable="true" selectionMode="multipleRows">
+                                <s:columns>
+                                    <s:ArrayList>
+                                        <s:GridColumn dataField="key" headerText="Key" editable="true">
+                                            <s:itemRenderer>
+                                                <fx:Component>
+                                                    <s:DefaultGridItemRenderer styleName="myText"/>                                            
+                                                </fx:Component>
+                                            </s:itemRenderer>
+                                        </s:GridColumn>
+                                        <s:GridColumn dataField="name" headerText="Name" />
+                                        <s:GridColumn dataField="price" headerText="Price">
+                                            <s:itemEditor>
+                                                <fx:Component>
+                                                    <s:DefaultGridItemEditor/>                            
+                                                </fx:Component>
+                                            </s:itemEditor>
+                                            
+                                        </s:GridColumn>
+                                        <s:GridColumn dataField="call" headerText="Rating" editable="true">
+                                            <s:itemEditor>
+                                                <fx:Component>
+                                                    <s:ComboBoxGridItemEditor>
+                                                        <s:dataProvider>
+                                                            <s:ArrayList>
+                                                                <fx:int>1</fx:int>
+                                                                <fx:int>2</fx:int>
+                                                                <fx:int>3</fx:int>
+                                                                <fx:int>4</fx:int>
+                                                                <fx:int>5</fx:int>
+                                                            </s:ArrayList>
+                                                        </s:dataProvider>
+                                                    </s:ComboBoxGridItemEditor>
+                                                </fx:Component>
+                                            </s:itemEditor>
+                                        </s:GridColumn>
+                                    </s:ArrayList>
+                                </s:columns>
+                                
+                                <s:ArrayCollection>
+                                    <s:DataItem key="1000" name="Abrasive" price="100.11" call="4"/>
+                                    <s:DataItem key="1001" name="Brush" price="110.01" call="3"/>
+                                    <s:DataItem key="1002" name="Clamp" price="120.02" call="4"/>
+                                    <s:DataItem key="1003" name="Drill" price="130.03" call="4"/>
+                                    <s:DataItem key="1004" name="Epoxy" price="140.04" call="5"/>
+                                    <s:DataItem key="1005" name="File" price="150.05" call="1"/>
+                                    <s:DataItem key="1006" name="Gouge" price="160.06" call="2"/>
+                                    <s:DataItem key="1007" name="Hook" price="170.07" call="4"/>
+                                    <s:DataItem key="1008" name="Ink" price="180.08" call="5"/>
+                                    <s:DataItem key="1009" name="Jack" price="190.09" call="4"/>             
+                                </s:ArrayCollection>
+                            </s:DataGrid>    
+                        </s:VGroup>
+                    </s:Group>                        
+                </s:Scroller>
+            </s:AccordionContent>
+            <s:AccordionContent id = "sc3" label="v_content3" elementDestructionPolicy="auto">
+                <s:Label id="pageLabel3" text="This is Page Three" height = "50"/>
+            </s:AccordionContent >
+        </s:Accordion>
+    </s:BorderContainer>
+    
+    <s:BorderContainer minWidth = "0" minHeight = "0" borderWeight="5">
+        <s:Accordion id="h_accordion" resizeToContent="false" requireSelection="true"
+                     selectedIndex = "0" skinClass="spark.skins.spark.HorizontalAccordionSkin">
+            <s:AccordionContent label="h_content1" elementCreationPolicy="all"
+                                skinClass="spark.skins.spark.HorizontalAccordionContentSkin" width = "200" height = "200">
+                <s:HGroup paddingTop = "5">
+                    <s:Label id="pageLabel1" text="This is Page One" />
+                    <s:List id = "testList" allowMultipleSelection="true"> 
+                        <mx:ArrayCollection >
+                            <fx:String>Flash</fx:String> 
+                            <fx:String>Director</fx:String> 
+                            <fx:String>Dreamweaver</fx:String> 
+                            <fx:String>ColdFusion</fx:String> 
+                        </mx:ArrayCollection>
+                    </s:List>
+                </s:HGroup>
+            </s:AccordionContent>
+            <s:AccordionContent label="h_content2" elementCreationPolicy="auto"
+                                skinClass="spark.skins.spark.HorizontalAccordionContentSkin">
+                <s:Label paddingTop = "5" id="pageLabel2" text="This is Page Two" />
+            </s:AccordionContent>
+            <s:AccordionContent label="h_content3" elementCreationPolicy="none"
+                                skinClass="spark.skins.spark.HorizontalAccordionContentSkin">
+                <s:HGroup paddingTop = "5">
+                    <s:Label id="pageLabel4" text="This is Page Three" />
+                    <s:Accordion id = "nestedAccordion" selectedIndex="1">
+                        <s:AccordionContent label = "c1">
+                            <s:Button label = "aContent" />
+                        </s:AccordionContent>
+                        <s:AccordionContent label = "c2">
+                            <s:VGroup>
+                                <s:Button label = "moreContent" />
+                                <s:CheckBox label = "checkme" />
+                            </s:VGroup>
+                        </s:AccordionContent>
+                    </s:Accordion>
+                </s:HGroup>
+            </s:AccordionContent >
+        </s:Accordion>
+    </s:BorderContainer>
+    
+</s:SkinnableContainer>

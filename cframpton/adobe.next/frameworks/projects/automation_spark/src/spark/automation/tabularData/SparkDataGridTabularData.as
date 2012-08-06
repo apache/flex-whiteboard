@@ -24,10 +24,8 @@ package spark.automation.tabularData
     import mx.automation.Automation;
     import mx.automation.IAutomationObject;
     import mx.automation.IAutomationTabularData;
-    import mx.automation.delegates.controls.DataGridAutomationImpl;
     import mx.collections.CursorBookmark;
     import mx.collections.errors.ItemPendingError;
-    import mx.controls.listClasses.ListBaseContentHolder;
     import mx.core.mx_internal;
     
     import spark.automation.delegates.components.SparkDataGridAutomationImpl;

@@ -102,16 +102,6 @@ public interface IUITextField extends IIMESupport,
     function get nonZeroTextHeight():Number;
 
     /**
-     *  @copy mx.core.UITextField#getStyle()
-     *  
-     *  @langversion 3.0
-     *  @playerversion Flash 9
-     *  @playerversion AIR 1.1
-     *  @productversion Flex 3
-     */
-    function getStyle(styleProp:String):*;
-
-    /**
      *  @copy mx.core.UITextField#getUITextFormat()
      *  
      *  @langversion 3.0

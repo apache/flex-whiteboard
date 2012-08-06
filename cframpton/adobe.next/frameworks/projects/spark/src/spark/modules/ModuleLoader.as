@@ -23,6 +23,7 @@ import flash.events.Event;
 import flash.system.ApplicationDomain;
 import flash.system.SecurityDomain;
 import flash.utils.ByteArray;
+
 import mx.core.ContainerCreationPolicy;
 import mx.core.FlexVersion;
 import mx.core.IDeferredContentOwner;
@@ -33,7 +34,9 @@ import mx.events.FlexEvent;
 import mx.events.ModuleEvent;
 import mx.modules.IModuleInfo;
 import mx.modules.ModuleManager;
+
 import spark.components.Group;
+import spark.core.ContainerDestructionPolicy;
 
 //--------------------------------------
 //  Events
@@ -351,27 +354,8 @@ public class ModuleLoader extends Group
         if (value == _url)
             return;
 
-        var wasLoaded:Boolean = false;
+        releaseModule();
         
-        if (module)
-        {
-            module.removeEventListener(ModuleEvent.PROGRESS,
-                                       moduleProgressHandler);
-            module.removeEventListener(ModuleEvent.SETUP, moduleSetupHandler);
-            module.removeEventListener(ModuleEvent.READY, moduleReadyHandler);
-            module.removeEventListener(ModuleEvent.ERROR, moduleErrorHandler);
-            module.removeEventListener(ModuleEvent.UNLOAD, moduleUnloadHandler);
-
-            module.release();
-            module = null;
-
-            if (child)
-            {
-                removeElement(child);
-                child = null;
-            }
-        }
-
         _url = value;
 
         dispatchEvent(new FlexEvent(FlexEvent.URL_CHANGED));
@@ -415,6 +399,7 @@ public class ModuleLoader extends Group
     // When set, the value of the backing store _creationPolicy
     // style is "auto" so descendants inherit the correct value.
     private var creationPolicyNone:Boolean = false;
+    private var _creationPolicy:String = ContainerCreationPolicy.AUTO;
     
     [Inspectable(enumeration="auto,all,none", defaultValue="auto")]
     
@@ -436,13 +421,20 @@ public class ModuleLoader extends Group
         // don't have this property (ie Group).
         // This style is an implementation detail and should be considered
         // private. Do not set it from CSS.
-        var result:String = getStyle("_creationPolicy");
-        
-        if (result == null)
-            result = ContainerCreationPolicy.AUTO;
-        
-        if (creationPolicyNone)
-            result = ContainerCreationPolicy.NONE;
+        if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_5_0)
+        {
+            var result:String = getStyle("_creationPolicy");
+            
+            if (result == null)
+                result = ContainerCreationPolicy.AUTO;
+
+            if (creationPolicyNone)
+                result = ContainerCreationPolicy.NONE;
+        }
+        else
+        {
+            result = _creationPolicy;
+        }
         
         return result;
     }
@@ -452,20 +444,96 @@ public class ModuleLoader extends Group
      */
     public function set creationPolicy(value:String):void
     {
-        if (value == ContainerCreationPolicy.NONE)
+        if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_5_0)
         {
-            // creationPolicy of none is not inherited by descendants.
-            // In this case, set the style to "auto" and set a local
-            // flag for subsequent access to the creationPolicy property.
-            creationPolicyNone = true;
-            value = ContainerCreationPolicy.AUTO;
+            if (value == ContainerCreationPolicy.NONE)
+            {
+                // creationPolicy of none is not inherited by descendants.
+                // In this case, set the style to "auto" and set a local
+                // flag for subsequent access to the creationPolicy property.
+                creationPolicyNone = true;
+                value = ContainerCreationPolicy.AUTO;
+            }
+            else
+            {
+                creationPolicyNone = false;
+            }
+            
+            setStyle("_creationPolicy", value);            
         }
         else
         {
-            creationPolicyNone = false;
+            _creationPolicy = value;
         }
-        
-        setStyle("_creationPolicy", value);
+    }
+    
+    /**
+     *  @private
+     */
+    private var _elementCreationPolicy:*;
+    
+    [Inspectable(enumeration="auto,all,none", defaultValue="auto")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementCreationPolicy():String
+    {
+        // If elementCreationPolicy has been set then use it. Otherwise
+        // fallback to using the deprecated creationPolicy.
+        if (_elementCreationPolicy !== undefined)
+            return _elementCreationPolicy;
+        else
+            return _creationPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementCreationPolicy(value:String):void
+    {
+        _elementCreationPolicy = value;
+    }
+    
+    //----------------------------------
+    //  elementDestructionPolicy
+    //----------------------------------
+    
+    /**
+     *  Defines the destruction policy for this component's content. When this 
+     *  component is no longer visible in its parent container the destruction 
+     *  policy is used to determine what to do with this component's children.
+     *  Each container may define what it means to be have a child visible. 
+     *  This property contains one of the values in 
+     *  <code>ContainerDestructionPolicy</code>.
+     *  
+     *  @default "never"
+     *
+     *  @see spark.core.ContainerDestructionPolicy
+     *
+     */    
+    /*  Default to "never" since releasing a module when it is no longer
+     *  visible is a new behavior and reloading the module may be time 
+     *  consuming.
+     */
+    private var _elementDestructionPolicy:String = ContainerDestructionPolicy.NEVER;
+    
+    [Inspectable(enumeration="always,auto,never", defaultValue="never")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementDestructionPolicy():String
+    {
+        return _elementDestructionPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementDestructionPolicy(value:String):void
+    {
+        _elementDestructionPolicy = value;
     }
     
     //----------------------------------
@@ -567,7 +635,7 @@ public class ModuleLoader extends Group
     
     //--------------------------------------------------------------------------
     //
-    //  Methods: INavigatorContent
+    //  Methods: IDeferredContentOwner
     //
     //--------------------------------------------------------------------------
 
@@ -588,7 +656,19 @@ public class ModuleLoader extends Group
         loadModule();
     }
 
-    //--------------------------------------------------------------------------
+    /**
+     *  @inheritDoc
+     */
+    public function removeDeferredContent(cache:Boolean = false):void
+    {
+        // Release the module and remove it from the display list. 
+        // ModuleManager will keep a weak reference to the module.
+        releaseModule();     
+        
+        loadRequested = false;
+    }
+
+	//--------------------------------------------------------------------------
     //
     //  Overridden Methods
     //
@@ -606,7 +686,7 @@ public class ModuleLoader extends Group
         {
             if (parent is IDeferredContentOwner)
             {
-                var parentCreationPolicy:String = IDeferredContentOwner(parent).creationPolicy;
+                var parentCreationPolicy:String = IDeferredContentOwner(parent).elementCreationPolicy;
                 creationPolicy = parentCreationPolicy == 
                     ContainerCreationPolicy.ALL ? ContainerCreationPolicy.ALL : 
                     ContainerCreationPolicy.NONE;
@@ -738,6 +818,31 @@ public class ModuleLoader extends Group
             module.unload();
             module.removeEventListener(ModuleEvent.UNLOAD, moduleUnloadHandler);
             module = null;
+        }
+    }
+
+    /**
+     *  @private
+     */ 
+    private function releaseModule():void
+    {
+        if (module)
+        {
+            module.removeEventListener(ModuleEvent.PROGRESS,
+                moduleProgressHandler);
+            module.removeEventListener(ModuleEvent.SETUP, moduleSetupHandler);
+            module.removeEventListener(ModuleEvent.READY, moduleReadyHandler);
+            module.removeEventListener(ModuleEvent.ERROR, moduleErrorHandler);
+            module.removeEventListener(ModuleEvent.UNLOAD, moduleUnloadHandler);
+            
+            module.release();
+            module = null;
+            
+            if (child)
+            {
+                removeElement(child);
+                child = null;
+            }
         }
     }
 

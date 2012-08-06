@@ -19,15 +19,13 @@
 
 package flex.ant.types;
 
-import flex.ant.config.OptionSource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DynamicAttribute;
-import org.apache.tools.ant.types.Commandline;
 
 /**
  * Supports the nested URL based tags of RuntimeSharedLibraryPath.
  */
-public class URLElement implements DynamicAttribute, OptionSource
+public class URLElement implements DynamicAttribute
 {
     private static final String RSL_URL = "rsl-url";
     private static final String POLICY_FILE_URL = "policy-file-url";
@@ -52,16 +50,23 @@ public class URLElement implements DynamicAttribute, OptionSource
         }
     }
 
-    public void addToCommandline(Commandline commandLine)
+    /**
+     * 
+     * @return the RSL URL.
+     */
+    public String getRslURL() 
     {
-        if (rslURL != null)
-        {
-            commandLine.createArgument().setValue(rslURL);
-        }
-
-        if (policyFileURL != null)
-        {
-            commandLine.createArgument().setValue(policyFileURL);
-        }
+        return rslURL;
     }
+
+    /**
+     * 
+     * @return the policy file URL.
+     */
+    public String getPolicyFileURL() 
+    {
+        return policyFileURL;
+    }
+
+    
 }

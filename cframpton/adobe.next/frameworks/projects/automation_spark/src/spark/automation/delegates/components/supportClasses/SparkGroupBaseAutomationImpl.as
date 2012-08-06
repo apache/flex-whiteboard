@@ -28,7 +28,7 @@ package spark.automation.delegates.components.supportClasses
     import mx.automation.IAutomationObject;
     import mx.automation.IAutomationObjectHelper;
     import mx.automation.delegates.core.UIComponentAutomationImpl;
-    import mx.automation.tabularData.ContainerTabularData;
+    import spark.automation.tabularData.SkinnableContainerTabularData;
     import mx.core.EventPriority;
     import mx.core.mx_internal;
     
@@ -47,7 +47,7 @@ package spark.automation.delegates.components.supportClasses
      *  @see spark.components.supportClasses.GroupBase
      *  
      *  @langversion 3.0
-     *  @playerversion Flash 9
+     *  @playerversion Flash 10
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      *
@@ -67,7 +67,7 @@ package spark.automation.delegates.components.supportClasses
          *  @param root The SystemManger of the application.
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -81,7 +81,7 @@ package spark.automation.delegates.components.supportClasses
          * @param obj GroupBase object to be automated.     
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -255,7 +255,7 @@ package spark.automation.delegates.components.supportClasses
          */
         override public function get automationTabularData():Object
         {
-            return new ContainerTabularData(uiAutomationObject);
+            return new SkinnableContainerTabularData(uiAutomationObject);
         }
         
         /**

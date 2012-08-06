@@ -39,7 +39,7 @@ package spark.automation.delegates.skins.spark
 	 *  
 	 *  @langversion 3.0
 	 *  @playerversion Flash 10
-	 *  @playerversion AIR 1.1
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkUITextFieldGridItemRendererAutomationImpl extends UITextFieldAutomationImpl
@@ -58,8 +58,8 @@ package spark.automation.delegates.skins.spark
 		 *  @param root The SystemManger of the application.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -79,7 +79,7 @@ package spark.automation.delegates.skins.spark
 		 *  
 		 *  @langversion 3.0
 		 *  @playerversion Flash 10
-		 *  @playerversion AIR 1.1
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SparkUITextFieldGridItemRendererAutomationImpl(obj:UITextFieldGridItemRenderer)

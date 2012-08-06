@@ -30,7 +30,7 @@ package spark.automation.events
      *  DataGrid, or Tree control is selected or deselected.
      *  
      *  @langversion 3.0
-     *  @playerversion Flash 9
+     *  @playerversion Flash 10
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      */
@@ -80,7 +80,7 @@ package spark.automation.events
          *  @eventType select
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -122,7 +122,7 @@ package spark.automation.events
          *  @eventType select
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -159,7 +159,7 @@ package spark.automation.events
          * 
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -197,7 +197,7 @@ package spark.automation.events
          *  @default false
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -214,7 +214,7 @@ package spark.automation.events
          *  @default false
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -231,7 +231,7 @@ package spark.automation.events
          *  @default null
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -248,7 +248,7 @@ package spark.automation.events
          *  @default null
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -265,7 +265,7 @@ package spark.automation.events
          *  @default false
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -277,7 +277,7 @@ package spark.automation.events
          *  This is used when the item to be selected is not visible in the control. 
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -288,7 +288,7 @@ package spark.automation.events
          *  The data provider index of the item to be selected.
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */

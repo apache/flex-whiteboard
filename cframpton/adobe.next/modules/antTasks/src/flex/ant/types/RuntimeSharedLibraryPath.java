@@ -19,9 +19,6 @@
 
 package flex.ant.types;
 
-import flex.ant.config.ConfigString;
-import flex.ant.config.ConfigVariable;
-import flex.ant.config.NestedAttributeElement;
 import flex.ant.config.OptionSource;
 import flex.ant.config.OptionSpec;
 import java.util.ArrayList;
@@ -41,7 +38,7 @@ public final class RuntimeSharedLibraryPath implements OptionSource, DynamicConf
     private static OptionSpec urlSpec = new OptionSpec("url");
 
     private String pathElement;
-    private ArrayList urlElements = new ArrayList();
+    private ArrayList<URLElement> urlElements = new ArrayList<URLElement>();
 
     public RuntimeSharedLibraryPath()
     {
@@ -49,15 +46,26 @@ public final class RuntimeSharedLibraryPath implements OptionSource, DynamicConf
 
     public void addToCommandline(Commandline commandLine)
     {
-        commandLine.createArgument().setValue(RUNTIME_SHARED_LIBRARY_PATH);
-        commandLine.createArgument().setValue(pathElement);
+        StringBuilder rslOption = new StringBuilder();
+        
+        rslOption.append(RUNTIME_SHARED_LIBRARY_PATH);
+        rslOption.append("=");
+        rslOption.append(pathElement);
 
-        Iterator it = urlElements.iterator();
+        Iterator<URLElement> it = urlElements.iterator();
 
         while (it.hasNext())
         {
-            ((OptionSource) it.next()).addToCommandline(commandLine);
+        URLElement option = it.next();
+            rslOption.append(",");
+            rslOption.append(option.getRslURL());
+            rslOption.append(",");
+
+            String policyFileURL = option.getPolicyFileURL(); 
+            rslOption.append(policyFileURL != null ? policyFileURL : "");
         }
+        
+        commandLine.createArgument().setValue(rslOption.toString());
     }
 
     public Object createDynamicElement(String name)

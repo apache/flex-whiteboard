@@ -27,7 +27,6 @@ package spark.automation.delegates.components.supportClasses
     import mx.automation.Automation;
     import mx.automation.IAutomationObjectHelper;
     import mx.core.mx_internal;
-    import mx.events.ScrollEvent;
     import mx.managers.DragManager;
     
     import spark.automation.events.SparkValueChangeAutomationEvent;

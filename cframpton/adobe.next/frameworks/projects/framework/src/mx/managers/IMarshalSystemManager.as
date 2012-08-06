@@ -99,14 +99,14 @@ public interface IMarshalSystemManager
      *  Dispatch a message to all parent and child applications in this SystemManager's SWF bridge group, regardless of
      *  whether they are in the same SecurityDomain or not. You can optionally exclude an application with this method's parameters.
      *
-         *  @param event The event to dispatch.
-         *  
-         *  @param skip Specifies an IEventDispatcher that you do not want to dispatch a message to. This is typically used to skip the
-         *  IEventDispatcher that originated the event.
+     *  @param event The event to dispatch.
+     *  
+     *  @param skip Specifies an IEventDispatcher that you do not want to dispatch a message to. This is typically used to skip the
+     *  IEventDispatcher that originated the event.
      * 
-         *  @param trackClones Whether to keep a reference to the events as they are dispatched.
-         *  
-         *  @param toOtherSystemManagers Whether to dispatch the event to other top-level SystemManagers in AIR.
+     *  @param trackClones Whether to keep a reference to the events as they are dispatched.
+     *  
+     *  @param toOtherSystemManagers Whether to dispatch the event to other top-level SystemManagers in AIR.
      *
      *  @langversion 3.0
      *  @playerversion Flash 10
@@ -115,6 +115,18 @@ public interface IMarshalSystemManager
      */
     function dispatchEventFromSWFBridges(event:Event, skip:IEventDispatcher = null, trackClones:Boolean = false, toOtherSystemManagers:Boolean = false):void
 
+    /**
+     *  Dispatch a message from this SystemManager
+     * 
+     *  @param event The event to dispatch.
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 10
+     *  @playerversion AIR 1.5
+     *  @productversion Flex 5
+     */
+    function dispatchEventFromSystemManager(event:Event):void
+        
     /**
      *  Determines if the caller using this system manager
      *  should should communicate directly with other managers

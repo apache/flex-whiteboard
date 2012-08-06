@@ -50,8 +50,8 @@ package spark.automation.delegates.components
 	 *
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkNumericStepperAutomationImpl extends SparkSpinnerAutomationImpl 
@@ -71,8 +71,8 @@ package spark.automation.delegates.components
 		 *  @param root The SystemManger of the application.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -91,8 +91,8 @@ package spark.automation.delegates.components
 		 * @param obj NumericStepper object to be automated.     
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SparkNumericStepperAutomationImpl(obj:spark.components.NumericStepper)
@@ -230,8 +230,8 @@ package spark.automation.delegates.components
 		 *  This can be used to access any sub-components and act on the component.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		override protected function componentInitialized():void

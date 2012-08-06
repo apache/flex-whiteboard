@@ -624,6 +624,11 @@ package spark.components
             // This TextContainerManager instance persists for the lifetime
             // of the component.
             _textContainerManager = createTextContainerManager();
+
+            // Turn on TextField-like behavior which preserves the selection when text is set.
+            // If the new text is shorter than the exisiting text, the selection may change.
+            if (FlexVersion.compatibilityVersion > FlexVersion.VERSION_4_5) 
+                _textContainerManager.preserveSelectionOnSetText = true;
             
             // Add event listeners on this component.
             addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
@@ -744,11 +749,6 @@ package spark.components
          *  @private
          */
         private var remeasuringText:Boolean = false;
-
-        /**
-         *  @private
-         */
-        mx_internal var preserveSelectionOnSetText:Boolean = false;
 
         /**
          *  @private
@@ -2536,9 +2536,6 @@ package spark.components
             
             if (textChanged)
             {
-                if (FlexVersion.compatibilityVersion > FlexVersion.VERSION_4_5) 
-                    preserveSelectionOnSetText = true;
-
                 // If the text has linebreaks (CR, LF, or CF+LF)
                 // create a multi-paragraph TextFlow from it
                 // and use the TextFlowTextLineFactory to render it.
@@ -2594,8 +2591,6 @@ package spark.components
             // not the underlying text.
             if (displayAsPasswordChanged)
             {
-                preserveSelectionOnSetText = true;
-                
                 // If there is any text, convert it to the passwordChar.
                 if (displayAsPassword)
                 {
@@ -2622,25 +2617,6 @@ package spark.components
                 lastContentBoundsGeneration = 0;
                 
                 displayAsPasswordChanged = false;
-            }
-            
-            if (preserveSelectionOnSetText)
-            {
-                preserveSelectionOnSetText = false;
-                
-                if (oldAnchorPosition != -1)
-                {
-                    // This will return null if editingMode = readOnly which is true when either
-                    // editable is false and/or enabled is false.
-                    var selManager:ISelectionManager = _textContainerManager.beginInteraction();                    
-
-                    // The visible selection will be refreshed during the update.
-                    if (selManager)
-                    {
-                        selManager.selectRange(oldAnchorPosition, oldActivePosition);        
-                        _textContainerManager.endInteraction();
-                    }
-                }           
             }
             
             if (clipAndEnableScrollingChanged)
@@ -2679,6 +2655,14 @@ package spark.components
                 
                 verticalScrollPositionChanged = false;            
             }
+            
+			// Updating the text programatically removes all child TextLine elements
+			// before rebuilding the TextFlow, effectively removing all visual elements
+			// from the display list. This causes any accessibilityImplementation that
+			// was assigned to the component to be removed. The following line restores
+			// the accessibilityImplementation if it no longer exists. 
+			if (!accessibilityImplementation)
+				initializeAccessibility();
         }
         
         /**
@@ -4634,9 +4618,6 @@ package spark.components
         private function textContainerManager_selectionChangeHandler(
             event:SelectionEvent):void
         {
-            if (preserveSelectionOnSetText)
-                return;
-            
             var oldAnchor:int = _selectionAnchorPosition;
             var oldActive:int = _selectionActivePosition;
             

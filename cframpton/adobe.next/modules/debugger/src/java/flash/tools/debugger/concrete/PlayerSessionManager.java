@@ -564,6 +564,11 @@ public class PlayerSessionManager implements SessionManager2
 			cmdList.add(airLaunchInfo.deviceExtDir);
 		}
 		
+		if (airLaunchInfo.simulation != null && airLaunchInfo.simulation.length() > 0) {
+			cmdList.add("-Xsimulation"); //$NON-NLS-1$
+			cmdList.add(airLaunchInfo.simulation);
+		}
+		
 		// If it's a "file:" URL, then pass the actual filename; otherwise, use the URL
 		// ok, its not an http: type request therefore we should be able to see
 		// it on the file system, right?  If not then it's probably not valid

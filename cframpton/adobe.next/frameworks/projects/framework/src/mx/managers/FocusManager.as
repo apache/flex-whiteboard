@@ -47,6 +47,8 @@ import mx.core.IVisualElement;
 import mx.core.mx_internal;
 import mx.events.FlexEvent;
 
+import spark.core.IToolTip;
+
 use namespace mx_internal;
 
 /**
@@ -168,7 +170,7 @@ public class FocusManager extends EventDispatcher implements IFocusManager
         container.addEventListener("_navigationChange_",viewHideHandler, true);
         
         //special case application and window
-        if (container.systemManager is SystemManager)
+        if (container.systemManager is SystemManager && !(container is IToolTip))
         {
             // special case application.  It shouldn't need to be made
             // active and because we defer appCreationComplete, this 

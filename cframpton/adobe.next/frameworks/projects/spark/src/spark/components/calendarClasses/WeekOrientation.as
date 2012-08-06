@@ -17,46 +17,40 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package spark.core
+package spark.components.calendarClasses
 {
+
 /**
- *  The ContainerCreationPolicy class defines the constant values
- *  for the <code>destructionPolicy</code> property of spark view
- *  classes.
- *
- *  @see spark.components.supportClasses.ViewNavigatorBase#destructionPolicy
- *  @see spark.components.View#destructionPolicy
+ *  The WeekOrientation class defines the possible values for the 
+ *  <code>weekOrientation</code> property of the DateChooser class.
+ * 
+ *  @see spark.components.DateChooser
  *  
  *  @langversion 3.0
- *  @playerversion AIR 2.5
- *  @productversion Flex 4.5
+ *  @playerversion Flash 11
+ *  @playerversion AIR 3.0
+ *  @productversion Flex 5.0
  */
-public final class ContainerDestructionPolicy
+public final class WeekOrientation
 {
-    //--------------------------------------------------------------------------
-    //
-    //  Class constants
-    //
-    //--------------------------------------------------------------------------
-    
     /**
-     *  The lifespan of the container's children is automatically
-     *  managed by the container based on the container's own
-     *  heuristic.
-     * 
+     *  Arranges weeks row by row.  This is a vertical orientation.
+     *  
      *  @langversion 3.0
-     *  @playerversion AIR 2.5
-     *  @productversion Flex 4.5
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5.0
      */
-    public static const AUTO:String = "auto";
-    
+    public static const ROWS:String = "rows";
+
     /**
-     *  The container never destroys its children.
-     * 
+     *  Arranges weeks column by column.  This is a horizontal orientation.
+     *  
      *  @langversion 3.0
-     *  @playerversion AIR 2.5
-     *  @productversion Flex 4.5
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5.0
      */
-    public static const NEVER:String = "never";
+    public static const COLUMNS:String = "columns";
 }
 }

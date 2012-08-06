@@ -112,6 +112,8 @@ import mx.utils.TransformUtil;
 import mx.validators.IValidatorListener;
 import mx.validators.ValidationResult;
 
+import spark.managers.ToolTipManager;
+
 use namespace mx_internal;
 
 // Excluding the property to enable code hinting for the layoutDirection style
@@ -1143,6 +1145,80 @@ include "../styles/metadata/AnchorStyles.as";
  *  @productversion Flex 3
  */
 [Style(name="themeColor", type="uint", format="Color", inherit="yes", theme="halo")]
+
+/**
+ *  Class used to create the skinnable tool tip for this component. This class
+ *  should implement <code>IToolTip</code>.
+ * 
+ *  @default "spark.components.ToolTip"
+ * 
+ *  @see spark.core.IToolTip
+ * 
+ *  @langversion 3.0
+ *  @playerversion Flash 11
+ *  @playerversion AIR 3
+ *  @productversion Flex 5.0
+ */
+[Style(name="toolTipClass", type="Class", inherit="no")]
+
+/**
+ *  The amount of time, in milliseconds, that Flex waits
+ *  to hide the tool tip after it appears.
+ *  Once Flex hides a tool tip, the user must move the mouse
+ *  off the component and then back onto it to see the tool tip again.
+ *  If you set <code>hideDelay</code> to <code>Infinity</code>,
+ *  Flex does not hide the ToolTip until the user triggers an event,
+ *  such as moving the mouse off of the component.
+ *
+ *  @default 10000
+ *  
+ *  @langversion 3.0
+ *  @playerversion Flash 11
+ *  @playerversion AIR 3
+ *  @productversion Flex 5.0
+ */
+[Style(name="toolTipHideDelay", type="Number", format="Time", inherit="no")]
+
+/**
+ *  The amount of time, in milliseconds, that a user can take
+ *  when moving the mouse from the last control to this control before Flex 
+ *  again waits for the duration of <code>toolTipShowDelay</code> to display 
+ *  the tool tip.
+ *
+ *  <p>This setting is useful if the user moves quickly from one control
+ *  to another; after displaying the first ToolTip, Flex will display
+ *  the others immediately rather than waiting.
+ *  The shorter the setting for <code>scrubDelay</code>, the more
+ *  likely that the user must wait for an amount of time specified
+ *  by <code>showDelay</code> in order to see the next ToolTip.
+ *  A good use of this property is if you have several buttons on a
+ *  toolbar, and the user will quickly scan across them to see brief
+ *  descriptions of their functionality.</p>
+ *
+ *  @default 100
+ *  
+ *  @langversion 3.0
+ *  @playerversion Flash 11
+ *  @playerversion AIR 3
+ *  @productversion Flex 5.0
+ */
+[Style(name="toolTipScrubDelay", type="Number", format="Time", inherit="no")]
+
+/**
+ *  The amount of time, in milliseconds, that Flex waits
+ *  before displaying the tool tip once a user
+ *  moves the mouse over a component that has a tool tip defined.
+ *  To make the tool tip appear instantly, set <code>showDelay</code> 
+ *  to 0.
+ *
+ *  @default 500
+ *  
+ *  @langversion 3.0
+ *  @playerversion Flash 11
+ *  @playerversion AIR 3
+ *  @productversion Flex 5.0
+ */    
+[Style(name="toolTipShowDelay", type="Number", format="Time", inherit="no")]
 
 //--------------------------------------
 //  Effects
@@ -3212,6 +3288,7 @@ public class UIComponent extends FlexSprite
 
     [Bindable("hide")]
     [Bindable("show")]
+    [Bindable("creationComplete")]
     [Inspectable(category="General", defaultValue="true")]
 
     /**
@@ -6753,10 +6830,50 @@ public class UIComponent extends FlexSprite
         var oldValue:String = _toolTip;
         _toolTip = value;
 
-        ToolTipManager.registerToolTip(this, oldValue, value);
+        mx.managers.ToolTipManager.registerToolTip(this, oldValue, value);
 
         dispatchEvent(new Event("toolTipChanged"));
     }
+    
+    //----------------------------------
+    //  toolTipData
+    //----------------------------------	
+    
+    /**
+     *  @private
+     *  Storage for the toolTipData property.
+     */
+    private var _toolTipData:Object;
+    
+    /**
+     *  Arbitrary data to render in this component's SkinnableToolTip. 
+     *  This may be a String or any other object. 
+     *
+     *  @default null
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */		
+    public function get toolTipData():Object
+    {
+        return _toolTipData;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set toolTipData(value:Object):void
+    {
+        var previousToolTipData:Object = _toolTipData;
+        _toolTipData = value;
+        
+        if (!previousToolTipData && _toolTipData)
+            spark.managers.ToolTipManager.registerTarget(this);
+        else if (previousToolTipData && !_toolTipData)
+            spark.managers.ToolTipManager.unregisterTarget(this);
+    }    
 
     //----------------------------------
     //  uid
@@ -7056,7 +7173,18 @@ public class UIComponent extends FlexSprite
         
         oldErrorString = _errorString;
         _errorString = value;
-
+        
+        // If we are clearing the errorString, clear the errorObjectArray and
+        // errorArray of leftover validators and error strings, respectively. 
+        if (!_errorString || _errorString == "")
+        {
+            if (errorObjectArray)
+                errorObjectArray.length = 0;
+            
+            if (errorArray)
+                errorArray.length = 0;
+        }        
+        
         errorStringChanged = true;
         invalidateProperties();
         dispatchEvent(new Event("errorStringChanged"));
@@ -7652,7 +7780,7 @@ public class UIComponent extends FlexSprite
         // for this component. For some components accessible object is attached
         // to child component so it should be called after createChildren
         initializeAccessibility();
-
+        
         // This should always be the last thing that initialize() calls.
         initializationComplete();
     }
@@ -8335,7 +8463,7 @@ public class UIComponent extends FlexSprite
         {
             errorStringChanged = false;          
             if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_4_0 || getStyle("showErrorTip"))
-                ToolTipManager.registerErrorString(this, oldErrorString, errorString);
+                mx.managers.ToolTipManager.registerErrorString(this, oldErrorString, errorString);
             
             setBorderColorForErrorString();
         }
@@ -13092,7 +13220,13 @@ public class UIComponent extends FlexSprite
             
         var pt:Point = new Point(x, y);
         pt = thisParent.localToGlobal(pt);
-
+        // for RTL layout, see if right side is the global left side
+        // and use that insteads
+        var pt2:Point = new Point(x + width, y);
+        pt2 = thisParent.localToGlobal(pt2);
+        if (pt2.x < pt.x)
+            pt.x = pt2.x;
+        
         // bounds of this object to return. Keep in global coordinates
         // until the end and set back to targetParent coordinates.
         var bounds:Rectangle = new Rectangle(pt.x, pt.y, width, height);
@@ -13116,7 +13250,9 @@ public class UIComponent extends FlexSprite
                 // clip the bounds by the scroll rect
                 currentRect = current.scrollRect.clone();
                 pt = current.localToGlobal(currentRect.topLeft);
-                currentRect.x = pt.x;
+                // also handle flipped components here
+                pt2 = current.localToGlobal(currentRect.bottomRight);
+                currentRect.x = Math.min(pt.x, pt2.x);
                 currentRect.y = pt.y;
                 bounds = bounds.intersection(currentRect);
             }

@@ -41,7 +41,7 @@ package spark.automation.delegates.skins.spark
      *  
      *  @langversion 3.0
      *  @playerversion Flash 10
-     *  @playerversion AIR 1.1
+     *  @playerversion AIR 1.5
      *  @productversion Flex 4
      */
     public class SparkDefaultGridItemRendererAutomationImpl extends UIFTETextFieldAutomationImpl
@@ -81,7 +81,7 @@ package spark.automation.delegates.skins.spark
          *  
          *  @langversion 3.0
          *  @playerversion Flash 10
-         *  @playerversion AIR 1.1
+         *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
         public function SparkDefaultGridItemRendererAutomationImpl(obj:DefaultGridItemRenderer)

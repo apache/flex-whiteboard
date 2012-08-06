@@ -68,7 +68,7 @@ public class EventProxy extends EventDispatcher
 			        IMarshalSystemManager(systemManager.getImplementation("mx.managers::IMarshalSystemManager"));
             marshalSystemManager.dispatchEventFromSWFBridges(mme, null, true, true);
             // must send to ourselves as well
-            systemManager.dispatchEvent(mme);
+            marshalSystemManager.dispatchEventFromSystemManager(mme);
         }
     }
 

@@ -38,7 +38,7 @@ package spark.automation.delegates.components.supportClasses
      *  @see spark.components.supportClasses.SkinnableComponent 
      *  
      *  @langversion 3.0
-     *  @playerversion Flash 9
+     *  @playerversion Flash 10
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      *
@@ -59,7 +59,7 @@ package spark.automation.delegates.components.supportClasses
          *  @param root The SystemManger of the application.
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -73,7 +73,7 @@ package spark.automation.delegates.components.supportClasses
          * @param obj SkinnableComponent object to be automated.     
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */

@@ -23,10 +23,21 @@ package mx.managers
 import mx.core.IFlexDisplayObject;
 
 /**
- *  Components that implement IToolTipManagerClient can have tooltips and must 
- *  have a toolTip getter/setter.
+ *  Components that implement IToolTipManagerClient can have tool tips and must 
+ *  have a toolTip getter/setter and toolTipData getter/setter.
  *  The ToolTipManager class manages showing and hiding the 
- *  tooltip on behalf of any component which is an IToolTipManagerClient.
+ *  tool tip on behalf of any component which is an IToolTipManagerClient.
+ *  The Spark ToolTipManager queries the component's toolTipData getter to
+ *  display the component's tool tip.
+ *  If using the Spark ToolTipManager, the component should also be a
+ *  DisplayObjectContainer in addtion to an IToolTipManagerClient.
+ *  The Spark ToolTipManager will call the component's getStyle method to
+ *  determine the component's tool tip configuration, defined by 
+ *  the toolTipClass, toolTipShowDelay, toolTipHideDelay, and toolTipScrubDelay
+ *  styles.
+ *  The MX ToolTipManager queries the component's toolTip getter to
+ *  display the component's tool tip.
+ *  The string returned by the toolTip getter is used for accessibility.
  * 
  *  @see mx.controls.ToolTip
  *  @see mx.managers.ToolTipManager
@@ -39,31 +50,56 @@ import mx.core.IFlexDisplayObject;
  */
 public interface IToolTipManagerClient extends IFlexDisplayObject
 {
-	//--------------------------------------------------------------------------
-	//
-	//  Properties
-	//
-	//--------------------------------------------------------------------------
-
-	//----------------------------------
-	//  toolTip
-	//----------------------------------
-
-	/**
-	 *  The text of this component's tooltip.
-	 *  
-	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
-	 *  @productversion Flex 3
-	 */
-	function get toolTip():String;
-	
-	/**
-	 *  @private
-	 */
-	function set toolTip(value:String):void;
-
+    //--------------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //--------------------------------------------------------------------------
+    
+    //----------------------------------
+    //  toolTip
+    //----------------------------------
+    
+    /**
+     *  The text of this component's tooltip.
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 9
+     *  @playerversion AIR 1.1
+     *  @productversion Flex 3
+     */
+    function get toolTip():String;
+    
+    /**
+     *  @private
+     */
+    function set toolTip(value:String):void;
+    
+    /**
+     *  Arbitrary data to render in this component's Spark ToolTip. 
+     *  This may be a String or any other object. 
+     *
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */		
+    function get toolTipData():Object
+    
+    /**
+     *  @private
+     */
+    function set toolTipData(value:Object):void; 
+    
+    /**
+     *  @copy mx.core.UIComponent#getStyle()
+     *
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */
+    function getStyle(styleProp:String):*;
 }
 
 }

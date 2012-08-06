@@ -51,8 +51,8 @@ import mx.core.ILayoutElement;
 import mx.core.IStateClient;
 import mx.core.IUIComponent;
 import mx.core.IVisualElement;
-import mx.core.LayoutElementUIComponentUtils;
 import mx.core.LayoutDirection;
+import mx.core.LayoutElementUIComponentUtils;
 import mx.core.UIComponentDescriptor;
 import mx.core.mx_internal;
 import mx.events.FlexEvent;
@@ -64,8 +64,11 @@ import mx.geom.TransformOffsets;
 import mx.managers.IFocusManagerComponent;
 import mx.managers.ISystemManager;
 import mx.managers.IToolTipManagerClient;
+import mx.styles.IStyleClient;
 import mx.utils.MatrixUtil;
 import mx.utils.TransformUtil;
+
+import spark.managers.ToolTipManager;
 
 use namespace mx_internal;
 
@@ -2669,6 +2672,47 @@ public dynamic class UIMovieClip extends MovieClip
             toolTipManager.registerToolTip(this, oldValue, value);
     }
     
+    
+    //----------------------------------
+    //  toolTipData
+    //----------------------------------	
+    
+    /**
+     *  @private
+     *  Storage for the toolTipData property.
+     */
+    private var _toolTipData:Object;
+    
+    /**
+     *  Arbitrary data to render in this component's ToolTip. 
+     *  This may be a String or any other object. 
+     *
+     *  @default null
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */		
+    public function get toolTipData():Object
+    {
+        return _toolTipData;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set toolTipData(value:Object):void
+    {
+        var previousToolTipData:Object = _toolTipData;
+        _toolTipData = value;
+        
+        if (!previousToolTipData && _toolTipData)
+            spark.managers.ToolTipManager.registerTarget(this);
+        else if (previousToolTipData && !_toolTipData)
+            spark.managers.ToolTipManager.unregisterTarget(this);
+    }  
+    
     //--------------------------------------------------------------------------
     //
     //  IFocusManagerComponent properties
@@ -3379,6 +3423,29 @@ public dynamic class UIMovieClip extends MovieClip
         // accidentally messing with this matrix, _unless_ we hand it out. Instead,
         // we hand out a clone.
         return _layoutFeatures.layoutMatrix3D.clone();          
+    }
+    
+    /**
+     *  @private
+     * 
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */
+    public function getStyle(styleProp:String):*
+    {
+        var displayObject:DisplayObject = parent;
+        while (displayObject)
+        {
+            var styleClient:IStyleClient = displayObject as IStyleClient;
+            if (styleClient)
+                return styleClient.getStyle(styleProp);
+            
+            displayObject = displayObject.parent;
+        }
+        
+        return undefined;
     }
     
     /**

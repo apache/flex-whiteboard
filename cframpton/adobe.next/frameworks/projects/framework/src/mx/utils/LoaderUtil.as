@@ -21,6 +21,7 @@ package mx.utils
 {
 
 import flash.display.DisplayObject;
+import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.events.IEventDispatcher;
 import flash.system.Capabilities;
@@ -28,11 +29,10 @@ import flash.utils.Dictionary;
 
 import mx.core.ApplicationDomainTarget;
 import mx.core.IFlexModuleFactory;
-import mx.core.mx_internal;
 import mx.core.RSLData;
+import mx.core.mx_internal;
 import mx.events.Request;
 import mx.managers.SystemManagerGlobals;
-import flash.display.Loader;
 
 use namespace mx_internal;
 
@@ -496,17 +496,20 @@ use namespace mx_internal;
         }
         else if (applicationDomainTarget == ApplicationDomainTarget.CURRENT)
         {
-            resolvedRSL = true;
+            // Don't resolve the current target. 
+            // This lets us check all of the module factories from the top 
+            // level down to the current module factory for loaded RSLs.
+            // If we don't resolve the RSL it will be loaded into the 
+            // current application domain by default.
         }
         else if (applicationDomainTarget == ApplicationDomainTarget.PARENT)
         {
-            // If there is no parent, ignore the target and load into the current
-            // app domain. 
-            targetModuleFactory = parentModuleFactory;
-        }
-        else
-        {
-            resolvedRSL = true; // bogus target, load into current application domain
+            // Defer resolving the parent module factory until the current module
+            // factory matches the target. This lets us check all of the
+            // module factories from the top level down to the current
+            // module factory for loaded RSLs.
+            if (currentModuleFactory == parentModuleFactory)
+                targetModuleFactory = parentModuleFactory;
         }
         
         if (resolvedRSL || targetModuleFactory)

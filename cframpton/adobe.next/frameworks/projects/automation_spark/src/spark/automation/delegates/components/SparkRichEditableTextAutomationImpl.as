@@ -43,8 +43,8 @@ package spark.automation.delegates.components
 	 * Utility class that facilitates replay of text input and selection.
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkRichEditableTextAutomationImpl extends  UIComponentAutomationImpl
@@ -57,8 +57,8 @@ package spark.automation.delegates.components
 		 *  @param root DisplayObject object representing the application root. 
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -183,8 +183,8 @@ package spark.automation.delegates.components
 		 *  This can be used to access any sub-components and act on the component.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		override protected function componentInitialized():void

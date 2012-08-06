@@ -45,8 +45,8 @@ package spark.automation.tabularData
 		 *  Constructor
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SparkListBaseTabularData(l:spark.components.supportClasses.ListBase)
@@ -80,8 +80,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function get firstVisibleRow():int
@@ -98,8 +98,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function get lastVisibleRow():int
@@ -120,8 +120,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function get numRows():int
@@ -133,8 +133,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function get numColumns():int
@@ -146,8 +146,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function get columnNames():Array
@@ -159,8 +159,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function getValues(start:uint = 0, end:uint = 0):Array
@@ -223,8 +223,8 @@ package spark.automation.tabularData
 		 *  @inheritDoc
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function getAutomationValueForData(data:Object):Array

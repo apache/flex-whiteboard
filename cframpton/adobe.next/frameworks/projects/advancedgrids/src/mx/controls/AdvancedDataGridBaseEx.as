@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////////
 //
 //  Licensed to the Apache Software Foundation (ASF) under one or more
 //  contributor license agreements.  See the NOTICE file distributed with
@@ -16,7 +16,7 @@
 //  limitations under the License.
 //
 ////////////////////////////////////////////////////////////////////////////////
-﻿
+
 package mx.controls
 {
 
@@ -715,7 +715,7 @@ public class AdvancedDataGridBaseEx extends AdvancedDataGridBase implements IIME
                          sortHandler,
                          false, EventPriority.DEFAULT_HANDLER);
 
-        addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);                         
+        addEventListener(MouseEvent.MOUSE_UP, mouseUpHandler);  
     }
 
     //--------------------------------------------------------------------------
@@ -2172,7 +2172,7 @@ public class AdvancedDataGridBaseEx extends AdvancedDataGridBase implements IIME
         // listContent size is adjusted
         updateSubContent();
     }
-	
+    
 	/**
 	 *  @private
 	 */

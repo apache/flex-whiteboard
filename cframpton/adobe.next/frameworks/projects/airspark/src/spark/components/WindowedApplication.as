@@ -30,6 +30,7 @@ import flash.display.NativeWindowResize;
 import flash.display.NativeWindowSystemChrome;
 import flash.display.NativeWindowType;
 import flash.display.Screen;
+import flash.display.StageScaleMode;
 import flash.events.Event;
 import flash.events.InvokeEvent;
 import flash.events.MouseEvent;
@@ -653,6 +654,9 @@ public class WindowedApplication extends Application implements IWindow
         else if (value > maxHeight)
             value = maxHeight;
 
+        if (explicitHeight != value)
+            explicitHeight = value;
+        
         _bounds.height = value;
         boundsChanged = true;
 
@@ -947,6 +951,9 @@ public class WindowedApplication extends Application implements IWindow
         else if (value > maxWidth)
             value = maxWidth;
 
+        if (explicitWidth != value)
+            explicitWidth = value;
+        
         _bounds.width = value;
         boundsChanged = true;
 
@@ -1744,8 +1751,11 @@ public class WindowedApplication extends Application implements IWindow
                 systemChrome == NativeWindowSystemChrome.STANDARD)
                 nativeWindow.height = chromeHeight() + _bounds.height;
             
-            systemManager.stage.stageWidth = _bounds.width;
-            systemManager.stage.stageHeight = _bounds.height;
+            if (systemManager.stage.scaleMode == StageScaleMode.NO_SCALE)
+            {
+                systemManager.stage.stageWidth = _bounds.width;
+                systemManager.stage.stageHeight = _bounds.height;
+            }
             
             // Set _width and _height.  This will update the mirroring
             // transform if applicable.
@@ -2452,9 +2462,12 @@ public class WindowedApplication extends Application implements IWindow
     {
         // Redispatch event.
         dispatchEvent(event);
-        height = systemManager.stage.stageHeight;
-        width = systemManager.stage.stageWidth;
-
+        if (systemManager.stage.scaleMode == StageScaleMode.NO_SCALE)
+        {
+            height = systemManager.stage.stageHeight;
+            width = systemManager.stage.stageWidth;
+        }
+        
         // Restored from a minimized state.
         if (event.beforeDisplayState == NativeWindowDisplayState.MINIMIZED)
         {

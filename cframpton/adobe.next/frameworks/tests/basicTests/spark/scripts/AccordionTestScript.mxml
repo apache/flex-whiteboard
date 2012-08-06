@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<UnitTester xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" testSWF="main.mxml">
+    
+    <!-- this set of lines form a template that must be in each unit test -->
+    <mx:Script>
+        <![CDATA[
+            public static function init(o:DisplayObject):void
+            {
+            }
+        ]]>
+    </mx:Script>
+    <mx:Metadata>
+        <![CDATA[
+        [Mixin]
+        ]]>
+    </mx:Metadata>
+    <!-- end of set of lines that must be in each unit test -->
+    
+    <testCases>
+        <TestCase testID="SetupSparkAccordion">
+            <body>
+                <SetProperty target = "" propertyName = "currentState" value = "sparkAccordionTest"
+                             waitEvent = "updateComplete" />
+                <AssertPropertyValue target="sparkAccordionTests.h_accordion" propertyName = "numElements" value = "3" />
+                <AssertPropertyValue target="sparkAccordionTests.v_accordion" propertyName = "numElements" value = "3" />
+                <AssertPropertyValue target="sparkAccordionTests.h_accordion" propertyName = "selectedIndex" value = "0" />
+                <AssertPropertyValue target="sparkAccordionTests.v_accordion" propertyName = "selectedIndex" value = "1" />
+            </body>
+        </TestCase>
+        
+        <TestCase testID="SparkAccordionTest1">
+            <body>
+                <DispatchMouseClickEvent target="sparkAccordionTests.h_accordion"  localX="10" localY="50" />
+                <DispatchMouseClickEvent target="sparkAccordionTests.v_accordion"  localX="50" localY="10" waitEvent="change" />
+                <AssertPropertyValue target="sparkAccordionTests.h_accordion" propertyName = "selectedIndex" value = "0" />
+                <AssertPropertyValue target="sparkAccordionTests.v_accordion" propertyName = "selectedIndex" value = "0" />
+            </body>
+        </TestCase>
+		
+        <TestCase testID="SparkAccordionTest2">
+            <body>
+                <SetProperty target = "sparkAccordionTests.h_accordion" propertyName = "requireSelection" value = "false"/>
+                <DispatchMouseClickEvent target="sparkAccordionTests.h_accordion"  localX="10" localY="50" waitEvent="change" />
+                <!--<SetProperty target = "sparkAccordionTests.v_accordion" propertyName = "allowMultipleSelection" value = "false"
+                             waitEvent = "valueCommit" />-->
+                <AssertPropertyValue target="sparkAccordionTests.h_accordion" propertyName = "selectedIndex" value = "-1" />
+                <AssertPropertyValue target="sparkAccordionTests.v_accordion" propertyName = "selectedIndex" value = "0" />
+            </body>
+        </TestCase>
+    </testCases>
+    
+</UnitTester>

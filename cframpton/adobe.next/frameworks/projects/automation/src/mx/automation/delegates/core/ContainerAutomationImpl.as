@@ -330,6 +330,19 @@ package mx.automation.delegates.core
 			return childList;
 		}
 		
+		
+		override protected function addMouseEvent(obj:DisplayObject, event:String, handler:Function , 
+										 useCapture:Boolean = false , priority:int = 0, useWeekRef:Boolean = false):void
+		{
+			Container(obj).$addEventListener(event, handler, useCapture,priority, useWeekRef);
+			
+		} 
+		
+		override protected function removeMouseEvent(obj:DisplayObject, event:String, handler:Function, useCapture:Boolean = false):void
+		{
+			Container(obj).$removeEventListener(event, handler,useCapture);
+		} 
+		
 		//----------------------------------
 		//  automationTabularData
 		//----------------------------------

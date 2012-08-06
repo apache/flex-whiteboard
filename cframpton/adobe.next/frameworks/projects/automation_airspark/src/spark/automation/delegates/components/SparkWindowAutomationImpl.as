@@ -39,8 +39,8 @@ package spark.automation.delegates.components
 	 *  
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkWindowAutomationImpl extends SparkSkinnableContainerAutomationImpl
@@ -58,8 +58,8 @@ package spark.automation.delegates.components
 		 *  @param root The SystemManger of the application.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -78,8 +78,8 @@ package spark.automation.delegates.components
 		 * @param obj Canvas object to be automated.     
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SparkWindowAutomationImpl(obj:spark.components.Window)

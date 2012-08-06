@@ -323,8 +323,8 @@
     <component id="HTTPMultiService" class="mx.rpc.http.mxml.HTTPMultiService" lookupOnly="true"/>
     <component id="HTTPOperation" class="mx.rpc.http.Operation" lookupOnly="true"/>
     <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService" lookupOnly="true"/>
+    <component id="MultiTopicConsumer" class="mx.messaging.MultiTopicConsumer" lookupOnly="true"/>    
     <component id="MultiTopicProducer" class="mx.messaging.MultiTopicProducer" lookupOnly="true"/>
-    <component id="MultiTopicConsumer" class="mx.messaging.MultiTopicConsumer" lookupOnly="true"/>
     <component id="Producer" class="mx.messaging.Producer" lookupOnly="true"/>
     <component id="RemoteObject" class="mx.rpc.remoting.mxml.RemoteObject" lookupOnly="true"/>
     <component id="RemoteObjectOperation" class="mx.rpc.remoting.mxml.Operation" lookupOnly="true"/>

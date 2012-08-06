@@ -70,6 +70,8 @@ import mx.utils.EventUtil;
 import mx.utils.NameUtil;
 import mx.utils.SecurityUtil;
 
+import spark.managers.marshalClasses.ToolTipManagerMarshalMixin;
+
 use namespace mx_internal;
 
 [ExcludeClass]
@@ -113,9 +115,12 @@ public class MarshallingSupport implements IMarshalSystemManager, ISWFBridgeProv
     /**
      *  @private
      */
-    private static function weakDependency5():void { ToolTipManagerMarshalMixin };
+    private static function weakDependency5():void { mx.managers.marshalClasses.ToolTipManagerMarshalMixin };
 
-
+    /**
+     *  @private
+     */
+    private static function weakDependency6():void { spark.managers.marshalClasses.ToolTipManagerMarshalMixin };
 
 	//--------------------------------------------------------------------------
 	//
@@ -1879,7 +1884,7 @@ public class MarshallingSupport implements IMarshalSystemManager, ISWFBridgeProv
 
 
 	/**
-         * Perform the requested action from a trusted dispatcher.
+     * Perform the requested action from a trusted dispatcher.
 	 */
 	private function systemManagerHandler(event:Event):void
 	{
@@ -1888,11 +1893,11 @@ public class MarshallingSupport implements IMarshalSystemManager, ISWFBridgeProv
 			event["value"] = currentSandboxEvent == event["value"];
 			return;
 		}
-                else if (event["name"] == "hasSWFBridges")
-                {
-                        event["value"] = hasSWFBridges();
-                        return;
-                }
+        else if (event["name"] == "hasSWFBridges")
+        {
+            event["value"] = hasSWFBridges();
+            return;
+        }
 
 		// if we are broadcasting messages, ignore the messages
 		// we send to ourselves.
@@ -2541,6 +2546,16 @@ public class MarshallingSupport implements IMarshalSystemManager, ISWFBridgeProv
 		// trace("<<dispatchEventFromSWFBridges", this, event.type);
 	}
 
+    /**
+     *  @inheritDoc
+     */
+    public function dispatchEventFromSystemManager(event:Event):void
+    {
+        currentSandboxEvent = event.clone(); // must make clone or dispatchEvent will clone it again
+        systemManager.dispatchEvent(currentSandboxEvent);
+        currentSandboxEvent = null;
+    }
+    
 	/**
 	 * request the parent to add an event listener.
 	 */

@@ -27,7 +27,7 @@ package spark.automation.events
      *  that are dispatched when the value in a control changes. 
      *  
      *  @langversion 3.0
-     *  @playerversion Flash 9
+     *  @playerversion Flash 10
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      */
@@ -66,7 +66,7 @@ package spark.automation.events
          *  @eventType change
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -86,7 +86,7 @@ package spark.automation.events
         *  @param value The new value.
         *  
         *  @langversion 3.0
-        *  @playerversion Flash 9
+        *  @playerversion Flash 10
         *  @playerversion AIR 1.5
         *  @productversion Flex 4
         */
@@ -112,7 +112,7 @@ package spark.automation.events
          *  The new value.
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */

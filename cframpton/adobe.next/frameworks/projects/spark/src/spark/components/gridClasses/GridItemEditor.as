@@ -39,6 +39,7 @@ import spark.components.gridClasses.GridColumn;
 import spark.components.DataGrid;
 import spark.components.Group;
 
+
 use namespace mx_internal;
 
 /**
@@ -525,6 +526,19 @@ public class GridItemEditor extends Group implements IGridItemEditor
                 ICollectionView(dataGrid.dataProvider).sort = sort;
         }
 
+        return true;
+    }
+    
+    /**
+     *  @inheritDoc 
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 10
+     *  @playerversion AIR 2.5
+     *  @productversion Flex 4.5
+     */
+    public function cancel():Boolean
+    {
         return true;
     }
     

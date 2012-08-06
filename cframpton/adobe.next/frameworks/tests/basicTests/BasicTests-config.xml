@@ -72,6 +72,7 @@
         <symbol>spark.scripts.ButtonBarTestScript</symbol>
         <symbol>spark.scripts.TileGroupTestScript</symbol>
         <symbol>spark.scripts.TitleWindowTestScript</symbol>
+        <symbol>spark.scripts.VideoPlayerTestScript</symbol>
         <symbol>graphics.scripts.GraphicsTagsTestScript</symbol>
         <symbol>fxg.scripts.FXGCompileTestScript</symbol>
         <symbol>fxg.scripts.FXG2CompileTestScript</symbol>
@@ -81,6 +82,7 @@
 	    <symbol>dmv.scripts.ODGTestScript</symbol>
 	    <symbol>dmv.scripts.ChartsTestScript</symbol>	
         <symbol>spark.scripts.AnimateConstraintsTestScript</symbol>
+        <symbol>spark.scripts.RemoveUnusedRSLsTestScript</symbol>
         <symbol>spark.scripts.ImageTestScript</symbol>
         <symbol>spark.scripts.DateTimeFormatterTestScript</symbol> 
         <symbol>spark.scripts.AdvancedStyleClientTestScript</symbol>
@@ -92,6 +94,8 @@
 		<symbol>spark.scripts.CurrencyValidatorTestScript</symbol>
         <symbol>spark.scripts.NumberValidatorTestScript</symbol>
 	<symbol>spark.scripts.SortTestScript</symbol>
+        <symbol>spark.scripts.ViewStackTestScript</symbol>
+        <symbol>spark.scripts.AccordionTestScript</symbol>		
     <!--
     -->
         <symbol>ExitWhenDone</symbol>

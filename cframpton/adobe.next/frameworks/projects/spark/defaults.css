@@ -19,7 +19,30 @@
 
 @namespace "library://ns.adobe.com/flex/spark";
 
+/* Global Style Declaration */
+
+global
+{
+    /*toolTipClass: ClassReference("spark.components.ToolTip");*/  
+    toolTipHideDelay: 10000;
+    toolTipScrubDelay: 100;
+    toolTipShowDelay: 500;
+}
+
 /* Default Skins */
+
+Accordion
+{
+    skinClass: ClassReference("spark.skins.spark.VerticalAccordionSkin");
+}
+
+AccordionContent
+{
+    skinClass: ClassReference("spark.skins.spark.VerticalAccordionContentSkin");
+    backgroundColor: #F8F8F8;
+    borderVisible: true;
+    borderColor: #666666;
+}
 
 Application
 {
@@ -67,8 +90,18 @@ ComboBox
 
 DataGrid
 {
+    dragIndicatorClass: ClassReference("spark.components.gridClasses.DataGridDragProxy");
+    dropIndicatorSkin: ClassReference("spark.skins.spark.ListDropIndicator");
     skinClass: ClassReference("spark.skins.spark.DataGridSkin");
     stretchCursor: Embed(source="Assets.swf",symbol="cursorStretch");    
+}
+
+DateChooser
+{
+    contentBackgroundColor: #F4F4F4;
+    skinClass: ClassReference("spark.skins.spark.DateChooserSkin");
+    repeatInterval: 400;
+    todayColor: #F9EB21;
 }
 
 DropDownList
@@ -146,12 +179,12 @@ Panel
     cornerRadius: 0;
     dropShadowVisible: true;
 */
-	skinClass: ClassReference("spark.skins.spark.PanelSkin");
+    skinClass: ClassReference("spark.skins.spark.PanelSkin");
 }
 
 RadioButton
 {
-	skinClass: ClassReference("spark.skins.spark.RadioButtonSkin");
+    skinClass: ClassReference("spark.skins.spark.RadioButtonSkin");
 }
 
 RichEditableText
@@ -224,7 +257,7 @@ TextArea
     paddingLeft: 3;
     paddingRight: 3;
     paddingTop: 5;
-	skinClass: ClassReference("spark.skins.spark.TextAreaSkin");
+    skinClass: ClassReference("spark.skins.spark.TextAreaSkin");
 }
 
 TextInput
@@ -233,24 +266,39 @@ TextInput
     paddingLeft: 3;
     paddingRight: 3;
     paddingTop: 5;
-	skinClass: ClassReference("spark.skins.spark.TextInputSkin");
+    skinClass: ClassReference("spark.skins.spark.TextInputSkin");
 }
 
 TitleWindow
 {
 /* in spark.css */
 /*
-	borderAlpha: 0.8;
-	borderColor: 0;
-	cornerRadius: 0;
-	dropShadowVisible: true;
+    borderAlpha: 0.8;
+    borderColor: 0;
+    cornerRadius: 0;
+    dropShadowVisible: true;
 */
-	skinClass: ClassReference("spark.skins.spark.TitleWindowSkin");
+    skinClass: ClassReference("spark.skins.spark.TitleWindowSkin");
 }
 
 ToggleButton
 {
-	skinClass: ClassReference("spark.skins.spark.ToggleButtonSkin");
+    skinClass: ClassReference("spark.skins.spark.ToggleButtonSkin");
+}
+
+ToolTip
+{
+    backgroundColor: #F8FACD;
+    borderAlpha: 0.15;
+    borderColor: #000000;
+    cornerRadius: 0;
+    dropShadowVisible: true;
+    fontSize: 10;
+    paddingBottom: 4;
+    paddingLeft: 5;
+    paddingRight: 5;
+    paddingTop: 6;
+    skinClass: ClassReference("spark.skins.spark.ToolTipSkin");	
 }
 
 VideoDisplay

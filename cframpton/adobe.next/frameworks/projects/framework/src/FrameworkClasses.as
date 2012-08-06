@@ -128,7 +128,7 @@ internal class FrameworkClasses
 	import mx.managers.marshalClasses.DragManagerMarshalMixin; DragManagerMarshalMixin;
 	import mx.managers.marshalClasses.FocusManagerMarshalMixin; FocusManagerMarshalMixin;
 	import mx.managers.marshalClasses.PopUpManagerMarshalMixin; PopUpManagerMarshalMixin;
-	import mx.managers.marshalClasses.ToolTipManagerMarshalMixin; ToolTipManagerMarshalMixin;
+	import mx.managers.marshalClasses.ToolTipManagerMarshalMixin; mx.managers.marshalClasses.ToolTipManagerMarshalMixin;
     import mx.managers.PopUpManager; PopUpManager;
 	import mx.managers.systemClasses.ActiveWindowManager; ActiveWindowManager;
 	import mx.managers.systemClasses.ChildManager; ChildManager;
@@ -169,6 +169,9 @@ internal class FrameworkClasses
     import mx.utils.PopUpUtil; PopUpUtil;
 	import mx.utils.XMLUtil; XMLUtil;
 	import mx.validators.Validator; Validator;
+    
+    import spark.managers.marshalClasses.ToolTipManagerMarshalMixin; spark.managers.marshalClasses.ToolTipManagerMarshalMixin;
+    
 	// Maintain alphabetical order
 }
 

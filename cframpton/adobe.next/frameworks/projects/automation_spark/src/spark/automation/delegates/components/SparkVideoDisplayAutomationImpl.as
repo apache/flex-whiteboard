@@ -36,7 +36,7 @@ package spark.automation.delegates.components
 		 *  
 		 *  @langversion 3.0
 		 *  @playerversion Flash 10
-		 *  @playerversion AIR 1.1
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4.5
 		 */
 		public class SparkVideoDisplayAutomationImpl extends UIComponentAutomationImpl
@@ -56,7 +56,7 @@ package spark.automation.delegates.components
 			 *  
 			 *  @langversion 3.0
 			 *  @playerversion Flash 10
-			 *  @playerversion AIR 1.1
+			 *  @playerversion AIR 1.5
 			 *  @productversion Flex 4.5
 			 */
 			public static function init(root:DisplayObject):void
@@ -76,7 +76,7 @@ package spark.automation.delegates.components
 			 *  
 			 *  @langversion 3.0
 			 *  @playerversion Flash 10
-			 *  @playerversion AIR 1.1
+			 *  @playerversion AIR 1.5
 			 *  @productversion Flex 4.5
 			 */
 			public function SparkVideoDisplayAutomationImpl(obj:spark.components.VideoDisplay)

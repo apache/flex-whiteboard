@@ -2783,6 +2783,9 @@ public class SystemManager extends MovieClip
 
         Singleton.registerClass("mx.managers::IToolTipManager2",
             Class(getDefinitionByName("mx.managers::ToolTipManagerImpl")));
+        
+        Singleton.registerClass("spark.managers::IToolTipManagerImpl", 
+            Class(getDefinitionByName("spark.managers::ToolTipManagerImpl")));
 
         var dragManagerClass:Class = null;
                 
@@ -3166,6 +3169,18 @@ public class SystemManager extends MovieClip
             }
         }
         
+        if (isTopLevelRoot() && stage.scaleMode != StageScaleMode.NO_SCALE)
+        {
+            // with scaling scalemodes, we can no longer trust
+            // stageWidth/stageHeight as they reflect the total
+            // number of pixels after scaling.  We will trust
+            // the loaderInfo width/height because the user is
+            // supposed to design his UI to fit within those
+            // dimensions and the player then scales that rectangle
+            // to fit.
+            w = m;
+            h = n;
+        }
         var x:Number = (m - w) / 2;
         var y:Number = (n - h) / 2;
         

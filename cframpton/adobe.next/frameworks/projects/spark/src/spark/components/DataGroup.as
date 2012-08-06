@@ -286,7 +286,8 @@ public class DataGroup extends GroupBase implements IItemRendererOwner
         if (_typicalItem === value)
             return;
         _typicalItem = explicitTypicalItem = value;
-        invalidateTypicalItemRenderer();
+        typicalItemChanged = true;
+        invalidateProperties();
     }
     
     private function setTypicalLayoutElement(element:ILayoutElement):void
@@ -1543,12 +1544,11 @@ public class DataGroup extends GroupBase implements IItemRendererOwner
             if (virtualRendererIndices.indexOf(index) == -1)
                 virtualRendererIndices.push(index);
             
-            var item:Object;
+            const item:Object = dataProvider.getItemAt(index);
             
             addedVirtualRenderer = false;  // set by createVirtualRendererForItem()
             if (!elt)
             {
-                item = dataProvider.getItemAt(index);
                 elt = createVirtualRendererForItem(item);
                 elt.visible = true;
                 elt.includeInLayout = true;

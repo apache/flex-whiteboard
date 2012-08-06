@@ -282,16 +282,23 @@ public class RichEditableTextContainerManager extends TextContainerManager
         var inactiveSelectionColor:* = textDisplay.getStyle(
                                             "inactiveTextSelectionColor"); 
 
+        var inactivePointAlpha:Number =
+            editingMode == EditingMode.READ_WRITE ?
+            1.0 :
+            0.0;
+        
         var inactiveAlpha:Number =
             textDisplay.selectionHighlighting == 
             TextSelectionHighlighting.ALWAYS ?
             1.0 :
             0.0;
 
-        // No insertion point when not active.
+        // Inactive is not unfocused so show an insertion point if there is one.
+        // This is consistent with TextField.
+        
         return new SelectionFormat(
             inactiveSelectionColor, inactiveAlpha, BlendMode.NORMAL,
-            inactiveSelectionColor, 0.0);
+            inactiveSelectionColor, inactivePointAlpha, BlendMode.INVERT);
     }   
     
     /**
@@ -326,6 +333,25 @@ public class RichEditableTextContainerManager extends TextContainerManager
     override public function setText(text:String):void
     {
         super.setText(text);
+        
+        // Workaround a bug in setText().  Even if the selection is being preserved, the
+        // selection can still change.  In this case, dispatch a SELECTION_CHANGE event.
+        if (preserveSelectionOnSetText)
+        {
+            var im:ISelectionManager = beginInteraction();
+
+            if (im)
+            {
+                if (im.anchorPosition != textDisplay.selectionAnchorPosition ||
+                    im.activePosition != textDisplay.selectionActivePosition)
+                {
+                    // Dispatch the SELECTION_CHANGE event.
+                    SelectionManager(im).selectionChanged();
+                }
+            }
+                        
+            endInteraction();
+        }
         
         // If we have focus, need to make sure we can still input text.
         initForInputIfHaveFocus();
@@ -364,7 +390,7 @@ public class RichEditableTextContainerManager extends TextContainerManager
             
             controller.requiredFocusInHandler(null);
             
-            if (!textDisplay.preserveSelectionOnSetText)
+            if (!preserveSelectionOnSetText)
                 im.selectRange(0, 0);
             
             endInteraction();

@@ -74,9 +74,67 @@ public interface IDeferredContentOwner extends IUIComponent
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      */
+    [Deprecated(replacement="elementCreationPolicy", since="5.0")]   
+    
     function get creationPolicy():String;
     function set creationPolicy(value:String):void;
-
+    
+    /**
+     *  Defines when this component creates its child elements. 
+     *  This property contains one of the values in 
+     *  <code>ContainerCreationPolicy</code>.
+     
+     *  <p>Possible values are:
+     *    <ul>
+     *      <li><code>auto</code> - The implementing container determines if the content is created 
+     *          immediately or if the creation is deferred.</li>
+     *      <li><code>all</code> - Create the content as soon as the parent component is created. This
+     *          option should only be used as a last resort because it increases startup time and memory usage.</li>
+     *      <li><code>none</code> - Content must be created manually by calling 
+     *          the <code>createDeferredContent()</code> method. The <code>createDeferredContent()</code> 
+     *          method</li> is typically called by the application developer.
+     *    </ul>
+     *  </p>
+     *  
+     *  @default "auto"
+     *  
+     */
+    function get elementCreationPolicy():String;
+    function set elementCreationPolicy(value:String):void;
+    
+    //----------------------------------
+    //  elementDestructionPolicy
+    //----------------------------------
+    
+    /**
+     *  Defines the destruction policy for this component's content. When this 
+     *  component is no longer visible in its parent container the destruction 
+     *  policy is used to determine what to do with this component's children.
+     *  Each container may define what it means to be have a child visible. 
+     *  This property contains one of the values in 
+     *  <code>ContainerDestructionPolicy</code>.
+     *  
+     *  <p>Possible values are:
+     *    <ul>
+     *      <li><code>auto</code> - Implementation is up to the parent container. Typically the content 
+     *                              is cached with a weak reference. 
+	 *                              If the content is needed again it can be quickly brought up. However, it can still be destroyed
+     *                              if necessary, for example, if there is not enough memory. </li>
+     *      <li><code>always</code> - Destroy the content as soon as the implementing container is no 
+     *                                longer visible. </li>
+     *      <li><code>never</code> - The content will never be destroyed even when the implementing 
+     *                               container is no longer visible. </li>
+     *    </ul>
+     *  </p>
+     * 
+     *  @default auto
+     *
+     *  @see spark.core.ContainerDestructionPolicy
+     *
+     */
+    function get elementDestructionPolicy():String;
+    function set elementDestructionPolicy(value:String):void;
+    
     /**
      *  Create the content for this component. If the value of the <code>creationPolicy</code> property
      *  is <code>auto</code> or <code>all</code>, this the Flex framework calls this method. If the value of the 
@@ -99,6 +157,20 @@ public interface IDeferredContentOwner extends IUIComponent
      *  @productversion Flex 4
      */
     function get deferredContentCreated():Boolean;
+
+    /**
+     *  Removes the content for this component. The removed content can be 
+     *  cached to improve the performance of re-creating the content. Calling
+     *  this method sets the <code>deferredContentCreated</code> to false 
+     *  so the <code>createDeferredContent</code> method may be called again.
+     *
+     *  @param cache If true, the removed content is cached to improve the 
+     *  performance of restoring the children.
+     *  The content is weak referenced so that the memory may be garbage 
+     *  collected if needed.
+     * 
+     */
+    function removeDeferredContent(cache:Boolean = false):void;    
 }
 
 }

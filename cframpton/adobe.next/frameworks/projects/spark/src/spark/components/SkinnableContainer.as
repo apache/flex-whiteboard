@@ -19,10 +19,14 @@
 
 package spark.components
 {
+import flash.utils.Dictionary;
+
 import mx.core.ContainerCreationPolicy;
+import mx.core.FlexVersion;
 import mx.core.IDeferredContentOwner;
 import mx.core.IDeferredInstance;
 import mx.core.IFlexModuleFactory;
+import mx.core.ITransientDeferredInstance;
 import mx.core.IVisualElement;
 import mx.core.IVisualElementContainer;
 import mx.core.mx_internal;
@@ -30,6 +34,7 @@ import mx.events.FlexEvent;
 import mx.utils.BitFlagUtil;
 
 import spark.components.supportClasses.SkinnableContainerBase;
+import spark.core.ContainerDestructionPolicy;
 import spark.events.ElementExistenceEvent;
 import spark.layouts.supportClasses.LayoutBase;
 
@@ -439,7 +444,8 @@ public class SkinnableContainer extends SkinnableContainerBase
         
         // Register the _creationPolicy style as inheriting. See the creationPolicy
         // getter for details on usage of this style.
-        styleManager.registerInheritingStyle("_creationPolicy");
+        if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_5_0)
+            styleManager.registerInheritingStyle("_creationPolicy");
     }
     
     //--------------------------------------------------------------------------
@@ -480,6 +486,12 @@ public class SkinnableContainer extends SkinnableContainerBase
         }
     }
     
+    //--------------------------------------------------------------------------
+    //
+    //  IDeferredContentOwner Properties 
+    //
+    //--------------------------------------------------------------------------
+    
     //----------------------------------
     //  creationPolicy
     //----------------------------------
@@ -488,6 +500,7 @@ public class SkinnableContainer extends SkinnableContainerBase
     // When set, the value of the backing store _creationPolicy
     // style is "auto" so descendants inherit the correct value.
     private var creationPolicyNone:Boolean = false;
+    private var _creationPolicy:String = ContainerCreationPolicy.AUTO;
     
     [Inspectable(enumeration="auto,all,none", defaultValue="auto")]
         
@@ -509,12 +522,15 @@ public class SkinnableContainer extends SkinnableContainerBase
         // don't have this property (ie Group).
         // This style is an implementation detail and should be considered
         // private. Do not set it from CSS.
-        var result:String = getStyle("_creationPolicy");
+        var lessThanFlexVersion5:Boolean = FlexVersion.compatibilityVersion < FlexVersion.VERSION_5_0; 
+        var result:String = lessThanFlexVersion5 ? 
+                                getStyle("_creationPolicy") : 
+                                _creationPolicy;
         
         if (result == null)
             result = ContainerCreationPolicy.AUTO;
         
-        if (creationPolicyNone)
+        if (creationPolicyNone && lessThanFlexVersion5)
             result = ContainerCreationPolicy.NONE;
         
         return result;
@@ -525,22 +541,87 @@ public class SkinnableContainer extends SkinnableContainerBase
      */
     public function set creationPolicy(value:String):void
     {
-        if (value == ContainerCreationPolicy.NONE)
+        if (FlexVersion.compatibilityVersion < FlexVersion.VERSION_5_0)
         {
-            // creationPolicy of none is not inherited by descendants.
-            // In this case, set the style to "auto" and set a local
-            // flag for subsequent access to the creationPolicy property.
-            creationPolicyNone = true;
-            value = ContainerCreationPolicy.AUTO;
+            if (value == ContainerCreationPolicy.NONE)
+            {
+                // creationPolicy of none is not inherited by descendants.
+                // In this case, set the style to "auto" and set a local
+                // flag for subsequent access to the creationPolicy property.
+                creationPolicyNone = true;
+                value = ContainerCreationPolicy.AUTO;
+            }
+            else
+            {
+                creationPolicyNone = false;
+            }
+            
+            setStyle("_creationPolicy", value);
+            //Also updates the elementCreationPolicy
+            elementCreationPolicy = value;
         }
         else
         {
-            creationPolicyNone = false;
+            _creationPolicy = value;
         }
         
-        setStyle("_creationPolicy", value);
     }
 
+    /**
+     *  @private
+     */
+    private var _elementCreationPolicy:*;
+    
+    [Inspectable(enumeration="auto,all,none", defaultValue="auto")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementCreationPolicy():String
+    {
+        // If elementCreationPolicy has been set then use it. Otherwise
+        // fallback to using the deprecated creationPolicy.
+        if (_elementCreationPolicy !== undefined)
+            return _elementCreationPolicy;
+        else
+            return _creationPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementCreationPolicy(value:String):void
+    {
+        _elementCreationPolicy = value;
+    }
+    
+    //----------------------------------
+    //  elementDestructionPolicy
+    //----------------------------------
+    
+    /**
+     *  @private
+     */
+    private var _elementDestructionPolicy:String = ContainerDestructionPolicy.AUTO;
+    
+    [Inspectable(enumeration="always,auto,never", defaultValue="auto")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementDestructionPolicy():String
+    {
+        return _elementDestructionPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementDestructionPolicy(value:String):void
+    {
+        _elementDestructionPolicy = value;
+    }
+    
     //--------------------------------------------------------------------------
     //
     //  Properties proxied to contentGroup
@@ -907,6 +988,19 @@ public class SkinnableContainer extends SkinnableContainerBase
 
         if (instance == contentGroup)
         {
+            if (_placeHolderGroup)
+            {
+                _placeHolderGroup.removeEventListener(
+                    ElementExistenceEvent.ELEMENT_ADD, contentGroup_elementAddedHandler);
+                _placeHolderGroup.removeEventListener(
+                    ElementExistenceEvent.ELEMENT_REMOVE, contentGroup_elementRemovedHandler);                
+            }
+
+            contentGroup.addEventListener(
+                ElementExistenceEvent.ELEMENT_ADD, contentGroup_elementAddedHandler);
+            contentGroup.addEventListener(
+                ElementExistenceEvent.ELEMENT_REMOVE, contentGroup_elementRemovedHandler);
+            
             if (_contentModified)
             {
                 if (_placeHolderGroup != null)
@@ -921,18 +1015,12 @@ public class SkinnableContainer extends SkinnableContainerBase
                     // copy the mxmlContent from the placeHolderGroup, but we must also 
                     // call removeElement() on those children.
                     
-                    // remove listener prior to removal of elements
-                    // or else we'll accidentally null out the owner field
-                    _placeHolderGroup.removeEventListener(
-                        ElementExistenceEvent.ELEMENT_REMOVE, contentGroup_elementRemovedHandler);
-                    
                     for (var i:int = _placeHolderGroup.numElements; i > 0; i--)
                     {
                         _placeHolderGroup.removeElementAt(0);  
                     }
                     
                     contentGroup.mxmlContent = sourceContent ? sourceContent.slice() : null;
-
                 }
                 else if (_mxmlContent != null)
                 {
@@ -940,6 +1028,8 @@ public class SkinnableContainer extends SkinnableContainerBase
                     _mxmlContent = null;
                 }
             }
+            
+            _placeHolderGroup = null;
             
             // copy proxied values from contentGroupProperties (if set) to contentGroup
             
@@ -959,22 +1049,7 @@ public class SkinnableContainer extends SkinnableContainerBase
                                                                LAYOUT_PROPERTY_FLAG, true);
             }
             
-            contentGroupProperties = newContentGroupProperties;
-            
-            contentGroup.addEventListener(
-                ElementExistenceEvent.ELEMENT_ADD, contentGroup_elementAddedHandler);
-            contentGroup.addEventListener(
-                ElementExistenceEvent.ELEMENT_REMOVE, contentGroup_elementRemovedHandler);
-            
-            if (_placeHolderGroup)
-            {
-                _placeHolderGroup.removeEventListener(
-                    ElementExistenceEvent.ELEMENT_ADD, contentGroup_elementAddedHandler);
-                _placeHolderGroup.removeEventListener(
-                    ElementExistenceEvent.ELEMENT_REMOVE, contentGroup_elementRemovedHandler);
-                
-                _placeHolderGroup = null;
-            }
+            contentGroupProperties = newContentGroupProperties;            
         }
     }
 
@@ -1035,6 +1110,23 @@ public class SkinnableContainer extends SkinnableContainerBase
     //--------------------------------------------------------------------------
 
     /**
+     *  @private 
+     *  Number of items in the cache. Verify that none of the items where
+     *  collected before reusing the cache.
+     */     
+    private var elementCacheCount:int;
+    
+    /**
+     *  @private
+     *  A weak reference dictionary to store children that
+     *  are not being displayed. The garbage collector can
+     *  collect the memory if it needs it. Otherwise the
+     *  children can be re-added to the display list without
+     *  the need to  recreated them.
+     */
+    private var elementCacheDictionary:Dictionary;
+    
+    /**
      *  Create the content for this component. 
      *  When the <code>creationPolicy</code> property is <code>auto</code> or
      *  <code>all</code>, this function is called automatically by the Flex framework.
@@ -1048,6 +1140,55 @@ public class SkinnableContainer extends SkinnableContainerBase
      */
     public function createDeferredContent():void
     {
+        //trace("createDeferredContent");
+        
+        // Restore the content from the cache if possible.
+        if (elementCacheCount)
+        {
+            //trace("createDeferredContent: elementCacheCount = " + elementCacheCount);
+            
+            // Compare the count to the actually number of elements
+            // in the dictionary. If the number of elements are not
+            // the same then destory the cache and create the elements
+            // from scratch.
+            var i:int = 0;
+            var elementVector:Vector.<IVisualElement> = new Vector.<IVisualElement>(elementCacheCount, true);
+            for (var o:Object in elementCacheDictionary)
+            {
+                if (i < elementCacheCount)
+                    elementVector[elementCacheDictionary[o]] = o as IVisualElement;
+                
+                i++;
+            }
+            
+            //trace("createDeferredContent: i == elementCacheCount = " + (i == elementCacheCount));
+            if (i == elementCacheCount)
+            {
+                //trace("createDeferredContent: re-add elements from cache.");
+                
+                var n:int = elementCacheCount;
+                mxmlContentCreated = true; // keep the code from recursing back into here.
+                _deferredContentCreated = true; 
+                
+                for (i = 0; i < n; i++)
+                {
+                    addElement(elementVector[i]);                    
+                }
+
+                dispatchEvent(new FlexEvent(FlexEvent.CONTENT_CREATION_COMPLETE));
+            }
+            else
+            {
+                // The cache is missing some pieces to re-create from scratch.
+                //trace("createDeferredContent: could not re-use cache.");
+                mxmlContentCreated = false;
+            }
+
+            elementCacheCount = 0;
+            elementCacheDictionary = null;
+            //trace("removeDeferredContent:   elementCacheDictionary set to null");
+        }
+        
         if (!mxmlContentCreated)
         {
             mxmlContentCreated = true;
@@ -1078,11 +1219,57 @@ public class SkinnableContainer extends SkinnableContainerBase
     }
 
     /**
+     *  Removes the content for this component. The removed content can be 
+     *  cached to improve the performance of re-creating the content. 
+     *
+     *  @param cache If true, then save a reference to the removed content.
+     *  The content is weak referenced and the memory may be garbage collected if
+     *  needed.
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 2.7
+     *  @productversion Flex 5
+     */
+    public function removeDeferredContent(cache:Boolean = false):void
+    {
+        //trace("removeDeferredContent: cache= " + cache);
+        
+        if (cache)
+        {
+            //trace("removeDeferredContent:   created elementCacheDictionary");
+            elementCacheDictionary = new Dictionary(true);
+            elementCacheCount = numElements;
+            
+            var n:int = elementCacheCount;
+            
+            for (var i:int = 0; i < n; i++)
+            {
+                // put the element in a weak reference dictionary. If it
+                // is still there when we want to add the child back then
+                // great. Otherwise we will need to instantiate the child
+                // again.
+                var element:IVisualElement = getElementAt(i);
+                elementCacheDictionary[element] = i;
+            }
+        }
+
+        removeAllElements();    
+        
+        // TODO (dloverin): Write comment.
+        if (_mxmlContentFactory is ITransientDeferredInstance)
+            ITransientDeferredInstance(_mxmlContentFactory).reset();
+        mxmlContentCreated = false;
+        _deferredContentCreated = false;
+        
+    }
+    
+    /**
      *  @private
      */
     private function createContentIfNeeded():void
     {
-        if (!mxmlContentCreated && creationPolicy != ContainerCreationPolicy.NONE)
+        if (!mxmlContentCreated && elementCreationPolicy != ContainerCreationPolicy.NONE)
             createDeferredContent();
     }
     

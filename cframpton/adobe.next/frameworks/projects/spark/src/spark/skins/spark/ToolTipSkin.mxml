@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<!--- The default skin class for the Spark ToolTip component.  
+
+@see spark.components.ToolTip
+@see spark.components.ToolTipSkin
+
+@langversion 3.0
+@playerversion Flash 11
+@playerversion AIR 3
+@productversion Flex 5.0
+-->
+<s:Skin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" 
+        xmlns:fb="http://ns.adobe.com/flashbuilder/2009" 
+        xmlns:mx="library://ns.adobe.com/flex/mx"
+        alpha.disabled="0.5">
+    
+    <fx:Metadata>
+        <![CDATA[ 
+        /** 
+         *  @copy spark.skins.spark.ApplicationSkin#hostComponent
+         */
+        [HostComponent("spark.components.ToolTip")]
+        ]]>
+    </fx:Metadata>
+    
+    <fx:Script fb:purpose="styling">
+        <![CDATA[
+            
+            private var previousCornerRadius:Number;
+            
+            /**
+             *  @private
+             */
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number) : void
+            {
+                // Inset the content group by the padding.
+                contentGroup.left = getStyle("paddingLeft");
+                contentGroup.right = getStyle("paddingRight");
+                contentGroup.top = getStyle("paddingTop");
+                contentGroup.bottom = getStyle("paddingBottom");
+                
+                if (getStyle("borderVisible") == true)
+                {
+                    border.visible = true;
+                    
+                    // Inset the background by the border weight.
+                    background.left = background.top = background.right = background.bottom = borderStroke.weight;
+                    
+                    // Inset the content group additionally by the border weight.
+                    contentGroup.left += borderStroke.weight;
+                    contentGroup.right += borderStroke.weight;
+                    contentGroup.top += borderStroke.weight;
+                    contentGroup.bottom += borderStroke.weight;
+                }
+                else
+                {
+                    border.visible = false;
+                    background.left = background.top = background.right = background.bottom = 0;
+                }
+                
+                // Set cornerRadius.
+                var cornerRadius:Number = getStyle("cornerRadius");
+                if (cornerRadius != previousCornerRadius)
+                {
+                    previousCornerRadius = cornerRadius;
+                    
+                    setRectCornerRadius(background, cornerRadius);
+                    setRectCornerRadius(border, cornerRadius);
+                    setDropShadowCornerRadius(dropShadow, cornerRadius);
+                }
+                
+                // Set dropShadowVisible.
+                dropShadow.visible = getStyle("dropShadowVisible");
+                
+                // Set borderColor and borderAlpha.
+                borderStroke.color = getStyle("borderColor");
+                borderStroke.alpha = getStyle("borderAlpha");
+                
+                // Set backgroundColor and backgroundAlpha.
+                backgroundFill.color = getStyle("backgroundColor");
+                backgroundFill.alpha = getStyle("backgroundAlpha");
+                
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+            }
+            
+            private function setRectCornerRadius(rect:Rect, cornerRadius:Number):void
+            {
+                rect.topLeftRadiusX = cornerRadius;
+                rect.topLeftRadiusY = cornerRadius;
+                rect.topRightRadiusX = cornerRadius;
+                rect.topRightRadiusY = cornerRadius;
+                rect.bottomLeftRadiusX = cornerRadius;
+                rect.bottomLeftRadiusY = cornerRadius;
+                rect.bottomRightRadiusX = cornerRadius;
+                rect.bottomRightRadiusY = cornerRadius;
+            }
+            
+            private function setDropShadowCornerRadius(dropShadow:RectangularDropShadow, cornerRadius:Number):void
+            {
+                dropShadow.tlRadius = cornerRadius;
+                dropShadow.trRadius = cornerRadius;
+                dropShadow.blRadius = cornerRadius;
+                dropShadow.brRadius = cornerRadius;
+            }
+            
+        ]]>        
+    </fx:Script>
+    
+    <s:states>
+        <s:State name="normal"/>
+        <s:State name="disabled"/>
+        <s:State name="closed" stateGroups="closedGroup"/>
+        <s:State name="disabledAndClosed" stateGroups="closedGroup"/>
+    </s:states>
+    
+    <!-- Transitions for open and close -->
+    <s:transitions>
+        <s:Transition fromState="closed" toState="normal" autoReverse="true">
+            <!--- @private -->
+            <s:Fade id="closedToNormalEffect" duration="300" target="{chrome}"/>
+        </s:Transition>
+        
+        <s:Transition fromState="disabledAndClosed" toState="disabled" autoReverse="true">
+            <!--- @private -->
+            <s:Fade id="disabledAndClosedToDisabledEffect" duration="300" target="{chrome}"/>
+        </s:Transition>
+        
+        <s:Transition fromState="disabled" toState="disabledAndClosed" autoReverse="true">
+            <!--- @private -->
+            <s:Fade id="disabledToDisabledAndClosedEffect" duration="300" target="{chrome}"/>
+        </s:Transition>
+        
+        <s:Transition fromState="normal" toState="closed" autoReverse="true">
+            <!--- @private -->
+            <s:Fade id="normalToClosedEffect" duration="300" target="{chrome}"/>
+        </s:Transition>
+    </s:transitions>
+    
+    <!--- Defines the visual area used by this skin. -->
+    <s:Group id="chrome" left="0" right="0" top="0" bottom="0" visible.closedGroup="false">
+        
+        <!--- layer 0: drop shadow -->
+        <s:RectangularDropShadow id="dropShadow" blurX="7" blurY="4" 
+                                 alpha="0.3" distance="3" angle="90" 
+                                 left="0" top="0" right="0" bottom="0"/>
+        
+        <!--- layer 1: border -->
+        <s:Rect id="border" left="0" right="0" top="0" bottom="0" >
+            <s:stroke>
+                <!--- @private -->
+                <s:SolidColorStroke id="borderStroke" color="#000000" alpha="0.15" weight="1"/>
+            </s:stroke>
+        </s:Rect>
+        
+        <!--- layer 2: background -->
+        <s:Rect id="background" top="0" right="0" bottom="0" left="0">
+            <s:fill>
+                <!--- @private -->
+                <s:SolidColor id="backgroundFill" color="0xF8FACD"/>
+            </s:fill>
+        </s:Rect>
+        
+        <!--
+        Note: Setting the minimum size to 0 here so that changes to the host component's
+        size will not be thwarted by this skin part's minimum size. This is a compromise,
+        more about it here: http://bugs.adobe.com/jira/browse/SDK-21143
+        -->
+        <!--- layer 3: content -->
+        <s:Group id="contentGroup" left="5" right="5" top="6" bottom="4" minWidth="0" minHeight="0">
+            <!--- @copy spark.components.labelDisplay -->
+            <s:Label id="labelDisplay" maxWidth="320"/>
+        </s:Group>
+        
+    </s:Group>
+    
+</s:Skin>

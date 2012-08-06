@@ -25,10 +25,9 @@ package spark.automation.codec
 	import mx.automation.IAutomationObject;
 	import mx.automation.IAutomationTabularData;
 	import mx.automation.codec.DefaultPropertyCodec;
-	import mx.automation.tool.IToolPropertyDescriptor;
+	import mx.automation.qtp.IQTPPropertyDescriptor;
 	import mx.core.mx_internal;
 	
-	import spark.components.DropDownList;
 	import spark.components.supportClasses.DropDownListBase;
 	import spark.utils.LabelUtil;
 	
@@ -40,8 +39,8 @@ package spark.automation.codec
 	 * Translates between internal Flex List item and automation-friendly version
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkDropDownListBaseSelectedItemCodec extends DefaultPropertyCodec
@@ -68,7 +67,7 @@ package spark.automation.codec
 		 */ 
 		override public function encode(automationManager:IAutomationManager,
 										obj:Object, 
-										propertyDescriptor:IToolPropertyDescriptor,
+										propertyDescriptor:IQTPPropertyDescriptor,
 										relativeParent:IAutomationObject):Object
 		{
 			// get the selected item
@@ -92,7 +91,7 @@ package spark.automation.codec
 		override public function decode(automationManager:IAutomationManager,
 										obj:Object, 
 										value:Object,
-										propertyDescriptor:IToolPropertyDescriptor,
+										propertyDescriptor:IQTPPropertyDescriptor,
 										relativeParent:IAutomationObject):void
 		{
 			// we expect this codec to be used for getting the property details.

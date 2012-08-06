@@ -650,7 +650,7 @@ public class TouchScrollHelper
             dragTimer = null;
         }
         
-
+        
         // Note that we do not add the time and position of the mouseUp event to 
         // our event history.  This is because the timing of this event is unreliable
         // and causes problems for our velocity calculation.

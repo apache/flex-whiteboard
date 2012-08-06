@@ -26,7 +26,6 @@ package spark.automation.tabularData
 	import mx.automation.IAutomationTabularData;
 	import mx.automation.AutomationManager;
 	import mx.core.mx_internal;
-	import mx.core.Repeater;
 	import mx.automation.Automation;
 	import spark.components.RichEditableText;
 	
@@ -47,8 +46,8 @@ package spark.automation.tabularData
 		 * strings can have multiple lines 
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function RichEditableTextTabularData(richEditableText:RichEditableText)

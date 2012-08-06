@@ -1698,14 +1698,14 @@ public class BarSeries extends Series implements IStackable2, IBar
                     stackedValue = 0;
                 }
 				if (xValue != 0)
-				{
-					chartItem.xValue = xValue + stackedValue;
-					chartItem.minValue = stackedValue;
+                {
+                    chartItem.xValue = xValue + stackedValue;
+                    chartItem.minValue = stackedValue;
 					
-					xValue += stackedValue;
-					stackedYValueDictionary[yValue] = xValue;
-					chartItem.yValue = yValue;
-					maxValue = Math.max(maxValue,xValue);
+                xValue += stackedValue;
+                stackedYValueDictionary[yValue] = xValue;
+                chartItem.yValue = yValue;
+                maxValue = Math.max(maxValue,xValue);
 				}
                 i++;
                 cursor.moveNext();              
@@ -1831,7 +1831,7 @@ public class BarSeries extends Series implements IStackable2, IBar
                     stackedNegYValueDictionary[yValue] = xValue;
                     minValue = Math.min(minValue,xValue);
                 }
-                chartItem.yValue = yValue;               
+                chartItem.yValue = yValue;
                 i++;
                 cursor.moveNext();              
             }           

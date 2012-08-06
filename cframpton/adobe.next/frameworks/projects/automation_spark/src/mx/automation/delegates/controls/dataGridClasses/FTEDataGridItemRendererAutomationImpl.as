@@ -38,8 +38,8 @@ package mx.automation.delegates.controls.dataGridClasses
 	 *
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class FTEDataGridItemRendererAutomationImpl extends UIFTETextFieldAutomationImpl
@@ -59,8 +59,8 @@ package mx.automation.delegates.controls.dataGridClasses
 		 *  @param root The SystemManger of the application.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -79,8 +79,8 @@ package mx.automation.delegates.controls.dataGridClasses
 		 * @param obj FTEDataGridItemRenderer object to be automated.     
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function FTEDataGridItemRendererAutomationImpl(obj:FTEDataGridItemRenderer)

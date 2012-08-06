@@ -48,6 +48,7 @@ import mx.styles.StyleProtoChain;
 import mx.utils.NameUtil;
 import mx.utils.StringUtil;
 
+import spark.managers.ToolTipManager;
 import spark.utils.TextUtil;
 
 use namespace mx_internal;
@@ -1815,8 +1816,48 @@ public class UIFTETextField extends FTETextField
         var oldValue:String = _toolTip;
         _toolTip = value;
 
-        ToolTipManager.registerToolTip(this, oldValue, value);
+        mx.managers.ToolTipManager.registerToolTip(this, oldValue, value);
     }
+    
+    //----------------------------------
+    //  toolTipData
+    //----------------------------------	
+    
+    /**
+     *  @private
+     *  Storage for the toolTipData property.
+     */
+    private var _toolTipData:Object;
+    
+    /**
+     *  Arbitrary data to render in this component's ToolTip. 
+     *  This may be a String or any other object. 
+     *
+     *  @default null
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */		
+    public function get toolTipData():Object
+    {
+        return _toolTipData;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set toolTipData(value:Object):void
+    {
+        var previousToolTipData:Object = _toolTipData;
+        _toolTipData = value;
+        
+        if (!previousToolTipData && _toolTipData)
+            spark.managers.ToolTipManager.registerTarget(this);
+        else if (previousToolTipData && !_toolTipData)
+            spark.managers.ToolTipManager.unregisterTarget(this);
+    }  
 
    //----------------------------------
     //  tweeningProperties

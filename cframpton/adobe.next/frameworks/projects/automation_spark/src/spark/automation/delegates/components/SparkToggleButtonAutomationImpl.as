@@ -38,7 +38,7 @@ package spark.automation.delegates.components
      *  @see spark.components.ToggleButton 
      *  
      *  @langversion 3.0
-     *  @playerversion Flash 9
+     *  @playerversion Flash 10
      *  @playerversion AIR 1.5
      *  @productversion Flex 4
      *
@@ -59,7 +59,7 @@ package spark.automation.delegates.components
          *  @param root The SystemManger of the application.
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */
@@ -73,7 +73,7 @@ package spark.automation.delegates.components
          * @param obj ToggleButton object to be automated.     
          *  
          *  @langversion 3.0
-         *  @playerversion Flash 9
+         *  @playerversion Flash 10
          *  @playerversion AIR 1.5
          *  @productversion Flex 4
          */

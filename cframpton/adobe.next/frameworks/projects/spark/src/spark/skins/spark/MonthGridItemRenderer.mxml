@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- 
+The Spark MonthGridItemRenderer class is an item renderer class that is used by 
+DateChooser to display a single month which is a MonthGrid which encapsulates a grid of 
+date cells.
+
+@see spark.components.DateChooser
+@see spark.components.MonthGrid
+@see spark.components.calendarClasses.DateItemRenderer
+
+@langversion 3.0
+@playerversion Flash 11
+@playerversion AIR 3.0
+@productversion Flex 5.0
+-->
+<s:DataRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+                xmlns:mx="library://ns.adobe.com/flex/mx" 
+                xmlns:s="library://ns.adobe.com/flex/spark">
+    <fx:Script>
+        <![CDATA[
+            import mx.core.mx_internal;
+            import mx.events.FlexEvent;
+            
+            import spark.components.DateChooser;
+            import spark.components.calendarClasses.DateSelection;
+            
+            use namespace mx_internal;
+            
+            // compatible with FlexEvent.DATA_CHANGE
+            [Bindable("dataChange")]  
+            
+            /**
+             *  The data to render.  
+             *  The fullYear and the month properties of the Date value determine which month 
+             *  is renderered.
+             *  
+             *  <p>When the item renderer is about to become visible, or it needs to reinitialize
+             *  iteself because one of the DateChooser's properties has changed, this is called with 
+             *  a non-null data value and it initializes itself in preparation for displaying the 
+             *  given month.
+             *  When the item renderer has been added to the recycle list it is called with a 
+             *  null data value.</p>
+             * 
+             *  @param value The date to be displayed in this month.
+             */
+            override public function set data(value:Object):void
+            {
+                const displayedDate:Date = value as Date;
+                const dateChooser:DateChooser = owner as DateChooser;
+                
+                super.data = value;
+                
+                if (!dateChooser)
+                    return;
+              
+                // data is set to null when the renderer is added to the recycle list.
+                if (displayedDate)
+                {
+                    monthGrid.dateChooser = dateChooser;
+                    monthGrid.dateSelection = dateChooser.dateSelection;
+                    monthGrid.displayedMonth = displayedDate.month;
+                    monthGrid.displayedYear = displayedDate.fullYear;
+                    
+                    monthGrid.weekOrientation = dateChooser.weekOrientation;
+                    monthGrid.showDaysInOtherMonths = dateChooser.showDaysInOtherMonths;
+                    monthGrid.showTodayIndicator = dateChooser.showTodayIndicator;
+                    monthGrid.sixWeekLayoutMode = dateChooser.sixWeekLayoutMode;
+                    monthGrid.typicalDate = dateChooser.typicalDate;
+                    
+                    monthGrid.caretIndicator = dateChooser.caretIndicator;
+                    monthGrid.hoverIndicator = dateChooser.hoverIndicator;
+                    monthGrid.selectionIndicator = dateChooser.selectionIndicator;
+                    monthGrid.todayIndicator = dateChooser.todayIndicator;
+                    
+                    monthGrid.rowSeparator = dateChooser.rowSeparator;
+                    monthGrid.columnSeparator = dateChooser.columnSeparator;
+                    
+                    //trace("monthGridRenderer", dateChooser.itemToLabel(data)); 
+                 }
+                else
+                {
+                    //trace("monthGridRenderer data==0", dateChooser.itemToLabel(data));                    
+                }
+            }            
+         ]]>
+    </fx:Script>
+
+    <!-- the grid of date cells -->
+    <s:MonthGrid id="monthGrid" height="100%" width="100%"
+                  requestedCellWidth="20" requestedCellHeight="20" 
+                  requestedHeaderSize="22" headerGap="2" horizontalGap="2"
+                  paddingTop="0" paddingLeft="4" paddingRight="4" paddingBottom="4">
+        <!-- short abbreviation for the days of the week, ex M, T, W -->
+        <s:dayOfTheWeekFormatter>
+            <s:DateTimeFormatter dateTimePattern="EEEEE"/>
+        </s:dayOfTheWeekFormatter>
+        
+        <!-- minimum number of digits to hold date, ie no leading zeros, etc 1, 10 -->
+        <s:dayOfTheMonthFormatter>
+            <s:DateTimeFormatter dateTimePattern="d"/>
+        </s:dayOfTheMonthFormatter>
+        
+        <!-- renders the cells that contain the names of the days of the week, e.g. Monday or M -->
+        <s:dayOfTheWeekRenderer>
+            <fx:Component>
+                 <s:DateItemRenderer>
+                    <s:Rect id="background" left="0" right="0" top="0" bottom="0" alpha="0">
+                        <s:stroke>
+                            <s:SolidColorStroke color="#A8C7EA"/>
+                        </s:stroke>
+                    </s:Rect>
+                    <s:Label id="labelDisplay" verticalCenter="0" horizontalCenter="0" fontWeight="bold"/>
+                </s:DateItemRenderer>
+            </fx:Component>
+        </s:dayOfTheWeekRenderer>  
+
+        <!-- renders the cells that contain the days of the month, e.g. 1, 2 -->
+        <s:dayOfTheMonthRenderer>
+            <fx:Component>
+                <s:DateItemRenderer>
+                    <s:Rect id="background" left="0" right="0" top="0" bottom="0" alpha="0">
+                        <s:stroke>
+                            <s:SolidColorStroke color="#A8C7EA"/>
+                        </s:stroke>
+                    </s:Rect>
+                    <s:Label id="labelDisplay" verticalCenter="0" horizontalCenter="0"/>
+                </s:DateItemRenderer>
+            </fx:Component>  
+        </s:dayOfTheMonthRenderer>     
+    </s:MonthGrid>
+</s:DataRenderer>

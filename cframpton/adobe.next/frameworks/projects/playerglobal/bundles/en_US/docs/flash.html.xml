@@ -374,7 +374,7 @@ package
 	The maximum size for an HTMLLoader object is 4,096 pixels in height and 4,096 pixels in width.
     Setting <codeph class="+ topic/ph pr-d/codeph ">width</codeph> or <codeph class="+ topic/ph pr-d/codeph ">height</codeph> of an HTMLLoader object to a number that exceeds   
 	4,095 causes the HTMLLoader object to throw an ArgumentError exception. (Note, prior to AIR 2, the 
-	 maximum size of HTMLLoader object was 2,880 pixels.)
+	 maximum size of HTMLLoader object wss 2,880 pixels.)
 	</p>
 	
 	
@@ -465,7 +465,7 @@ package {
  
  <p class="- topic/p ">A <codeph class="+ topic/ph pr-d/codeph ">locationChange</codeph> event of type LocationChangeEvent is dispatched by the 
  HTMLLoader in applications using AIR namespace 2.7 and later. In earlier versions of AIR,
- the dispatched event object is an instance of the Event class.</p> 
+ the dispatched event object is of type, Event.</p> 
  
  </apiDesc></adobeApiEventDetail><related-links class="- topic/related-links "><link href="HTMLLoader.html#loadString()" class="- topic/link "><linktext class="- topic/linktext ">loadString()</linktext></link><link href="HTMLLoader.html#load()" class="- topic/link "><linktext class="- topic/linktext ">load()</linktext></link></related-links></adobeApiEvent><adobeApiEvent id="flash.html:HTMLLoader_flash.events.Event.LOCATION_CHANGE_locationChange" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">locationChange</apiName><shortdesc class="- topic/shortdesc ">
  Signals that the location property of the HTMLLoader object has changed.</shortdesc><prolog class="- topic/prolog "><asMetadata class="+ topic/metadata adobe-api-d/asMetadata "><apiVersion class="+ topic/ph adobe-api-d/apiVersion "><apiPlatform description="" name="AIR" version="1.0" class="+ topic/ph adobe-api-d/apiPlatform "/></apiVersion></asMetadata></prolog><adobeApiEventDetail class="- topic/body reference/refbody apiRef/apiDetail adobeApiEvent/adobeApiEventDetail "><adobeApiEventDef class="- topic/section reference/section apiRef/apiDef adobeApiEvent/adobeApiEventDef "><apiEventType class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiEventType ">flash.events.Event.LOCATION_CHANGE</apiEventType><adobeApiEventClassifier class="- topic/xref reference/xref apiRef/apiRelation adobeApiEvent/adobeApiEventClassifier ">flash.events.Event</adobeApiEventClassifier><apiGeneratedEvent class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiGeneratedEvent "/><apiTipTexts><apiTipText class="+ topic/state reference/state apiRef/apiQualifier adobe-api-d/apiTipText ">Signals that the location property of the HTMLLoader object has changed.
@@ -477,7 +477,7 @@ package {
  
  <p class="- topic/p ">A <codeph class="+ topic/ph pr-d/codeph ">locationChange</codeph> event of type Event is dispatched by the HTMLLoader 
  in applications using an AIR namespace prior to 2.7. In AIR 2.7 and later, the event object is
- an instance of the LocationChangeEvent class, which provides an additional <codeph class="+ topic/ph pr-d/codeph ">location</codeph> property set 
+ of type, LocationChangeEvent, which provides an additional <codeph class="+ topic/ph pr-d/codeph ">location</codeph> property set 
  to the new page URL.</p>
  
  </apiDesc></adobeApiEventDetail><related-links class="- topic/related-links "><link href="HTMLLoader.html#loadString()" class="- topic/link "><linktext class="- topic/linktext ">loadString()</linktext></link><link href="HTMLLoader.html#load()" class="- topic/link "><linktext class="- topic/linktext ">load()</linktext></link></related-links></adobeApiEvent><adobeApiEvent id="flash.html:HTMLLoader_flash.events.LocationChangeEvent.LOCATION_CHANGING_locationChanging" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">locationChanging</apiName><shortdesc class="- topic/shortdesc ">
@@ -485,18 +485,18 @@ package {
  </apiTipText></apiTipTexts></adobeApiEventDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
  Signals that the <codeph class="+ topic/ph pr-d/codeph ">location</codeph> property of the HTMLLoader object is about to change.
  
- <p class="- topic/p ">A <codeph class="+ topic/ph pr-d/codeph ">locationChanging</codeph> event is dispatched only when the location change is initiated through 
- user interaction, such as when a user clicks a link, or by code running inside the HTMLLoader, such as a client-side redirect. 
+ <p class="- topic/p ">A locationChanging event is only dispatched when the location change is initiated through 
+ HTML content or code running inside the HTMLLoader object,such as when a user clicks a link. 
  By default, the new location is displayed in this 
  HTMLLoader object. You can call the <codeph class="+ topic/ph pr-d/codeph ">preventDefault()</codeph> method of the event 
  object to cancel the default behavior. For example, you could use the <codeph class="+ topic/ph pr-d/codeph ">flash.net.navigateToURL()</codeph> 
  function to open the page in the system browser based on the <codeph class="+ topic/ph pr-d/codeph ">location</codeph> 
- property of the event object.</p>
+ property of the event object</p>
  
- <p class="- topic/p ">A <codeph class="+ topic/ph pr-d/codeph ">locationChanging()</codeph> event is not dispatched when you call the following methods:</p>
+ <p class="- topic/p ">A <codeph class="+ topic/ph pr-d/codeph ">locationChanging()</codeph> is not dispatched when you call the following methods:</p>
  <ul class="- topic/ul "><li class="- topic/li ">load()</li><li class="- topic/li ">loadString()</li><li class="- topic/li ">reload()</li><li class="- topic/li ">historyBack()</li><li class="- topic/li ">historyForward()</li><li class="- topic/li ">historyGo()</li></ul>
- <p class="- topic/p ">In addition, this event is not dispatched when the <codeph class="+ topic/ph pr-d/codeph ">navigateInSystemBrowser</codeph> property is <codeph class="+ topic/ph pr-d/codeph ">true</codeph> 
- and the destination page is opened in the system browser, since the HTMLLoader location does not change.</p>
+ <p class="- topic/p ">In addition, this event is not dispatched when the destination page is opened in the system browser, since
+ the HTMLLoader location does not change.</p>
  
  </apiDesc><example conref="examples\HTMLLoader_locationChanging.as" class="- topic/example "> The following code initializes an HTMLLoader object, configures its width and height, 
  loads the URL http://www.adobe.com, and adds the object to the display list. If the user (or JavaScript on the page)

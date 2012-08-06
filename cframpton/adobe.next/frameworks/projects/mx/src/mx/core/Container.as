@@ -331,7 +331,13 @@ include "../styles/metadata/TextStyles.as"
  */ 
 [Style(name="symbolColor", type="uint", format="Color", inherit="yes", theme="spark")]
 
+//--------------------------------------
+//  Other metadata
+//--------------------------------------
+
 [ResourceBundle("core")]
+
+[Exclude(name="removeDeferredContent", kind="method")]
 
 /**
  *  The Container class is an abstract base class for components that
@@ -1326,6 +1332,63 @@ public class Container extends UIComponent
         setActualCreationPolicies(value);
     }
 
+    /**
+     *  @private
+     */
+    private var _elementCreationPolicy:*;
+    
+    [Inspectable(enumeration="auto,all,none", defaultValue="auto")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementCreationPolicy():String
+    {
+        // If elementCreationPolicy has been set then use it. Otherwise
+        // fallback to using the deprecated creationPolicy.
+        if (_elementCreationPolicy !== undefined)
+            return _elementCreationPolicy;
+        else
+            return creationPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementCreationPolicy(value:String):void
+    {
+        _elementCreationPolicy = value;
+    }
+        
+    //----------------------------------
+    //  elementDestructionPolicy
+    //----------------------------------
+    
+    /**
+     *  @private
+     */
+    // NOTE: Don't reference ContainerDestructionPolicy here. We don't want 
+    // the mx library to be dependent on the spark library.
+    private var _elementDestructionPolicy:String = "never";
+    
+    [Inspectable(enumeration="always,auto,never", defaultValue="auto")]
+    
+    /**
+     *  @inheritDoc
+     */
+    public function get elementDestructionPolicy():String
+    {
+        return _elementDestructionPolicy;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set elementDestructionPolicy(value:String):void
+    {
+        _elementDestructionPolicy = value;
+    }
+    
     //----------------------------------
     //  defaultButton
     //----------------------------------
@@ -4222,7 +4285,22 @@ public class Container extends UIComponent
         createComponentsFromDescriptors(true);
     }
 
-   /**
+    /**
+     *  <code>Container</code> does not support removing deferred content.
+     * 
+     *  @param cache If true, the removed content is cached to improve the 
+     *  performance of restoring the children.
+     *  The content is weak referenced so that the memory may be garbage 
+     *  collected if needed.
+     * 
+     */
+    public function removeDeferredContent(cache:Boolean = false):void
+    {
+        // This is just a stub to satisfy changes to the 
+        // IDeferredContentOwner interface made in 5.0 
+    }
+
+    /**
      *  Given a single UIComponentDescriptor, create the corresponding
      *  component and add the component as a child of this Container.
      *  

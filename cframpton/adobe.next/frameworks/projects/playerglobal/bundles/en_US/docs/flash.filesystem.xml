@@ -260,7 +260,7 @@ fileStream.close();
 	
 	</apiDesc></adobeApiEventDetail><shortdesc class="- topic/shortdesc ">The file cannot be read or the file is not open.</shortdesc></adobeApiEvent></apiOperation><apiOperation id="flash.filesystem:FileStream:readBytes" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef apiOperation/apiOperation "><apiName class="- topic/title reference/title apiRef/apiName ">readBytes</apiName><shortdesc class="- topic/shortdesc ">
 	
-     Reads the number of data bytes, specified by the length parameter, 
+     Reads the number of data bytes, specified by the length parameter,
      from the file stream, byte stream, or byte array.</shortdesc><prolog class="- topic/prolog "><asMetadata class="+ topic/metadata adobe-api-d/asMetadata "><apiVersion class="+ topic/ph adobe-api-d/apiVersion "><apiPlatform description="" name="AIR" version="1.0" class="+ topic/ph adobe-api-d/apiPlatform "/></apiVersion></asMetadata></prolog><apiOperationDetail class="- topic/body reference/refbody apiRef/apiDetail apiOperation/apiOperationDetail "><apiOperationDef class="- topic/section reference/section apiRef/apiDef apiOperation/apiOperationDef "><apiAccess value="public" class="- topic/state reference/state apiRef/apiQualifier adobe-api-d/apiAccess "/><apiException class="+ topic/ph reference/ph apiRef/apiDefItem apiOperation/apiEvent adobe-api-d/apiException "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The file has not been opened; the file has been opened, but it was not opened with
 	read capabilities; or for a file that has been opened for synchronous operations (by using the 
 	<codeph class="+ topic/ph pr-d/codeph ">open()</codeph> method), the file cannot be read (for example, because the file is missing).
@@ -276,9 +276,9 @@ fileStream.close();
                    of 0 causes all available data to be read.
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
-     Reads the number of data bytes, specified by the <codeph class="+ topic/ph pr-d/codeph ">length</codeph> parameter, 
-     from the file stream, byte stream, or byte array. The bytes are read into the 
-     ByteArray objected specified by the <codeph class="+ topic/ph pr-d/codeph ">bytes</codeph> parameter, starting at 
+     Reads the number of data bytes, specified by the <codeph class="+ topic/ph pr-d/codeph ">length</codeph> parameter,
+     from the file stream, byte stream, or byte array. The bytes are read into the
+     ByteArray objected specified by the <codeph class="+ topic/ph pr-d/codeph ">bytes</codeph> parameter, starting at
      the position specified by <codeph class="+ topic/ph pr-d/codeph ">offset</codeph>.
      </apiDesc></apiOperationDetail><adobeApiEvent id="flash.filesystem:FileStream:readBytes_ioError" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">ioError</apiName><prolog class="- topic/prolog "/><adobeApiEventDetail class="- topic/body reference/refbody apiRef/apiDetail adobeApiEvent/adobeApiEventDetail "><adobeApiEventDef class="- topic/section reference/section apiRef/apiDef adobeApiEvent/adobeApiEventDef "><adobeApiEventClassifier class="- topic/xref reference/xref apiRef/apiRelation adobeApiEvent/adobeApiEventClassifier ">flash.events:IOErrorEvent</adobeApiEventClassifier><apiGeneratedEvent class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiGeneratedEvent "/></adobeApiEventDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The file cannot be read or the file is not open. This event is dispatched 
 	only for files opened for asynchronous operations (by using the <codeph class="+ topic/ph pr-d/codeph ">openAsync()</codeph> method).
@@ -343,18 +343,18 @@ fileStream.close();
 	
 	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">UTF-8 encoded string.
      </apiDesc><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier></apiReturn><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">length</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">uint</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The number of bytes from the byte stream to read.
-     </apiDesc></apiParam><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">charSet</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The string denoting the character set to use to interpret the bytes. 
+     </apiDesc></apiParam><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">charSet</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The string denoting the character set to use to interpret the bytes.
      Possible character set strings include <codeph class="+ topic/ph pr-d/codeph ">"shift-jis"</codeph>, <codeph class="+ topic/ph pr-d/codeph ">"cn-gb"</codeph>,
      <codeph class="+ topic/ph pr-d/codeph ">"iso-8859-1"</codeph>, and others.
-     For a complete list, see <xref href="../../charset-codes.html" class="- topic/xref ">Supported Character Sets</xref>. 
+     For a complete list, see <xref href="../../charset-codes.html" class="- topic/xref ">Supported Character Sets</xref>.
      
-     <p class="- topic/p "><b class="+ topic/ph hi-d/b ">Note:</b> If the value for the <codeph class="+ topic/ph pr-d/codeph ">charSet</codeph> parameter is not recognized by the current 
-     system, then <ph class="- topic/ph ">Adobe<sup class="+ topic/ph hi-d/sup ">®</sup> Flash<sup class="+ topic/ph hi-d/sup ">®</sup> Player or</ph> 
-     Adobe<sup class="+ topic/ph hi-d/sup ">®</sup> AIR<sup class="+ topic/ph hi-d/sup ">®</sup> uses the system's default 
-     code page as the character set. For example, a value for the <codeph class="+ topic/ph pr-d/codeph ">charSet</codeph> parameter, as in 
+     <p class="- topic/p "><b class="+ topic/ph hi-d/b ">Note:</b> If the value for the <codeph class="+ topic/ph pr-d/codeph ">charSet</codeph> parameter is not recognized by the current
+     system, then <ph class="- topic/ph ">Adobe<sup class="+ topic/ph hi-d/sup ">®</sup> Flash<sup class="+ topic/ph hi-d/sup ">®</sup> Player or</ph>
+     Adobe<sup class="+ topic/ph hi-d/sup ">®</sup> AIR<sup class="+ topic/ph hi-d/sup ">®</sup> uses the system's default
+     code page as the character set. For example, a value for the <codeph class="+ topic/ph pr-d/codeph ">charSet</codeph> parameter, as in
      <codeph class="+ topic/ph pr-d/codeph ">myTest.readMultiByte(22, "iso-8859-01")</codeph>, that uses  <codeph class="+ topic/ph pr-d/codeph ">01</codeph> instead of
      <codeph class="+ topic/ph pr-d/codeph ">1</codeph> might work on your development system, but not on another system. On the other
-     system, <ph class="- topic/ph ">Flash Player or</ph> the AIR runtime will use the system's 
+     system, <ph class="- topic/ph ">Flash Player or</ph> the AIR runtime will use the system's
      default code page.</p>
      
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
@@ -410,7 +410,7 @@ fileStream.close();
 	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiException class="+ topic/ph reference/ph apiRef/apiDefItem apiOperation/apiEvent adobe-api-d/apiException "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The position specfied for reading data exceeds the number of bytes available 
 	(specified by the <codeph class="+ topic/ph pr-d/codeph ">bytesAvailable</codeph> property).
 	
-	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">A UTF-8 string produced by the byte representation of characters of the specified length.     
+	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">A UTF-8 string produced by the byte representation of characters of the specified length.
      </apiDesc><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier></apiReturn><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">length</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">uint</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The number of bytes to read.
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
@@ -449,7 +449,7 @@ fileStream.close();
 	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiException class="+ topic/ph reference/ph apiRef/apiDefItem apiOperation/apiEvent adobe-api-d/apiException "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The position specfied for reading data exceeds the number of bytes available 
 	(specified by the <codeph class="+ topic/ph pr-d/codeph ">bytesAvailable</codeph> property).
 	
-	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The returned value is in the range 0 to 255.        
+	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The returned value is in the range 0 to 255.
      </apiDesc><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">uint</apiOperationClassifier></apiReturn></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
      Reads an unsigned byte from the file stream, byte stream, or byte array.
@@ -481,7 +481,7 @@ fileStream.close();
 	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiException class="+ topic/ph reference/ph apiRef/apiDefItem apiOperation/apiEvent adobe-api-d/apiException "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The position specfied for reading data exceeds the number of bytes available 
 	(specified by the <codeph class="+ topic/ph pr-d/codeph ">bytesAvailable</codeph> property).
 	
-	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The returned value is in the range 0 to 65535. 
+	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">EOFError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:EOFError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The returned value is in the range 0 to 65535.
      </apiDesc><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">uint</apiOperationClassifier></apiReturn></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
      Reads an unsigned 16-bit integer from the file stream, byte stream, or byte array.
@@ -538,7 +538,7 @@ function fileClosed(event:Event):void {
 	write capabilities; or for a file that has been opened for synchronous operations (by using the 
 	<codeph class="+ topic/ph pr-d/codeph ">open()</codeph> method), the file cannot be written (for example, because the file is missing).
 	
-	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiType value="void" name="type" class="- topic/state reference/state apiRef/apiType "/></apiReturn><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">value</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">Boolean</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">A Boolean value determining which byte is written. If the parameter is <codeph class="+ topic/ph pr-d/codeph ">true</codeph>, 
+	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiType value="void" name="type" class="- topic/state reference/state apiRef/apiType "/></apiReturn><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">value</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">Boolean</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">A Boolean value determining which byte is written. If the parameter is <codeph class="+ topic/ph pr-d/codeph ">true</codeph>,
      1 is written; if <codeph class="+ topic/ph pr-d/codeph ">false</codeph>, 0 is written.
      
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
@@ -571,7 +571,7 @@ function fileClosed(event:Event):void {
 	
      Writes a sequence of bytes from the
      specified byte array, bytes,
-     starting at the byte specified by offset 
+     starting at the byte specified by offset
      (using a zero-based index)
      with a length specified by length,
      into the file stream, byte stream, or byte array.</shortdesc><prolog class="- topic/prolog "><asMetadata class="+ topic/metadata adobe-api-d/asMetadata "><apiVersion class="+ topic/ph adobe-api-d/apiVersion "><apiPlatform description="" name="AIR" version="1.0" class="+ topic/ph adobe-api-d/apiPlatform "/></apiVersion></asMetadata></prolog><apiOperationDetail class="- topic/body reference/refbody apiRef/apiDetail apiOperation/apiOperationDetail "><apiOperationDef class="- topic/section reference/section apiRef/apiDef apiOperation/apiOperationDef "><apiAccess value="public" class="- topic/state reference/state apiRef/apiQualifier adobe-api-d/apiAccess "/><apiException class="+ topic/ph reference/ph apiRef/apiDefItem apiOperation/apiEvent adobe-api-d/apiException "><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The file has not been opened; the file has been opened, but it was not opened with
@@ -586,7 +586,7 @@ function fileClosed(event:Event):void {
 	
      Writes a sequence of bytes from the
      specified byte array, <codeph class="+ topic/ph pr-d/codeph ">bytes</codeph>,
-     starting at the byte specified by <codeph class="+ topic/ph pr-d/codeph ">offset</codeph> 
+     starting at the byte specified by <codeph class="+ topic/ph pr-d/codeph ">offset</codeph>
      (using a zero-based index)
      with a length specified by <codeph class="+ topic/ph pr-d/codeph ">length</codeph>,
      into the file stream, byte stream, or byte array.
@@ -658,10 +658,10 @@ function fileClosed(event:Event):void {
 	</apiDesc><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">IOError</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">flash.errors:IOError</apiOperationClassifier></apiException><apiReturn class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiReturn "><apiType value="void" name="type" class="- topic/state reference/state apiRef/apiType "/></apiReturn><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">value</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The string value to be written.
      </apiDesc></apiParam><apiParam class="- topic/ph reference/ph apiRef/apiDefItem apiOperation/apiParam "><apiItemName class="- topic/keyword reference/keyword apiRef/apiItemName ">charSet</apiItemName><apiOperationClassifier class="- topic/xref reference/xref apiRef/apiRelation apiOperation/apiOperationClassifier ">String</apiOperationClassifier><apiDesc class="- topic/section reference/section apiRef/apiDesc ">The string denoting the character set to use. Possible character set strings
      include <codeph class="+ topic/ph pr-d/codeph ">"shift-jis"</codeph>, <codeph class="+ topic/ph pr-d/codeph ">"cn-gb"</codeph>, <codeph class="+ topic/ph pr-d/codeph ">"iso-8859-1"</codeph>, and others.
-     For a complete list, see <xref href="../../charset-codes.html" class="- topic/xref ">Supported Character Sets</xref>. 
+     For a complete list, see <xref href="../../charset-codes.html" class="- topic/xref ">Supported Character Sets</xref>.
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
-     Writes a multibyte string to the file stream, byte stream, or byte array, using the specified character set. 
+     Writes a multibyte string to the file stream, byte stream, or byte array, using the specified character set.
      
      </apiDesc></apiOperationDetail><related-links class="- topic/related-links "><link href="flash.filesystem.xml#File/systemCharset" class="- topic/link "><linktext class="- topic/linktext ">File.systemCharset</linktext></link></related-links><adobeApiEvent id="flash.filesystem:FileStream:writeMultiByte_ioError" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">ioError</apiName><prolog class="- topic/prolog "/><adobeApiEventDetail class="- topic/body reference/refbody apiRef/apiDetail adobeApiEvent/adobeApiEventDetail "><adobeApiEventDef class="- topic/section reference/section apiRef/apiDef adobeApiEvent/adobeApiEventDef "><adobeApiEventClassifier class="- topic/xref reference/xref apiRef/apiRelation adobeApiEvent/adobeApiEventClassifier ">flash.events:IOErrorEvent</adobeApiEventClassifier><apiGeneratedEvent class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiGeneratedEvent "/></adobeApiEventDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">You cannot write to the file (for example, because the file is missing). 
 	This event is dispatched only for files that have been opened for asynchronous operations (by using the 
@@ -694,7 +694,7 @@ function fileClosed(event:Event):void {
      
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
-     Writes a 16-bit integer. The low 16 bits of the parameter are used; 
+     Writes a 16-bit integer. The low 16 bits of the parameter are used;
      the high 16 bits are ignored.
      </apiDesc></apiOperationDetail><adobeApiEvent id="flash.filesystem:FileStream:writeShort_ioError" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">ioError</apiName><prolog class="- topic/prolog "/><adobeApiEventDetail class="- topic/body reference/refbody apiRef/apiDetail adobeApiEvent/adobeApiEventDetail "><adobeApiEventDef class="- topic/section reference/section apiRef/apiDef adobeApiEvent/adobeApiEventDef "><adobeApiEventClassifier class="- topic/xref reference/xref apiRef/apiRelation adobeApiEvent/adobeApiEventClassifier ">flash.events:IOErrorEvent</adobeApiEventClassifier><apiGeneratedEvent class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiGeneratedEvent "/></adobeApiEventDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">You cannot write to the file (for example, because the file is missing). 
 	This event is dispatched only for files that have been opened for asynchronous operations (by using the 
@@ -729,8 +729,8 @@ function fileClosed(event:Event):void {
      
      </apiDesc></apiParam></apiOperationDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
-     Writes a UTF-8 string to the file stream, byte stream, or byte array. The length of the UTF-8 string in bytes 
-     is written first, as a 16-bit integer, followed by the bytes representing the 
+     Writes a UTF-8 string to the file stream, byte stream, or byte array. The length of the UTF-8 string in bytes
+     is written first, as a 16-bit integer, followed by the bytes representing the
      characters of the string.
      </apiDesc></apiOperationDetail><adobeApiEvent id="flash.filesystem:FileStream:writeUTF_ioError" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef adobeApiEvent/adobeApiEvent "><apiName class="- topic/title reference/title apiRef/apiName ">ioError</apiName><prolog class="- topic/prolog "/><adobeApiEventDetail class="- topic/body reference/refbody apiRef/apiDetail adobeApiEvent/adobeApiEventDetail "><adobeApiEventDef class="- topic/section reference/section apiRef/apiDef adobeApiEvent/adobeApiEventDef "><adobeApiEventClassifier class="- topic/xref reference/xref apiRef/apiRelation adobeApiEvent/adobeApiEventClassifier ">flash.events:IOErrorEvent</adobeApiEventClassifier><apiGeneratedEvent class="- topic/state reference/state apiRef/apiQualifier adobeApiEvent/apiGeneratedEvent "/></adobeApiEventDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">You cannot write to the file (for example, because the file is missing). 
 	This event is dispatched only for files that have been opened for asynchronous operations (by using the 
@@ -763,10 +763,10 @@ function fileClosed(event:Event):void {
      it with one of the read methods.
      </apiDesc><example conref="examples\FileStream.bytesAvailable.1.as" class="- topic/example "/></apiValueDetail></apiValue><apiValue id="flash.filesystem:FileStream:endian:get" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef apiValue/apiValue "><apiName class="- topic/title reference/title apiRef/apiName ">endian</apiName><shortdesc class="- topic/shortdesc ">
 	
-     The byte order for the data, either the BIG_ENDIAN or LITTLE_ENDIAN constant 
+     The byte order for the data, either the BIG_ENDIAN or LITTLE_ENDIAN constant
      from the Endian class.</shortdesc><prolog class="- topic/prolog "><asMetadata class="+ topic/metadata adobe-api-d/asMetadata "><apiVersion class="+ topic/ph adobe-api-d/apiVersion "><apiPlatform description="" name="AIR" version="1.0" class="+ topic/ph adobe-api-d/apiPlatform "/></apiVersion></asMetadata></prolog><apiValueDetail class="- topic/body reference/refbody apiRef/apiDetail apiValue/apiValueDetail "><apiValueDef class="- topic/section reference/section apiRef/apiDef apiValue/apiValueDef "><apiProperty class="+ topic/state reference/state apiRef/apiQualifier adobe-api-d/apiProperty "/><apiAccess value="public" class="- topic/state reference/state apiRef/apiQualifier adobe-api-d/apiAccess "/><apiDynamic class="+ topic/state reference/state apiRef/apiQualifier adobe-api-d/apiDynamic "/><apiValueAccess value="readwrite" class="+ topic/state reference/state apiRef/apiQualifier adobe-api-d/apiValueAccess "/><apiValueClassifier class="- topic/xref reference/xref apiRef/apiRelation apiValue/apiValueClassifier ">String</apiValueClassifier></apiValueDef><apiDesc class="- topic/section reference/section apiRef/apiDesc ">
 	
-     The byte order for the data, either the <codeph class="+ topic/ph pr-d/codeph ">BIG_ENDIAN</codeph> or <codeph class="+ topic/ph pr-d/codeph ">LITTLE_ENDIAN</codeph> constant 
+     The byte order for the data, either the <codeph class="+ topic/ph pr-d/codeph ">BIG_ENDIAN</codeph> or <codeph class="+ topic/ph pr-d/codeph ">LITTLE_ENDIAN</codeph> constant
      from the Endian class.
      
      </apiDesc></apiValueDetail></apiValue><apiValue id="flash.filesystem:FileStream:objectEncoding:get" ditaarch:DITAArchVersion="1.0" domains="(topic ui-d) (topic hi-d) (topic pr-d) (topic sw-d)                              (topic ut-d) (topic pr-d api-d)" class="- topic/topic reference/reference apiRef/apiRef apiValue/apiValue "><apiName class="- topic/title reference/title apiRef/apiName ">objectEncoding</apiName><shortdesc class="- topic/shortdesc ">

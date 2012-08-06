@@ -1034,7 +1034,7 @@ public class GroupBase extends UIComponent implements IViewport
     {
         if (_mouseEnabledWhereTransparent)
             $invalidateDisplayList();
-    _hasMouseListeners = value;
+        _hasMouseListeners = value;
     }
     
     /**

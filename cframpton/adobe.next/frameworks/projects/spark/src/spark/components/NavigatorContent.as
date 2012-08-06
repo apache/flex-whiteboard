@@ -22,16 +22,20 @@ package spark.components
 import flash.events.Event;
 
 import mx.core.ContainerCreationPolicy;
+import mx.core.FlexVersion;
 import mx.core.IDeferredContentOwner;
 import mx.core.INavigatorContent
 
 /**
  *  The NavigatorContent class defines a Spark container that can be used 
  *  in an MX navigator container, such as the ViewStack, TabNavigator and Accordion containers.
+ *  This class can also be used with Spark navigator containers such as 
+ *  ViewStack and Accordion.
  *
- *  <p>Do not use a NavigatorContent container outside of an MX navigator container.</p>
+ *  <p>Do not use a NavigatorContent container outside of MX or Spark navigator containers.</p>
  *
- *  <p>The creation policy of the NavigatorContent container is based on the creation policy 
+ *  <p>When used with Halo navigator containers the creation policy of the 
+ *  NavigatorContent container is based on the creation policy 
  *  of its parent navigator container: </p>
  *
  *  <ul>
@@ -39,7 +43,11 @@ import mx.core.INavigatorContent
  *    <li>If the creation policy of the parent is all, then the creation policy of the NavigatorContent is all.</li>
  *    <li>If the creation policy of the parent is auto, then the creation policy of the NavigatorContent is none.</li>
  *  </ul>
- * 
+ *
+ *  <p>When used with Spark navigator containers the creation policy of the Navigator container 
+ *  is obtained from its own <code>elementCreationPolicy</code> property and is not inherited 
+ *  from its parent container.</p>
+ *  
  *  <p>The NavigatorContent container does not support the queued creation policy.</p>
  *
  *  <p>The NavigatorContent container has the following default characteristics:</p>
@@ -218,21 +226,41 @@ public class NavigatorContent extends SkinnableContainer
     {
         // if nobody has overridden creationPolicy, get it from the
         // navigator parent
-        if (creationPolicy == ContainerCreationPolicy.AUTO)
+        if (elementCreationPolicy == ContainerCreationPolicy.AUTO)
         {
-            if (parent is IDeferredContentOwner)
+            if (owner is IDeferredContentOwner)
             {
-                var parentCreationPolicy:String = IDeferredContentOwner(parent).creationPolicy;
+                var parentCreationPolicy:String = IDeferredContentOwner(parent).elementCreationPolicy;
                 creationPolicy = parentCreationPolicy == 
-                        ContainerCreationPolicy.ALL ? ContainerCreationPolicy.ALL : 
-                                                        ContainerCreationPolicy.NONE;
+                    ContainerCreationPolicy.ALL ? ContainerCreationPolicy.ALL : 
+                    ContainerCreationPolicy.NONE;                    
 
             }
+            else if (FlexVersion.compatibilityVersion >= FlexVersion.VERSION_5_0)
+            {
+                // The default behavior in Flex 5 when used with Spark ViewStack is to not
+                // create children when the creation policy is auto. Creation policy is not
+                // inherited from the parent or owner.
+                return;
+            }
+            
         }
 
         super.createChildren();
     }
 
+    /**
+     *  @private
+     */
+    override public function get numElements():int
+    {
+        // super class will create the content in order
+        // to determine numElements.  Avoid that here.
+        if (!deferredContentCreated)
+            return 0;
+        
+        return super.numElements;
+    }
 }
 
 }

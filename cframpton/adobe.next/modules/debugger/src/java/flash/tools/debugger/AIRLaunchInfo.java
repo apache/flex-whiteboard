@@ -122,4 +122,11 @@ public class AIRLaunchInfo
 	 * -XdeviceExtDir argument of ADL.
 	 */
 	public String deviceExtDir;
+	
+	/**
+	 * ADL supports sensor and event input simulation through the use of the -simulation command line option. 
+	 * Examples of simulated events are device orientation changes and accelerometer measurements.
+	 * Usage : -simulation [<controllerIP>:]<controllerPort>
+	 */
+	public String simulation;
 }

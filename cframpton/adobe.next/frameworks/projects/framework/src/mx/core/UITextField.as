@@ -1812,7 +1812,35 @@ public class UITextField extends FlexTextField
         ToolTipManager.registerToolTip(this, oldValue, value);
     }
 
-   //----------------------------------
+    //----------------------------------
+    //  toolTipData
+    //----------------------------------	
+    
+    /**
+     *  Arbitrary data to render in this component's ToolTip. 
+     *  This may be a String or any other object. 
+     *
+     *  @default null
+     *  
+     *  @langversion 3.0
+     *  @playerversion Flash 11
+     *  @playerversion AIR 3.0
+     *  @productversion Flex 5
+     */		
+    public function get toolTipData():Object
+    {
+        return toolTip;
+    }
+    
+    /**
+     *  @private
+     */
+    public function set toolTipData(value:Object):void
+    {
+        toolTip = value.toString();
+    }  
+
+    //----------------------------------
     //  tweeningProperties
     //----------------------------------
 
@@ -2434,10 +2462,16 @@ public class UITextField extends FlexTextField
         if (originalText != "" && textWidth + TEXT_WIDTH_PADDING > w + 0.00000000000001)
         {
             // This should get us into the ballpark.
-            var s:String = super.text = originalText;
+            var s:String = 
                 originalText.slice(0,
-                    Math.floor((w / (textWidth + TEXT_WIDTH_PADDING)) * originalText.length));
-
+                Math.floor((w / (textWidth + TEXT_WIDTH_PADDING)) * originalText.length));
+            
+            // This doesn't seem correct but it preserves previous behavior.
+            // If one character doesn't fit the text is one character plus the
+            // truncation indicator rather than just the truncation indicator as you would expect.
+            if (s.length <= 1 && textWidth + TEXT_WIDTH_PADDING > w)
+                super.text = originalText.charAt(0) + truncationIndicator;
+            
             while (s.length > 1 && textWidth + TEXT_WIDTH_PADDING > w)
             {
                 s = s.slice(0, -1);

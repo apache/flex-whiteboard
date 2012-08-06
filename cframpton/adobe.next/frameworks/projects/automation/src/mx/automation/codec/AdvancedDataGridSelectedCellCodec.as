@@ -21,13 +21,11 @@ package mx.automation.codec
 { 
 	
 	import mx.automation.AutomationError;
-	import mx.automation.tool.IToolPropertyDescriptor;
+	import mx.automation.qtp.IQTPPropertyDescriptor;
 	import mx.automation.IAutomationManager;
 	import mx.automation.IAutomationObject;
 	import mx.automation.IAutomationTabularData;
 	import mx.core.mx_internal;
-	import mx.controls.AdvancedDataGrid;
-	import mx.automation.delegates.advancedDataGrid.AdvancedDataGridAutomationImpl;
 	
 	use namespace mx_internal;
 	
@@ -65,7 +63,7 @@ package mx.automation.codec
 		 */ 
 		override public function encode(automationManager:IAutomationManager,
 										obj:Object,  
-										propertyDescriptor:IToolPropertyDescriptor,
+										propertyDescriptor:IQTPPropertyDescriptor,
 										relativeParent:IAutomationObject):Object
 		{
 			var val:Object = getMemberFromObject(automationManager, obj, propertyDescriptor);
@@ -73,8 +71,8 @@ package mx.automation.codec
 			if (val != null)
 			{ 
 				//val = relativeParent.automationTabularData.getAutomationValueForFiedData(val).join(" | ");
-				var adg:AdvancedDataGrid = relativeParent as AdvancedDataGrid;
-				var objdel:AdvancedDataGridAutomationImpl = (adg.automationDelegate) as AdvancedDataGridAutomationImpl;
+				var adg:Object = relativeParent;
+				var objdel:Object = (adg.automationDelegate);
 				var ret:Array = [];
 				
 				if((val.columnIndex == -1)&& (val.rowIndex != -1))
@@ -96,7 +94,7 @@ package mx.automation.codec
 		override public function decode(automationManager:IAutomationManager,
 										obj:Object, 
 										value:Object,
-										propertyDescriptor:IToolPropertyDescriptor,
+										propertyDescriptor:IQTPPropertyDescriptor,
 										relativeParent:IAutomationObject):void
 		{
 			var message:String = resourceManager.getString(

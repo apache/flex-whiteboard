@@ -61,6 +61,8 @@ import mx.events.Request;
 import mx.managers.systemClasses.ActiveWindowManager;
 import mx.styles.IStyleClient;
 
+import spark.core.IToolTip;
+
 use namespace mx_internal;
 
 [ExcludeClass]
@@ -436,7 +438,7 @@ public class PopUpManagerImpl extends EventDispatcher implements IPopUpManager
         // this handles _all_ cleanup
         window.addEventListener(Event.REMOVED, popupRemovedHandler);
             
-        if (window is IFocusManagerContainer && visibleFlag)
+        if (window is IFocusManagerContainer && visibleFlag && !(window is IToolTip))
         {
             if (hasEventListener("addedPopUp"))
             {
@@ -549,6 +551,7 @@ public class PopUpManagerImpl extends EventDispatcher implements IPopUpManager
             
                 // Offset the top, left of the window to bring it into view.        
                 clippingOffset = rect.topLeft.clone();
+                clippingOffset = DisplayObject(systemManager).localToGlobal(clippingOffset);
                 appWidth = rect.width;
                 appHeight = rect.height;
             } 
@@ -560,9 +563,8 @@ public class PopUpManagerImpl extends EventDispatcher implements IPopUpManager
                 rect = UIComponent(popUpParent).getVisibleRect();
 				if (UIComponent(popUpParent).systemManager != sbRoot)
 					rect = UIComponent(popUpParent).systemManager.getVisibleApplicationRect(rect);
-                var offset:Point = popUpParent.globalToLocal(rect.topLeft);
-                clippingOffset.x += offset.x;
-                clippingOffset.y += offset.y;
+                clippingOffset.x = rect.x;
+                clippingOffset.y = rect.y;
                 parentWidth = rect.width;
                 parentHeight = rect.height;              
             }   
@@ -576,27 +578,8 @@ public class PopUpManagerImpl extends EventDispatcher implements IPopUpManager
             // clipped by the parent application.
             x = Math.max(0, (Math.min(appWidth, parentWidth) - popUp.width) / 2);
             y = Math.max(0, (Math.min(appHeight, parentHeight) - popUp.height) / 2);
-            
-            // If the layout has been mirrored, then 0,0 is the uppper
-            // right corner; compensate here.
-            if (FlexVersion.compatibilityVersion >= FlexVersion.VERSION_4_0)
-            {
-                // If popUp has layout direction different than the parent (or parent doesn't
-                // have layout direction and popUp is RTL) flip it to the other side of the x axis.
-                const popUpLDE:ILayoutDirectionElement = popUp as ILayoutDirectionElement;
-                const parentLDE:ILayoutDirectionElement = popUpParent as ILayoutDirectionElement;
-                
-                if (popUpLDE &&
-                    ((parentLDE && parentLDE.layoutDirection != popUpLDE.layoutDirection) ||
-                        (!parentLDE && popUpLDE.layoutDirection == LayoutDirection.RTL)))
-                 {
-                        x = -x /* to flip it on the other side of the x axis*/ 
-                            -popUp.width /* because 0 is the right edge */;                            
-                 }
-            }
-            
-            pt = new Point(clippingOffset.x, clippingOffset.y);            
-            pt = popUpParent.localToGlobal(pt);
+
+            pt = new Point(clippingOffset.x, clippingOffset.y);
             pt = popUp.parent.globalToLocal(pt);
             popUp.move(Math.round(x) + pt.x, Math.round(y) + pt.y);
         }

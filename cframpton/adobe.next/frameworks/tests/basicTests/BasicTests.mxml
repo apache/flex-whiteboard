@@ -94,6 +94,7 @@
         <mx:State name="designLayerTest" />
         <mx:State name="styleManagerTest" />
         <mx:State name="fxg2RuntimeTest" />
+        <mx:State name="removeUnusedRSLsTest" />
         <mx:State name="imageTest" />
         <mx:State name="sparkDateTimeFormatterTest" />
         <mx:State name="sparkAdvancedStyleClientTest" />
@@ -102,9 +103,11 @@
         <mx:State name="sparkCollatorTest" />
         <mx:State name="sparkCurrencyFormatterTest" />
         <mx:State name="sparkDataGridTest" />
-		<mx:State name="sparkCurrencyValidatorTest" />
+	   <mx:State name="sparkCurrencyValidatorTest" />
         <mx:State name="sparkNumberValidatorTest" />
         <mx:State name="sparkSortTest" /> 
+        <mx:State name="sparkViewStackTest" /> 
+        <mx:State name="sparkAccordionTest" />
     </mx:states>
     
     <!--  STEP 2: Add an mxml component with the widgets for your test here -->
@@ -157,6 +160,7 @@
     <sparkviews:PanelControlBarTests id="sparkPanelControlBarTests" includeIn="sparkPanelControlBarTest" />    
     <sparkviews:ButtonBarTests id="sparkButtonBarTests" includeIn="sparkButtonBarTest" />    
     <sparkviews:TitleWindowTests id="sparkTitleWindowTests" includeIn="sparkTitleWindowTest" />
+    <sparkviews:VideoPlayerTests id="sparkVideoPlayerTests" includeIn="sparkVideoPlayerTest" />   
     <graphicsviews:GraphicsTagsTests id="graphicsTagsTests" includeIn="graphicsTagsTest" />    
     <fxgviews:FXGCompileTests id="fxgCompileTests" includeIn="fxgCompileTest" />
     <fxgviews:FXG2CompileTests id="fxg2CompileTests" includeIn="fxg2CompileTest" />    
@@ -165,6 +169,7 @@
     <dmvviews:ADGTests id="dmvADGTests" includeIn="dmvADGTest" />
     <dmvviews:ODGTests id="dmvODGTests" includeIn="dmvODGTest" />
     <dmvviews:ChartsTests id="dmvChartsTests" includeIn="dmvChartsTest" />
+    <sparkviews:RemoveUnusedRSLsTests id="removeUnusedRSLsTests" includeIn="removeUnusedRSLsTest" />
     <sparkviews:ImageTests id="imageTests" includeIn="imageTest" />
     <sparkviews:DateTimeFormatterTests id="sparkDateTimeFormatterTests" includeIn="sparkDateTimeFormatterTest" />
     <sparkviews:AdvancedStyleClientTests id="sparkAdvancedStyleClientTests" includeIn="sparkAdvancedStyleClientTest" />
@@ -176,7 +181,8 @@
 	<sparkviews:CurrencyValidatorTests id="sparkCurrencyValidatorTests" includeIn="sparkCurrencyValidatorTest" />
     <sparkviews:NumberValidatorTests id="sparkNumberValidatorTests" includeIn="sparkNumberValidatorTest" />
     <sparkviews:SortTests id="sparkSortTests" includeIn="sparkSortTest" />
-	
+    <sparkviews:ViewStackTests id="sparkViewStackTests" includeIn="sparkViewStackTest" />
+    <sparkviews:AccordionTests id="sparkAccordionTests" includeIn="sparkAccordionTest" />
 
     <!--  STEP 3: Add the testscript to BasicTests-config.xml -->
     

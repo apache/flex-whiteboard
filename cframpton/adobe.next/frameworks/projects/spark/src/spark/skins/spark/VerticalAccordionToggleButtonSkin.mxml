@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<!--- The default skin class for the ToggleButton header
+of an AccordionContent.
+
+@see spark.components.AccordionContent
+
+
+@langversion 3.0
+@playerversion Flash 11
+@playerversion AIR 3.0
+@productversion Flex 5.0
+
+-->
+<s:SparkButtonSkin xmlns:fx="http://ns.adobe.com/mxml/2009" 
+                   xmlns:s="library://ns.adobe.com/flex/spark" 
+                   xmlns:fb="http://ns.adobe.com/flashbuilder/2009"
+                   minWidth="21" minHeight="28" 
+                   alpha.disabledStates="0.5">
+    
+    <!-- host component -->
+    <fx:Metadata>
+    <![CDATA[ 
+        /** 
+         * @copy spark.skins.spark.ApplicationSkin#hostComponent
+         */
+        [HostComponent("spark.components.ToggleButton")]
+    ]]>
+    </fx:Metadata>
+    
+    <!-- states -->
+    <s:states>
+        <s:State name="up" />
+        <s:State name="over" stateGroups="overStates" />
+        <s:State name="down" stateGroups="downStates" />
+        <s:State name="disabled" stateGroups="disabledStates" />
+        <s:State name="upAndSelected" stateGroups="selectedStates, selectedUpStates" />
+        <s:State name="overAndSelected" stateGroups="overStates, selectedStates" />
+        <s:State name="downAndSelected" stateGroups="downStates, selectedStates" />
+        <s:State name="disabledAndSelected" stateGroups="selectedUpStates, disabledStates, selectedStates" />
+    </s:states>
+    
+    <s:transitions>
+        <s:Transition autoReverse="true">
+            <s:Rotate target="{arrow}" duration="100"/>
+        </s:Transition>
+    </s:transitions>
+    
+    <!-- layer 1: fill -->
+    <s:Rect left="1" right="1" top="1" bottom="1">
+        <s:fill>
+            <s:LinearGradient rotation="90">
+                <s:GradientEntry color="#FFFFFF" ratio="0" alpha="0.85" color.overStates="#BBBDBD" alpha.overStates="0.85" color.downStates="#929496" alpha.downStates="0.75"/>
+                <s:GradientEntry color="#D8D8D8" ratio="1" alpha="0.85" color.overStates="#9FA0A1" alpha.overStates="0.85" color.downStates="#AAAAAA"/>
+            </s:LinearGradient>
+        </s:fill>
+    </s:Rect>
+    
+    <!-- layer 2: highlight -->
+    <s:Rect left="1" right="1" top="1" bottom="1">
+        <s:fill>
+            <s:LinearGradient rotation="90">
+                <s:GradientEntry color="#FFFFFF" ratio="0" alpha="0.33" alpha.overStates="0.2" alpha.downAndSelected="0.2"/>
+                <s:GradientEntry color="#FFFFFF" ratio="0.48" alpha="0.33" alpha.over="0.2" alpha.overAndSelected="0.2" alpha.downAndSelected="0.2"/>
+                <s:GradientEntry color="#FFFFFF" ratio="0.481" alpha="0" alpha.over="0.1" alpha.overAndSelected="0" alpha.downAndSelected="0"/>
+            </s:LinearGradient>
+        </s:fill>
+    </s:Rect>
+    
+    <!-- layer 3: inner shadow -->
+    <s:Rect left="1" top="1" right="1" height="3" includeIn="downStates">
+        <s:fill>
+            <s:LinearGradient rotation="90">
+                <s:GradientEntry color="#000000" ratio="0" alpha="0.5"/>
+                <s:GradientEntry color="#000000" ratio="1" alpha="0"/>
+            </s:LinearGradient>
+        </s:fill>
+    </s:Rect>
+    
+    <!-- layer 4: inner stroke -->
+    <s:Rect left="1" right="1" top="1" bottom="1">
+        <s:stroke>
+            <s:LinearGradientStroke rotation="90">
+                <s:GradientEntry color="#FFFFFF" ratio="0" alpha.over="0.22" color.downStates="#000000" alpha.downStates="0.2" alpha.overAndSelected="0.5"/>
+                <s:GradientEntry color="#D8D8D8" ratio="1" alpha.over="0.22" color.downStates="#000000" alpha.downStates="0.3" alpha.overAndSelected="0.5"/>
+            </s:LinearGradientStroke>
+        </s:stroke>
+    </s:Rect>
+    
+    <!-- layer 5: outer stroke -->
+    <s:Rect left="0" right="0" top="0" bottom="0">
+        <s:stroke>
+            <s:LinearGradientStroke rotation="90">
+                <s:GradientEntry color="#4D4D4D" ratio="0"/>
+                <s:GradientEntry color="#1A1A1A" ratio="1"/>
+            </s:LinearGradientStroke>
+        </s:stroke>
+    </s:Rect>
+    
+    <s:Label id="labelDisplay" 
+             maxDisplayedLines="1"
+             verticalCenter="2" verticalAlign="middle"
+             left="24" right="10">
+    </s:Label>
+    
+    <s:Group verticalCenter="2" left="10" width="8" height="8" >
+        <s:Path id="arrow" data="M0 0 8 0 4 4Z" transformX="4" transformY="2" rotation="-90" rotation.selectedStates="0">
+            <s:fill>
+                <s:SolidColor color="#1A1A1A"/>
+            </s:fill>
+        </s:Path>
+    </s:Group>
+</s:SparkButtonSkin>

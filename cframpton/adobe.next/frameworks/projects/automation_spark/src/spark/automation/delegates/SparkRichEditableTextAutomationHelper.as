@@ -59,8 +59,8 @@ package spark.automation.delegates
 	 * Utility class that facilitates replay of text input and selection.
 	 *  
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	public class SparkRichEditableTextAutomationHelper 
@@ -85,8 +85,8 @@ package spark.automation.delegates
 		 *  
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SparkRichEditableTextAutomationHelper(owner:IEventDispatcher,
@@ -312,8 +312,8 @@ package spark.automation.delegates
 		 *  @param cacheable Contains <code>true</code> if this is a cacheable event, and <code>false</code> if not.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */ 
 		public function recordAutomatableEvent(interaction:Event, 
@@ -339,8 +339,8 @@ package spark.automation.delegates
 		 * @return If true, replay the event.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function replayAutomatableEvent(event:Event):Boolean

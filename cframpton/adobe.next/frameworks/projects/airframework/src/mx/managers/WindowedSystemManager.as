@@ -1065,13 +1065,13 @@ public class WindowedSystemManager extends MovieClip implements ISystemManager
 
         // This listener is intended to run before any other KeyboardEvent listeners
         // so that it can redispatch a cancelable=true copy of the event. 
-        if (getSandboxRoot() == this)
+        if (topLevel)
         {
             // keydown events on AIR are cancelable so we don't need to add a listener.
             addEventListener(MouseEvent.MOUSE_WHEEL, mouseEventHandler, true, 1000);
             addEventListener(MouseEvent.MOUSE_DOWN, mouseEventHandler, true, 1000);
         }
-        if (isTopLevelRoot() && stage)
+        if (topLevel && stage)
         {
             // keydown events on AIR are cancelable so we don't need to add a listener.
             stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseEventHandler, false, 1000);
@@ -1285,56 +1285,8 @@ public class WindowedSystemManager extends MovieClip implements ISystemManager
      */
     public function getSandboxRoot():DisplayObject
     {
-        // work our say up the parent chain to the root. This way we
-        // don't have to rely on this object being added to the stage.
-        var sm:ISystemManager = this;
-
-        try
-        {
-            if (sm.topLevelSystemManager)
-                sm = ISystemManager(sm.topLevelSystemManager);
-            var parent:DisplayObject = DisplayObject(sm).parent;
-            if (parent is Stage)
-                return DisplayObject(sm);
-            // test to see if parent is a Bootstrap
-            if (parent && !parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot", false, true)))
-                return this;
-            var lastParent:DisplayObject = this;
-            while (parent)
-            {
-                if (parent is Stage)
-                    return lastParent;
-                // test to see if parent is a Bootstrap
-                if (!parent.dispatchEvent(new Event("mx.managers.SystemManager.isBootstrapRoot", false, true)))
-                    return lastParent;
-                    
-                // Test if the childAllowsParent so we know there is mutual trust between
-                // the sandbox root and this sm.
-                // The parentAllowsChild is taken care of by the player because it returns null
-                // for the parent if we do not have access.
-                if (parent is Loader)
-                {
-                    var loader:Loader = Loader(parent);
-                    var loaderInfo:LoaderInfo = loader.contentLoaderInfo;
-                    if (!loaderInfo.childAllowsParent)
-                        return loaderInfo.content;
-                }
-                
-                // If an object is listening for system manager request we assume it is a sandbox
-                // root. If not, don't assign lastParent to this parent because it may be a
-                // non-Flex application. We only want Flex apps to be returned as sandbox roots.
-                if (parent.hasEventListener("systemManagerRequest"))
-                    lastParent = parent; 
-                parent = parent.parent;             
-            }
-        }
-        catch (error:Error)
-        {
-            // Either we don't have security access to a parent or
-            // the swf is unloaded and loaderInfo.childAllowsParent is throwing Error #2099.
-        }       
-        
-        return lastParent != null ? lastParent : DisplayObject(sm);
+        // WindowedSystemManager is never sandbox root nor is it the first sm created
+        return SystemManagerGlobals.topLevelSystemManagers[0].getSandboxRoot();
     }
     
     /**

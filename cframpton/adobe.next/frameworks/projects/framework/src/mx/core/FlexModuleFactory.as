@@ -679,6 +679,9 @@ public class FlexModuleFactory extends MovieClip
 
         Singleton.registerClass("mx.managers::IToolTipManager2",
 			Class(getDefinitionByName("mx.managers::ToolTipManagerImpl")));
+        
+        Singleton.registerClass("spark.managers::IToolTipManagerImpl",
+            Class(getDefinitionByName("spark.managers::ToolTipManagerImpl")));
 
 		appReady = true;
         

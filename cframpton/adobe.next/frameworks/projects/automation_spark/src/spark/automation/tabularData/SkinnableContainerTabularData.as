@@ -21,11 +21,12 @@ package spark.automation.tabularData
 { 
 	
 	import flash.display.DisplayObject;
+	import flash.system.ApplicationDomain;
+	import flash.utils.getDefinitionByName;
 	
 	import mx.automation.Automation;
 	import mx.automation.IAutomationObject;
 	import mx.automation.IAutomationTabularData;
-	import mx.core.Repeater;
 	import mx.core.mx_internal;
 	
 	use namespace mx_internal;
@@ -42,8 +43,8 @@ package spark.automation.tabularData
 		 *  Constructor
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public function SkinnableContainerTabularData(container:IAutomationObject)
@@ -119,8 +120,18 @@ package spark.automation.tabularData
 				if (ao)
 				{
 					var disp:DisplayObject = ao as DisplayObject;
-					if (disp.visible && !(disp is Repeater))
-						++visibleChildren;
+					if(disp.visible){
+						if(isMxRepeaterClassPresent())
+						{
+							var mxRepeater:Class = Class(ApplicationDomain.currentDomain.getDefinition("mx.core.Repeater"));
+							if(!(disp is mxRepeater))					
+							{
+								++visibleChildren;
+							}
+						}
+						else						
+							++visibleChildren;
+					}
 				}
 			}
 			return visibleChildren;
@@ -171,15 +182,33 @@ package spark.automation.tabularData
 				if (ao)
 				{
 					var disp:DisplayObject = ao  as DisplayObject;
-					if (disp.visible && !(disp is Repeater))
+					if (disp.visible)
 					{
-						if (k >=start && k <= end)
+						if(isMxRepeaterClassPresent())
 						{
-							var av:Array = flattenArray(ao.automationValue);
-							_values.push(av);
-							longestRow = Math.max(longestRow, av.length);
+							var mxRepeater:Class = Class(ApplicationDomain.currentDomain.getDefinition("mx.core.Repeater"));
+							var av:Array;
+							if(!(disp is mxRepeater))	
+							{
+								if (k >=start && k <= end)
+								{
+									av = flattenArray(ao.automationValue);
+									_values.push(av);
+									longestRow = Math.max(longestRow, av.length);
+								}
+								++k;
+							}
 						}
-						++k;
+						else
+						{
+							if (k >=start && k <= end)
+							{
+								av = flattenArray(ao.automationValue);
+								_values.push(av);
+								longestRow = Math.max(longestRow, av.length);
+							}
+							++k;
+						}
 					}
 				}
 			}
@@ -234,6 +263,21 @@ package spark.automation.tabularData
 		public function getAutomationValueForData(data:Object):Array
 		{
 			return [];
+		}
+		
+		public static function isMxRepeaterClassPresent():Boolean
+		{
+			try
+			{
+				if (getDefinitionByName("mx.core.Repeater") != null)
+					return true;
+			}
+			catch(e:Error)
+			{
+				Automation.automationDebugTracer.traceMessage("AutomationHelper", "isMxRepeaterClassPresent()", e.message);
+			}
+			Automation.automationDebugTracer.traceMessage("AutomationHelper", "isMxRepeaterClassPresent()", "mx.core.Repeater class is not found.");
+			return false;
 		}
 	}
 }

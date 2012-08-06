@@ -37,8 +37,8 @@ package mx.automation.delegates.core
 	 *  @ see mx.core.UIFTETextField
 	 * 
 	 *  @langversion 3.0
-	 *  @playerversion Flash 9
-	 *  @playerversion AIR 1.1
+	 *  @playerversion Flash 10
+	 *  @playerversion AIR 1.5
 	 *  @productversion Flex 4
 	 */
 	
@@ -59,8 +59,8 @@ package mx.automation.delegates.core
 		 *  @param root The SystemManger of the application.
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */
 		public static function init(root:DisplayObject):void
@@ -73,8 +73,8 @@ package mx.automation.delegates.core
 		 * @param obj UIFTETextField object to be automated.     
 		 *  
 		 *  @langversion 3.0
-		 *  @playerversion Flash 9
-		 *  @playerversion AIR 1.1
+		 *  @playerversion Flash 10
+		 *  @playerversion AIR 1.5
 		 *  @productversion Flex 4
 		 */ 
 		public function UIFTETextFieldAutomationImpl(obj:UIFTETextField)
