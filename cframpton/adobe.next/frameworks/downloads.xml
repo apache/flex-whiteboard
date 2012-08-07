@@ -224,7 +224,7 @@
 
     <target name="download-tlf-zip" unless="tlf.zip.exists">
         <mkdir dir="${download.dir}"/>
-        <get src="http://sourceforge.net/projects/tlf.adobe/files/2.0/232/textLayout_build.zip/download" 
+        <get src="http://sourceforge.net/projects/tlf.adobe/files/3.0/28/textLayout_build.zip/download" 
             dest="${download.dir}/textLayout_build.zip" 
             verbose="false"/>
     </target>

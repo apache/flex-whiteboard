@@ -25,7 +25,7 @@ package spark.automation.codec
 	import mx.automation.IAutomationObject;
 	import mx.automation.IAutomationTabularData;
 	import mx.automation.codec.DefaultPropertyCodec;
-	import mx.automation.qtp.IQTPPropertyDescriptor;
+	import mx.automation.tool.IToolPropertyDescriptor;
 	import mx.core.mx_internal;
 	
 	import spark.components.supportClasses.DropDownListBase;
@@ -67,7 +67,7 @@ package spark.automation.codec
 		 */ 
 		override public function encode(automationManager:IAutomationManager,
 										obj:Object, 
-										propertyDescriptor:IQTPPropertyDescriptor,
+										propertyDescriptor:IToolPropertyDescriptor,
 										relativeParent:IAutomationObject):Object
 		{
 			// get the selected item
@@ -91,7 +91,7 @@ package spark.automation.codec
 		override public function decode(automationManager:IAutomationManager,
 										obj:Object, 
 										value:Object,
-										propertyDescriptor:IQTPPropertyDescriptor,
+										propertyDescriptor:IToolPropertyDescriptor,
 										relativeParent:IAutomationObject):void
 		{
 			// we expect this codec to be used for getting the property details.
