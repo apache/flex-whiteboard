@@ -1,0 +1,107 @@
+#**
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+
+@test velocimacro2.vm
+
+This template is used for Velocity regression testing.
+If you alter this template make sure you change the
+corresponding comparison file so that the regression
+test doesn't fail incorrectly.
+
+*#
+#macro( foo $a )
+  Hello from foo : $a
+#end
+
+#macro( foo2 $a )
+  Hello from foo2 : $a
+#end
+
+#macro( foo_two $a )
+  Hello from foo_two : $a
+#end
+
+#foo( "hi" )
+#foo2( "hi" )
+#foo_two( "hi" )
+
+
+#foo( $notincontext )
+#foo( $notincontext.getThing() )
+
+#macro( tester $a )
+  #if($a)
+    $a :  yes
+  #else
+    $a :  no
+  #end
+#end
+
+##
+## test to see if we can print these
+## as schmoo
+##
+
+#tester( $notincontext )
+#tester( $notincontext.woogie() )
+
+#set($foo = "bar")
+
+#tester($foo)
+
+#foo2( ${foo} )
+
+#macro( poundthis $truth )
+  #if ($truth )
+    <td align=center class=v10><b>#</b></td>
+    <td align=center class=v10><b> # </b></td>
+    <td align=center class=v10><b>\#</b></td>
+  #end
+#end
+
+#poundthis( true )
+
+##
+## test for bug reported when stringlit changed to on-init parsing
+##
+
+#macro( blorp $bar ) $bar #end
+#macro( schlorp $i )#blorp( "hi $i" ) #end
+
+#schlorp("victor")
+
+
+##
+## test all directive arg types
+##
+
+#macro(dirarg $a)
+>$a<
+#end
+
+#set($ref = 1)
+
+#dirarg(1)
+#dirarg(true)
+#dirarg(false)
+#dirarg("hello")
+#dirarg('hello')
+#dirarg($ref)
+#dirarg([1..10])
+#dirarg(['a','b',$ref])
+

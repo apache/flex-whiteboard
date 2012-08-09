@@ -1,0 +1,203 @@
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="combined" default="main" basedir=".">
+	<property name="FLEX_HOME" location="${basedir}/../../.."/>
+	
+    <property file="${FLEX_HOME}/env.properties"/>
+    <property environment="env"/>
+	<property file="${FLEX_HOME}/build.properties"/>
+
+	<property name="output.file" value="${FLEX_HOME}/frameworks/libs/textLayout.swc"/>
+	<property name="output.docs" value="${FLEX_HOME}/tempDoc"/>
+	<property name="flexTasks.location" value="${FLEX_HOME}/lib/flexTasks.jar"/>
+	<property name="project.uri" value="library://ns.adobe.com/flashx/textLayout"/>
+
+        <!-- We use abbreviated token names here as, the 'release' 
+             and 'debug' tokens conflict with those specified in 
+             build.properties -->
+	<property name="dbg" value="false"/>
+	<property name="rel" value="true"/>
+	
+	<macrodef name="bundle">
+		<attribute name="locale"/>
+		<sequential>
+			<echo message="Compiling frameworks/locale/@{locale}/textLayout_rb.swc"/>
+
+			<!-- Load the <compc> task. We can't do this at the <project> level -->
+			<!-- because targets that run before flexTasks.jar gets built would fail. -->
+			<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/lib/flexTasks.jar"/>
+			<compc fork="true"
+				   output="${FLEX_HOME}/frameworks/locale/@{locale}/textLayout_rb.swc"
+				   locale="@{locale}">
+				<jvmarg line="${compc.jvm.args}"/>
+				<target-player>${playerglobal.version}</target-player>
+				<include-resource-bundles bundle="textLayout"/>
+				<include-namespaces/>
+				<include-classes/>
+				<source-path path-element="${basedir}/bundles/@{locale}"/>
+				<include-libraries/>
+				<library-path/>
+				<external-library-path dir="${env.PLAYERGLOBAL_HOME}">
+					<include name="${playerglobal.version}/playerglobal.swc"/>
+				</external-library-path>
+				<external-library-path dir="${FLEX_HOME}/frameworks/libs">
+					<include name="framework.swc"/>
+				</external-library-path>
+			</compc>
+		</sequential>
+	</macrodef>	
+	
+	<macrodef name="fat-swc">
+		<attribute name="locale"/>
+		<sequential>
+			<echo message="creating 'fat-swc' in textLayout_rb.swc for @{locale}"/>
+			<mkdir dir="${basedir}/bundles/@{locale}/docs" />
+			<zip destfile="${FLEX_HOME}/frameworks/locale/@{locale}/textLayout_rb.swc" update="true">
+				<zipfileset dir="${basedir}/bundles/@{locale}/docs" prefix="docs">
+					<include name="*.*"/>
+					<exclude name="ASDoc_Config.xml"/>
+					<exclude name="overviews.xml"/>
+				</zipfileset>
+			</zip>
+		</sequential>
+	</macrodef>	
+	<macrodef name="bundle-clean">
+		<attribute name="locale"/>
+		<sequential>
+			<delete failonerror="false">
+				<fileset dir="${FLEX_HOME}/frameworks/locale">
+					<include name="@{locale}/textLayout_rb.swc"/>
+					<include name="@{locale}/textLayout_rb.swc.incr"/>
+				</fileset>
+			</delete>
+		</sequential>
+	</macrodef>
+	<macrodef name="bundler">
+		<attribute name="locale"/>
+		<element name="run.fat.swc" optional="yes"/>
+		<sequential>
+			<bundle-clean locale="@{locale}"/>
+			<bundle locale="@{locale}"/>
+			<run.fat.swc/>
+		</sequential>
+	</macrodef>
+		
+				
+	<target name="main" depends="clean" description="Clean build of automation_dmv.swc and en_US">
+		<bundle locale="${locale}"/>
+	</target>
+	
+	<target name="other.locales" depends="bundles" description="Build other locale SWCs"/>
+	
+	<!-- This is a private target for building automation_rb.swc for various locales. -->
+	<!-- The targets below set the 'locale' parameter  -->
+	<target name="bundles">
+		<!-- these languages do not have localized docs-->
+		<bundler locale="en_AU"/><!-- Australian resources -->
+		<bundler locale="en_GB"/><!-- United Kingdom resources -->
+		<bundler locale="en_CA"/><!-- Canadian resources -->
+		<bundler locale="da_DK"/><!-- Danish resources -->
+		<bundler locale="de_DE"><!-- German resources -->
+			<run.fat.swc>
+				<fat-swc locale="de_DE"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="en_US"><!-- American English resources -->
+			<run.fat.swc>
+				<fat-swc locale="en_US"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="en_AU"/>
+		<bundler locale="en_GB"/>
+		<bundler locale="en_CA"/>
+		<bundler locale="es_ES"/><!-- Spanish resources -->
+		<bundler locale="fi_FI"/><!--  Finnish resources-->
+		<bundler locale="fr_FR"><!-- French resources -->
+			<run.fat.swc>
+				<fat-swc locale="fr_FR"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="it_IT"/><!-- Italian resources -->
+		<bundler locale="ja_JP"><!-- Japanese resources -->
+			<run.fat.swc>
+				<fat-swc locale="ja_JP"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="ko_KR"/><!-- Korean resources -->
+		<bundler locale="nb_NO"/><!-- Norwegian Bokmal resources -->
+		<bundler locale="nl_NL"/><!-- Dutch resources -->
+		<bundler locale="pt_BR"/><!-- Brazilian Portuguese resources -->
+		<bundler locale="pt_PT"/><!-- Portugal Portuguese resources -->
+		<bundler locale="ru_RU"><!-- Russian resources -->
+			<run.fat.swc>
+				<fat-swc locale="ru_RU"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="sv_SE"/><!-- Swedish resources -->
+		<bundler locale="zh_CN"><!-- Simplified Chinese resources -->
+			<run.fat.swc>
+				<fat-swc locale="zh_CN"/>
+			</run.fat.swc>
+		</bundler>
+		<bundler locale="zh_TW"/><!-- Traditional Chinese resources -->
+		<bundler locale="el_GR"/><!-- Greek Language  resources -->
+	</target>
+	
+	<target name="clean" depends="bundles-clean" description="Deletes the combined swc">
+		<delete failonerror="false">
+			<fileset dir="${FLEX_HOME}/frameworks/libs">
+				<include name="textLayout.swc"/>
+				<include name="combined_link.xml"/>
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="bundles-clean">
+		<delete failonerror="false">
+			<fileset dir="${FLEX_HOME}/frameworks/locale">
+				<include name="*/textLayout_rb.swc"/>
+				<include name="*/textLayout_rb.swc.incr"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="compile" description="Compiles textLayout.swc">
+		<taskdef resource="flexTasks.tasks" classpath="${flexTasks.location}"/>
+		<compc fork="true"
+			   output="${output.file}"
+			   compute-digest="true"
+			   include-classes="flashx.textLayout.CoreClasses flashx.textLayout.EditClasses flashx.textLayout.ConversionClasses">
+			<jvmarg line="${compc.jvm.args}"/>
+			<keep-as3-metadata>IMXMLObject</keep-as3-metadata>
+			<include-namespaces uri="${project.uri}"/>
+			<namespace uri="${project.uri}" manifest="manifest.xml"/>
+			<source-path path-element="src"/>
+			<library-path/>
+			<include-file name="manifest.xml" path="${basedir}/manifest.xml"/>
+			<static-link-runtime-shared-libraries/>
+			<define name="CONFIG::debug" value="${dbg}"/>
+			<define name="CONFIG::release" value="${rel}"/>
+		</compc>
+     </target>
+
+	<target name="doc" description="Updates textLayout.swc with ASDoc XML">
+	    <echo message="Docs are currently included in TLF drop."/>
+    </target>
+</project>
