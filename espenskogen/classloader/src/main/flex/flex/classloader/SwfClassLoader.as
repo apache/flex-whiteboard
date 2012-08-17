@@ -1,8 +1,10 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
+import classloader.*;
+
 import flash.display.Loader;
 import flash.events.Event;
 import flash.events.IOErrorEvent;

@@ -1,8 +1,9 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
+import classloader.*;
     import flash.display.MovieClip;
     import flash.errors.IllegalOperationError;
     import flash.events.EventDispatcher;
@@ -15,16 +16,16 @@ package com.jpmorgan.ib.cfpe.classloader
     import mx.logging.ILogger;
     import mx.logging.Log;
 
-    [Event(name="loaded", type="com.jpmorgan.ib.cfpe.classloader.ClassLoaderEvent")]
-    [Event(name="error", type="com.jpmorgan.ib.cfpe.classloader.ClassLoaderEvent")]
-    [Event(name="unloaded", type="com.jpmorgan.ib.cfpe.classloader.ClassLoaderEvent")]
+    [Event(name="loaded", type="flex.classloader.ClassLoaderEvent")]
+    [Event(name="error", type="flex.classloader..ClassLoaderEvent")]
+    [Event(name="unloaded", type="flex.classloader.ClassLoaderEvent")]
 
     /**
      * Abstract base class for ClassLoaders.
      *
      * <p>Provides a Java style class loader hierarchy for dynamically loading Flex classes.</p>
      * <p>Sub classes should implement <code>findClass</code>, <code>loadContainer</code> and <code>unloadContainer</code> at a minimum</p>
-     * @see http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/ClassLoader.html
+     * @see http://docs.oracle.com/javase/1.4.2/docs/api/java/lang/flex.classloader.ClassLoader.html
      */
     public class ClassLoader extends EventDispatcher
     {

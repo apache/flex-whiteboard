@@ -1,8 +1,10 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
+import classloader.*;
+
 import com.jpmorgan.ib.cfpe.classloader.util.SwcExtractor;
 
 import flash.display.Loader;

@@ -497,13 +497,6 @@
                     <version>2.2.2</version>
                 </plugin>
 
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.2.1</version>
-                    <configuration>
-                        <scmCommentPrefix>CFPE1-74</scmCommentPrefix>
-                    </configuration>
-                </plugin>
 
                 <plugin>
                     <groupId>com.adobe.ac</groupId>
@@ -536,23 +529,7 @@
                     </executions>
                 </plugin>
 
-                <plugin>
-                    <groupId>com.adobe.ac</groupId>
-                    <artifactId>flex-pmd-maven-plugin</artifactId>
-                    <version>1.2</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
 
-                    <configuration>
-                        <url>http://subversion.ny.jpmorgan.com/svn/repos/CFPE/Common/trunk/PMDRules/Flexpmd.xml</url>
-                    </configuration>
-                </plugin>
 
             </plugins>
         </pluginManagement>
@@ -584,19 +561,7 @@
         </repository>
 
 
-        <repository>
-            <id>internal</id>
-            <name>JPM CFP Public</name>
-            <url>http://devash-ecfpwb01.svr.us.jpmchase.net:4143/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-                <checksumPolicy>warn</checksumPolicy>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+
 
     </repositories>
 

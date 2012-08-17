@@ -1,7 +1,7 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
 import flash.system.ApplicationDomain;
 

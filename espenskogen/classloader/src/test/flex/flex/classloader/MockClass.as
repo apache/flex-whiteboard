@@ -1,7 +1,7 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
 /**
  *  Mock Class to load

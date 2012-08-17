@@ -1,25 +1,24 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader
+package flex.classloader
 {
-import flash.system.ApplicationDomain;
+import flash.utils.getTimer;
 
 import mx.core.BitmapAsset;
 
 import org.flexunit.asserts.assertEquals;
-import org.flexunit.asserts.assertFalse;
 import org.flexunit.async.Async;
 
 /**
- * Tests for SwfClassLoader
+ *  SwcClassLoader Tests
  */
-public class SwfClassLoaderTest
+public class SwcClassLoaderTest
 {
     /**
      * Constructor
      */
-    public function SwfClassLoaderTest()
+    public function SwcClassLoaderTest()
     {
     }
 
@@ -38,10 +37,12 @@ public class SwfClassLoaderTest
 
 
     /* TESTS */
+
+
     [Test(async)]
     public function testConstructWithMissingSWF():void
     {
-        classLoader = new SwfClassLoader("dependencies/nowhere.swf");
+        classLoader = new SwcClassLoader("dependencies/nowhere.swc");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_ERROR);
     }
@@ -49,7 +50,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testConstructWithSWF():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, 10000);
     }
@@ -58,11 +59,14 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testLoadClass():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        const tickCount:int = getTimer();
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
                 {
+                    const time:int = getTimer() - tickCount;
+                    trace(time);
                     const RuntimeClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass");
                     const runtimeClass:Object = new RuntimeClass();
 
@@ -72,42 +76,56 @@ public class SwfClassLoaderTest
     }
 
 
-    [Test(async)]
-    public function testLoadImportedClass():void
+    [Test(async, expects="ReferenceError")]
+    public function testClassNotFound():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
                 {
-                    const RuntimeImportedClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeImportedClass");
-
-                    const runtimeImportedClass:Object = new RuntimeImportedClass();
-                    assertEquals(runtimeImportedClass.toString(), "RuntimeImportedClass");
+                    const RuntimeClass:Class = classLoader.getClass("NoClassCalledThis");
                 }, 10000
         );
     }
 
 
-    [Test(async, expects="ReferenceError")]
-    public function testUnloadClassContainer():void
+    [Test(expects="ReferenceError")]
+    public function testClassNotLoaded():void
     {
-        assertFalse(ApplicationDomain.currentDomain.hasDefinition("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass"));
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        const RuntimeClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass");
+    }
 
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+
+    [Test(async)]
+    public function testLoadFunction():void
+    {
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
                 {
-                    const RuntimeClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass");
-                    classLoader.unload();
+                    const runtimeFunction:Function = classLoader.getFunction("com.jpmorgan.ib.cfpe.classloader.runtime.runtimeFunction");
+                    const result:String = runtimeFunction();
 
+                    assertEquals("Hello!", result);
                 }, 10000
         );
+    }
 
-        Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_UNLOADED, function ():void
+
+    [Test(async)]
+    public function testLoadNamespace():void
+    {
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader.load();
+
+        Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
                 {
-                    const RuntimeClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass");
+                    const runtimenamespace:Namespace = classLoader.getNamespace("com.jpmorgan.ib.cfpe.classloader.runtime.runtimenamespace");
+
+                    assertEquals("someURL", runtimenamespace.uri);
                 }, 10000
         );
     }
@@ -116,7 +134,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testLoadBitmapAsset():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -132,6 +150,5 @@ public class SwfClassLoaderTest
     /* PRIVATE */
 
     private var classLoader:ClassLoader;
-
 }
 }

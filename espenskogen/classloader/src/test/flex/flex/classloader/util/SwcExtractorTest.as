@@ -1,7 +1,7 @@
 /**
  *  CFPE
  */
-package com.jpmorgan.ib.cfpe.classloader.util
+package flex.classloader.util
 {
 import flash.events.Event;
 import flash.net.URLLoader;
