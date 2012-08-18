@@ -15,12 +15,12 @@ import org.flexunit.async.Async;
 /**
  * SwcExtractor Tests
  */
-public class SwcExtractorTest
+public class SWCExtractorTest
 {
     /**
      * Constructor
      */
-    public function SwcExtractorTest()
+    public function SWCExtractorTest()
     {
     }
 

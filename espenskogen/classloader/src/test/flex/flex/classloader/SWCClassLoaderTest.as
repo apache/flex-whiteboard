@@ -13,12 +13,12 @@ import org.flexunit.async.Async;
 /**
  *  SwcClassLoader Tests
  */
-public class SwcClassLoaderTest
+public class SWCClassLoaderTest
 {
     /**
      * Constructor
      */
-    public function SwcClassLoaderTest()
+    public function SWCClassLoaderTest()
     {
     }
 
@@ -42,7 +42,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testConstructWithMissingSWF():void
     {
-        classLoader = new SwcClassLoader("dependencies/nowhere.swc");
+        classLoader = new SWCClassLoader("dependencies/nowhere.swc");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_ERROR);
     }
@@ -50,7 +50,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testConstructWithSWF():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, 10000);
     }
@@ -59,7 +59,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testLoadClass():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         const tickCount:int = getTimer();
         classLoader.load();
 
@@ -79,7 +79,7 @@ public class SwcClassLoaderTest
     [Test(async, expects="ReferenceError")]
     public function testClassNotFound():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -93,7 +93,7 @@ public class SwcClassLoaderTest
     [Test(expects="ReferenceError")]
     public function testClassNotLoaded():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         const RuntimeClass:Class = classLoader.getClass("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass");
     }
 
@@ -101,7 +101,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testLoadFunction():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -118,7 +118,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testLoadNamespace():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -134,7 +134,7 @@ public class SwcClassLoaderTest
     [Test(async)]
     public function testLoadBitmapAsset():void
     {
-        classLoader = new SwcClassLoader("dependencies/RuntimeClass.swc");
+        classLoader = new SWCClassLoader("dependencies/RuntimeClass.swc");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void

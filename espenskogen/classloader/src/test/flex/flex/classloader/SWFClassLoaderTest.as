@@ -14,12 +14,12 @@ import org.flexunit.async.Async;
 /**
  * Tests for SwfClassLoader
  */
-public class SwfClassLoaderTest
+public class SWFClassLoaderTest
 {
     /**
      * Constructor
      */
-    public function SwfClassLoaderTest()
+    public function SWFClassLoaderTest()
     {
     }
 
@@ -41,7 +41,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testConstructWithMissingSWF():void
     {
-        classLoader = new SwfClassLoader("dependencies/nowhere.swf");
+        classLoader = new SWFClassLoader("dependencies/nowhere.swf");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_ERROR);
     }
@@ -49,7 +49,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testConstructWithSWF():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SWFClassLoader("dependencies/RuntimeClass.swf");
         classLoader.load();
         Async.proceedOnEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, 10000);
     }
@@ -58,7 +58,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testLoadClass():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SWFClassLoader("dependencies/RuntimeClass.swf");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -75,7 +75,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testLoadImportedClass():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SWFClassLoader("dependencies/RuntimeClass.swf");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -94,7 +94,7 @@ public class SwfClassLoaderTest
     {
         assertFalse(ApplicationDomain.currentDomain.hasDefinition("com.jpmorgan.ib.cfpe.classloader.runtime.RuntimeClass"));
 
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SWFClassLoader("dependencies/RuntimeClass.swf");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void
@@ -116,7 +116,7 @@ public class SwfClassLoaderTest
     [Test(async)]
     public function testLoadBitmapAsset():void
     {
-        classLoader = new SwfClassLoader("dependencies/RuntimeClass.swf");
+        classLoader = new SWFClassLoader("dependencies/RuntimeClass.swf");
         classLoader.load();
 
         Async.handleEvent(this, classLoader, ClassLoaderEvent.CLASS_CONTAINER_LOADED, function ():void

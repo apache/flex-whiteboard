@@ -16,12 +16,12 @@ import flash.system.LoaderContext;
 /**
  * Implements a Class Loader which loads Classes within a SWF container from a URL
  */
-public class SwfClassLoader extends ClassLoader
+public class SWFClassLoader extends ClassLoader
 {
     /**
      * Constructor
      */
-    public function SwfClassLoader(swfURL:String, parent:ClassLoader = null, domain:ApplicationDomain = null)
+    public function SWFClassLoader(swfURL:String, parent:ClassLoader = null, domain:ApplicationDomain = null)
     {
         super(parent, domain);
 

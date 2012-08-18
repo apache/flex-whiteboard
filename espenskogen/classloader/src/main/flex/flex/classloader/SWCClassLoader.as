@@ -25,12 +25,12 @@ import flash.utils.ByteArray;
  * explicitly remove the resource file asset from the SWC, to avoid storing the asset twice i.e. once for the file
  * and once of the Asset class wrapping the file.</p>
  */
-public class SwcClassLoader extends ClassLoader
+public class SWCClassLoader extends ClassLoader
 {
     /**
      * Constructor
      */
-    public function SwcClassLoader(swcURL:String, parent:ClassLoader = null, domain:ApplicationDomain = null)
+    public function SWCClassLoader(swcURL:String, parent:ClassLoader = null, domain:ApplicationDomain = null)
     {
         super(parent, domain);
 
