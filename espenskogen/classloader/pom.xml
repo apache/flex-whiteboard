@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-
     <groupId>classLoaderLib</groupId>
     <artifactId>classLoaderLib</artifactId>
     <version>1.0</version>
+    <packaging>swc</packaging>
 
     <properties>
         <flexmojos.version>4.0-RC1</flexmojos.version>
+        <flex.version>4.1.0.16076</flex.version>
     </properties>
     <dependencies>
         <!-- Flex -->
@@ -530,7 +531,6 @@
                 </plugin>
 
 
-
             </plugins>
         </pluginManagement>
 
@@ -544,7 +544,24 @@
         <url>scm:svn:https://svn.apache.org/repos/asf/incubator/flex/whiteboard/espenskogen</url>
     </scm>
 
+    <pluginRepositories>
 
+        <pluginRepository>
+            <id>sonatype</id>
+            <name>Sonatype FlexGroup</name>
+            <url>https://repository.sonatype.org/content/groups/flexgroup/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+
+
+    </pluginRepositories>
     <repositories>
         <repository>
             <id>sonatype</id>
@@ -559,8 +576,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
-
 
 
     </repositories>
