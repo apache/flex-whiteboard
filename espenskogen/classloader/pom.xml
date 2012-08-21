@@ -140,6 +140,18 @@
             <type>swc</type>
         </dependency>
 
+        <dependency>
+            <groupId>com.adobe.flexunit</groupId>
+            <artifactId>flexunit</artifactId>
+            <type>swc</type>
+        </dependency>
+
+        <dependency>
+            <groupId>hamcrest-as3</groupId>
+            <artifactId>hamcrest-as3</artifactId>
+            <type>swc</type>
+        </dependency>
+
     </dependencies>
 
 
@@ -307,6 +319,7 @@
                 <artifactId>flexunit</artifactId>
                 <version>4.1.0_RC2</version>
                 <type>swc</type>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.digitalprimates.fluint</groupId>

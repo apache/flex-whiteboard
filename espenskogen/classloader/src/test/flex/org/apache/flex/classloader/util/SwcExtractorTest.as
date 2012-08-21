@@ -1,7 +1,5 @@
-/**
- *  CFPE
- */
-package flex.classloader
+
+package org.apache.flex.classloader.util
 {
 import flash.events.Event;
 import flash.net.URLLoader;
@@ -15,12 +13,12 @@ import org.flexunit.async.Async;
 /**
  * SwcExtractor Tests
  */
-public class SWCExtractorTest
+public class SwcExtractorTest
 {
     /**
      * Constructor
      */
-    public function SWCExtractorTest()
+    public function SwcExtractorTest()
     {
     }
 
@@ -48,7 +46,7 @@ public class SWCExtractorTest
 
         Async.handleEvent(this, loader, Event.COMPLETE, function ():void
         {
-            const swcExtractor:SwcExtractor = new SwcExtractor(ByteArray(loader.data));
+            const swcExtractor:SWCExtractor = new SWCExtractor(ByteArray(loader.data));
 
             const swfData:ByteArray = swcExtractor.extract("library.swf");
         });
@@ -64,7 +62,7 @@ public class SWCExtractorTest
 
         Async.handleEvent(this, loader, Event.COMPLETE, function ():void
         {
-            const swcExtractor:SwcExtractor = new SwcExtractor(ByteArray(loader.data));
+            const swcExtractor:SWCExtractor = new SWCExtractor(ByteArray(loader.data));
 
             const swfData:ByteArray = swcExtractor.extract("catalog.xml");
         });
