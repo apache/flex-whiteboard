@@ -767,7 +767,7 @@ package ws.tink.spark.layouts
 		 */
 		private function updateDisplayListElements():void
 		{
-			var prevSize:Number;
+//			var prevSize:Number;
 			var elementSize:ElementSize;
 			var element:IVisualElement;
 			var elementPos:Number = 0;
@@ -790,17 +790,16 @@ package ws.tink.spark.layouts
 				}
 				
 				elementSize = _elementSizes[ i ];
-				prevSize = elementSize.size;
+//				prevSize = elementSize.size;
 				elementSize.size = elementSize.start + ( elementSize.diff * offsetMultiplier );
 				
-				if( elementSize.elementChanged )
+				if( elementSize.start || elementSize.diff )
 				{
 					if( direction == LayoutAxis.VERTICAL )
 					{
 						if( _useScrollRect && elementSize.element is DisplayObject )
 						{
 							DisplayObject( elementSize.element ).scrollRect = new Rectangle( 0, 0, unscaledWidth, elementSize.size );
-							
 							elementSize.element.setLayoutBoundsSize( unscaledWidth, unscaledHeight - _buttonLayout._totalSize );
 						}
 						else
@@ -825,8 +824,10 @@ package ws.tink.spark.layouts
 						elementSize.element.setLayoutBoundsPosition( elementPos, 0 );
 					}
 					
-					elementPos += elementSize.size;
+					
 				}
+				
+				elementPos += elementSize.size;
 			}
 		}
 		
@@ -859,7 +860,7 @@ package ws.tink.spark.layouts
 		override protected function updateDisplayListVirtual():void
 		{
 			super.updateDisplayListVirtual();		
-			
+
 			if( !indicesInLayout.length ) return;
 			
 			var i:int;
@@ -873,7 +874,7 @@ package ws.tink.spark.layouts
 				// of any item that is currently in the display list.
 				// If we are creating a new elementSize, we must make sure that this element
 				// is actually added (i.e. not worry about being virtual as it's already created).
-				const indicesCreated:Vector.<int> = new Vector.<int>();
+//				const indicesCreated:Vector.<int> = new Vector.<int>();
 				const size:Number = direction == LayoutAxis.VERTICAL ? unscaledHeight : unscaledWidth;
 				const selectedSize:Number = size - _buttonLayout._totalSize - ( minElementSize * ( numElementsInLayout - 1 ) );
 				
@@ -884,32 +885,31 @@ package ws.tink.spark.layouts
 				
 				if( buttonBar || minElementSize )
 				{
-					indicesRequired = indicesInLayout.concat()
+					indicesRequired = indicesInLayout.concat();
 				}
 				else
 				{
-					if( target.numChildren > 1 )
-					{
-						for( i = 0; i < target.numChildren; i++ )
-						{
-							element =  IVisualElement( target.getChildAt( i ) );
-							if( element.includeInLayout )
-							{
-								// Store a reference to the the element index of all children.
-								indicesCreated.push( target.getElementIndex( element ) );
-								
-							}
-						}
-					}
-					
-					// Also add this as an index that is required.
-					indicesRequired = indicesCreated.concat();
+//					if( target.numChildren > 1 )
+//					{
+//						for( i = 0; i < target.numChildren; i++ )
+//						{
+//							element =  IVisualElement( target.getChildAt( i ) );
+//							if( element.includeInLayout )
+//							{
+//								// Store a reference to the the element index of all children.
+//								indicesCreated.push( target.getElementIndex( element ) );
+//								
+//							}
+//						}
+//					}
+//					
+//					// Also add this as an index that is required.
+//					indicesRequired = indicesCreated.concat();
 					
 					// Make sure we always push the selectedIndex
 					var selected:int = indicesInLayout[ selectedIndex ];
 					if( indicesRequired.indexOf( selected ) == -1 ) indicesRequired.push( selected );
 				}
-				
 				
 				for( i = numElementSizes - 1; i >= 0; i-- )
 				{
@@ -934,7 +934,6 @@ package ws.tink.spark.layouts
 					}
 				}
 				
-				
 				// If we need to create some ElementSize items.
 				const numElementsRequired:int = indicesRequired.length;
 				for( i = 0; i < numElementsRequired; i++ )
@@ -947,8 +946,9 @@ package ws.tink.spark.layouts
 					
 					// Only get the virtual element if it is the selectedIndex,
 					// its start size is bigger than 0.
-					if( elementSize.displayListIndex == selectedIndex || elementSize.start || 
-					indicesCreated.indexOf( elementSize.displayListIndex ) != -1 )
+					if( elementSize.displayListIndex == selectedIndex ||
+						elementSize.start || elementSize.size )
+//					indicesCreated.indexOf( elementSize.displayListIndex ) != -1 )
 					{
 						elementSize.element = target.getVirtualElementAt( elementSize.displayListIndex );
 					}
@@ -969,7 +969,10 @@ package ws.tink.spark.layouts
 					
 					// Only get the virtual element if its size is bigger than 0,
 					// or it is the selectedIndex.
-					if( selectedIndex == elementSize.layoutIndex || elementSize.size ) elementSize.element = target.getVirtualElementAt( elementSize.displayListIndex );
+					if( selectedIndex == elementSize.layoutIndex || elementSize.size )
+					{
+						elementSize.element = target.getVirtualElementAt( elementSize.displayListIndex );
+					}
 				}
 			}
 		}
@@ -1154,7 +1157,9 @@ internal class ElementSize
 	private var _elementChanged:Boolean;
 	public function get elementChanged():Boolean
 	{
-		return _elementChanged;
+		var f:Boolean = _elementChanged;
+		_elementChanged = false;
+		return f;
 	}
 }
 
