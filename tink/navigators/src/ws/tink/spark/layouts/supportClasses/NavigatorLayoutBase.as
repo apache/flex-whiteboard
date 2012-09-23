@@ -711,7 +711,7 @@ package ws.tink.spark.layouts.supportClasses
 			// Only really want to do this if...
 			// a) the number of elements have changed
 			// b) includeLayout has changed on an element
-			// updateElementsInLayout();
+			 updateElementsInLayout();
 			
 			// TODO This was move to measure, but if the target has an explicit size
 			// measure isn't invoked, so checking it here too.
@@ -739,6 +739,12 @@ package ws.tink.spark.layouts.supportClasses
 				_proposedSelectedIndex = 0;
 				//				_proposedSelectedIndexOffset = 0;
 				//				scrollPositionChanged();
+				scrollPositionInvalid = true;
+			}
+			else if( selectedIndex >= _numElementsInLayout )
+			{
+				_selectedIndexInvalid = true;
+				_proposedSelectedIndex = 0;
 				scrollPositionInvalid = true;
 			}
 			
@@ -785,11 +791,11 @@ package ws.tink.spark.layouts.supportClasses
 			{
 				if( useVirtualLayout )
 				{
-					_selectedElement = target ? target.getVirtualElementAt( selectedIndex ) : null;
+					_selectedElement = target ? target.getVirtualElementAt( indicesInLayout[ selectedIndex ] ) : null;
 				}
 				else
 				{
-					_selectedElement = target ? target.getElementAt( selectedIndex ) : null;
+					_selectedElement = target ? target.getElementAt( indicesInLayout[ selectedIndex ] ) : null;
 				}
 			}
 			

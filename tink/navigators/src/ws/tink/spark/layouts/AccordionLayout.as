@@ -632,8 +632,9 @@ package ws.tink.spark.layouts
 			}
 			else if( selectedIndex != -1 )
 			{
+				const index:int = selectedIndex >= numElementsInLayout ? numElementsInLayout - 1 : 0
 				// If we are using a virtual layout, cache the size of the selected item.
-				_measuredCache.cache( target.getElementAt( indicesInLayout[ selectedIndex ] ) );
+				_measuredCache.cache( target.getElementAt( indicesInLayout[ index ] ) );
 			}
 			
 			const prevButtonSize:Number = _buttonLayout._totalSize;
@@ -1291,6 +1292,8 @@ internal class MeasuredCache
 
 	public function cache( elt:ILayoutElement ):void
 	{
+		if( !elt ) return;
+		
 		var preferred:Number;
 		var min:Number;
 		
