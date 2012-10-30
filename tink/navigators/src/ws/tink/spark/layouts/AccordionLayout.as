@@ -918,7 +918,7 @@ package ws.tink.spark.layouts
 					
 					// Remove ElementSize items that are not in the layout.
 					indicesRequiredIndex = indicesRequired.indexOf( elementSize.displayListIndex );
-					if( indicesRequiredIndex == -1 && !elementSize.size )
+					if( indicesRequiredIndex == -1 || !elementSize.size )
 					{
 						_elementSizes.splice( i, 1 );
 					}
