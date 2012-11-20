@@ -1,0 +1,71 @@
+#*
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+
+@test escape.vm
+
+This template is used for Velocity regression testing.
+If you alter this template make sure you change the
+corresponding comparison file so that the regression 
+test doesn't fail incorrectly.
+
+*#
+
+\A
+
+\#set($woo = "bar")
+#set($woo = "bar")
+
+\$woo => $woo
+
+The following should print 'as is' : 
+$f\oo
+\a
+"\r"
+
+Now, test the built in directives. Note that $foo isn't in the context :
+\#set($foo = $foo + 1)
+\#set(\$foo = $foo + 1)
+\#if($foo)
+\#if ( $foo )
+\#else
+\#end
+\#elseif(
+
+Now, a reference not in the context:
+\$foo -> $foo
+\#if($foo)
+\#if(\$foo)
+
+Put it in :
+#set($foo = 1)
+\$foo -> $foo
+\#if($foo)
+\#if(\$foo)
+
+This isn't in the context, so we get the full monty :
+	\$woobie.blagh()
+
+The following two are references :
+	\$provider.Title = $provider.Title
+	\$provider.getTitle() = $provider.getTitle()
+
+Now, pluggable directives:
+
+\#notadirective
+\#foreach
+

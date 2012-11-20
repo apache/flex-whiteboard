@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<project name="playerglobal" default="main" basedir=".">
+
+    <property name="FLEX_HOME" location="${basedir}/../../.."/>
+
+    <property file="${FLEX_HOME}/env.properties"/>
+    <property environment="env"/>
+	<property file="${FLEX_HOME}/build.properties"/>
+	
+	<macrodef name="bundle">
+		<attribute name="locale"/>
+			<sequential>
+				<echo message="Compiling frameworks/locale/@{locale}/playerglobal_rb.swc"/>
+
+				<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/lib/flexTasks.jar"/>
+				<compc fork="true" output="${FLEX_HOME}/frameworks/locale/@{locale}/playerglobal_rb.swc">
+					<jvmarg line="${compc.jvm.args}"/>
+                    <load-config filename="bundle-config.xml" />
+                    <arg value="+playerglobal.version=${playerglobal.version}" />
+                    <arg value="+env.PLAYERGLOBAL_HOME=${env.PLAYERGLOBAL_HOME}" />
+                    <arg value="+locale=@{locale}" />
+				</compc>
+		</sequential>
+	</macrodef>	
+	
+	<macrodef name="fat-swc">
+		<attribute name="locale"/>
+		<sequential>
+			<echo message="creating 'fat-swc' in playerglobal_rb.swc for @{locale}"/>
+			<mkdir dir="${basedir}/bundles/@{locale}/docs" />
+			<zip destfile="${FLEX_HOME}/frameworks/locale/@{locale}/playerglobal_rb.swc" update="true">
+				<zipfileset dir="${basedir}/bundles/@{locale}/docs" prefix="docs">
+					<include name="*.*"/>
+				</zipfileset>
+			</zip>
+		</sequential>
+	</macrodef>	
+		
+	<macrodef name="bundler">
+	<attribute name="locale"/>
+	<sequential>
+		<bundle locale="@{locale}"/>
+		<fat-swc locale="@{locale}"/>
+	</sequential>
+	</macrodef>
+	<target name="main"/>
+		
+	<target name="other.locales" depends="bundles-clean,bundles" description="Build other locale SWCs"/>
+	
+	<!-- This is a private target for building automation_flashflexkit_rb.swc for various locales. -->
+	<!-- The targets below set the 'locale' parameter and call it with <antcall>. -->
+	<target name="bundles">
+		<bundler locale="en_US"/><!-- American resources -->
+		<bundler locale="de_DE"/><!-- German resources -->
+		<bundler locale="fr_FR"/><!-- French resources -->
+		<bundler locale="ja_JP"/><!-- Japanese resources -->
+		<bundler locale="ru_RU"/><!-- Russian resources -->
+		<bundler locale="zh_CN"/><!-- Simplified Chinese resources -->
+	</target>
+	
+    <target name="bundles-clean">
+        <delete failonerror="false">
+            <fileset dir="${FLEX_HOME}/frameworks/locale">
+                <include name="*/playerglobal_rb.swc"/>
+                <include name="*/playerglobal_rb.swc.incr"/>
+            </fileset>
+        </delete>
+    </target>
+    
+    <!-- This is a private target for building playerglobal_rb.swc for various locales. -->
+    <!-- The targets below set the 'locale' parameter and call it with <antcall>. -->
+    <target name="bundle">
+        <echo message="Compiling frameworks/locale/${locale}/playerglobal_rb.swc"/>
+
+        <taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/lib/flexTasks.jar"/>
+        <compc fork="true" output="${FLEX_HOME}/frameworks/locale/${locale}/playerglobal_rb.swc">
+            <jvmarg line="${compc.jvm.args}"/>
+            <load-config filename="bundle-config.xml" />
+            <arg value="+playerglobal.version=${playerglobal.version}" />
+            <arg value="+env.PLAYERGLOBAL_HOME=${env.PLAYERGLOBAL_HOME}" />
+            <arg value="+locale=${locale}" />
+        </compc>
+    </target>
+  
+</project>

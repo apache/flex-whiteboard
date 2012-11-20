@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<!-- Simple example to demonstrate the Halo Fade effect. -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:mx="library://ns.adobe.com/flex/mx"
+        initialize="Font.registerFont(myriad_font);">
+
+    <fx:Script>
+        <![CDATA[
+
+            import flash.text.Font;
+
+			[Embed("assets/OpenSans-Regular.ttf", fontName="MyOpenSans")]
+			public var opensans_font:Class;
+        ]]>
+    </fx:Script>
+
+    <fx:Declarations>
+        <mx:Fade id="fadeOut" duration="1000" alphaFrom="1.0" alphaTo="0.0"/>
+        <mx:Fade id="fadeIn" duration="1000" alphaFrom="0.0" alphaTo="1.0"/>
+    </fx:Declarations>
+
+    <s:Panel title="Halo Fade Effect Example" width="95%" height="95%">
+        <s:VGroup left="20" right="20" top="20" bottom="20">
+            <s:Label width="100%" color="blue"
+                text="Use the Fade effect to show or hide the text and image. Use an embedded font when applying the Fade effect to text."/>
+
+            <mx:Text text="Product1"
+                fontFamily="MyOpenSans" fontSize="14"
+                visible="{cb1.selected}"
+                hideEffect="{fadeOut}" showEffect="{fadeIn}"/>
+
+            <mx:Image source="@Embed(source='assets/Product1.png')"
+                visible="{cb1.selected}"
+                hideEffect="{fadeOut}" showEffect="{fadeIn}"/>
+
+            <s:CheckBox id="cb1" label="visible" selected="true"/>
+        </s:VGroup>
+    </s:Panel>
+</s:Application>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+<!-- Simple example to demonstrate the Halo Alert control. -->
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+        xmlns:s="library://ns.adobe.com/flex/spark"
+        xmlns:mx="library://ns.adobe.com/flex/mx">
+
+    <fx:Script>
+        <![CDATA[
+            import mx.controls.Alert;
+            import mx.events.CloseEvent;
+
+            // Event handler function uses a static method to show
+            // a pop-up window with the title, message, and requested buttons.
+            private function clickHandler(evt:Event):void {
+                Alert.show("Do you want to save your changes?", "Save Changes", Alert.YES|Alert.NO, this, alertClickHandler);
+            }
+
+            // Event handler function for displaying the selected Alert button.
+            private function alertClickHandler(evt:CloseEvent):void {
+                if (evt.detail == Alert.YES) {
+                    status.text = "You answered Yes";
+                } else {
+                    status.text = "You answered No";
+                }
+            }
+
+            // Event handler function changes the default Button labels and sets the
+            // Button widths. If you later use an Alert with the default Buttons, 
+            // you must reset these values.
+            private function secondClickHandler(evt:Event):void {
+                Alert.buttonWidth = 100;
+                Alert.yesLabel = "Magenta";
+                Alert.noLabel = "Blue";
+                Alert.cancelLabel = "Green";
+
+                Alert.show("Select a color:", "Color Selection", Alert.YES|Alert.NO|Alert.CANCEL, this);
+
+                // Set the labels back to normal:
+                Alert.yesLabel = "Yes";
+                Alert.noLabel = "No";
+            }
+        ]]>
+    </fx:Script>
+
+    <s:Panel title="Halo Alert Control Example"
+            width="75%"
+            horizontalCenter="0" verticalCenter="0">
+        <s:VGroup left="10" right="10" top="10" bottom="10">
+            <s:Label color="blue"
+                    text="Click the button below to display a simple Alert window."/>
+            <s:Button label="Click Me" click="Alert.show('Hello World!', 'Message');"/>
+
+            <mx:HRule width="100%" />
+
+            <s:Label color="blue" 
+                    text="Click the button below to display an Alert window and capture the button pressed by the user."/>
+            <s:Button label="Click Me" click="clickHandler(event);"/>
+            <s:Label id="status" fontWeight="bold"/>
+
+            <mx:HRule width="100%" />
+
+            <s:Label color="blue"
+                    text="Click the button below to display an Alert window that uses custom Button labels."/>
+            <s:Button label="Click Me" click="secondClickHandler(event);"/>
+        </s:VGroup>
+    </s:Panel>
+
+</s:Application>
