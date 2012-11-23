@@ -4,21 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.apache.flex.utilities</groupId>
-        <artifactId>com.apache.flex.utilities.developerToolSuite</artifactId>
+        <groupId>org.apache.flex.utilities</groupId>
+        <artifactId>org.apache.flex.utilities.developerToolSuite</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.apache.flex.utilities</groupId>
-    <artifactId>com.apache.flex.utilities.developerToolSuite.executor-lib</artifactId>
+    <groupId>org.apache.flex.utilities</groupId>
+    <artifactId>org.apache.flex.utilities.developerToolSuite.executor-lib</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <packaging>swc</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.apache.flex.utilities</groupId>
-            <artifactId>com.apache.flex.utilities.developerToolSuite.testHelper-lib</artifactId>
+            <groupId>org.apache.flex.utilities</groupId>
+            <artifactId>org.apache.flex.utilities.developerToolSuite.testHelper-lib</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>

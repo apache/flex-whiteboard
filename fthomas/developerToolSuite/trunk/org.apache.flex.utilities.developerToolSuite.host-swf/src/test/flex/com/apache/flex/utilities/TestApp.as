@@ -1,4 +1,4 @@
-package com.apache.flex.utilities {
+package org.apache.flex.utilities {
 
     public class TestApp {
         [Before]
