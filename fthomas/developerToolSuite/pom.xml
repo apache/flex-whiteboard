@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.apache.flex.utilities</groupId>
+    <artifactId>com.apache.flex.utilities.developerToolSuite</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <properties>
+        <flexmojos.version>6.0-SNAPSHOT</flexmojos.version>
+        <flex.version>4.8.0.1359417</flex.version>
+    </properties>
+
+    <modules>
+        <module>com.apache.flex.utilities.developerToolSuite.testHelper-lib</module>
+        <module>com.apache.flex.utilities.developerToolSuite.executor-lib</module>
+        <module>com.apache.flex.utilities.developerToolSuite.host-swf</module>
+        <module>com.apache.flex.utilities.developerToolSuite.air</module>
+    </modules>
+
+    <build>
+        <sourceDirectory>src/Main/flex</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>${flexmojos.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.adobe.flex</groupId>
+                        <artifactId>compiler</artifactId>
+                        <version>${flex.version}</version>
+                        <type>pom</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- Air SDK dependencies -->
+        <dependency>
+            <groupId>com.adobe.flex.framework.air</groupId>
+            <artifactId>air-framework</artifactId>
+            <version>${flex.version}</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
+</project>
