@@ -22,7 +22,7 @@
                 <artifactId>flexmojos-maven-plugin</artifactId>
                 <version>${flexmojos.version}</version>
                 <configuration>
-                    <storepass>flexmojos</storepass>
+                    <storepass>39#wnetx3tl</storepass>
                 </configuration>
             </plugin>
         </plugins>

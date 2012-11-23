@@ -15,10 +15,10 @@
     -->
 
     <!-- The application identifier string, unique to this application. Required. -->
-    <id>com.apache.flex.utilities.developerToolSuite</id>
+    <id>developerToolSuite</id>
 
     <!-- Used as the filename for the application. Required. -->
-    <filename>Main</filename>
+    <filename>Apache Flex SDK Developer Tool Suite</filename>
 
     <!-- The name that is displayed in the AIR application installer. Optional. -->
     <name>Apache Flex SDK Developer Tool Suite</name>
@@ -36,7 +36,7 @@
     <initialWindow>
         <!-- The Main SWF or HTML file of the application. Required. -->
         <!-- Note: In Flex Builder, the SWF reference is set automatically. -->
-        <content>${output}</content>
+        <content>org.apache.flex.utilities.developerToolSuite.host-swf-1.0-SNAPSHOT.swf</content>
 
         <!-- The title of the Main window. Optional. -->
         <!-- <title></title> -->
@@ -79,10 +79,10 @@
     </initialWindow>
 
     <!-- The subpath of the standard default installation location to use. Optional. -->
-    <!-- <installFolder></installFolder> -->
+    <installFolder>apache/flex/utilities</installFolder>
 
     <!-- The subpath of the Windows Start/Programs menu to use. Optional. -->
-    <!-- <programMenuFolder></programMenuFolder> -->
+    <programMenuFolder>apache/flex/utilities</programMenuFolder>
 
     <!-- The icon the system uses for the application. For at least one resolution,
           specify the path to a PNG file included in the AIR package. Optional. -->
