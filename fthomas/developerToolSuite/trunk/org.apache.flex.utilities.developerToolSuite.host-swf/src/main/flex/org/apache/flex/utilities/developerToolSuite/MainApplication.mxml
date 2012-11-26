@@ -18,7 +18,6 @@ limitations under the License.
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
                        xmlns:s="library://ns.adobe.com/flex/spark"
                        xmlns:mx="library://ns.adobe.com/flex/mx"
-                       xmlns:component="org.apache.flex.utilities.developerToolSuite.component.sample.*" xmlns:local="*"
                        title="Apache Flex Developer Tool Suite">
 
     <fx:Declarations>
@@ -34,19 +33,13 @@ limitations under the License.
     </s:layout>
 
     <s:DropDownList id="localeComboBox"
-                dataProvider="{new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES)}"
-                change="onChangeLocale(event)"
-                selectedItem="{LocaleUtil.getOSLanguage()}"/>
+                    dataProvider="{new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES)}"
+                    change="resourceManager.localeChain = LocaleUtil.getOrderedLocalChain(localeComboBox.selectedItem.data)"
+                    selectedItem="{LocaleUtil.getOSLanguage()}"/>
 
     <s:Label text="{resourceManager.getString('Application','Hello')}"/>
 
     <fx:Script><![CDATA[
         import mx.collections.ArrayCollection;
-
-        private function onChangeLocale(event:Event):void {
-            if (localeComboBox.selectedItem) {
-                resourceManager.localeChain = LocaleUtil.getOrderedLocalChain(localeComboBox.selectedItem.data);
-            }
-        }
         ]]></fx:Script>
 </s:WindowedApplication>

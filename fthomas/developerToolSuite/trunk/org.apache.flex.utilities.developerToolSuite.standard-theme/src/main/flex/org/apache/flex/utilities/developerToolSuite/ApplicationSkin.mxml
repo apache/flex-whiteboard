@@ -21,18 +21,17 @@ limitations under the License.
  title bar, or title bar buttons.
 
  <p>You can either use  system chrome, the FlexChromSkin class, or
- the WindowedApplicationSkin class to define the appearance of
+ the ApplicationSkino define the appearance of
  the WindowedApplication and Window containers.
- To use the WindowedApplicationSkin class with the WindowedApplication container,
+ To use the ApplicatApplicationSkinWindowedApplication container,
  set <code>systemChrome</code> to "none"
  in the application's .xml file, and set the <code>skinClass</code> style to
- spark.skins.spark.WindowedApplicationSkin.
- To use the WindowedApplicationSkin class with the Window container,
+ spark.skins.spark.ApplicationSkin.ApplicationSkinnSkin class wiApplicationSkin,
  set the <code>Window.systemChrome</code> property to "none",
  and set the <code>skinClass</code> style to
- spark.skins.spark.WindowedApplicationSkin.</p>
+ spark.skins.spark.ApplicationSkin.</p>
 
- @see spark.components.WindowedApplication
+ @see sparApplicationSkinplication
 
  @langversion 3.0
  @playerversion Flash 10

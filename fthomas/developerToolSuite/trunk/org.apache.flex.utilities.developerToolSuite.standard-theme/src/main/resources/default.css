@@ -20,5 +20,5 @@ limitations under the License.
 
 asf|MainApplication {
     backgroundColor: #DDDDDD;
-    skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.WindowedApplicationSkin");
+    skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.ApplicationSkin");
 }
