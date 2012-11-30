@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>${appName}</title>
+    
+    <script type="text/javascript" src="/apacheFlex.js"></script>
+    <script type="text/javascript" src="/${appName}.js"></script>
+</head>
+<body onload="new ${appName}().start()">
+</body>
+</html>
