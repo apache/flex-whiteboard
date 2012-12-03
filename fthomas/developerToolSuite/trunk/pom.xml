@@ -28,6 +28,7 @@ limitations under the License.
     <properties>
         <flexmojos.version>6.0-SNAPSHOT</flexmojos.version>
         <flex.version>4.8.0.1359417</flex.version>
+        <flex.debug>true</flex.debug>
     </properties>
 
     <modules>
@@ -42,6 +43,16 @@ limitations under the License.
 
     <build>
         <sourceDirectory>src/main/flex</sourceDirectory>
+        <testSourceDirectory>src/test/flex</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>net.flexmojos.oss</groupId>
@@ -52,7 +63,18 @@ limitations under the License.
                     <storepass/>
                     <targetPlayer>11.1</targetPlayer>
                     <swfVersion>14</swfVersion>
-                    <debug>true</debug>
+                    <debug>${flex.debug}</debug>
+                    <defines>
+                        <property>
+                            <name>CONFIG::debugging</name>
+                            <value>${flex.debug}</value>
+                        </property>
+                        <property>
+                            <name>CONFIG::versionNumber</name>
+                            <value>'${project.version}'</value>
+                        </property>
+                    </defines>
+                    <adlCommand>D://SDKsSources/air/3.5/bin/adl.exe</adlCommand>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -66,6 +88,13 @@ limitations under the License.
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>ooo-maven-repo</id>
+            <url>http://ooo-maven.googlecode.com/hg/repository</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- Air SDK dependencies -->
         <dependency>
@@ -73,6 +102,42 @@ limitations under the License.
             <artifactId>air-framework</artifactId>
             <version>${flex.version}</version>
             <type>pom</type>
+        </dependency>
+        <!-- parsley -->
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>spicelib-reflect</artifactId>
+            <version>3.0.0</version>
+            <type>swc</type>
+            <scope>internal</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>spicelib-util</artifactId>
+            <version>3.1.0</version>
+            <type>swc</type>
+            <scope>internal</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>spicelib-commands</artifactId>
+            <version>3.1.0</version>
+            <type>swc</type>
+            <scope>internal</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>parsley-core</artifactId>
+            <version>3.0.0</version>
+            <type>swc</type>
+            <scope>internal</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>parsley-flex</artifactId>
+            <version>3.0.0</version>
+            <type>swc</type>
+            <scope>internal</scope>
         </dependency>
     </dependencies>
 

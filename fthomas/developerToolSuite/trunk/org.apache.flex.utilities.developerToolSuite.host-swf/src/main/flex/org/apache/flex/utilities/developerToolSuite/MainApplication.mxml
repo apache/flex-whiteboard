@@ -18,10 +18,13 @@ limitations under the License.
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
                        xmlns:s="library://ns.adobe.com/flex/spark"
                        xmlns:mx="library://ns.adobe.com/flex/mx"
-                       title="Apache Flex Developer Tool Suite">
+                       xmlns:spicefactory="http://www.spicefactory.org/parsley"
+                       title="Apache Flex Developer Tool Suite"
+                       menu="{applicationMenu}">
 
     <fx:Declarations>
-        <!-- Placer ici les éléments non visuels (services et objets de valeur, par exemple). -->
+        <spicefactory:ContextBuilder config="{ApplicationContext}"/>
+        <spicefactory:Configure/>
     </fx:Declarations>
 
     <fx:Metadata>
@@ -32,14 +35,55 @@ limitations under the License.
         <s:VerticalLayout/>
     </s:layout>
 
+
     <s:DropDownList id="localeComboBox"
                     dataProvider="{new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES)}"
-                    change="resourceManager.localeChain = LocaleUtil.getOrderedLocalChain(localeComboBox.selectedItem.data)"
-                    selectedItem="{LocaleUtil.getOSLanguage()}"/>
+                    change="localeComboBox_changeHandler(event)"/>
 
     <s:Label text="{resourceManager.getString('Application','Hello')}"/>
 
     <fx:Script><![CDATA[
         import mx.collections.ArrayCollection;
+
+        import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingsMessage;
+        import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
+
+        import spark.events.IndexChangeEvent;
+
+        [Inject]
+        [Bindable]
+        public var applicationMenu:ApplicationMenu;
+
+        [Inject]
+        public var applicationSettings:SettingModel;
+
+        [MessageDispatcher]
+        public var dispatch:Function;
+
+        private function localeComboBox_changeHandler(event:IndexChangeEvent):void {
+            resourceManager.localeChain = LocaleUtil.getOrderedLocalChain(localeComboBox.selectedItem.data);
+
+            applicationSettings.locale = localeComboBox.selectedItem.data;
+            var msg:SaveSettingsMessage = new SaveSettingsMessage(applicationSettings);
+            dispatch(msg);
+        }
+
+        [Init]
+        // Without that, the menu is not shown until the first resize or desactivate/activate.
+        //TODO: Fix the bug.
+        public function init():void {
+            minimize();
+            restore();
+
+            dispatch(new InitApplicationMessage());
+        }
+
+        [MessageHandler]
+        public function applicationReadyHandler(msg:ApplicationReadyMessage):void {
+            localeComboBox.selectedItem = LocaleUtil.getDefaultLanguage(applicationSettings.locale);
+        }
         ]]></fx:Script>
 </s:WindowedApplication>
