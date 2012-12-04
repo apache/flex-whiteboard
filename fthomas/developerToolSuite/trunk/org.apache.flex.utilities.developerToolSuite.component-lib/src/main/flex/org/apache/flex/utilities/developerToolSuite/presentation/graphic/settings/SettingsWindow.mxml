@@ -15,15 +15,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009"
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
          xmlns:s="library://ns.adobe.com/flex/spark"
          xmlns:mx="library://ns.adobe.com/flex/mx"
          xmlns:parsley="http://www.spicefactory.org/parsley"
          xmlns:settings="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.*"
          title="{resourceManager.getString('Application', 'SETTINGS')}"
-         width="640" height="480"
+         width="800" height="480"
          addedToStage="addedToStageHandler(event)"
-         removedFromStage="removedFromStageHandler(event)">
+         removedFromStage="removedFromStageHandler(event)"
+         close="PopUpManager.removePopUp(this)">
 
     <s:layout>
         <s:VerticalLayout/>
@@ -32,7 +33,7 @@ limitations under the License.
     <s:TabBar dataProvider="{settingsViewStack}"/>
 
     <mx:ViewStack id="settingsViewStack" height="100%" width="100%">
-        <s:NavigatorContent id="generalSettingsContent" label="{resourceManager.getString('SettingsPanel', 'GENERAL')}">
+        <s:NavigatorContent id="generalSettingsContent" label="{resourceManager.getString('SettingsWindow', 'GENERAL')}">
             <settings:GeneralSettings />
         </s:NavigatorContent>
     </mx:ViewStack>
@@ -42,14 +43,26 @@ limitations under the License.
         <s:layout>
             <s:HorizontalLayout horizontalAlign="center" paddingBottom="16"/>
         </s:layout>
-        <s:Button label="{resourceManager.getString('SettingsPanel', 'CLOSE')}"
+        <s:Button label="{resourceManager.getString('SettingsWindow', 'CLOSE')}"
                   click="PopUpManager.removePopUp(this)"/>
     </s:Group>
 
     <fx:Script><![CDATA[
         import mx.core.FlexGlobals;
+        import mx.core.IFlexDisplayObject;
         import mx.events.ResizeEvent;
         import mx.managers.PopUpManager;
+
+        import org.spicefactory.parsley.core.context.Context;
+
+        public static function show(context:Context,modal:Boolean = true):SettingsWindow {
+            var window:SettingsWindow = new SettingsWindow();
+
+            context.viewManager.addViewRoot(window);
+            PopUpManager.addPopUp(window, FlexGlobals.topLevelApplication as DisplayObject, modal);
+            PopUpManager.centerPopUp(window);
+            return window;
+        }
 
         private function addedToStageHandler(event:Event):void {
             FlexGlobals.topLevelApplication.addEventListener(ResizeEvent.RESIZE, resizeHandler);
@@ -63,4 +76,4 @@ limitations under the License.
             PopUpManager.centerPopUp(this);
         }
         ]]></fx:Script>
-</s:Panel>
+</s:TitleWindow>

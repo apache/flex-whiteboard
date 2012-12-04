@@ -21,7 +21,7 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
     import mx.managers.PopUpManager;
     import mx.resources.ResourceManager;
 
-    import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsPanel;
+    import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsWindow;
     import org.spicefactory.parsley.core.context.Context;
 
     public class GeneralMenu {
@@ -49,10 +49,7 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
         }
 
         public function openSettings(item:Object):void {
-            var settingsWindow:SettingsPanel = new SettingsPanel();
-            context.viewManager.addViewRoot(settingsWindow);
-            PopUpManager.addPopUp(settingsWindow, FlexGlobals.topLevelApplication as DisplayObject, true);
-            PopUpManager.centerPopUp(settingsWindow);
+            SettingsWindow.show(context);
         }
     }
 }

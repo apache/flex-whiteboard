@@ -34,7 +34,7 @@ limitations under the License.
 
     <fx:Metadata>
         [ResourceBundle("Application")]
-        [ResourceBundle("SettingsPanel")]
+        [ResourceBundle("SettingsWindow")]
     </fx:Metadata>
 
     <s:layout>
