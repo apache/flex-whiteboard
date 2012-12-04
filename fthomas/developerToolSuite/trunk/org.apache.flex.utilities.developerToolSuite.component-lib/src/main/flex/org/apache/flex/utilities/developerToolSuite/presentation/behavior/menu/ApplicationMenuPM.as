@@ -15,19 +15,14 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu {
-    import flash.events.Event;
-    import flash.net.URLLoader;
-    import flash.net.URLRequest;
-    import flash.net.getClassByAlias;
     import flash.utils.getDefinitionByName;
 
-    import mx.events.FlexNativeMenuEvent;
-
-    import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu;
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ProjectMenu;
+    import org.spicefactory.parsley.core.context.Context;
+    import org.spicefactory.parsley.core.context.DynamicObject;
 
-    public class ApplicationMenuPM implements IApplicationMenuPM{
+    public class ApplicationMenuPM implements IApplicationMenuPM {
 
         private static var linkageEnforcer:Array = [ProjectMenu, GeneralMenu];
 
@@ -43,6 +38,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu 
                 <menuitem menuClass='org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu' label='QUIT' action='quit'/>
             </menuitem>
         </root>;
+
+        [Inject]
+        public var context:Context;
 
         public function get dataProvider():XML {
             return menuXml;
@@ -64,7 +62,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu 
 
         public function doMenuAction(item:Object):void {
             var menuItemClass:Class = getDefinitionByName(item.@menuClass) as Class;
-            menuItemClass[item.@action](item);
+            var dynamicObject:DynamicObject = context.createDynamicObjectByType(menuItemClass);
+            var instance:Object = dynamicObject.instance;
+            instance[item.@action](item);
         }
     }
 }

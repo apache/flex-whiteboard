@@ -19,12 +19,13 @@ limitations under the License.
            xmlns:parsley="http://www.spicefactory.org/parsley"
            xmlns:menu="org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu.*"
            xmlns:menuGraphic="org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.*"
+           xmlns:database="org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.*"
            xmlns:domain="org.apache.flex.utilities.developerToolSuite.executor.domain.*"
-           xmlns:database="org.apache.flex.utilities.developerToolSuite.executor.database.*">
+           xmlns:settingspanel="org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel.*">
 
     <fx:Declarations>
         <menuGraphic:ApplicationMenu/>
-        <menuGraphic:GeneralMenu/>
+        <parsley:DynamicObject type="{GeneralMenu}"/>
 
         <database:ApplicationDB/>
 
@@ -40,14 +41,15 @@ limitations under the License.
         </parsley:MapCommand>
 
         <parsley:MapCommand type="{MenuActionCommand}"/>
-        <parsley:MapCommand type="{SaveSettingsCommand}"/>
     </fx:Declarations>
 
     <fx:Script><![CDATA[
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.InitDBCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.command.MenuActionCommand;
+        import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu;
         ]]></fx:Script>
 </fx:Object>

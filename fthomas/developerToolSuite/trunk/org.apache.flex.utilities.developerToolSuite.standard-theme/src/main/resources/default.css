@@ -22,3 +22,7 @@ asf|MainApplication {
     backgroundColor: #DDDDDD;
     skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.ApplicationSkin");
 }
+
+s|Panel {
+    contentBackgroundColor: #DDDDDD;
+}

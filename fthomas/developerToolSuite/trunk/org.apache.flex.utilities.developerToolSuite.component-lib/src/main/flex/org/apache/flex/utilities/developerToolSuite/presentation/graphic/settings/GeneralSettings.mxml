@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<mx:Grid xmlns:fx="http://ns.adobe.com/mxml/2009"
+         xmlns:s="library://ns.adobe.com/flex/spark"
+         xmlns:mx="library://ns.adobe.com/flex/mx"
+         xmlns:parsley="http://www.spicefactory.org/parsley"
+         width="100%" height="100%">
+
+
+    <fx:Declarations>
+        <parsley:Configure/>
+    </fx:Declarations>
+
+    <mx:GridRow width="100%" horizontalAlign="center">
+        <mx:GridItem>
+            <s:BorderContainer>
+                <s:layout>
+                    <s:HorizontalLayout verticalAlign="middle" paddingLeft="8" paddingRight="8" paddingTop="8" paddingBottom="8" gap="16"/>
+                </s:layout>
+                <s:Label id="languageLabel" text="{resourceManager.getString('SettingsPanel', 'LANGUAGE')}"/>
+                <s:DropDownList id="languageComboBox"
+                                change="localeComboBox_changeHandler(event)"/>
+            </s:BorderContainer>
+        </mx:GridItem>
+    </mx:GridRow>
+
+    <fx:Script><![CDATA[
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
+        import org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel.IGeneralSettingsPM;
+
+        import spark.events.IndexChangeEvent;
+
+        [MessageDispatcher]
+        public var dispatch:Function;
+
+        [Inject]
+        public var model:IGeneralSettingsPM;
+
+        [Init]
+        public function init():void {
+            languageComboBox.dataProvider = model.availableLanguages;
+            languageComboBox.selectedItem = model.currentLanguage;
+        }
+
+        private function localeComboBox_changeHandler(event:IndexChangeEvent):void {
+            dispatch(new ChangeLanguageMessage(languageComboBox.selectedItem.data));
+        }
+        ]]></fx:Script>
+</mx:Grid>

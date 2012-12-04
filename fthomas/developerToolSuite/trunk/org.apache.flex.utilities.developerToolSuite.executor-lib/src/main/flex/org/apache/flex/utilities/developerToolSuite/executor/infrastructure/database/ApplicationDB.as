@@ -14,7 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.database {
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database {
     import flash.data.SQLConnection;
     import flash.data.SQLResult;
     import flash.data.SQLStatement;
@@ -24,11 +24,17 @@ package org.apache.flex.utilities.developerToolSuite.executor.database {
     import flash.filesystem.File;
     import flash.net.Responder;
 
+    import mx.logging.ILogger;
+    import mx.utils.ObjectUtil;
+
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class ApplicationDB {
+
+        private static var LOG:ILogger = LogUtil.getLogger(ApplicationDB);
 
         public static const DATABASE_NAME:String = "DTSDB.db";
         private static var _conn:SQLConnection;
@@ -42,6 +48,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.database {
             if (DBReady)
                 return;
 
+            LOG.debug("Connecting async DB: " + ApplicationDB.DATABASE_NAME);
             _conn = new SQLConnection();
 
             _conn.addEventListener(SQLEvent.OPEN, openHandler);
@@ -55,18 +62,18 @@ package org.apache.flex.utilities.developerToolSuite.executor.database {
         }
 
         public function close():void {
+            LOG.debug("Closing async DB: " + ApplicationDB.DATABASE_NAME);
             _conn.close();
             DBReady = false;
         }
 
         private function openHandler(event:SQLEvent):void {
             DBReady = true;
-            trace("the database was opened successfully");
+            LOG.debug("the database was opened successfully");
         }
 
         private function errorHandler(event:SQLErrorEvent):void {
-            trace("Error message:", event.error.message);
-            trace("Details:", event.error.details);
+            LOG.error("Error while opening the DB: " + ObjectUtil.toString(event.error));
         }
 
         public function executeSqlStatement(stmt:SQLStatement, responder:Responder):void {

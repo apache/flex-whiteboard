@@ -22,10 +22,17 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import flash.errors.SQLError;
     import flash.filesystem.File;
 
+    import mx.logging.ILogger;
+    import mx.utils.ObjectUtil;
+
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
-    import org.apache.flex.utilities.developerToolSuite.executor.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class InitDBCommand {
+
+        private static var LOG:ILogger = LogUtil.getLogger(InitDBCommand);
+
         private static var _conn:SQLConnection;
 
         private var createSettingsTableSql:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
@@ -38,41 +45,49 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             var folder:File = File.applicationStorageDirectory;
             var dbFile:File = folder.resolvePath(ApplicationDB.DATABASE_NAME);
 
+            LOG.debug("Connecting DB: " + ApplicationDB.DATABASE_NAME);
             _conn.open(dbFile);
 
             if (!settingsTableCreated())
                 buildDatabaseTables();
 
             _conn.close();
+            LOG.debug("Closing DB: " + ApplicationDB.DATABASE_NAME);
 
         }
 
         private function settingsTableCreated():Boolean {
 
+            LOG.debug("Trying create DB schema");
             try {
                 _conn.loadSchema();
             } catch (err:SQLError) {
+                LOG.debug("Schema wasn't already created");
                 return false;
             }
             var schema:SQLSchemaResult = _conn.getSchemaResult();
 
             for each(var currentTable:SQLTableSchema in schema.tables)
-                if (currentTable.name == "settings")
+                if (currentTable.name == "settings") {
+                    LOG.debug("Schema was already created");
                     return true;
+                }
 
+            LOG.debug("Schema wasn't already created");
             return false;
         }
 
         private function buildDatabaseTables():void {
             try {
+                LOG.debug("Start schema creation");
                 _conn.begin();
                 createSettingsTable();
                 insertSettingsTable();
                 _conn.commit();
+                LOG.debug("Schema creation ok");
             } catch (err:SQLError) {
+                LOG.error("Error during schema creation: " + ObjectUtil.toString(err) + " : Rolling back !");
                 _conn.rollback();
-                trace("Error message:", err.message);
-                trace("Details:", err.details);
             };
 
             function createSettingsTable():void {
@@ -84,6 +99,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
 
             function insertSettingsTable():void {
+                LOG.debug("Inserting data");
                 var stmtInsertSettingsTable:SQLStatement;
                 stmtInsertSettingsTable = new SQLStatement();
                 stmtInsertSettingsTable.sqlConnection = _conn;

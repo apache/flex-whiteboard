@@ -18,40 +18,42 @@ limitations under the License.
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
                        xmlns:s="library://ns.adobe.com/flex/spark"
                        xmlns:mx="library://ns.adobe.com/flex/mx"
-                       xmlns:spicefactory="http://www.spicefactory.org/parsley"
+                       xmlns:parsley="http://www.spicefactory.org/parsley"
                        title="Apache Flex Developer Tool Suite"
-                       menu="{applicationMenu}">
+                       menu="{applicationMenu}"
+                       width="800" height="600">
 
     <fx:Declarations>
-        <spicefactory:ContextBuilder config="{ApplicationContext}"/>
-        <spicefactory:Configure/>
+        <parsley:ContextBuilder>
+            <parsley:ViewSettings autowireComponents="true"/>
+            <parsley:FlexConfig type="{ApplicationContext}"/>
+            <parsley:FlexConfig type="{SettingsContext}"/>
+        </parsley:ContextBuilder>
+        <parsley:Configure/>
     </fx:Declarations>
 
     <fx:Metadata>
         [ResourceBundle("Application")]
+        [ResourceBundle("SettingsPanel")]
     </fx:Metadata>
 
     <s:layout>
         <s:VerticalLayout/>
     </s:layout>
 
-
-    <s:DropDownList id="localeComboBox"
-                    dataProvider="{new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES)}"
-                    change="localeComboBox_changeHandler(event)"/>
-
-    <s:Label text="{resourceManager.getString('Application','Hello')}"/>
+    <s:Label text="{resourceManager.getString('Application','HELLO')}"/>
 
     <fx:Script><![CDATA[
-        import mx.collections.ArrayCollection;
+        import mx.logging.Log;
+        import mx.logging.LogEventLevel;
+        import mx.logging.targets.TraceTarget;
 
         import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingsMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+        import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
-
-        import spark.events.IndexChangeEvent;
 
         [Inject]
         [Bindable]
@@ -63,27 +65,40 @@ limitations under the License.
         [MessageDispatcher]
         public var dispatch:Function;
 
-        private function localeComboBox_changeHandler(event:IndexChangeEvent):void {
-            resourceManager.localeChain = LocaleUtil.getOrderedLocalChain(localeComboBox.selectedItem.data);
-
-            applicationSettings.locale = localeComboBox.selectedItem.data;
-            var msg:SaveSettingsMessage = new SaveSettingsMessage(applicationSettings);
-            dispatch(msg);
-        }
-
         [Init]
-        // Without that, the menu is not shown until the first resize or desactivate/activate.
-        //TODO: Fix the bug.
         public function init():void {
+            // Without that, the menu is not shown until the first resize or desactivate/activate but that's an ugly hack.
+            // TODO: Fix the bug.
             minimize();
             restore();
 
+            addLog();
+
+            LogUtil.getLogger(this).info('Application initialization');
             dispatch(new InitApplicationMessage());
         }
 
         [MessageHandler]
-        public function applicationReadyHandler(msg:ApplicationReadyMessage):void {
-            localeComboBox.selectedItem = LocaleUtil.getDefaultLanguage(applicationSettings.locale);
+        public function applicationReady(msg:ApplicationReadyMessage):void {
+            LogUtil.getLogger(this).info('Application ready');
+        }
+
+        private function addLog():void {
+            var parsleyLogger:TraceTarget = new TraceTarget();
+            parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
+            parsleyLogger.level = LogEventLevel.WARN;
+            parsleyLogger.includeCategory = true;
+            parsleyLogger.includeLevel = true;
+            parsleyLogger.fieldSeparator = " -> ";
+            Log.addTarget(parsleyLogger);
+
+            var devLogger:TraceTarget = new TraceTarget();
+            devLogger.filters = ["org.apache.flex.utilities.developerToolSuite.*"];
+            devLogger.level = LogEventLevel.ALL;
+            devLogger.includeCategory = true;
+            devLogger.includeLevel = true;
+            devLogger.fieldSeparator = " -> ";
+            Log.addTarget(devLogger);
         }
         ]]></fx:Script>
 </s:WindowedApplication>

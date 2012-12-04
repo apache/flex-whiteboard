@@ -20,10 +20,18 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import flash.errors.SQLError;
     import flash.net.Responder;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.database.ApplicationDB;
+    import mx.logging.ILogger;
+
+    import mx.logging.Log;
+    import mx.utils.ObjectUtil;
+
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class AbstractDBCommand {
+
+        protected var log:ILogger = LogUtil.getLogger(this);
 
         [Inject]
         public var db:ApplicationDB;
@@ -37,6 +45,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         protected var stmt:SQLStatement = new SQLStatement();
 
         protected function executeAsync():void {
+            log.debug("Executing Command")
             if (!db.DBReady)
                 db.connect();
             else
@@ -55,10 +64,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         protected function result(result:SQLResult):void {
+            log.debug("Ending Command with result: " + ObjectUtil.toString(result.data));
             callback(result.complete);
         }
 
         protected function error(error:SQLError):void {
+            log.error("Ending Command with error: " + ObjectUtil.toString(error));
             callback(error.details);
         }
     }

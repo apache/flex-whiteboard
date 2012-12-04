@@ -15,14 +15,22 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
+    import flash.display.DisplayObject;
+
+    import mx.core.FlexGlobals;
+    import mx.managers.PopUpManager;
     import mx.resources.ResourceManager;
 
-    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
+    import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsPanel;
+    import org.spicefactory.parsley.core.context.Context;
 
     public class GeneralMenu {
 
         [MessageDispatcher]
-        private var dispatch:Function;
+        public var dispatch:Function;
+
+        [Inject]
+        public var context:Context;
 
         private static function getLocalizedLabel(label:String):String {
             return ResourceManager.getInstance().getString('Application', label);
@@ -38,6 +46,13 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
 
         function GeneralMenu():void {
 
+        }
+
+        public function openSettings(item:Object):void {
+            var settingsWindow:SettingsPanel = new SettingsPanel();
+            context.viewManager.addViewRoot(settingsWindow);
+            PopUpManager.addPopUp(settingsWindow, FlexGlobals.topLevelApplication as DisplayObject, true);
+            PopUpManager.centerPopUp(settingsWindow);
         }
     }
 }

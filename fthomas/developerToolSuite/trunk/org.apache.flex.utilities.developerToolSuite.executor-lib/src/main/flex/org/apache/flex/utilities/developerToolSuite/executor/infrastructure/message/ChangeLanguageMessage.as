@@ -14,10 +14,17 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.domain {
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
+    public class ChangeLanguageMessage {
 
-    [Bindable]
-    public class SettingModel {
-        public var locale:String;
+        private var _locale:String;
+
+        public function ChangeLanguageMessage(locale:String) {
+            this._locale = locale;
+        }
+
+        public function get locale():String {
+            return _locale;
+        }
     }
 }

@@ -14,19 +14,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
+package org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel {
+    import mx.collections.ArrayCollection;
+
+    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
 
-    public class SaveSettingsMessage {
+    public class GeneralSettingsPM implements IGeneralSettingsPM {
 
-        private var _settings:SettingModel;
+        [Inject]
+        public var settings:SettingModel;
 
-        public function SaveSettingsMessage(settings:SettingModel) {
-            this._settings = settings;
+        private var _availableLanguages:ArrayCollection;
+
+        private var _currentLanguage:Object;
+
+        public function get availableLanguages():ArrayCollection {
+            return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
         }
 
-        public function get settings():SettingModel {
-            return _settings;
+        public function get currentLanguage():Object {
+            return LocaleUtil.getDefaultLanguage(settings.locale);
         }
     }
 }

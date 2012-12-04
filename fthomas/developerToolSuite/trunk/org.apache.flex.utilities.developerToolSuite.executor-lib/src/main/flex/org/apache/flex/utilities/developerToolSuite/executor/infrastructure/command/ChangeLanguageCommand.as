@@ -15,26 +15,28 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingsMessage;
-    import org.spicefactory.lib.reflect.ClassInfo;
-    import org.spicefactory.lib.reflect.Property;
+    import mx.resources.ResourceManager;
 
-    public class SaveSettingsCommand extends AbstractDBCommand {
+    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
 
-        private var _msg:SaveSettingsMessage;
+    public class ChangeLanguageCommand extends AbstractDBCommand {
 
-        public function execute(msg:SaveSettingsMessage):void {
+        private var _msg:ChangeLanguageMessage;
+
+        [Inject]
+        public var settings:SettingModel;
+
+        public function execute(msg:ChangeLanguageMessage):void {
             this._msg = msg;
             executeAsync();
         }
 
         override protected function prepareSql():void {
-            var classInfo:ClassInfo = ClassInfo.forInstance(_msg.settings);
-            sql = "";
-            for (var i:uint; i < classInfo.getProperties().length; i++) {
-                var property:Property = classInfo.getProperties()[i] as Property;
-                sql += "UPDATE settings SET value='" + _msg.settings[property.name] + "' WHERE name='" + property.name + "';";
-            }
+            ResourceManager.getInstance().localeChain = LocaleUtil.getOrderedLocalChain(_msg.locale);
+            settings.locale = _msg.locale;
+            sql = "UPDATE settings SET value='" + _msg.locale + "' WHERE name='locale';";
 
             super.prepareSql();
         }

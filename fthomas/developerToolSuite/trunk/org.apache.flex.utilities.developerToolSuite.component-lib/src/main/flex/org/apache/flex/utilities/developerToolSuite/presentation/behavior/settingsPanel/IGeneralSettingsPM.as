@@ -14,10 +14,14 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.domain {
+package org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel {
+    import mx.collections.ArrayCollection;
 
-    [Bindable]
-    public class SettingModel {
-        public var locale:String;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+
+    public interface IGeneralSettingsPM {
+        function get availableLanguages():ArrayCollection;
+
+        function get currentLanguage():Object;
     }
 }
