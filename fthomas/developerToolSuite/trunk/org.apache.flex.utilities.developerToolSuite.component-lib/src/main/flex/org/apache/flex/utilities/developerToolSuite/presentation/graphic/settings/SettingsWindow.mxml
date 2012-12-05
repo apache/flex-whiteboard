@@ -21,7 +21,7 @@ limitations under the License.
          xmlns:parsley="http://www.spicefactory.org/parsley"
          xmlns:settings="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.*"
          title="{resourceManager.getString('Application', 'SETTINGS')}"
-         width="800" height="480"
+         width="100%" height="480"
          addedToStage="addedToStageHandler(event)"
          removedFromStage="removedFromStageHandler(event)"
          close="PopUpManager.removePopUp(this)">

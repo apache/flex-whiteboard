@@ -14,13 +14,25 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.domain {
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
 
-    [Bindable]
-    public class SettingModel {
-        public var locale:String;
-        public var JAVA_HOME:String;
-        public var ANT_HOME:String;
-        public var MAVEN_HOME:String;
+    public class SaveSettingMessage {
+
+        private var _name:String;
+        private var _value:String;
+
+        public function SaveSettingMessage(name:String, value:String) {
+            _name = name;
+            _value = value;
+        }
+
+        public function get name():String {
+            return _name;
+        }
+
+        public function get value():String {
+            return _value;
+        }
     }
 }

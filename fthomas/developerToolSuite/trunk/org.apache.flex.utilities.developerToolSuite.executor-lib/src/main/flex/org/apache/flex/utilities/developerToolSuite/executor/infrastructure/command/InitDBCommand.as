@@ -35,8 +35,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private static var _conn:SQLConnection;
 
-        private var createSettingsTableSql:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
-        private var insertSettingsTableSql:String = "INSERT INTO settings (name, value) VALUES ('locale', '" + LocaleUtil.getDefaultLanguage().data + "');";
+        private static const SETTINGS_TABLE_SQL:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
+        private static var settingsDataSql:String;
 
         public function execute():void {
             _conn = new SQLConnection();
@@ -94,17 +94,25 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 var stmtCreateSettingsTable:SQLStatement;
                 stmtCreateSettingsTable = new SQLStatement();
                 stmtCreateSettingsTable.sqlConnection = _conn;
-                stmtCreateSettingsTable.text = createSettingsTableSql;
+                stmtCreateSettingsTable.text = SETTINGS_TABLE_SQL;
                 stmtCreateSettingsTable.execute();
             }
 
             function insertSettingsTable():void {
                 LOG.debug("Inserting data");
+                prepareData();
                 var stmtInsertSettingsTable:SQLStatement;
                 stmtInsertSettingsTable = new SQLStatement();
                 stmtInsertSettingsTable.sqlConnection = _conn;
-                stmtInsertSettingsTable.text = insertSettingsTableSql;
+                stmtInsertSettingsTable.text = settingsDataSql;
                 stmtInsertSettingsTable.execute();
+            }
+
+            function prepareData():void {
+                settingsDataSql = "INSERT INTO 'settings' SELECT '1' AS 'id', 'locale' AS 'name', '" + LocaleUtil.getDefaultLanguage().data + "' AS 'value' ";
+                settingsDataSql += "UNION SELECT '2', 'JAVA_HOME', '' ";
+                settingsDataSql += "UNION SELECT '3', 'ANT_HOME', '' ";
+                settingsDataSql += "UNION SELECT '4', 'MAVEN_HOME', '';";
             }
         }
     }

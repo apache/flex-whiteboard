@@ -14,39 +14,31 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel {
-    import mx.collections.ArrayCollection;
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
+    import mx.resources.ResourceManager;
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
 
-    public class GeneralSettingsPM implements IGeneralSettingsPM {
+    public class SaveSettingCommand extends AbstractDBCommand {
+
+        private var _msg:SaveSettingMessage;
 
         [Inject]
         public var settings:SettingModel;
 
-        private var _availableLanguages:ArrayCollection;
-
-        private var _currentLanguage:Object;
-
-        public function get availableLanguages():ArrayCollection {
-            return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
+        public function execute(msg:SaveSettingMessage):void {
+            this._msg = msg;
+            executeAsync();
         }
 
-        public function get currentLanguage():Object {
-            return LocaleUtil.getDefaultLanguage(settings.locale);
-        }
+        override protected function prepareSql():void {
+            settings[_msg.name] = _msg.value;
+            sql = "UPDATE settings SET value='" + _msg.value + "' WHERE name='" + _msg.name +"';";
 
-        public function get javaHomePath():String {
-            return settings.JAVA_HOME;
-        }
-
-        public function get antHomePath():String {
-            return settings.ANT_HOME;
-        }
-
-        public function get mavenHomePath():String {
-            return settings.MAVEN_HOME;
+            super.prepareSql();
         }
     }
 }

@@ -23,6 +23,10 @@ asf|MainApplication {
     skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.ApplicationSkin");
 }
 
-s|TitleWindow {
-    contentBackgroundColor: #DDDDDD;
+.stackedForm {
+    skinClass: ClassReference("spark.skins.spark.StackedFormSkin");
+}
+
+.stackedFormItem {
+    skinClass: ClassReference("spark.skins.spark.StackedFormItemSkin");
 }

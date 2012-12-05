@@ -18,11 +18,11 @@
 
 -->
 <spark:BorderContainerSkin xmlns:fx="http://ns.adobe.com/mxml/2009"
-                            xmlns:s="library://ns.adobe.com/flex/spark"
-                            xmlns:spark="spark.skins.spark.*"
-                            implements="mx.core.IRectangularBorder"
-                            minWidth="120" minHeight="40"
-                            alpha.disabled="0.5">
+                           xmlns:s="library://ns.adobe.com/flex/spark"
+                           xmlns:spark="spark.skins.spark.*"
+                           implements="mx.core.IRectangularBorder"
+                           minWidth="120" minHeight="40"
+                           alpha.disabled="0.5">
 
     <fx:Metadata>
         [HostComponent("org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.Frame")]
@@ -37,8 +37,6 @@
         <![CDATA[
         import mx.core.EdgeMetrics;
         import mx.core.IVisualElement;
-
-        import org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.Frame;
 
         import spark.components.BorderContainer;
 
@@ -101,10 +99,10 @@
          *  @private
          */
         protected function labelChangeChangeHandler(event:Event):void {
-            // Ensure empty label is not included in layout else
-            // a gap between icon and label would be applied.
+            // Ensure empty label is not included in layout.
             if (labelDisplay) {
-                IVisualElement(labelDisplay).includeInLayout = labelDisplay.text != null && labelDisplay.text.length;
+                IVisualElement(labelBackground).includeInLayout = IVisualElement(labelDisplay).includeInLayout = labelDisplay.text != null
+                        && labelDisplay.text.length && Frame(hostComponent).showLabel;
             }
         }
 
@@ -161,14 +159,14 @@
 
         override protected function commitProperties():void {
             super.commitProperties();
-            labelBackground.visible = labelDisplay.visible = Frame(hostComponent).showLabel;
+            labelBackground.visible = labelDisplay.visible = labelDisplay.text != null && labelDisplay.text.length && Frame(hostComponent).showLabel;
         }
 
         override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
             super.updateDisplayList(unscaledWidth, unscaledHeight);
 
-            if (labelDisplay && labelDisplay.visible) {
-                labelDisplay.y = 0;
+            if (labelDisplay && labelDisplay.includeInLayout) {
+                labelDisplay.y = -4;
                 labelDisplay.x = (hostComponent.width - labelDisplay.width) / 2;
 
                 labelBackground.x = labelDisplay.x - 2;
@@ -190,7 +188,7 @@
 
     <!-- border -->
     <!--- @private -->
-    <s:Rect left="4" right="4" top="4" bottom="4" radiusX="0" id="border">
+    <s:Rect left="0" right="0" top="0" bottom="0" radiusX="0" id="border">
         <s:stroke>
             <!--- @private -->
             <s:SolidColorStroke id="borderStroke"/>

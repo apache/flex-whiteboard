@@ -14,13 +14,25 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.domain {
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
+    import mx.rpc.Responder;
 
-    [Bindable]
-    public class SettingModel {
-        public var locale:String;
-        public var JAVA_HOME:String;
-        public var ANT_HOME:String;
-        public var MAVEN_HOME:String;
+    public class ValidateAntHomePathMessage {
+
+        private var _path:String;
+        private var _responder:Responder;
+
+        public function ValidateAntHomePathMessage(path:String, responder:Responder) {
+            _path = path;
+            _responder = responder;
+        }
+
+        public function get path():String {
+            return _path;
+        }
+
+        public function get responder():Responder {
+            return _responder;
+        }
     }
 }

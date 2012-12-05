@@ -14,13 +14,25 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.executor.domain {
+package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
+    import flash.filesystem.File;
 
-    [Bindable]
-    public class SettingModel {
-        public var locale:String;
-        public var JAVA_HOME:String;
-        public var ANT_HOME:String;
-        public var MAVEN_HOME:String;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntHomePathMessage;
+
+    public class ValidateAntHomePathCommand {
+
+        public function ValidateAntHomePathCommand(msg:ValidateAntHomePathMessage) {
+            try {
+                var file:File = new File(msg.path.replace("\\", "/"));
+                if (!file.resolvePath("lib/ant.jar").exists) {
+                    msg.responder.fault(false);
+                    return
+                }
+            } catch (err:Error) {
+                msg.responder.fault(false);
+                return
+            }
+            msg.responder.result(true);
+        }
     }
 }

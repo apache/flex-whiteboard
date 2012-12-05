@@ -48,7 +48,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             log.debug("Executing Command")
             if (!db.DBReady)
                 db.connect();
-            else
+
                 prepareSql();
         }
 

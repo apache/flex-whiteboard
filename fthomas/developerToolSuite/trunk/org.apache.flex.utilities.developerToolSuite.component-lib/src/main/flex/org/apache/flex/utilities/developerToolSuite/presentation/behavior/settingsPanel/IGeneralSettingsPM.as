@@ -23,5 +23,11 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.setti
         function get availableLanguages():ArrayCollection;
 
         function get currentLanguage():Object;
+
+        function get javaHomePath():String;
+
+        function get antHomePath():String;
+
+        function get mavenHomePath():String;
     }
 }
