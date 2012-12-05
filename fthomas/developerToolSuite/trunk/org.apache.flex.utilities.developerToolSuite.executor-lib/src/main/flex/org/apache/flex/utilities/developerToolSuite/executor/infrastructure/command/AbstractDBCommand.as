@@ -45,7 +45,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         protected var stmt:SQLStatement = new SQLStatement();
 
         protected function executeAsync():void {
-            log.debug("Executing Command")
             if (!db.DBReady)
                 db.connect();
 
@@ -64,13 +63,14 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         protected function result(result:SQLResult):void {
-            log.debug("Ending Command with result: " + ObjectUtil.toString(result.data));
-            callback(result.complete);
+            var resultMessage:String = (result.data != null) ? ObjectUtil.toString(result.data) : result.rowsAffected + " affected row(s)";
+            log.debug("Successfully executed command: " + resultMessage);
+            callback(resultMessage);
         }
 
         protected function error(error:SQLError):void {
-            log.error("Ending Command with error: " + ObjectUtil.toString(error));
-            callback(error.details);
+            log.error("Error executing command: " + ObjectUtil.toString(error));
+            callback(error);
         }
     }
 }

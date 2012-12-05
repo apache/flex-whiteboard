@@ -16,6 +16,7 @@
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
     import mx.resources.ResourceManager;
+    import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
@@ -29,6 +30,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         public var settings:SettingModel;
 
         public function execute(msg:ChangeLanguageMessage):void {
+            log.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             this._msg = msg;
             executeAsync();
         }

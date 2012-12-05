@@ -15,6 +15,8 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
+    import mx.utils.ObjectUtil;
+
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingsMessage;
     import org.spicefactory.lib.reflect.ClassInfo;
     import org.spicefactory.lib.reflect.Property;
@@ -24,6 +26,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         private var _msg:SaveSettingsMessage;
 
         public function execute(msg:SaveSettingsMessage):void {
+            log.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             this._msg = msg;
             executeAsync();
         }

@@ -20,7 +20,7 @@ limitations under the License.
          xmlns:mx="library://ns.adobe.com/flex/mx"
          xmlns:parsley="http://www.spicefactory.org/parsley"
          xmlns:component="org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.*"
-         xmlns:settings="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.*"
+         xmlns:formitem="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.formItem.*"
          width="100%" height="100%"
          paddingTop="30" paddingLeft="30" paddingRight="30">
 
@@ -50,9 +50,9 @@ limitations under the License.
                     <s:layout>
                         <s:FormLayout gap="-14"/>
                     </s:layout>
-                    <settings:JavaHomeSettingFormItem/>
-                    <settings:AntHomeSettingFormItem/>
-                    <settings:MavenHomeSettingFormItem/>
+                    <formitem:JavaHomeFormItem id="javaHomeFormItem"/>
+                    <formitem:AntHomeFormItem id="antHomeFormItem"/>
+                    <formitem:MavenHomeFormItem id="mavenHomeFormItem"/>
                 </s:Form>
             </component:Frame>
         </mx:GridItem>
@@ -78,6 +78,15 @@ limitations under the License.
         public function init():void {
             languageComboBox.dataProvider = model.availableLanguages;
             languageComboBox.selectedItem = model.currentLanguage;
+
+            javaHomeFormItem.dispatch = dispatch;
+            javaHomeFormItem.propertyValue = model.javaHomePath;
+
+            antHomeFormItem.dispatch = dispatch;
+            antHomeFormItem.propertyValue = model.antHomePath;
+
+            mavenHomeFormItem.dispatch = dispatch;
+            mavenHomeFormItem.propertyValue = model.mavenHomePath;
         }
 
         private function localeComboBox_changeHandler(event:IndexChangeEvent):void {

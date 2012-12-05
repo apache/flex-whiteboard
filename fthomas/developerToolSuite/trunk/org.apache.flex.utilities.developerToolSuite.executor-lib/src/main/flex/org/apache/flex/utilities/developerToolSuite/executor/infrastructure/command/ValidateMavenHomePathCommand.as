@@ -17,21 +17,31 @@
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
     import flash.filesystem.File;
 
+    import mx.logging.ILogger;
+    import mx.utils.ObjectUtil;
+
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenHomePathMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class ValidateMavenHomePathCommand {
 
+        private static var LOG:ILogger = LogUtil.getLogger(ValidateMavenHomePathCommand);
+
         public function ValidateMavenHomePathCommand(msg:ValidateMavenHomePathMessage) {
+            LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             try {
                 var file:File = new File(msg.path.replace("\\", "/"));
                 if (!file.resolvePath("bin/mvn.bat").exists) {
+                    LOG.error("Error resolving MAVEN_HOME");
                     msg.responder.fault(false);
                     return
                 }
             } catch (err:Error) {
+                LOG.error(ObjectUtil.toString(err));
                 msg.responder.fault(false);
                 return
             }
+            LOG.info("Successfully executed command")
             msg.responder.result(true);
         }
     }

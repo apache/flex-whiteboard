@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<s:FormItem xmlns:fx="http://ns.adobe.com/mxml/2009"
+            xmlns:s="library://ns.adobe.com/flex/spark"
+            xmlns:mx="library://ns.adobe.com/flex/mx"
+            xmlns:parsley="http://www.spicefactory.org/parsley"
+            xmlns:validator="org.apache.flex.utilities.developerToolSuite.presentation.behavior.validator.*"
+            creationComplete="creationCompleteHandler(event)"
+            label="{propertyName}"
+            required="true"
+            styleName="stackedFormItem">
+
+
+    <fx:Declarations>
+        <parsley:Configure/>
+
+
+        <validator:ToolPathValidator id="validator" required="true"
+                                     source="{this}" property="toolHomePathValidated"
+                                     errorStringResourceString="{errorStringTextResourceString}"
+                                     trigger="{toolHomeLocation}"
+                                     listener="{toolHomeLocation}"/>
+    </fx:Declarations>
+
+    <s:HGroup gap="0">
+        <s:TextInput id="toolHomeLocation"
+                     width="240"
+                     change="toolHomeLocation_changeHandler(event)"/>
+        <mx:Button id="browseButton" label="..." width="28"
+                   toolTip="{resourceManager.getString('SettingsWindow', browserDirectoryResourceString)}"
+                   click="browseButton_clickHandler(event)"/>
+    </s:HGroup>
+    <s:helpContent>
+        <s:VGroup>
+            <s:Label text="{resourceManager.getString('SettingsWindow', helpLabelResourcesString)}"/>
+            <mx:LinkButton label="{helpUrlText}"
+                           click="navigateToURL(new URLRequest(helpUrl));"/>
+        </s:VGroup>
+    </s:helpContent>
+    <fx:Script><![CDATA[
+        import mx.events.FlexEvent;
+        import mx.rpc.Responder;
+
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
+
+        import spark.events.TextOperationEvent;
+
+        private var _file:File;
+        private var _toolHomePathValidated:Boolean;
+        private var _responder:mx.rpc.Responder;
+
+        [Bindable]
+        public var propertyName:String;
+        [Bindable]
+        public var propertyValue:String;
+        [Bindable]
+        public var toolTipLabelResourceString:String;
+        [Bindable]
+        public var helpLabelResourcesString:String;
+        [Bindable]
+        public var helpUrlText:String
+        [Bindable]
+        public var helpUrl:String;
+        [Bindable]
+        public var browserDirectoryResourceString:String;
+        [Bindable]
+        public var validateToolMessageClass:Class;
+        [Bindable]
+        public var errorStringTextResourceString:String;
+
+        public var dispatch:Function;
+
+        private function creationCompleteHandler(event:FlexEvent):void {
+            _responder = new mx.rpc.Responder(toolHomePathResult, toolHomePathValidatedError);
+            toolHomeLocation.text = propertyValue;
+            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+        }
+
+        private function browseButton_clickHandler(event:MouseEvent):void {
+            try {
+                _file = new File(toolHomeLocation.text.replace("\\", "/"));
+            } catch (err:Error) {
+                _file = new File();
+            }
+
+            _file.addEventListener(Event.SELECT, file_select);
+            _file.browseForDirectory(resourceManager.getString('SettingsWindow', browserDirectoryResourceString));
+        }
+
+        private function file_select(evt:Event):void {
+            toolHomeLocation.text = _file.nativePath;
+            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+        }
+
+        private function toolHomeLocation_changeHandler(event:TextOperationEvent):void {
+            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+        }
+
+        private function toolHomePathResult(result:Boolean):void {
+            toolHomePathValidated = true;
+
+            if (toolHomePathValidated) {
+                dispatch(new SaveSettingMessage(propertyName, toolHomeLocation.text));
+            }
+        }
+
+        private function toolHomePathValidatedError(result:Boolean):void {
+            toolHomePathValidated = false;
+        }
+
+        public function get toolHomePathValidated():Boolean {
+            return _toolHomePathValidated;
+        }
+
+        public function set toolHomePathValidated(value:Boolean):void {
+            _toolHomePathValidated = value;
+            validator.validate();
+        }
+        ]]></fx:Script>
+</s:FormItem>

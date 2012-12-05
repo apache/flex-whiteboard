@@ -14,11 +14,15 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-package org.apache.flex.utilities.developerToolSuite.presentation.behavior {
+package org.apache.flex.utilities.developerToolSuite.presentation.behavior.validator {
     import mx.validators.ValidationResult;
     import mx.validators.Validator;
 
     public class ToolPathValidator extends Validator{
+
+        [Bindable]
+        public var errorStringResourceString:String;
+
         public function ToolPathValidator() {
             super();
         }
@@ -36,7 +40,7 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior {
 
             if (Boolean(value) == false) {
                 ValidatorResults.push(new ValidationResult(true, null, "Tool Home Path Error",
-                                                           resourceManager.getString('SettingsWindow', 'TOOL_PATH_ERROR_STRING')));
+                                                           resourceManager.getString('SettingsWindow', errorStringResourceString)));
                 return ValidatorResults;
             }
 
