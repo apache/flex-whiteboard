@@ -1,0 +1,20 @@
+1. create a directory 'closure' somewhere
+2. get Closure Library and install it in 'closure/library'
+    - svn checkout http://closure-library.googlecode.com/svn/trunk/ library
+3. download Closure Compiler and unzip in 'closure/compiler'
+    - http://closure-compiler.googlecode.com/files/compiler-latest.zip
+4. install Closure Linter into 'closure/linter'
+    - https://developers.google.com/closure/utilities/docs/linter_howto
+5. get Closure Builder and install it in 'closure/builder'
+    - svn checkout http://closure-library.googlecode.com/svn/trunk/closure/bin/build/ builder
+6. edit 'build.properties' to reflect the location of the 'closure' directory
+7. build FalconJS (see README)
+8. run the publish script with the 'ant -Dapp.name=[your.app.name.here] -Dapp.location=[your.app.location.here]'
+
+ATTENTION!
+As of 2012-12-06, the FalconJS compiler doesn't output JS that can be parsed
+by the new tool set. While this is being corrected, you'll have to create your
+own 'intermediate' JS project, or modify one of the examples (I've included
+'FlexJSTest_dummy' in the repo). Make sure to not include the 'falconJS'
+dependency (?) in the build.xml and if you don't want to loose your work,
+make sure to set CLEAN_INTERMEDIATE_JS to 'false' in build.properties.
