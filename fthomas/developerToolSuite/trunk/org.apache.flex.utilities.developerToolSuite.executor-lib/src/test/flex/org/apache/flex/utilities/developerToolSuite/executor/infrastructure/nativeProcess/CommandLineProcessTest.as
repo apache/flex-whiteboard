@@ -9,11 +9,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
 
     public class CommandLineProcessTest {
 
-        private var command:NativeProcessHelper;
+        private var command:NativeShellHelper;
 
         [Before]
         public function setUp():void {
-            command = new NativeProcessHelper();
+            command = new NativeShellHelper();
             command.logMessages();
         }
 
@@ -31,7 +31,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
         }
 
         private function outputDataLogHandler(event:ProgressEvent, passThroughData:Object):void {
-            var command:NativeProcessHelper = event.currentTarget as NativeProcessHelper;
+            var command:NativeShellHelper = event.currentTarget as NativeShellHelper;
             var result:String = command.process.standardOutput.readUTFBytes(command.process.standardOutput.bytesAvailable);
             trace("res: ", command.process.standardOutput.readUTFBytes(command.process.standardOutput.bytesAvailable));
             assertNotNull(result);

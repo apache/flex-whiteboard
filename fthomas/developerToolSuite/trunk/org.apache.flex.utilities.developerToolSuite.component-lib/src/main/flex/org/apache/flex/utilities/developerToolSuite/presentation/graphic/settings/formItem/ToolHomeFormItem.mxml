@@ -31,7 +31,7 @@ limitations under the License.
 
 
         <validator:ToolPathValidator id="validator" required="true"
-                                     source="{this}" property="toolHomePathValidated"
+                                     source="{this}" property="installationPathValidated"
                                      errorStringResourceString="{errorStringTextResourceString}"
                                      trigger="{toolHomeLocation}"
                                      listener="{toolHomeLocation}"/>
@@ -57,12 +57,12 @@ limitations under the License.
         import mx.rpc.Responder;
 
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
 
         import spark.events.TextOperationEvent;
 
         private var _file:File;
-        private var _toolHomePathValidated:Boolean;
-        private var _validateToolResponder:mx.rpc.Responder;
+        private var _installationPathValidated:Boolean;
 
         [Bindable]
         public var propertyName:String;
@@ -86,16 +86,15 @@ limitations under the License.
         public var dispatch:Function;
 
         private function creationCompleteHandler(event:FlexEvent):void {
-            _validateToolResponder = new mx.rpc.Responder(toolHomePathResult, toolHomePathValidatedError);
 
             toolHomeLocation.text = propertyValue;
 
-            dispatch(new validateToolMessageClass(propertyValue, _validateToolResponder));
+            dispatch(new validateToolMessageClass(propertyValue));
         }
 
         private function browseButton_clickHandler(event:MouseEvent):void {
             try {
-                _file = new File(toolHomeLocation.text.replace("\\", "/"));
+                _file = new File(NativeShellHelper.formatPath(toolHomeLocation.text));
             } catch (err:Error) {
                 _file = new File();
             }
@@ -106,33 +105,21 @@ limitations under the License.
 
         private function file_select(evt:Event):void {
             toolHomeLocation.text = _file.nativePath;
-            dispatch(new validateToolMessageClass(toolHomeLocation.text, _validateToolResponder));
+            dispatch(new validateToolMessageClass(toolHomeLocation.text));
         }
 
         private function toolHomeLocation_changeHandler(event:TextOperationEvent):void {
-            dispatch(new validateToolMessageClass(toolHomeLocation.text, _validateToolResponder));
-        }
-
-        // Result handlers for the commands which check if the path of the tool is good
-        private function toolHomePathResult(result:Boolean):void {
-            toolHomePathValidated = true;
-
-            if (toolHomePathValidated) {
-                dispatch(new SaveSettingMessage(propertyName, toolHomeLocation.text));
-            }
-        }
-
-        private function toolHomePathValidatedError(result:Boolean):void {
-            toolHomePathValidated = false;
+            dispatch(new validateToolMessageClass(toolHomeLocation.text));
         }
 
         // Result handlers for the SaveSettingCommand
-        public function get toolHomePathValidated():Boolean {
-            return _toolHomePathValidated;
+        public function get installationPathValidated():Boolean {
+            return _installationPathValidated;
         }
 
-        public function set toolHomePathValidated(value:Boolean):void {
-            _toolHomePathValidated = value;
+        [Bindable]
+        public function set installationPathValidated(value:Boolean):void {
+            _installationPathValidated = value;
             validator.validate();
         }
         ]]></fx:Script>

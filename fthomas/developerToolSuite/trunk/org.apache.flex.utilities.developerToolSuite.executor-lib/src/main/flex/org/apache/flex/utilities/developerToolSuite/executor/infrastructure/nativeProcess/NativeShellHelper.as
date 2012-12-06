@@ -7,12 +7,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
     import flash.events.NativeProcessExitEvent;
     import flash.events.ProgressEvent;
     import flash.filesystem.File;
+    import flash.system.Capabilities;
 
     import mx.logging.ILogger;
 
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class NativeProcessHelper extends EventDispatcher {
+    public class NativeShellHelper extends EventDispatcher {
 
         // Use trace during tests as AIR thru Maven doesn't support resource xml config files for logging.
         private static var LOG:ILogger;
@@ -24,12 +25,14 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
 
         private var _isLogEnabled:Boolean;
 
-        public function NativeProcessHelper() {
+        public function NativeShellHelper() {
             super();
-            if (!LOG)
-                LOG = LogUtil.getLogger(NativeProcessHelper);
-            if (!_gcLocker)
+            if (!LOG) {
+                LOG = LogUtil.getLogger(NativeShellHelper);
+            }
+            if (!_gcLocker) {
                 _gcLocker = new GCLocker();
+            }
             _process = new NativeProcess();
         }
 
@@ -41,7 +44,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
             return _isRunning;
         }
 
-        public function run(command:String, args:Vector.<String> = null):void {
+        public function run(command:Vector.<String> = null, shell:String = null):void {
 
             if (_isRunning) {
                 throw new Error("NativeProcessHelper is currently busy");
@@ -52,11 +55,16 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
             //Avoid the garbage collection
             _gcLocker.lock(this);
 
+            if (!shell)
+                shell = getShellPath();
+
+            LOG.debug("Executing: " + shell + " " + command.join(" "));
+
             var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
 
-            var file:File = File.applicationDirectory.resolvePath(command);
+            var file:File = File.applicationDirectory.resolvePath(shell);
             nativeProcessStartupInfo.executable = file;
-            nativeProcessStartupInfo.arguments = args;
+            nativeProcessStartupInfo.arguments = command;
 
             _process.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, dispatch2, false, 0, true);
             _process.addEventListener(ProgressEvent.STANDARD_ERROR_DATA, dispatch2, false, 0, true);
@@ -109,6 +117,77 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
             _process = null;
             _isRunning = false;
             this.dispatchEvent(e);
+        }
+
+        public static function get OS():String {
+            var os:String;
+
+            if (Capabilities.os.toLowerCase().indexOf("win") > -1) {
+                os = "win";
+            } else if (Capabilities.os.toLowerCase().indexOf("mac") > -1) {
+                os = "mac";
+            } else if (Capabilities.os.toLowerCase().indexOf("linux") > -1) {
+                os = "linux";
+            }
+
+            return os;
+        }
+
+        public function get OS():String {
+            return NativeShellHelper.OS;
+        }
+
+        public function getShellPath():String {
+            var shellPath:String;
+
+            if (OS == "win") {
+                shellPath = "C:/Windows/System32/cmd.exe";
+            } else if (OS == "mac") {
+                shellPath = "/Applications/Utilities/Terminal.app";
+            } else if (OS == "linux") {
+
+                var file:File;
+                try {
+                    file = new File("/bin/bash");
+                    if (file.exists)
+                        shellPath = file.nativePath;
+                } catch (err:Error) {
+                }
+                ;
+
+                if (!shellPath) {
+                    try {
+                        file = new File("/bin/bsh");
+                        if (file.exists)
+                            shellPath = file.nativePath;
+                    } catch (err:Error) {
+                    }
+                    ;
+                }
+
+                if (!shellPath) {
+                    try {
+                        file = new File("/bin/csh");
+                        if (file.exists)
+                            shellPath = file.nativePath;
+                    } catch (err:Error) {
+                    }
+                    ;
+                }
+            }
+            if (!shellPath) {
+                throw new Error("Unsupported System");
+            }
+
+            return shellPath;
+        }
+
+        public static function formatPath(path:String):String {
+            return path.replace(/\\/g, "/");
+        }
+
+        public function formatPath(path:String):String {
+            return NativeShellHelper.formatPath(path);
         }
     }
 }

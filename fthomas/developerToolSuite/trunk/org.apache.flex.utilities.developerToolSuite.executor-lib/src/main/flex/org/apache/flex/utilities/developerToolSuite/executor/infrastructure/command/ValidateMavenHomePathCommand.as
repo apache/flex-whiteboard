@@ -15,34 +15,88 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
+    import flash.events.ProgressEvent;
     import flash.filesystem.File;
 
     import mx.logging.ILogger;
     import mx.utils.ObjectUtil;
 
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenHomePathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class ValidateMavenHomePathCommand {
+    public class ValidateMavenHomePathCommand extends AbstractShellCommand {
 
         private static var LOG:ILogger = LogUtil.getLogger(ValidateMavenHomePathCommand);
 
-        public function ValidateMavenHomePathCommand(msg:ValidateMavenHomePathMessage) {
+        private var _msg:ValidateMavenHomePathMessage;
+
+        [Inject]
+        public var settings:SettingModel;
+
+        private var _done:Boolean;
+
+        public function execute(msg:ValidateMavenHomePathMessage):void {
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
+            _msg = msg;
+            executeCommand();
+        }
+
+        override protected function executeCommand():void {
+
+            LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
+
+            var file:File;
             try {
-                var file:File = new File(msg.path.replace("\\", "/"));
+                file = new File(shell.formatPath(_msg.path));
                 if (!file.resolvePath("bin/mvn.bat").exists) {
-                    LOG.error("Error resolving MAVEN_HOME");
-                    msg.responder.fault(false);
-                    return
+                    LOG.error("Error resolving ANT_HOME");
+                    error(false);
+                    return;
                 }
             } catch (err:Error) {
                 LOG.error(ObjectUtil.toString(err));
-                msg.responder.fault(false);
-                return
+                error(false);
+                return;
             }
-            LOG.info("Successfully executed shell")
-            msg.responder.result(true);
+            ;
+
+            var mvn:String = shell.formatPath(file.resolvePath("bin/mvn.bat").nativePath);
+
+            if (shell.OS == "win")
+                command.push("/C");
+
+            command.push(mvn);
+            command.push("-version");
+
+            super.executeCommand();
+        }
+
+        private function extractVersion(output:String):void {
+
+            if (_done)
+                return;
+
+            _done = true;
+
+            if (output.indexOf("Apache Maven 3.") > -1) {
+                settings.mavenEnabled = true;
+                result(true);
+            } else {
+                settings.mavenEnabled = false;
+                error(false);
+            }
+        }
+
+        override protected function outputDataHandler(event:ProgressEvent):void {
+            super.outputDataHandler(event);
+            extractVersion(standardOutput);
+        }
+
+        override protected function errorDataHandler(event:ProgressEvent):void {
+            super.errorDataHandler(event);
+            extractVersion(standardError);
         }
     }
 }

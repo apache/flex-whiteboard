@@ -20,19 +20,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.mes
     public class ValidateMavenHomePathMessage {
 
         private var _path:String;
-        private var _responder:Responder;
 
-        public function ValidateMavenHomePathMessage(path:String, responder:Responder) {
+        public function ValidateMavenHomePathMessage(path:String) {
             _path = path;
-            _responder = responder;
         }
 
         public function get path():String {
             return _path;
-        }
-
-        public function get responder():Responder {
-            return _responder;
         }
     }
 }

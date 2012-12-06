@@ -17,12 +17,31 @@
 package org.apache.flex.utilities.developerToolSuite.executor.domain {
     import flash.utils.Dictionary;
 
+    import mx.collections.ArrayCollection;
+
+    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
+
     [Bindable]
     public class SettingModel {
+
+        public function get availableLanguages():ArrayCollection {
+            return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
+        }
+
+        public function get currentLanguage():Object {
+            return LocaleUtil.getDefaultLanguage(locale);
+        }
+
         public var environmentVariables:Dictionary;
+
         public var locale:String;
+
         public var JAVA_HOME:String;
         public var ANT_HOME:String;
         public var MAVEN_HOME:String;
+
+        public var javaEnabled:Boolean;
+        public var antEnabled:Boolean;
+        public var mavenEnabled:Boolean;
     }
 }

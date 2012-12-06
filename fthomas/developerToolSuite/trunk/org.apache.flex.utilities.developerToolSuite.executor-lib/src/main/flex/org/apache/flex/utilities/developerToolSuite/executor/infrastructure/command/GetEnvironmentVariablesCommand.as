@@ -30,10 +30,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         override protected function executeCommand():void {
-            command = "C:\\Windows\\System32\\cmd.exe";
 
-            args.push("/C");
-            args.push("set");
+            command.push("/C");
+            command.push("set");
 
             super.executeCommand();
         }
@@ -46,12 +45,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 var tuple:Array = row.split("=");
                 settings.environmentVariables[tuple[0]] = tuple[1];
             }
-            returnSuccess(settings.environmentVariables);
+            result(settings.environmentVariables);
         }
 
         override protected function outputDataHandler(event:ProgressEvent):void {
             super.outputDataHandler(event);
-            extractVariables(output);
+            extractVariables(standardOutput);
         }
     }
 }

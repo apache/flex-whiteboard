@@ -21,7 +21,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import mx.logging.ILogger;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeProcessHelper;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class AbstractShellCommand {
@@ -30,18 +30,22 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         public var callback:Function;
 
-        protected var shell:NativeProcessHelper;
+        protected var shell:NativeShellHelper;
 
-        protected var command:String;
-        protected var args:Vector.<String> = new Vector.<String>();
+        protected var shellPath:String;
+        protected var command:Vector.<String> = new Vector.<String>();
 
-        protected var output:String;
+        protected var standardOutput:String;
+        protected var standardError:String;
+
+        public function AbstractShellCommand() {
+            shell = new NativeShellHelper();
+        }
 
         protected function executeCommand():void {
-            shell = new NativeProcessHelper();
             addShellListeners();
 
-            shell.run(command, args);
+            shell.run(command, shellPath);
         }
 
         private function addShellListeners():void {
@@ -61,33 +65,33 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         protected function outputDataHandler(event:ProgressEvent):void {
-            var shell:NativeProcessHelper = event.currentTarget as NativeProcessHelper;
-            output = shell.process.standardOutput.readUTFBytes(shell.process.standardOutput.bytesAvailable);
-            log.debug("Reading standard output: \n" + output);
+            var shell:NativeShellHelper = event.currentTarget as NativeShellHelper;
+            standardOutput = shell.process.standardOutput.readUTFBytes(shell.process.standardOutput.bytesAvailable);
+            log.debug("Reading standard output: \n" + standardOutput);
         }
 
         protected function errorDataHandler(event:ProgressEvent):void {
-            var shell:NativeProcessHelper = event.currentTarget as NativeProcessHelper;
-            log.error("ERROR -" + shell.process.standardError.readUTFBytes(shell.process.standardError.bytesAvailable));
-            returnError(event);
+            var shell:NativeShellHelper = event.currentTarget as NativeShellHelper;
+            standardError = shell.process.standardError.readUTFBytes(shell.process.standardError.bytesAvailable);
+            log.debug("Reading standard error: \n" + standardError);
         }
 
         protected function IOErrorHandler(event:IOErrorEvent):void {
             log.error(event.toString());
-            returnError(event);
+            error(event);
         }
 
         protected function exitHandler(event:NativeProcessExitEvent):void {
-            log.debug("Process exited with ", event.exitCode);
+            log.debug("Process exited with ", event.exitCode.toString());
             removeShellListeners();
         }
 
-        protected function returnSuccess(result:Object):void {
+        protected function result(result:Object):void {
             shell.process.exit();
             callback(result);
         }
 
-        protected function returnError(error:Object):void {
+        protected function error(error:Object):void {
             shell.process.exit();
             callback(error);
         }

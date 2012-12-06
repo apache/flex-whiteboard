@@ -31,7 +31,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         public function execute(msg:ChangeLanguageMessage):void {
             log.debug("Executing Command with message: " + ObjectUtil.toString(msg));
-            this._msg = msg;
+            _msg = msg;
             executeAsync();
         }
 
