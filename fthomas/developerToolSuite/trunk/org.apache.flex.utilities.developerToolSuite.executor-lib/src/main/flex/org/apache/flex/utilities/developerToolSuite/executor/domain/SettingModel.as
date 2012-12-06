@@ -15,9 +15,11 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.domain {
+    import flash.utils.Dictionary;
 
     [Bindable]
     public class SettingModel {
+        public var environmentVariables:Dictionary;
         public var locale:String;
         public var JAVA_HOME:String;
         public var ANT_HOME:String;

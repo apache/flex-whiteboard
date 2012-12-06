@@ -15,6 +15,8 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel {
+    import flash.utils.Dictionary;
+
     import mx.collections.ArrayCollection;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
@@ -23,6 +25,8 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.setti
         function get availableLanguages():ArrayCollection;
 
         function get currentLanguage():Object;
+
+        function get environmentVariables():Dictionary;
 
         function get javaHomePath():String;
 

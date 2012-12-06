@@ -62,7 +62,7 @@ limitations under the License.
 
         private var _file:File;
         private var _toolHomePathValidated:Boolean;
-        private var _responder:mx.rpc.Responder;
+        private var _validateToolResponder:mx.rpc.Responder;
 
         [Bindable]
         public var propertyName:String;
@@ -86,9 +86,11 @@ limitations under the License.
         public var dispatch:Function;
 
         private function creationCompleteHandler(event:FlexEvent):void {
-            _responder = new mx.rpc.Responder(toolHomePathResult, toolHomePathValidatedError);
+            _validateToolResponder = new mx.rpc.Responder(toolHomePathResult, toolHomePathValidatedError);
+
             toolHomeLocation.text = propertyValue;
-            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+
+            dispatch(new validateToolMessageClass(propertyValue, _validateToolResponder));
         }
 
         private function browseButton_clickHandler(event:MouseEvent):void {
@@ -104,13 +106,14 @@ limitations under the License.
 
         private function file_select(evt:Event):void {
             toolHomeLocation.text = _file.nativePath;
-            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+            dispatch(new validateToolMessageClass(toolHomeLocation.text, _validateToolResponder));
         }
 
         private function toolHomeLocation_changeHandler(event:TextOperationEvent):void {
-            dispatch(new validateToolMessageClass(toolHomeLocation.text, _responder));
+            dispatch(new validateToolMessageClass(toolHomeLocation.text, _validateToolResponder));
         }
 
+        // Result handlers for the commands which check if the path of the tool is good
         private function toolHomePathResult(result:Boolean):void {
             toolHomePathValidated = true;
 
@@ -123,6 +126,7 @@ limitations under the License.
             toolHomePathValidated = false;
         }
 
+        // Result handlers for the SaveSettingCommand
         public function get toolHomePathValidated():Boolean {
             return _toolHomePathValidated;
         }

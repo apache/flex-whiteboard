@@ -33,11 +33,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         protected var log:ILogger = LogUtil.getLogger(this);
 
-        [Inject]
-        public var db:ApplicationDB;
-
         [MessageDispatcher]
         public var dispatch:Function;
+
+        [Inject]
+        public var db:ApplicationDB;
 
         public var callback:Function;
 
@@ -51,11 +51,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 prepareSql();
         }
 
-        [MessageHandler]
-        public function DBReadyHandler(msg:InitApplicationMessage):void {
-            prepareSql();
-        }
-
         protected function prepareSql():void {
             var responder:Responder = new Responder(result, error);
             stmt.text = sql;
@@ -64,12 +59,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         protected function result(result:SQLResult):void {
             var resultMessage:String = (result.data != null) ? ObjectUtil.toString(result.data) : result.rowsAffected + " affected row(s)";
-            log.debug("Successfully executed command: " + resultMessage);
+            log.debug("Successfully executed shell: " + resultMessage);
             callback(resultMessage);
         }
 
         protected function error(error:SQLError):void {
-            log.error("Error executing command: " + ObjectUtil.toString(error));
+            log.error("Error executing shell: " + ObjectUtil.toString(error));
             callback(error);
         }
     }

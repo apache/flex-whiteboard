@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<fx:Object xmlns:fx="http://ns.adobe.com/mxml/2009"
+           xmlns:parsley="http://www.spicefactory.org/parsley"
+           xmlns:database="org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.*"
+           xmlns:domain="org.apache.flex.utilities.developerToolSuite.executor.domain.*"
+           xmlns:nativeprocess="org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.*">
+
+    <fx:Declarations>
+        <database:ApplicationDB/>
+
+        <parsley:MapCommand messageType="{InitApplicationMessage}">
+            <parsley:CommandSequence>
+                <parsley:Command type="{InitDBCommand}"/>
+                <parsley:Command type="{GetSettingsCommand}"/>
+                <parsley:Command type="{GetEnvironmentVariablesCommand}"/>
+            </parsley:CommandSequence>
+        </parsley:MapCommand>
+
+
+        <parsley:MapCommand type="{ChangeLanguageCommand}"/>
+        <parsley:MapCommand type="{SaveSettingsCommand}"/>
+        <parsley:MapCommand type="{SaveSettingCommand}"/>
+        <parsley:MapCommand type="{ValidateJavaHomePathCommand}"/>
+        <parsley:MapCommand type="{ValidateAntHomePathCommand}"/>
+        <parsley:MapCommand type="{ValidateMavenHomePathCommand}"/>
+
+        <domain:SettingModel/>
+    </fx:Declarations>
+
+    <fx:Script><![CDATA[
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetEnvironmentVariablesCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetEnvironmentVariablesCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.InitDBCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateAntHomePathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateJavaHomePathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateMavenHomePathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
+        ]]></fx:Script>
+</fx:Object>

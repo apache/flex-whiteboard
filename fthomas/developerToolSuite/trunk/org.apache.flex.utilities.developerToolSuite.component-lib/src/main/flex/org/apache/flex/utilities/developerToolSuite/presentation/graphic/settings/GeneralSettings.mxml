@@ -80,13 +80,13 @@ limitations under the License.
             languageComboBox.selectedItem = model.currentLanguage;
 
             javaHomeFormItem.dispatch = dispatch;
-            javaHomeFormItem.propertyValue = model.javaHomePath;
+            javaHomeFormItem.propertyValue = model.javaHomePath ? model.javaHomePath : model.environmentVariables["JAVA_HOME"];
 
             antHomeFormItem.dispatch = dispatch;
-            antHomeFormItem.propertyValue = model.antHomePath;
+            antHomeFormItem.propertyValue = model.antHomePath ? model.antHomePath : model.environmentVariables["ANT_HOME"];
 
             mavenHomeFormItem.dispatch = dispatch;
-            mavenHomeFormItem.propertyValue = model.mavenHomePath;
+            mavenHomeFormItem.propertyValue = model.mavenHomePath ? model.mavenHomePath : model.environmentVariables["MAVEN_HOME"];
         }
 
         private function localeComboBox_changeHandler(event:IndexChangeEvent):void {

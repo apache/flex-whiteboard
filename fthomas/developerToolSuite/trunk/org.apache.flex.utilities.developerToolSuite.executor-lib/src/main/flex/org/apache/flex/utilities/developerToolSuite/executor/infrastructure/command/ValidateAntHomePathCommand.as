@@ -41,7 +41,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 msg.responder.fault(false);
                 return
             }
-            LOG.debug("Successfully executed command")
+            LOG.debug("Successfully executed shell")
             msg.responder.result(true);
         }
     }

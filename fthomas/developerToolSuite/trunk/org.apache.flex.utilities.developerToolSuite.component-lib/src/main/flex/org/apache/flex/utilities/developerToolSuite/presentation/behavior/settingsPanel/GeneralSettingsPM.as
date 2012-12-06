@@ -15,6 +15,8 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel {
+    import flash.utils.Dictionary;
+
     import mx.collections.ArrayCollection;
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
@@ -35,6 +37,10 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.setti
 
         public function get currentLanguage():Object {
             return LocaleUtil.getDefaultLanguage(settings.locale);
+        }
+
+        public function get environmentVariables():Dictionary {
+            return settings.environmentVariables;
         }
 
         public function get javaHomePath():String {

@@ -15,6 +15,7 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor {
+    import org.flexunit.asserts.assertFalse;
 
     public class SampleTest {
         [Before]
@@ -26,6 +27,7 @@ package org.apache.flex.utilities.developerToolSuite.executor {
         public function testNothing():void {
             //TODO un implemented
             trace("Hello test");
+            assertFalse(false);
         }
 
         [After]

@@ -17,24 +17,20 @@ limitations under the License.
 -->
 <fx:Object xmlns:fx="http://ns.adobe.com/mxml/2009"
            xmlns:parsley="http://www.spicefactory.org/parsley"
-           xmlns:settingspanel="org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel.*">
+           xmlns:settingspanel="org.apache.flex.utilities.developerToolSuite.presentation.behavior.settingsPanel.*"
+           xmlns:menu="org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu.*">
 
     <fx:Declarations>
+        <parsley:DynamicObject type="{GeneralMenu}"/>
+
+        <parsley:MapCommand type="{MenuActionCommand}"/>
+
         <settingspanel:GeneralSettingsPM/>
-        <parsley:MapCommand type="{ChangeLanguageCommand}"/>
-        <parsley:MapCommand type="{SaveSettingsCommand}"/>
-        <parsley:MapCommand type="{SaveSettingCommand}"/>
-        <parsley:MapCommand type="{ValidateJavaHomePathCommand}"/>
-        <parsley:MapCommand type="{ValidateAntHomePathCommand}"/>
-        <parsley:MapCommand type="{ValidateMavenHomePathCommand}"/>
+        <menu:ApplicationMenuPM/>
     </fx:Declarations>
 
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateAntHomePathCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateJavaHomePathCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateMavenHomePathCommand;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.command.MenuActionCommand;
+        import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu;
         ]]></fx:Script>
 </fx:Object>

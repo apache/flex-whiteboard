@@ -28,6 +28,7 @@ limitations under the License.
             <parsley:ViewSettings autowireComponents="true"/>
             <parsley:FlexConfig type="{ApplicationContext}"/>
             <parsley:FlexConfig type="{SettingsContext}"/>
+            <parsley:FlexConfig type="{ExecutorContext}"/>
         </parsley:ContextBuilder>
         <parsley:Configure/>
     </fx:Declarations>
@@ -49,6 +50,7 @@ limitations under the License.
         import mx.logging.targets.TraceTarget;
 
         import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.config.ExecutorContext;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
