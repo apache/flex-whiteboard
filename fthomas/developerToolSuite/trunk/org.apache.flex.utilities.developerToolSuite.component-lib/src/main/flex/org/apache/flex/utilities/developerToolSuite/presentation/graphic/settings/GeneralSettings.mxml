@@ -62,7 +62,7 @@ limitations under the License.
     <mx:GridRow/>
 
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+        import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.FrameSkin;
 
@@ -73,7 +73,7 @@ limitations under the License.
 
         [Inject]
         [Bindable]
-        public var model:SettingModel;
+        public var model:ISettingsModel;
 
         [Init]
         public function init():void {

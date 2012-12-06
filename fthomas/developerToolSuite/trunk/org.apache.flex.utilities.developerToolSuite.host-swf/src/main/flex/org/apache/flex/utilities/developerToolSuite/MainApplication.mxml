@@ -49,7 +49,7 @@ limitations under the License.
         import mx.logging.LogEventLevel;
         import mx.logging.targets.TraceTarget;
 
-        import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+        import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.config.ExecutorContext;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
@@ -62,7 +62,7 @@ limitations under the License.
         public var applicationMenu:ApplicationMenu;
 
         [Inject]
-        public var applicationSettings:SettingModel;
+        public var applicationSettings:ISettingsModel;
 
         [MessageDispatcher]
         public var dispatch:Function;

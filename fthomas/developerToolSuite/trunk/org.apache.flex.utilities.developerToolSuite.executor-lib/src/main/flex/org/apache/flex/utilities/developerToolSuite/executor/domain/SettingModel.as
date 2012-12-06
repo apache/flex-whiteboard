@@ -21,27 +21,98 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
 
-    [Bindable]
-    public class SettingModel {
+    public class SettingModel implements ISettingsModel {
 
         public function get availableLanguages():ArrayCollection {
             return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
         }
 
         public function get currentLanguage():Object {
-            return LocaleUtil.getDefaultLanguage(locale);
+            return LocaleUtil.getDefaultLanguage(_locale);
         }
 
-        public var environmentVariables:Dictionary;
+        private var _environmentVariables:Dictionary;
 
-        public var locale:String;
+        private var _locale:String;
 
-        public var JAVA_HOME:String;
-        public var ANT_HOME:String;
-        public var MAVEN_HOME:String;
+        private var _JAVA_HOME:String;
+        private var _ANT_HOME:String;
+        private var _MAVEN_HOME:String;
 
-        public var javaEnabled:Boolean;
-        public var antEnabled:Boolean;
-        public var mavenEnabled:Boolean;
+        private var _javaEnabled:Boolean;
+        private var _antEnabled:Boolean;
+        private var _mavenEnabled:Boolean;
+
+        public function get environmentVariables():Dictionary {
+            return _environmentVariables;
+        }
+
+        [Bindable]
+        public function set environmentVariables(value:Dictionary):void {
+            _environmentVariables = value;
+        }
+
+        public function get locale():String {
+            return _locale;
+        }
+
+        [Bindable]
+        public function set locale(value:String):void {
+            _locale = value;
+        }
+
+        public function get JAVA_HOME():String {
+            return _JAVA_HOME;
+        }
+
+        [Bindable]
+        public function set JAVA_HOME(value:String):void {
+            _JAVA_HOME = value;
+        }
+
+        public function get ANT_HOME():String {
+            return _ANT_HOME;
+        }
+
+        [Bindable]
+        public function set ANT_HOME(value:String):void {
+            _ANT_HOME = value;
+        }
+
+        public function get MAVEN_HOME():String {
+            return _MAVEN_HOME;
+        }
+
+        [Bindable]
+        public function set MAVEN_HOME(value:String):void {
+            _MAVEN_HOME = value;
+        }
+
+        public function get javaEnabled():Boolean {
+            return _javaEnabled;
+        }
+
+        [Bindable]
+        public function set javaEnabled(value:Boolean):void {
+            _javaEnabled = value;
+        }
+
+        public function get antEnabled():Boolean {
+            return _antEnabled;
+        }
+
+        [Bindable]
+        public function set antEnabled(value:Boolean):void {
+            _antEnabled = value;
+        }
+
+        public function get mavenEnabled():Boolean {
+            return _mavenEnabled;
+        }
+
+        [Bindable]
+        public function set mavenEnabled(value:Boolean):void {
+            _mavenEnabled = value;
+        }
     }
 }
