@@ -20,7 +20,6 @@ limitations under the License.
                        xmlns:mx="library://ns.adobe.com/flex/mx"
                        xmlns:parsley="http://www.spicefactory.org/parsley"
                        title="Apache Flex Developer Tool Suite"
-                       menu="{applicationMenu}"
                        width="800" height="600"
                        closing="closingHandler(event)">
 
@@ -42,8 +41,6 @@ limitations under the License.
     <s:layout>
         <s:VerticalLayout/>
     </s:layout>
-
-    <s:Label id="helloLabel" text="{resourceManager.getString('Application','HELLO')}"/>
 
     <fx:Script><![CDATA[
         import mx.controls.Alert;
@@ -80,15 +77,14 @@ limitations under the License.
 
             dispatch(new InitApplicationMessage());
 
-            if (!applicationSettings.appDisplayState) {
-                alert = Alert.show(resourceManager.getString('Application', 'WELCOME_MSG'), resourceManager.getString('Application','WELCOME_TITLE'));
-            }
+            alert = Alert.show(resourceManager.getString('Application', 'WELCOME_MSG'), resourceManager.getString('Application', 'WELCOME_TITLE'));
         }
 
         [MessageHandler]
         public function applicationReady(msg:ApplicationReadyMessage):void {
 
             PopUpManager.removePopUp(alert);
+            menu = applicationMenu;
 
             if (applicationSettings.appDisplayState) {
                 if (applicationSettings.appDisplayState == NativeWindowDisplayState.MAXIMIZED) {
