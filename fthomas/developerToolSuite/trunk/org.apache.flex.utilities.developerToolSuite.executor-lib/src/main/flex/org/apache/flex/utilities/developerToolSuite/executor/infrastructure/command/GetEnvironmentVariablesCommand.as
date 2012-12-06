@@ -31,8 +31,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         override protected function executeCommand():void {
 
-            command.push("/C");
-            command.push("set");
+            if (shell.OS == "win") {
+                command.push("/C");
+                command.push("set");
+            }
+            else command.push("env");
 
             super.executeCommand();
         }
