@@ -18,7 +18,23 @@
 
 -->
 <project name="asjsPublisher" default="main" basedir=".">
-    <property file="${basedir}/build.properties" description="Properties for ASJS-Framework project" />
+    <property file="${basedir}/build.properties" description="Properties for the ASJS Publisher" />
+
+    <property name="DIR_CLOSURE_LIBRARY" value="${DIR_CLOSURE}/library" />
+    <property name="FILE_CLOSURE_BUILDER" value="${DIR_CLOSURE}/builder/closurebuilder.py" />
+    <property name="FILE_CLOSURE_DEPENDENCIES" value="${DIR_CLOSURE_LIBRARY}/closure/goog/deps.js" />
+    <property name="FILE_CLOSURE_JAR" value="${DIR_CLOSURE}/compiler/compiler.jar" />
+    
+    <property name="DIR_FRAMEWORK" value="${basedir}/../frameworks/js/src" />
+
+    <property name="DIR_INTERMEDIATE" value="${basedir}/intermediate" />
+    <property name="DIR_RELEASE" value="${basedir}/release" />
+
+    <property name="DIR_INTERMEDIATE_APPLICATION" value="${DIR_INTERMEDIATE}/${app.name}" />
+    <property name="DIR_RELEASE_APPLICATION" value="${DIR_RELEASE}/${app.name}" />
+
+    <property name="FILE_HTML_TEMPLATE" value="${basedir}/index.html.template" />
+    <property name="FILE_RELEASE" value="${DIR_RELEASE_APPLICATION}/FlexJS.js" />
 
     <macrodef name="closureBuilder">
         <sequential>
@@ -40,7 +56,7 @@
     </macrodef>
 
     <!-- target name="main" description="Compiles framework files" depends="clean,createDirs,falconJS,closureBuilding,createHTML" / -->
-    <target name="main" description="Compiles framework files" depends="clean,createDirs,closureBuilding,createHTML" />
+    <target name="main" description="Compiles framework files" depends="clean,createDirs,lint,closureBuilding,createHTML" />
 
     <target name="clean" description="Clean up previous runs" depends="cleanIntermediate,cleanRelease">
         <echo>Delete 'intermediate' and 'release' directories</echo>
@@ -79,6 +95,10 @@
             <arg value="-output"/>
             <arg value="${DIR_INTERMEDIATE_APPLICATION}/js/${app.name}.js"/>
         </exec>
+    </target>
+
+    <target name="lint">
+        <echo>Lint-ing the FlexJS JS framework</echo>
     </target>
 
     <target name="closureBuilding">
