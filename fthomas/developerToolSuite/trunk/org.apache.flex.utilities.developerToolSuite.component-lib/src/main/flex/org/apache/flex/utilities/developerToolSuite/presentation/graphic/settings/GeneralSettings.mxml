@@ -41,7 +41,7 @@ limitations under the License.
                                 change="localeComboBox_changeHandler(event)" width="180"/>
             </component:Frame>
         </mx:GridItem>
-        <mx:GridItem>
+        <mx:GridItem rowSpan="3">
             <component:Frame label="{resourceManager.getString('SettingsWindow', 'TOOLS_PATH_LOCATION')}" skinClass="{FrameSkin}">
                 <component:layout>
                     <s:VerticalLayout horizontalAlign="center" paddingRight="35"/>
@@ -50,15 +50,30 @@ limitations under the License.
                     <s:layout>
                         <s:FormLayout gap="-14"/>
                     </s:layout>
-                    <formitem:JavaHomeFormItem id="javaHomeFormItem" installationPathValidated="{model.javaEnabled}"/>
-                    <formitem:AntHomeFormItem id="antHomeFormItem" installationPathValidated="{model.antEnabled}"/>
-                    <formitem:MavenHomeFormItem id="mavenHomeFormItem" installationPathValidated="{model.mavenEnabled}"/>
+                    <formitem:JavaHomeFormItem id="javaHomeFormItem" installationPathValidated="{model.javaEnabled}"
+                                               propertyValue="{model.JAVA_HOME ? model.JAVA_HOME : model.environmentVariables['JAVA_HOME']}"/>
+                    <formitem:AntHomeFormItem id="antHomeFormItem" installationPathValidated="{model.antEnabled}"
+                                              propertyValue="{model.ANT_HOME ? model.ANT_HOME : model.environmentVariables['ANT_HOME']}"/>
+                    <formitem:MavenHomeFormItem id="mavenHomeFormItem" installationPathValidated="{model.mavenEnabled}"
+                                                propertyValue="{model.MAVEN_HOME ? model.MAVEN_HOME : model.environmentVariables['MAVEN_HOME']}"/>
                 </s:Form>
             </component:Frame>
         </mx:GridItem>
     </mx:GridRow>
 
-    <mx:GridRow/>
+    <mx:GridRow width="100%" horizontalAlign="center">
+        <mx:GridItem rowSpan="2">
+            <component:Frame label="{resourceManager.getString('SettingsWindow', 'LANGUAGE')}" skinClass="{FrameSkin}" height="100%">
+                <component:layout>
+                    <s:HorizontalLayout horizontalAlign="center"
+                                        verticalAlign="middle" paddingLeft="30" paddingRight="30" paddingTop="30" paddingBottom="30"
+                                        gap="16"/>
+                </component:layout>
+                <s:DropDownList id="languageComboBox2"
+                                change="localeComboBox_changeHandler(event)" width="180"/>
+            </component:Frame>
+        </mx:GridItem>
+    </mx:GridRow>
     <mx:GridRow/>
 
     <fx:Script><![CDATA[
@@ -80,14 +95,7 @@ limitations under the License.
             languageComboBox.dataProvider = model.availableLanguages;
             languageComboBox.selectedItem = model.currentLanguage;
 
-            javaHomeFormItem.dispatch = dispatch;
-            javaHomeFormItem.propertyValue = model.JAVA_HOME ? model.JAVA_HOME : model.environmentVariables["JAVA_HOME"];
-
-            antHomeFormItem.dispatch = dispatch;
-            antHomeFormItem.propertyValue = model.ANT_HOME ? model.ANT_HOME : model.environmentVariables["ANT_HOME"];
-
-            mavenHomeFormItem.dispatch = dispatch;
-            mavenHomeFormItem.propertyValue = model.MAVEN_HOME ? model.MAVEN_HOME : model.environmentVariables["MAVEN_HOME"];
+            javaHomeFormItem.dispatch = antHomeFormItem.dispatch = mavenHomeFormItem.dispatch = dispatch;
         }
 
         private function localeComboBox_changeHandler(event:IndexChangeEvent):void {

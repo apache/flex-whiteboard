@@ -47,6 +47,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
 
             var file:File;
+
+            if (!_msg.path) {
+                LOG.error("Path null, nothing to check, quit");
+                error(false);
+                return;
+            }
+
             try {
                 file = new File(shell.formatPath(_msg.path));
                 if (!file.resolvePath("lib/tools.jar").exists) {

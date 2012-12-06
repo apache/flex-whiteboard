@@ -25,6 +25,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         [Inject]
         public var settings:SettingModel;
 
+        private var _done:Boolean;
+
         public function execute():void {
             executeCommand();
         }
@@ -41,6 +43,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         private function extractVariables(output:String):void {
+
+            if (_done)
+                return;
+
+            _done = true;
             settings.environmentVariables = new Dictionary();
 
             var rows:Array = output.split("\r\n");
@@ -54,6 +61,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         override protected function outputDataHandler(event:ProgressEvent):void {
             super.outputDataHandler(event);
             extractVariables(standardOutput);
+        }
+
+        override protected function errorDataHandler(event:ProgressEvent):void {
+            super.outputDataHandler(event);
+            extractVariables(standardError);
         }
     }
 }

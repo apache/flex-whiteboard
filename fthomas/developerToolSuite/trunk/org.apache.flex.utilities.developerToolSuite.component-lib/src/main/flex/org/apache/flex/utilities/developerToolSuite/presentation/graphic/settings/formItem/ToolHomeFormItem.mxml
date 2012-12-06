@@ -38,7 +38,7 @@ limitations under the License.
     </fx:Declarations>
 
     <s:HGroup gap="0">
-        <s:TextInput id="toolHomeLocation"
+        <s:TextInput id="toolHomeLocation" text="{propertyValue}"
                      width="240"
                      change="toolHomeLocation_changeHandler(event)"/>
         <mx:Button id="browseButton" label="..." width="28"
@@ -86,9 +86,6 @@ limitations under the License.
         public var dispatch:Function;
 
         private function creationCompleteHandler(event:FlexEvent):void {
-
-            toolHomeLocation.text = propertyValue;
-
             dispatch(new validateToolMessageClass(propertyValue));
         }
 

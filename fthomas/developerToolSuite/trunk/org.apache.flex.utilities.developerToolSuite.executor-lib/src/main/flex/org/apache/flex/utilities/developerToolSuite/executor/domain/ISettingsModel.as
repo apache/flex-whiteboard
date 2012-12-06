@@ -5,6 +5,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
 
     [Bindable]
     public interface ISettingsModel {
+
+        function get appBounds():String;
+
+        function get appDisplayState():String;
+
         function get availableLanguages():ArrayCollection;
 
         function get currentLanguage():Object;

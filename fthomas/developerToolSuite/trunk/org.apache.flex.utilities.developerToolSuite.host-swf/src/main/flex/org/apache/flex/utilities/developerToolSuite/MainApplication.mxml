@@ -21,7 +21,8 @@ limitations under the License.
                        xmlns:parsley="http://www.spicefactory.org/parsley"
                        title="Apache Flex Developer Tool Suite"
                        menu="{applicationMenu}"
-                       width="800" height="600">
+                       width="800" height="600"
+                       closing="closingHandler(event)">
 
     <fx:Declarations>
         <parsley:ContextBuilder>
@@ -42,17 +43,20 @@ limitations under the License.
         <s:VerticalLayout/>
     </s:layout>
 
-    <s:Label text="{resourceManager.getString('Application','HELLO')}"/>
+    <s:Label id="helloLabel" text="{resourceManager.getString('Application','HELLO')}"/>
 
     <fx:Script><![CDATA[
+        import mx.controls.Alert;
         import mx.logging.Log;
         import mx.logging.LogEventLevel;
         import mx.logging.targets.TraceTarget;
+        import mx.managers.PopUpManager;
 
         import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.config.ExecutorContext;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
@@ -67,21 +71,39 @@ limitations under the License.
         [MessageDispatcher]
         public var dispatch:Function;
 
+        private var alert:Alert;
+
         [Init]
         public function init():void {
-            // Without that, the menu is not shown until the first resize or desactivate/activate but that's an ugly hack.
-            // TODO: Fix the bug.
-            minimize();
-            restore();
-
             addLog();
-
             LogUtil.getLogger(this).info('Application initialization');
+
             dispatch(new InitApplicationMessage());
+
+            if (!applicationSettings.appDisplayState) {
+                alert = Alert.show(resourceManager.getString('Application', 'WELCOME_MSG'), resourceManager.getString('Application','WELCOME_TITLE'));
+            }
         }
 
         [MessageHandler]
         public function applicationReady(msg:ApplicationReadyMessage):void {
+
+            PopUpManager.removePopUp(alert);
+
+            if (applicationSettings.appDisplayState) {
+                if (applicationSettings.appDisplayState == NativeWindowDisplayState.MAXIMIZED) {
+                    nativeWindow.maximize();
+                } else {
+                    nativeWindow.restore();
+                    if (applicationSettings.appBounds) {
+                        var bounds:Array = applicationSettings.appBounds.split(",");
+                        nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
+                    }
+                }
+            } else {
+                nativeWindow.bounds = new Rectangle(120, 120, 1150, 720);
+            }
+
             LogUtil.getLogger(this).info('Application ready');
         }
 
@@ -101,6 +123,11 @@ limitations under the License.
             devLogger.includeLevel = true;
             devLogger.fieldSeparator = " -> ";
             Log.addTarget(devLogger);
+        }
+
+        private function closingHandler(event:Event):void {
+            dispatch(new SaveSettingMessage("appBounds", nativeWindow.x + "," + nativeWindow.y + "," + nativeWindow.width + "," + nativeWindow.height));
+            dispatch(new SaveSettingMessage("appDisplayState", nativeWindow.displayState));
         }
         ]]></fx:Script>
 </s:WindowedApplication>

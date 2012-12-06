@@ -33,6 +33,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private static var LOG:ILogger = LogUtil.getLogger(InitDBCommand);
 
+        public var callback:Function;
+
         private static var _conn:SQLConnection;
 
         private static const SETTINGS_TABLE_SQL:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
@@ -54,6 +56,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             _conn.close();
             LOG.debug("Closing DB: " + ApplicationDB.DATABASE_NAME);
 
+            callback(true);
         }
 
         private function settingsTableCreated():Boolean {
@@ -100,7 +103,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             function insertSettingsTable():void {
                 LOG.debug("Inserting data");
-                prepareData();
+                prepareSettingsData();
                 var stmtInsertSettingsTable:SQLStatement;
                 stmtInsertSettingsTable = new SQLStatement();
                 stmtInsertSettingsTable.sqlConnection = _conn;
@@ -108,11 +111,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 stmtInsertSettingsTable.execute();
             }
 
-            function prepareData():void {
+            function prepareSettingsData():void {
                 settingsDataSql = "INSERT INTO 'settings' SELECT '1' AS 'id', 'locale' AS 'name', '" + LocaleUtil.getDefaultLanguage().data + "' AS 'value' ";
                 settingsDataSql += "UNION SELECT '2', 'JAVA_HOME', '' ";
                 settingsDataSql += "UNION SELECT '3', 'ANT_HOME', '' ";
-                settingsDataSql += "UNION SELECT '4', 'MAVEN_HOME', '';";
+                settingsDataSql += "UNION SELECT '4', 'MAVEN_HOME', '' ";
+                settingsDataSql += "UNION SELECT '5', 'appDisplayState', '' ";
+                settingsDataSql += "UNION SELECT '6', 'appBounds', '';";
             }
         }
     }

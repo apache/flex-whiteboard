@@ -43,6 +43,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         private var _antEnabled:Boolean;
         private var _mavenEnabled:Boolean;
 
+        private var _appBounds:String;
+        private var _appDisplayState:String;
+
         public function get environmentVariables():Dictionary {
             return _environmentVariables;
         }
@@ -113,6 +116,24 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         [Bindable]
         public function set mavenEnabled(value:Boolean):void {
             _mavenEnabled = value;
+        }
+
+        public function get appBounds():String {
+            return _appBounds;
+        }
+
+        [Bindable]
+        public function set appBounds(value:String):void {
+            _appBounds = value;
+        }
+
+        public function get appDisplayState():String {
+            return _appDisplayState;
+        }
+
+        [Bindable]
+        public function set appDisplayState(value:String):void {
+            _appDisplayState = value;
         }
     }
 }

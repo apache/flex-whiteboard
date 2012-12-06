@@ -22,7 +22,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenHomePathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
@@ -48,6 +47,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
 
             var file:File;
+
+            if (!_msg.path) {
+                LOG.error("Path null, nothing to check, quit");
+                error(false);
+                return;
+            }
+
             try {
                 file = new File(shell.formatPath(_msg.path));
                 if (!file.resolvePath("bin/mvn.bat").exists) {
@@ -64,8 +70,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             var mvn:String = shell.formatPath(file.resolvePath("bin/mvn.bat").nativePath);
 
-            if (shell.OS == "win")
+            if (shell.OS == "win") {
                 command.push("/C");
+            }
 
             command.push(mvn);
             command.push("-version");
@@ -75,8 +82,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private function extractVersion(output:String):void {
 
-            if (_done)
+            if (_done) {
                 return;
+            }
 
             _done = true;
 
