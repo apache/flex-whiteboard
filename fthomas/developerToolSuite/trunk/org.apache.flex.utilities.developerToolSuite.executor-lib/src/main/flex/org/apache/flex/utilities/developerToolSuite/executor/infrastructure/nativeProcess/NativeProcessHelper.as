@@ -30,6 +30,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
                 LOG = LogUtil.getLogger(NativeProcessHelper);
             if (!_gcLocker)
                 _gcLocker = new GCLocker();
+            _process = new NativeProcess();
         }
 
         public function get process():NativeProcess {
@@ -46,19 +47,16 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
                 throw new Error("NativeProcessHelper is currently busy");
                 return;
             }
-            _process = new NativeProcess();
             _isRunning = true;
 
             //Avoid the garbage collection
             _gcLocker.lock(this);
 
             var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
-            var processArgs:Vector.<String> = new Vector.<String>();
 
             var file:File = File.applicationDirectory.resolvePath(command);
             nativeProcessStartupInfo.executable = file;
-            processArgs = args;
-            nativeProcessStartupInfo.arguments = processArgs;
+            nativeProcessStartupInfo.arguments = args;
 
             _process.addEventListener(ProgressEvent.STANDARD_OUTPUT_DATA, dispatch2, false, 0, true);
             _process.addEventListener(ProgressEvent.STANDARD_ERROR_DATA, dispatch2, false, 0, true);
