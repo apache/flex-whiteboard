@@ -55,6 +55,7 @@ limitations under the License.
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
         import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
 
@@ -106,7 +107,7 @@ limitations under the License.
         private function addLog():void {
             var parsleyLogger:TraceTarget = new TraceTarget();
             parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
-            parsleyLogger.level = LogEventLevel.WARN;
+            parsleyLogger.level = LogEventLevel.ALL;
             parsleyLogger.includeCategory = true;
             parsleyLogger.includeLevel = true;
             parsleyLogger.fieldSeparator = " -> ";
@@ -119,6 +120,16 @@ limitations under the License.
             devLogger.includeLevel = true;
             devLogger.fieldSeparator = " -> ";
             Log.addTarget(devLogger);
+        }
+
+        [MessageHandler(selector='opened')]
+        public function modalWindowOpenedHandler(event:ModalWindowEvent):void {
+            menu = null;
+        }
+
+        [MessageHandler(selector='closed')]
+        public function modalWindowClosedHandler(event:ModalWindowEvent):void {
+            menu = applicationMenu;
         }
 
         private function closingHandler(event:Event):void {
