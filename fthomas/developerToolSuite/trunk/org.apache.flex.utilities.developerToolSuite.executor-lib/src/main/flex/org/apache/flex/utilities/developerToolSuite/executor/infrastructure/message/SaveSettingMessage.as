@@ -15,8 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
-    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-
     public class SaveSettingMessage {
 
         private var _name:String;

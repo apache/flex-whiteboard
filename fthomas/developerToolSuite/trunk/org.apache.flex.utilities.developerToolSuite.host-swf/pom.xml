@@ -71,20 +71,20 @@ limitations under the License.
 
     <build>
         <plugins>
-        <plugin>
-            <groupId>net.flexmojos.oss</groupId>
-            <artifactId>flexmojos-maven-plugin</artifactId>
-            <version>${flexmojos.version}</version>
-            <extensions>true</extensions>
-            <configuration>
-                <storepass/>
-                <sourceFile>${project.build.sourceDirectory}/org/apache/flex/utilities/developerToolSuite/MainApplication.mxml</sourceFile>
-                <localesCompiled>
-                    <locale>en_US</locale>
-                    <locale>fr_FR</locale>
-                </localesCompiled>
-            </configuration>
-        </plugin>
+            <plugin>
+                <groupId>net.flexmojos.oss</groupId>
+                <artifactId>flexmojos-maven-plugin</artifactId>
+                <version>${flexmojos.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <storepass/>
+                    <sourceFile>${project.build.sourceDirectory}/org/apache/flex/utilities/developerToolSuite/MainApplication.mxml</sourceFile>
+                    <localesCompiled>
+                        <locale>en_US</locale>
+                        <locale>fr_FR</locale>
+                    </localesCompiled>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

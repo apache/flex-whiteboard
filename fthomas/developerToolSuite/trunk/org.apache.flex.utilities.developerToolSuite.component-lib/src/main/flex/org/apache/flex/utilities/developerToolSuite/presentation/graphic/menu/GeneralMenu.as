@@ -15,10 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
-    import flash.display.DisplayObject;
-
-    import mx.core.FlexGlobals;
-    import mx.managers.PopUpManager;
     import mx.resources.ResourceManager;
 
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsWindow;

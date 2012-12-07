@@ -17,8 +17,6 @@
 package org.apache.flex.utilities.developerToolSuite.presentation.graphic.component {
     import flash.events.Event;
 
-    import mx.core.IVisualElement;
-
     import spark.components.BorderContainer;
     import spark.core.IDisplayText;
 
@@ -62,8 +60,7 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.compon
 
     //-------------------------------------- //  Other metadata //--------------------------------------
 
-
-    public class Frame extends BorderContainer{
+    public class Frame extends BorderContainer {
         public function Frame() {
             super();
         }
@@ -143,8 +140,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.compon
 
             _label = value;
 
-            if (labelDisplay)
+            if (labelDisplay) {
                 labelDisplay.text = _label;
+            }
 
             dispatchEvent(new Event("labelChange"));
         }
@@ -174,8 +172,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.compon
                 labelDisplay.addEventListener("isTruncatedChanged", labelDisplay_isTruncatedChangedHandler);
 
                 // Push down to the part only if the label was explicitly set
-                if (labelDisplay !== null)
+                if (labelDisplay !== null) {
                     labelDisplay.text = label;
+                }
             }
         }
 
@@ -195,8 +194,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.compon
          */
         private function labelDisplay_isTruncatedChangedHandler(event:Event):void {
 
-            if (_explicitToolTip)
+            if (_explicitToolTip) {
                 return;
+            }
 
             var isTruncated:Boolean = labelDisplay.isTruncated;
 

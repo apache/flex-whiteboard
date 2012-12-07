@@ -22,7 +22,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
@@ -71,8 +70,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             var java:String = shell.formatPath(file.resolvePath("bin/java.exe").nativePath);
 
-            if (shell.OS == "win")
+            if (shell.OS == "win") {
                 command.push("/C");
+            }
 
             command.push(java);
             command.push("-version");
@@ -82,8 +82,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private function extractVersion(output:String):void {
 
-            if (_done)
+            if (_done) {
                 return;
+            }
 
             _done = true;
             if (output.indexOf("1.6.") > -1) {

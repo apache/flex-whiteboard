@@ -55,8 +55,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
             //Avoid the garbage collection
             _gcLocker.lock(this);
 
-            if (!shell)
+            if (!shell) {
                 shell = getShellPath();
+            }
 
             LOG.debug("Executing: " + shell + " " + command.join(" "));
 
@@ -149,8 +150,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
                 var file:File;
                 try {
                     file = new File("/bin/bash");
-                    if (file.exists)
+                    if (file.exists) {
                         shellPath = file.nativePath;
+                    }
                 } catch (err:Error) {
                 }
                 ;
@@ -158,8 +160,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
                 if (!shellPath) {
                     try {
                         file = new File("/bin/bsh");
-                        if (file.exists)
+                        if (file.exists) {
                             shellPath = file.nativePath;
+                        }
                     } catch (err:Error) {
                     }
                     ;
@@ -168,8 +171,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
                 if (!shellPath) {
                     try {
                         file = new File("/bin/csh");
-                        if (file.exists)
+                        if (file.exists) {
                             shellPath = file.nativePath;
+                        }
                     } catch (err:Error) {
                     }
                     ;

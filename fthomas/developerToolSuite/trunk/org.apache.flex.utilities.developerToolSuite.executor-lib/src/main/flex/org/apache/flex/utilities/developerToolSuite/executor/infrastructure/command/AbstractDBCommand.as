@@ -21,12 +21,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import flash.net.Responder;
 
     import mx.logging.ILogger;
-
-    import mx.logging.Log;
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class AbstractDBCommand {
@@ -45,10 +42,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         protected var stmt:SQLStatement = new SQLStatement();
 
         protected function executeAsync():void {
-            if (!db.DBReady)
+            if (!db.DBReady) {
                 db.connect();
+            }
 
-                prepareSql();
+            prepareSql();
         }
 
         protected function prepareSql():void {

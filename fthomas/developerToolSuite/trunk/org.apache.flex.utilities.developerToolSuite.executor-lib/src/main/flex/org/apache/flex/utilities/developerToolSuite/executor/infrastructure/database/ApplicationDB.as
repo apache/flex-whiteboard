@@ -16,9 +16,7 @@
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database {
     import flash.data.SQLConnection;
-    import flash.data.SQLResult;
     import flash.data.SQLStatement;
-    import flash.errors.SQLError;
     import flash.events.SQLErrorEvent;
     import flash.events.SQLEvent;
     import flash.filesystem.File;
@@ -27,9 +25,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.dat
     import mx.logging.ILogger;
     import mx.utils.ObjectUtil;
 
-    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
-
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class ApplicationDB {
@@ -45,8 +40,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.dat
         }
 
         public function connect():void {
-            if (DBReady)
+            if (DBReady) {
                 return;
+            }
 
             LOG.debug("Connecting async DB: " + ApplicationDB.DATABASE_NAME);
             _conn = new SQLConnection();

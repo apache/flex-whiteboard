@@ -1,9 +1,7 @@
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess {
-    import flash.desktop.NativeProcess;
     import flash.events.ProgressEvent;
 
     import org.flexunit.Assert;
-
     import org.flexunit.asserts.assertNotNull;
     import org.flexunit.async.Async;
 
@@ -40,8 +38,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
         private function handleTimeout(passThroughData:Object):void {
             Assert.fail("Timeout reached before event");
         }
-
-
 
         [After]
         public function tearDown():void {

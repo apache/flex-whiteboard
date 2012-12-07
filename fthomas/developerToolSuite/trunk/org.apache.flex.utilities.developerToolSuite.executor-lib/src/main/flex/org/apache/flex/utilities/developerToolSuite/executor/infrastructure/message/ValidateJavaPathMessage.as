@@ -15,8 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
-    import mx.rpc.Responder;
-
     public class ValidateJavaPathMessage {
 
         private var _path:String;

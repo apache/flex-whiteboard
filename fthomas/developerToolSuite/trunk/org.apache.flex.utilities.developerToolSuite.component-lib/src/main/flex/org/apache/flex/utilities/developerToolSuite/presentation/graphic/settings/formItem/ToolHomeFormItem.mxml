@@ -56,7 +56,6 @@ limitations under the License.
         import mx.events.FlexEvent;
 
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
-
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
 
         import spark.events.TextOperationEvent;
@@ -118,8 +117,9 @@ limitations under the License.
             _installationPathValidated = value;
             validator.validate();
 
-            if (_installationPathValidated)
+            if (_installationPathValidated) {
                 dispatch(new SaveSettingMessage(propertyName, toolHomeLocation.text));
+            }
         }
         ]]></fx:Script>
 </s:FormItem>

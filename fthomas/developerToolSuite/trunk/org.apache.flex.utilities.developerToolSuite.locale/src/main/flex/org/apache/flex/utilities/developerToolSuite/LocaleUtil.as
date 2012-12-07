@@ -32,8 +32,7 @@ package org.apache.flex.utilities.developerToolSuite {
             {label: 'Français', data: 'fr_FR'}
         ];
 
-
-        private static  function init():void {
+        private static function init():void {
             initLocaleMap();
             initLanguageCodeMap();
         }
@@ -50,12 +49,14 @@ package org.apache.flex.utilities.developerToolSuite {
             _LANGUAGE_MAP['fr_FR'] = "Français";
         }
 
-        public static function getDefaultLanguage(locale:String=null):Object {
+        public static function getDefaultLanguage(locale:String = null):Object {
             var language:String = locale ? _LANGUAGE_MAP[locale] : _LANGUAGE_MAP[_LOCALE_MAP[Capabilities.language]];
 
-            for (var i:uint; i < AVAILABLE_LANGUAGES.length; i++)
-                if (AVAILABLE_LANGUAGES[i].label == language)
+            for (var i:uint; i < AVAILABLE_LANGUAGES.length; i++) {
+                if (AVAILABLE_LANGUAGES[i].label == language) {
                     return AVAILABLE_LANGUAGES[i];
+                }
+            }
 
             return AVAILABLE_LANGUAGES[0];
         }
@@ -63,27 +64,31 @@ package org.apache.flex.utilities.developerToolSuite {
         public static function getCurrentLanguage(locale:String):Object {
             var language:String = _LANGUAGE_MAP[locale];
 
-            for (var i:uint; i < AVAILABLE_LANGUAGES.length; i++)
-                if (AVAILABLE_LANGUAGES[i].label == language)
+            for (var i:uint; i < AVAILABLE_LANGUAGES.length; i++) {
+                if (AVAILABLE_LANGUAGES[i].label == language) {
                     return AVAILABLE_LANGUAGES[i];
+                }
+            }
 
             return AVAILABLE_LANGUAGES[0];
         }
 
         public static function getOrderedLocalChain(firstLocale:String = null):Array {
 
-            if (StringUtil.trim(firstLocale) == "")
+            if (StringUtil.trim(firstLocale) == "") {
                 firstLocale = _LOCALE_MAP[Capabilities.language];
+            }
 
             var localeChain:Array = ['en_US', 'fr_FR'];
 
             var idx:int = localeChain.indexOf(firstLocale);
 
-            if (idx < 1)
+            if (idx < 1) {
                 return localeChain;
+            }
 
             localeChain.splice(idx, 1);
-            localeChain.splice(0,0,firstLocale);
+            localeChain.splice(0, 0, firstLocale);
 
             return localeChain;
         }

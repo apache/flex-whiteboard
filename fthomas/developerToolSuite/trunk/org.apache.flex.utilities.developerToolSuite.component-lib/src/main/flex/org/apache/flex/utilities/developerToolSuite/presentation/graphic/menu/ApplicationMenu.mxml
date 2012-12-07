@@ -21,15 +21,11 @@ limitations under the License.
                    xmlns:parsley="http://www.spicefactory.org/parsley">
 
     <fx:Script><![CDATA[
-        import mx.core.Application;
-        import mx.core.FlexGlobals;
         import mx.events.FlexNativeMenuEvent;
         import mx.resources.ResourceManager;
 
         import org.apache.flex.utilities.developerToolSuite.infrastructure.message.MenuActionMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.behavior.menu.IApplicationMenuPM;
-
-        import spark.components.WindowedApplication;
 
         [Inject]
         public var model:IApplicationMenuPM;

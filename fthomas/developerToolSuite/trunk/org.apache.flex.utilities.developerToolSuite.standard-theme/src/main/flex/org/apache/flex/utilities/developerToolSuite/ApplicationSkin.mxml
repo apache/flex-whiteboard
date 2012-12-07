@@ -44,8 +44,6 @@ limitations under the License.
     <fx:Metadata>[HostComponent("spark.components.Application")]</fx:Metadata>
 
     <fx:Script fb:purpose="styling">
-        import mx.graphics.BitmapFillMode;
-
         /*  Define the skin elements that should not be colorized.
          *  For WindowedApplication, border and status bar background are colorized,
          *  but the content area and status text are not.

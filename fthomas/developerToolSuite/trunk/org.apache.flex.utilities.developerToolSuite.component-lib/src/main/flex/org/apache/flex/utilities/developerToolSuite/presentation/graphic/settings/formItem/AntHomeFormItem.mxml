@@ -28,6 +28,5 @@ limitations under the License.
                            errorStringTextResourceString="ANT_HOME_ERROR_STRING">
     <fx:Script><![CDATA[
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
         ]]></fx:Script>
 </formitem:ToolHomeFormItem>

@@ -22,11 +22,10 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class ValidateAntPathCommand extends AbstractShellCommand{
+    public class ValidateAntPathCommand extends AbstractShellCommand {
 
         private static var LOG:ILogger = LogUtil.getLogger(ValidateAntPathCommand);
 
@@ -71,8 +70,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             var ant:String = shell.formatPath(file.resolvePath("bin/ant.bat").nativePath);
 
-            if (shell.OS == "win")
+            if (shell.OS == "win") {
                 command.push("/C");
+            }
 
             command.push(ant);
             command.push("-version");
@@ -82,8 +82,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private function extractVersion(output:String):void {
 
-            if (_done)
+            if (_done) {
                 return;
+            }
 
             _done = true;
             if (output.indexOf("Apache Ant(TM) version") > -1) {

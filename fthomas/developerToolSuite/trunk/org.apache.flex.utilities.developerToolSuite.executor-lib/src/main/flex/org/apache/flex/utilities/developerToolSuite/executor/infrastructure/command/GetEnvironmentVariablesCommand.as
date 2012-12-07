@@ -36,16 +36,18 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             if (shell.OS == "win") {
                 command.push("/C");
                 command.push("set");
+            } else {
+                command.push("env");
             }
-            else command.push("env");
 
             super.executeCommand();
         }
 
         private function extractVariables(output:String):void {
 
-            if (_done)
+            if (_done) {
                 return;
+            }
 
             _done = true;
             settings.environmentVariables = new Dictionary();

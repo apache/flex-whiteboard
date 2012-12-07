@@ -25,12 +25,5 @@ limitations under the License.
     </fx:Declarations>
 
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.InitDBCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.command.MenuActionCommand;
-        import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu;
         ]]></fx:Script>
 </fx:Object>

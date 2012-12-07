@@ -15,12 +15,9 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
-    import mx.resources.ResourceManager;
     import mx.utils.ObjectUtil;
 
-    import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
 
     public class SaveSettingCommand extends AbstractDBCommand {
@@ -38,7 +35,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         override protected function prepareSql():void {
             settings[_msg.name] = _msg.value;
-            sql = "UPDATE settings SET value='" + _msg.value + "' WHERE name='" + _msg.name +"';";
+            sql = "UPDATE settings SET value='" + _msg.value + "' WHERE name='" + _msg.name + "';";
 
             super.prepareSql();
         }

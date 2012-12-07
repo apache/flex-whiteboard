@@ -50,8 +50,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             LOG.debug("Connecting DB: " + ApplicationDB.DATABASE_NAME);
             _conn.open(dbFile);
 
-            if (!settingsTableCreated())
+            if (!settingsTableCreated()) {
                 buildDatabaseTables();
+            }
 
             _conn.close();
             LOG.debug("Closing DB: " + ApplicationDB.DATABASE_NAME);
@@ -70,11 +71,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
             var schema:SQLSchemaResult = _conn.getSchemaResult();
 
-            for each(var currentTable:SQLTableSchema in schema.tables)
+            for each(var currentTable:SQLTableSchema in schema.tables) {
                 if (currentTable.name == "settings") {
                     LOG.debug("Schema was already created");
                     return true;
                 }
+            }
 
             LOG.debug("Schema wasn't already created");
             return false;
@@ -91,7 +93,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             } catch (err:SQLError) {
                 LOG.error("Error during schema creation: " + ObjectUtil.toString(err) + " : Rolling back !");
                 _conn.rollback();
-            };
+            }
+            ;
 
             function createSettingsTable():void {
                 var stmtCreateSettingsTable:SQLStatement;

@@ -18,7 +18,7 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.valid
     import mx.validators.ValidationResult;
     import mx.validators.Validator;
 
-    public class ToolPathValidator extends Validator{
+    public class ToolPathValidator extends Validator {
 
         [Bindable]
         public var errorStringResourceString:String;
@@ -35,8 +35,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.valid
             // Call base class doValidation().
             ValidatorResults = super.doValidation(value);
             // Return if there are errors.
-            if (ValidatorResults.length > 0)
+            if (ValidatorResults.length > 0) {
                 return ValidatorResults;
+            }
 
             if (Boolean(value) == false) {
                 ValidatorResults.push(new ValidationResult(true, null, "Tool Home Path Error",
