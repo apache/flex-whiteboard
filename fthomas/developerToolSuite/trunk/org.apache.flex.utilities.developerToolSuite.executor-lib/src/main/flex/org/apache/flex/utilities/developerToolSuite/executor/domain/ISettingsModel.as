@@ -29,5 +29,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         function get antEnabled():Boolean;
 
         function get mavenEnabled():Boolean;
+
+        function get svnEnabled():Boolean;
+
+        function get gitEnabled():Boolean;
     }
 }

@@ -36,9 +36,11 @@ limitations under the License.
         <parsley:MapCommand type="{ChangeLanguageCommand}"/>
         <parsley:MapCommand type="{SaveSettingsCommand}"/>
         <parsley:MapCommand type="{SaveSettingCommand}"/>
-        <parsley:MapCommand type="{ValidateJavaHomePathCommand}"/>
-        <parsley:MapCommand type="{ValidateAntHomePathCommand}"/>
-        <parsley:MapCommand type="{ValidateMavenHomePathCommand}"/>
+        <parsley:MapCommand type="{ValidateJavaPathCommand}"/>
+        <parsley:MapCommand type="{ValidateAntPathCommand}"/>
+        <parsley:MapCommand type="{ValidateMavenPathCommand}"/>
+        <parsley:MapCommand type="{ValidateSvnPathCommand}"/>
+        <parsley:MapCommand type="{ValidateGitPathCommand}"/>
 
         <domain:SettingModel/>
     </fx:Declarations>
@@ -46,14 +48,15 @@ limitations under the License.
     <fx:Script><![CDATA[
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetEnvironmentVariablesCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetEnvironmentVariablesCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.InitDBCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateAntHomePathCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateJavaHomePathCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateMavenHomePathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateAntPathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateGitPathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateJavaPathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateMavenPathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateSvnPathCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
         ]]></fx:Script>
 </fx:Object>

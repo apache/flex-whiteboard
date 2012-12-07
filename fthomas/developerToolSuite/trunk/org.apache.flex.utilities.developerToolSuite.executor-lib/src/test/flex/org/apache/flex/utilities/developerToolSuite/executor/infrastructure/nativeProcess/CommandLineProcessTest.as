@@ -27,13 +27,13 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nat
             args.push("/K");
             args.push("set");
 
-            command.run(shell, args);
+            command.run(args, shell);
         }
 
         private function outputDataLogHandler(event:ProgressEvent, passThroughData:Object):void {
             var command:NativeShellHelper = event.currentTarget as NativeShellHelper;
             var result:String = command.process.standardOutput.readUTFBytes(command.process.standardOutput.bytesAvailable);
-            trace("res: ", command.process.standardOutput.readUTFBytes(command.process.standardOutput.bytesAvailable));
+            trace("res: ", result);
             assertNotNull(result);
         }
 

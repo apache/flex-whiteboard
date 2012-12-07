@@ -15,18 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
-    import mx.rpc.Responder;
-
-    public class ValidateJavaHomePathMessage {
-
-        private var _path:String;
-
-        public function ValidateJavaHomePathMessage(path:String) {
-            _path = path;
-        }
-
-        public function get path():String {
-            return _path;
-        }
+    public class ValidateSvnPathMessage {
     }
 }

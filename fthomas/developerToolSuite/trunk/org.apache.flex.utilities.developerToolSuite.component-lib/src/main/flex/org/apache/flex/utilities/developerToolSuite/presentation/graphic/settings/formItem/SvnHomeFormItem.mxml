@@ -15,18 +15,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<formitem:ToolHomeFormItem xmlns:fx="http://ns.adobe.com/mxml/2009"
+<formitem:VCSFormItem xmlns:fx="http://ns.adobe.com/mxml/2009"
                            xmlns:s="library://ns.adobe.com/flex/spark"
                            xmlns:mx="library://ns.adobe.com/flex/mx"
                            xmlns:formitem="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.formItem.*"
-                           propertyName="MAVEN_HOME"
-                           toolTipLabelResourceString="BROWSE_MAVEN_HOME"
-                           helpLabelResourcesString="INDICATE_MAVEN_HOME" helpUrlText="(Maven 3.x Home Page)"
-                           helpUrl="http://maventest.apache.org/download.html"
-                           browserDirectoryResourceString="PLEASE_INDICATE_MAVEN_HOME"
-                           validateToolMessageClass="{ValidateMavenPathMessage}"
-                           errorStringTextResourceString="MAVEN_HOME_ERROR_STRING">
+                           propertyName="SVN"
+                           helpUrlText="(SVN Home Page)"
+                           helpUrl="http://subversion.apache.org/packages.html"
+                           validateVcsMessageClass="{ValidateSvnPathMessage}">
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateSvnPathMessage;
         ]]></fx:Script>
-</formitem:ToolHomeFormItem>
+</formitem:VCSFormItem>

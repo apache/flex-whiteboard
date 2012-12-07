@@ -16,92 +16,66 @@
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
     import flash.events.ProgressEvent;
-    import flash.filesystem.File;
 
     import mx.logging.ILogger;
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaHomePathMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateGitPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class ValidateJavaHomePathCommand extends AbstractShellCommand {
+    public class ValidateGitPathCommand extends AbstractShellCommand {
 
-        private static var LOG:ILogger = LogUtil.getLogger(ValidateAntHomePathCommand);
-
-        private var _msg:ValidateJavaHomePathMessage;
+        private static var LOG:ILogger = LogUtil.getLogger(ValidateAntPathCommand);
 
         [Inject]
         public var settings:SettingModel;
 
         private var _done:Boolean;
 
-        public function execute(msg:ValidateJavaHomePathMessage):void {
+        public function execute(msg:ValidateGitPathMessage):void {
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
-            _msg = msg;
+            settings.gitEnabled = false;
             executeCommand();
         }
 
         override protected function executeCommand():void {
-            LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
+            LOG.debug("Executing Command");
 
-            var file:File;
-
-            if (!_msg.path) {
-                LOG.error("Path null, nothing to check, quit");
-                error(false);
-                return;
-            }
-
-            try {
-                file = new File(shell.formatPath(_msg.path));
-                if (!file.resolvePath("lib/tools.jar").exists) {
-                    LOG.error("Error resolving JAVA_HOME");
-                    error(false);
-                    return;
-                }
-            } catch (err:Error) {
-                LOG.error(ObjectUtil.toString(err));
-                error(false);
-                return;
-            }
-            ;
-
-            var java:String = shell.formatPath(file.resolvePath("bin/java.exe").nativePath);
-
-            if (shell.OS == "win")
+            if (shell.OS == "win") {
                 command.push("/C");
+            }
 
-            command.push(java);
-            command.push("-version");
+            command.push("git");
+            command.push("--version");
 
             super.executeCommand();
         }
 
-        private function extractVersion(output:String):void {
-
-            if (_done)
+        protected function readOutputs(output:String):void {
+            if (_done) {
                 return;
+            }
 
             _done = true;
-            if (output.indexOf("1.6.") > -1) {
-                settings.javaEnabled = true;
+            if (output.indexOf("git version") > -1) {
+                settings.gitEnabled = true;
                 result(true);
             } else {
-                settings.javaEnabled = false;
                 error(false);
             }
+
+            return;
         }
 
         override protected function outputDataHandler(event:ProgressEvent):void {
             super.outputDataHandler(event);
-            extractVersion(standardOutput);
+            readOutputs(standardOutput);
         }
 
         override protected function errorDataHandler(event:ProgressEvent):void {
             super.errorDataHandler(event);
-            extractVersion(standardError);
+            readOutputs(standardError);
         }
     }
 }

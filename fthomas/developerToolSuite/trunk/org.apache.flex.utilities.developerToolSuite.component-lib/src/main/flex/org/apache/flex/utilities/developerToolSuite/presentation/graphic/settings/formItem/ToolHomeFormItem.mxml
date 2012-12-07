@@ -54,9 +54,9 @@ limitations under the License.
     </s:helpContent>
     <fx:Script><![CDATA[
         import mx.events.FlexEvent;
-        import mx.rpc.Responder;
 
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
+
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
 
         import spark.events.TextOperationEvent;
@@ -109,7 +109,6 @@ limitations under the License.
             dispatch(new validateToolMessageClass(toolHomeLocation.text));
         }
 
-        // Result handlers for the SaveSettingCommand
         public function get installationPathValidated():Boolean {
             return _installationPathValidated;
         }
@@ -118,6 +117,9 @@ limitations under the License.
         public function set installationPathValidated(value:Boolean):void {
             _installationPathValidated = value;
             validator.validate();
+
+            if (_installationPathValidated)
+                dispatch(new SaveSettingMessage(propertyName, toolHomeLocation.text));
         }
         ]]></fx:Script>
 </s:FormItem>

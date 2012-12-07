@@ -20,7 +20,7 @@ limitations under the License.
                        xmlns:mx="library://ns.adobe.com/flex/mx"
                        xmlns:parsley="http://www.spicefactory.org/parsley"
                        title="Apache Flex Developer Tool Suite"
-                       width="800" height="600"
+                       width="800" height="550"
                        closing="closingHandler(event)">
 
     <fx:Declarations>
@@ -97,7 +97,7 @@ limitations under the License.
                     }
                 }
             } else {
-                nativeWindow.bounds = new Rectangle(120, 120, 1150, 720);
+                nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
             }
 
             LogUtil.getLogger(this).info('Application ready');

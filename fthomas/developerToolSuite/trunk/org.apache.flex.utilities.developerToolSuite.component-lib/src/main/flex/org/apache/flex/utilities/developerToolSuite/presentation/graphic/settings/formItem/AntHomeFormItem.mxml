@@ -24,9 +24,10 @@ limitations under the License.
                            helpLabelResourcesString="INDICATE_ANT_HOME" helpUrlText="(ANT Home Page)"
                            helpUrl="http://ant.apache.org/"
                            browserDirectoryResourceString="PLEASE_INDICATE_ANT_HOME"
-                           validateToolMessageClass="{ValidateAntHomePathMessage}"
+                           validateToolMessageClass="{ValidateAntPathMessage}"
                            errorStringTextResourceString="ANT_HOME_ERROR_STRING">
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntHomePathMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
         ]]></fx:Script>
 </formitem:ToolHomeFormItem>

@@ -24,9 +24,9 @@ limitations under the License.
                            helpLabelResourcesString="INDICATE_JAVA_HOME" helpUrlText="(JDK 1.6 Home Page)"
                            helpUrl="http://www.oracle.com/technetwork/java/javaee/downloads/java-ee-sdk-6u3-jdk-6u29-downloads-523388.html"
                            browserDirectoryResourceString="PLEASE_INDICATE_JAVA_HOME"
-                           validateToolMessageClass="{ValidateJavaHomePathMessage}"
+                           validateToolMessageClass="{ValidateJavaPathMessage}"
                            errorStringTextResourceString="JAVA_HOME_ERROR_STRING">
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaHomePathMessage;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
         ]]></fx:Script>
 </formitem:ToolHomeFormItem>

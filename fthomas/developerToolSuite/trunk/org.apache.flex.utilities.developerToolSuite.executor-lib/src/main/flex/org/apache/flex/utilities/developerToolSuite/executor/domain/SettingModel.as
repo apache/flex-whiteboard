@@ -43,6 +43,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         private var _antEnabled:Boolean;
         private var _mavenEnabled:Boolean;
 
+        private var _svnEnabled:Boolean;
+        private var _gitEnabled:Boolean;
+
         private var _appBounds:String;
         private var _appDisplayState:String;
 
@@ -116,6 +119,24 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         [Bindable]
         public function set mavenEnabled(value:Boolean):void {
             _mavenEnabled = value;
+        }
+
+        public function get svnEnabled():Boolean {
+            return _svnEnabled;
+        }
+
+        [Bindable]
+        public function set svnEnabled(value:Boolean):void {
+            _svnEnabled = value;
+        }
+
+        public function get gitEnabled():Boolean {
+            return _gitEnabled;
+        }
+
+        [Bindable]
+        public function set gitEnabled(value:Boolean):void {
+            _gitEnabled = value;
         }
 
         public function get appBounds():String {

@@ -22,28 +22,29 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenHomePathMessage;
+
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class ValidateMavenHomePathCommand extends AbstractShellCommand {
+    public class ValidateAntPathCommand extends AbstractShellCommand{
 
-        private static var LOG:ILogger = LogUtil.getLogger(ValidateMavenHomePathCommand);
+        private static var LOG:ILogger = LogUtil.getLogger(ValidateAntPathCommand);
 
-        private var _msg:ValidateMavenHomePathMessage;
+        private var _msg:ValidateAntPathMessage;
 
         [Inject]
         public var settings:SettingModel;
 
         private var _done:Boolean;
 
-        public function execute(msg:ValidateMavenHomePathMessage):void {
+        public function execute(msg:ValidateAntPathMessage):void {
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             _msg = msg;
+            settings.antEnabled = false;
             executeCommand();
         }
 
         override protected function executeCommand():void {
-
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
 
             var file:File;
@@ -56,7 +57,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             try {
                 file = new File(shell.formatPath(_msg.path));
-                if (!file.resolvePath("bin/mvn.bat").exists) {
+                if (!file.resolvePath("bin/ant.bat").exists) {
                     LOG.error("Error resolving ANT_HOME");
                     error(false);
                     return;
@@ -68,13 +69,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
             ;
 
-            var mvn:String = shell.formatPath(file.resolvePath("bin/mvn.bat").nativePath);
+            var ant:String = shell.formatPath(file.resolvePath("bin/ant.bat").nativePath);
 
-            if (shell.OS == "win") {
+            if (shell.OS == "win")
                 command.push("/C");
-            }
 
-            command.push(mvn);
+            command.push(ant);
             command.push("-version");
 
             super.executeCommand();
@@ -82,17 +82,14 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private function extractVersion(output:String):void {
 
-            if (_done) {
+            if (_done)
                 return;
-            }
 
             _done = true;
-
-            if (output.indexOf("Apache Maven 3.") > -1) {
-                settings.mavenEnabled = true;
+            if (output.indexOf("Apache Ant(TM) version") > -1) {
+                settings.antEnabled = true;
                 result(true);
             } else {
-                settings.mavenEnabled = false;
                 error(false);
             }
         }

@@ -23,23 +23,24 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntHomePathMessage;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
-    public class ValidateAntHomePathCommand extends AbstractShellCommand{
+    public class ValidateJavaPathCommand extends AbstractShellCommand {
 
-        private static var LOG:ILogger = LogUtil.getLogger(ValidateAntHomePathCommand);
+        private static var LOG:ILogger = LogUtil.getLogger(ValidateAntPathCommand);
 
-        private var _msg:ValidateAntHomePathMessage;
+        private var _msg:ValidateJavaPathMessage;
 
         [Inject]
         public var settings:SettingModel;
 
         private var _done:Boolean;
 
-        public function execute(msg:ValidateAntHomePathMessage):void {
+        public function execute(msg:ValidateJavaPathMessage):void {
             LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             _msg = msg;
+            settings.javaEnabled = false;
             executeCommand();
         }
 
@@ -56,8 +57,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             try {
                 file = new File(shell.formatPath(_msg.path));
-                if (!file.resolvePath("bin/ant.bat").exists) {
-                    LOG.error("Error resolving ANT_HOME");
+                if (!file.resolvePath("lib/tools.jar").exists) {
+                    LOG.error("Error resolving JAVA_HOME");
                     error(false);
                     return;
                 }
@@ -68,12 +69,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
             ;
 
-            var ant:String = shell.formatPath(file.resolvePath("bin/ant.bat").nativePath);
+            var java:String = shell.formatPath(file.resolvePath("bin/java.exe").nativePath);
 
             if (shell.OS == "win")
                 command.push("/C");
 
-            command.push(ant);
+            command.push(java);
             command.push("-version");
 
             super.executeCommand();
@@ -85,11 +86,10 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 return;
 
             _done = true;
-            if (output.indexOf("Apache Ant(TM) version") > -1) {
-                settings.antEnabled = true;
+            if (output.indexOf("1.6.") > -1) {
+                settings.javaEnabled = true;
                 result(true);
             } else {
-                settings.antEnabled = false;
                 error(false);
             }
         }

@@ -15,18 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
-    import mx.rpc.Responder;
-
-    public class ValidateAntHomePathMessage {
-
-        private var _path:String;
-
-        public function ValidateAntHomePathMessage(path:String) {
-            _path = path;
-        }
-
-        public function get path():String {
-            return _path;
-        }
+    public class ValidateGitPathMessage {
     }
 }

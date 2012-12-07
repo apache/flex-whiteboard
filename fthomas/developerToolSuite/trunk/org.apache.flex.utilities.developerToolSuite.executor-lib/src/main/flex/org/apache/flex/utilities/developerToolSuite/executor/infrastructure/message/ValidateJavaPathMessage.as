@@ -17,11 +17,11 @@
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
     import mx.rpc.Responder;
 
-    public class ValidateMavenHomePathMessage {
+    public class ValidateJavaPathMessage {
 
         private var _path:String;
 
-        public function ValidateMavenHomePathMessage(path:String) {
+        public function ValidateJavaPathMessage(path:String) {
             _path = path;
         }
 
