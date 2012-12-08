@@ -62,6 +62,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 if (!file.resolvePath("Cygwin.bat").exists) {
                     LOG.error("Error resolving CYGWIN_HOME");
                     callback(false);
+                    return;
                 }
                 else {
                     LOG.debug("Resolved CYGWIN_HOME");
@@ -70,6 +71,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             } catch (err:Error) {
                 LOG.error("Ending Command with error: " + ObjectUtil.toString(err));
                 callback(false);
+                return;
             }
             ;
             LOG.debug("Ending Command with result: " + file.nativePath);
