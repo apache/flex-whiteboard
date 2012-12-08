@@ -98,7 +98,6 @@ limitations under the License.
         private function closeWindow():void{
             PopUpManager.removePopUp(this);
             dispatchEvent(new ModalWindowEvent(ModalWindowEvent.CLOSED));
-            context.viewManager.removeViewRoot(this);
         }
         ]]></fx:Script>
 </s:TitleWindow>
