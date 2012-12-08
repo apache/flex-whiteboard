@@ -41,6 +41,7 @@ limitations under the License.
         <parsley:MapCommand type="{ValidateMavenPathCommand}"/>
         <parsley:MapCommand type="{ValidateSvnPathCommand}"/>
         <parsley:MapCommand type="{ValidateGitPathCommand}"/>
+        <parsley:MapCommand type="{ValidateCygwinPathCommand}"/>
 
         <domain:SettingModel/>
     </fx:Declarations>
@@ -53,6 +54,7 @@ limitations under the License.
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateAntPathCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateCygwinPathCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateGitPathCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateJavaPathCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ValidateMavenPathCommand;

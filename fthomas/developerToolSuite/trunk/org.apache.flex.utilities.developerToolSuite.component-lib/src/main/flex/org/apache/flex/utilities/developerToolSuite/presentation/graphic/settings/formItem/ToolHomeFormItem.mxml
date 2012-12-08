@@ -85,6 +85,7 @@ limitations under the License.
         public var dispatch:Function;
 
         private function creationCompleteHandler(event:FlexEvent):void {
+            validator.validate();
             dispatch(new validateToolMessageClass(propertyValue));
         }
 

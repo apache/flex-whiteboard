@@ -41,7 +41,7 @@ limitations under the License.
                                 change="localeComboBox_changeHandler(event)" width="100%"/>
             </component:Frame>
         </mx:GridItem>
-        <mx:GridItem rowSpan="3">
+        <mx:GridItem rowSpan="4">
             <component:Frame label="{resourceManager.getString('SettingsWindow', 'TOOLS_PATH_LOCATION')}" skinClass="{FrameSkin}">
                 <component:layout>
                     <s:VerticalLayout horizontalAlign="center" paddingRight="35"/>
@@ -56,13 +56,15 @@ limitations under the License.
                                               propertyValue="{model.ANT_HOME ? model.ANT_HOME : model.environmentVariables['ANT_HOME']}"/>
                     <formitem:MavenHomeFormItem id="mavenHomeFormItem" installationPathValidated="{model.mavenEnabled}"
                                                 propertyValue="{model.MAVEN_HOME ? model.MAVEN_HOME : model.environmentVariables['MAVEN_HOME']}"/>
+                    <formitem:CygwinHomeFormItem id="cygwinHomeFormItem" installationPathValidated="{model.cygwinEnabled}"
+                                                 propertyValue="{model.CYGWIN_HOME}"/>
                 </s:Form>
             </component:Frame>
         </mx:GridItem>
     </mx:GridRow>
 
     <mx:GridRow width="100%" horizontalAlign="center">
-        <mx:GridItem rowSpan="2">
+        <mx:GridItem rowSpan="3">
             <component:Frame label="{resourceManager.getString('SettingsWindow', 'VCS')}" skinClass="{FrameSkin}" height="100%">
                 <component:layout>
                     <s:HorizontalLayout horizontalAlign="center"
@@ -70,15 +72,15 @@ limitations under the License.
                                         gap="16"/>
                 </component:layout>
                 <s:Form styleName="stackedForm">
-                    <s:layout>
-                        <s:FormLayout gap="-14"/>
-                    </s:layout>
+                    <s:Label text="{resourceManager.getString('SettingsWindow', 'VCS_INTRO')}"/>
                     <formitem:SvnHomeFormItem id="svnHomeFormItem" installationPathValidated="{model.svnEnabled}"/>
                     <formitem:GitHomeFormItem id="gitHomeFormItem" installationPathValidated="{model.gitEnabled}"/>
                 </s:Form>
             </component:Frame>
         </mx:GridItem>
     </mx:GridRow>
+
+    <mx:GridRow/>
     <mx:GridRow/>
 
     <fx:Script><![CDATA[
@@ -100,7 +102,8 @@ limitations under the License.
             languageComboBox.dataProvider = model.availableLanguages;
             languageComboBox.selectedItem = model.currentLanguage;
 
-            svnHomeFormItem.dispatch = gitHomeFormItem.dispatch = javaHomeFormItem.dispatch = antHomeFormItem.dispatch = mavenHomeFormItem.dispatch = dispatch;
+            cygwinHomeFormItem.dispatch = svnHomeFormItem.dispatch = gitHomeFormItem.dispatch = javaHomeFormItem.dispatch = antHomeFormItem.dispatch
+                    = mavenHomeFormItem.dispatch = dispatch;
         }
 
         private function localeComboBox_changeHandler(event:IndexChangeEvent):void {

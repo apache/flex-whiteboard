@@ -38,10 +38,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         private var _JAVA_HOME:String;
         private var _ANT_HOME:String;
         private var _MAVEN_HOME:String;
+        private var _CYGWIN_HOME:String;
 
         private var _javaEnabled:Boolean;
         private var _antEnabled:Boolean;
         private var _mavenEnabled:Boolean;
+        private var _cygwinEnabled:Boolean;
 
         private var _svnEnabled:Boolean;
         private var _gitEnabled:Boolean;
@@ -94,6 +96,15 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
             _MAVEN_HOME = value;
         }
 
+        public function get CYGWIN_HOME():String {
+            return _CYGWIN_HOME;
+        }
+
+        [Bindable]
+        public function set CYGWIN_HOME(value:String):void {
+            _CYGWIN_HOME = value;
+        }
+
         public function get javaEnabled():Boolean {
             return _javaEnabled;
         }
@@ -119,6 +130,15 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         [Bindable]
         public function set mavenEnabled(value:Boolean):void {
             _mavenEnabled = value;
+        }
+
+        public function get cygwinEnabled():Boolean {
+            return _cygwinEnabled;
+        }
+
+        [Bindable]
+        public function set cygwinEnabled(value:Boolean):void {
+            _cygwinEnabled = value;
         }
 
         public function get svnEnabled():Boolean {

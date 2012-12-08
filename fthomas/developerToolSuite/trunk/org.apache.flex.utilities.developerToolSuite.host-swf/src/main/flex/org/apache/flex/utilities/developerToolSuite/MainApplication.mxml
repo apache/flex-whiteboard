@@ -107,7 +107,7 @@ limitations under the License.
         private function addLog():void {
             var parsleyLogger:TraceTarget = new TraceTarget();
             parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
-            parsleyLogger.level = LogEventLevel.ALL;
+            parsleyLogger.level = LogEventLevel.ERROR;
             parsleyLogger.includeCategory = true;
             parsleyLogger.includeLevel = true;
             parsleyLogger.fieldSeparator = " -> ";

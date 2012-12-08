@@ -116,11 +116,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             function prepareSettingsData():void {
                 settingsDataSql = "INSERT INTO 'settings' SELECT '1' AS 'id', 'locale' AS 'name', '" + LocaleUtil.getDefaultLanguage().data + "' AS 'value' ";
-                settingsDataSql += "UNION SELECT '2', 'JAVA_HOME', '' ";
-                settingsDataSql += "UNION SELECT '3', 'ANT_HOME', '' ";
-                settingsDataSql += "UNION SELECT '4', 'MAVEN_HOME', '' ";
-                settingsDataSql += "UNION SELECT '5', 'appDisplayState', '' ";
-                settingsDataSql += "UNION SELECT '6', 'appBounds', '';";
+                settingsDataSql += "UNION SELECT '2', 'appDisplayState', '' ";
+                settingsDataSql += "UNION SELECT '3', 'appBounds', '' ";
+                settingsDataSql += "UNION SELECT '4', 'JAVA_HOME', '' ";
+                settingsDataSql += "UNION SELECT '5', 'ANT_HOME', '' ";
+                settingsDataSql += "UNION SELECT '6', 'MAVEN_HOME', '' ";
+                settingsDataSql += "UNION SELECT '7', 'CYGWIN_HOME', '';";
             }
         }
     }
