@@ -75,6 +75,9 @@ limitations under the License.
             return window;
         }
 
+        [Inject]
+        public var context:Context;
+
         [Init]
         public function init():void {
             dispatchEvent(new ModalWindowEvent(ModalWindowEvent.OPENED));
@@ -95,6 +98,7 @@ limitations under the License.
         private function closeWindow():void{
             PopUpManager.removePopUp(this);
             dispatchEvent(new ModalWindowEvent(ModalWindowEvent.CLOSED));
+            context.viewManager.removeViewRoot(this);
         }
         ]]></fx:Script>
 </s:TitleWindow>
