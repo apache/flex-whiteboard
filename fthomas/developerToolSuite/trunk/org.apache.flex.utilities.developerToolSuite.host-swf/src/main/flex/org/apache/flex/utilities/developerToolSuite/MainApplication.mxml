@@ -60,7 +60,7 @@ limitations under the License.
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.StartHelperMessage;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.LaunchUIMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
 
@@ -108,7 +108,7 @@ limitations under the License.
 
             LogUtil.getLogger(this).info('Application ready');
 
-            dispatch(new StartHelperMessage());
+            dispatch(new LaunchUIMessage());
         }
 
         [MessageHandler(selector='opened')]
