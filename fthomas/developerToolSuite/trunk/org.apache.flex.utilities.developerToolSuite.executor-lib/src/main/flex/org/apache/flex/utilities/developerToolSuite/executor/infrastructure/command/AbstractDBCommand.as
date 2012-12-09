@@ -58,12 +58,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         protected function result(result:SQLResult):void {
             var resultMessage:String = (result.data != null) ? ObjectUtil.toString(result.data) : result.rowsAffected + " affected row(s)";
             log.debug("Successfully executed shell: " + resultMessage);
-            callback(resultMessage);
+            callback(new CommandCallBackResult(result));
         }
 
         protected function error(error:SQLError):void {
             log.error("Error executing shell: " + ObjectUtil.toString(error));
-            callback(error);
+            callback(new CommandCallBackError(error.message, error.detailID));
         }
     }
 }

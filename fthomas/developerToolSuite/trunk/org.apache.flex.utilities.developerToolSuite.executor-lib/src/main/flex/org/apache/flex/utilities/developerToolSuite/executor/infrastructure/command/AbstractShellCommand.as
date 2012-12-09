@@ -78,7 +78,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         protected function IOErrorHandler(event:IOErrorEvent):void {
             log.error(event.toString());
-            error(event);
+            result(new CommandCallBackError(event.text, event.errorID));
         }
 
         protected function exitHandler(event:NativeProcessExitEvent):void {
@@ -86,12 +86,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             removeShellListeners();
         }
 
-        protected function result(result:Object):void {
-            shell.process.exit();
-            callback(result);
-        }
-
-        protected function error(error:Object):void {
+        protected function result(error:ICommandCallBack):void {
             shell.process.exit();
             callback(error);
         }

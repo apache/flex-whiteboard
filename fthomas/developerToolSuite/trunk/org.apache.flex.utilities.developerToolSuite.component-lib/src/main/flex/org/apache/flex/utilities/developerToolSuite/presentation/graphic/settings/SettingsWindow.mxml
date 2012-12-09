@@ -21,7 +21,7 @@ limitations under the License.
                xmlns:parsley="http://www.spicefactory.org/parsley"
                xmlns:settings="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.*"
                title="{resourceManager.getString('Application', 'SETTINGS')}"
-               width="100%" height="480"
+               width="100%" height="500"
                addedToStage="addedToStageHandler(event)"
                removedFromStage="removedFromStageHandler(event)"
                close="closeWindow()">
@@ -66,13 +66,18 @@ limitations under the License.
 
         import org.spicefactory.parsley.core.context.Context;
 
-        public static function show(context:Context, modal:Boolean = true):SettingsWindow {
-            var window:SettingsWindow = new SettingsWindow();
+        private static var __window:SettingsWindow;
 
-            context.viewManager.addViewRoot(window);
-            PopUpManager.addPopUp(window, FlexGlobals.topLevelApplication as DisplayObject, modal);
-            PopUpManager.centerPopUp(window);
-            return window;
+        public static function show(context:Context, modal:Boolean = true):SettingsWindow {
+            if (__window)
+                return __window;
+
+            __window = new SettingsWindow();
+
+            context.viewManager.addViewRoot(__window);
+            PopUpManager.addPopUp(__window, FlexGlobals.topLevelApplication as DisplayObject, modal);
+            PopUpManager.centerPopUp(__window);
+            return __window;
         }
 
         [Inject]
@@ -98,6 +103,7 @@ limitations under the License.
         private function closeWindow():void{
             PopUpManager.removePopUp(this);
             dispatchEvent(new ModalWindowEvent(ModalWindowEvent.CLOSED));
+            __window = null;
         }
         ]]></fx:Script>
 </s:TitleWindow>

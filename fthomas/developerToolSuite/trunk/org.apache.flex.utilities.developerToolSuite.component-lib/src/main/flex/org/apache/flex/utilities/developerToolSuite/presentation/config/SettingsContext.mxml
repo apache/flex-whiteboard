@@ -23,12 +23,14 @@ limitations under the License.
         <parsley:DynamicObject type="{GeneralMenu}"/>
 
         <parsley:MapCommand type="{MenuActionCommand}"/>
+        <parsley:MapCommand type="{StartHelperCommand}"/>
 
         <menu:ApplicationMenuPM/>
     </fx:Declarations>
 
     <fx:Script><![CDATA[
         import org.apache.flex.utilities.developerToolSuite.infrastructure.command.MenuActionCommand;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.command.StartHelperCommand;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.GeneralMenu;
         ]]></fx:Script>
 </fx:Object>

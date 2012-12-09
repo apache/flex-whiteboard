@@ -53,7 +53,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             if (!_msg.path) {
                 LOG.error("Path null, nothing to check, quit");
-                callback(false);
+                callback(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
 
@@ -61,7 +61,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 file = new File(NativeShellHelper.formatPath(_msg.path));
                 if (!file.resolvePath("Cygwin.bat").exists) {
                     LOG.error("Error resolving CYGWIN_HOME");
-                    callback(false);
+                    callback(CommandCallBack.DEFAULT_ERROR);
                     return;
                 }
                 else {
@@ -70,12 +70,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 }
             } catch (err:Error) {
                 LOG.error("Ending Command with error: " + ObjectUtil.toString(err));
-                callback(false);
+                callback(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
             ;
             LOG.debug("Ending Command with result: " + file.nativePath);
-            callback(true);
+            callback(CommandCallBack.DEFAULT_RESULT);
         }
     }
 }

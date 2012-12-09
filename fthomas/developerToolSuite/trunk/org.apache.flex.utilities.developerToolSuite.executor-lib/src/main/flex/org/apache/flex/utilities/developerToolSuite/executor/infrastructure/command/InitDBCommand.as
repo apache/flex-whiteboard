@@ -27,6 +27,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class InitDBCommand {
@@ -40,7 +41,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         private static const SETTINGS_TABLE_SQL:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
         private static var settingsDataSql:String;
 
-        public function execute():void {
+        public function execute(msg:InitApplicationMessage):void {
             _conn = new SQLConnection();
 
             // The database file is in the application storage directory

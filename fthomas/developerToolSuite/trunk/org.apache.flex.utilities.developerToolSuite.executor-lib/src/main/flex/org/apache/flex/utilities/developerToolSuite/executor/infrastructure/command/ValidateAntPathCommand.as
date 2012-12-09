@@ -50,7 +50,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
             if (!_msg.path) {
                 LOG.error("Path null, nothing to check, quit");
-                error(false);
+                result(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
 
@@ -58,12 +58,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 file = new File(shell.formatPath(_msg.path));
                 if (!file.resolvePath("bin/ant.bat").exists) {
                     LOG.error("Error resolving ANT_HOME");
-                    error(false);
+                    result(CommandCallBack.DEFAULT_ERROR);
                     return;
                 }
             } catch (err:Error) {
                 LOG.error(ObjectUtil.toString(err));
-                error(false);
+                result(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
             ;
@@ -89,9 +89,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             _done = true;
             if (output.indexOf("Apache Ant(TM) version") > -1) {
                 settings.antEnabled = true;
-                result(true);
+                result(CommandCallBack.DEFAULT_RESULT);
             } else {
-                error(false);
+                result(CommandCallBack.DEFAULT_ERROR);
             }
         }
 

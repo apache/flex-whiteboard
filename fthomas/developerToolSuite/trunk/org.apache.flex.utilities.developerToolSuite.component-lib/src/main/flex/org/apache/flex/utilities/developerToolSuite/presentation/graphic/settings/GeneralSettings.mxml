@@ -22,7 +22,7 @@ limitations under the License.
          xmlns:component="org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.*"
          xmlns:formitem="org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.formItem.*"
          width="100%" height="100%"
-         paddingTop="30" paddingLeft="30" paddingRight="30" verticalGap="12">
+         paddingTop="15" paddingLeft="30" paddingRight="30" verticalGap="12">
 
 
     <fx:Declarations>
@@ -44,7 +44,7 @@ limitations under the License.
         <mx:GridItem rowSpan="4">
             <component:Frame label="{resourceManager.getString('SettingsWindow', 'TOOLS_PATH_LOCATION')}" skinClass="{FrameSkin}">
                 <component:layout>
-                    <s:VerticalLayout horizontalAlign="center" paddingRight="35"/>
+                    <s:VerticalLayout horizontalAlign="center" paddingRight="40"/>
                 </component:layout>
                 <s:Form styleName="stackedForm">
                     <s:layout>

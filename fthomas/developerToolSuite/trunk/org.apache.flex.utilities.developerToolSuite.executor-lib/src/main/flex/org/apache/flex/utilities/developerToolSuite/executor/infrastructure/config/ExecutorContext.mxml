@@ -27,8 +27,8 @@ limitations under the License.
         <parsley:MapCommand messageType="{InitApplicationMessage}">
             <parsley:CommandSequence>
                 <parsley:Command type="{InitDBCommand}"/>
-                <parsley:Command type="{GetSettingsCommand}"/>
                 <parsley:Command type="{GetEnvironmentVariablesCommand}"/>
+                <parsley:Command type="{GetSettingsFromDBCommand}"/>
             </parsley:CommandSequence>
         </parsley:MapCommand>
 
@@ -43,13 +43,13 @@ limitations under the License.
         <parsley:MapCommand type="{ValidateGitPathCommand}"/>
         <parsley:MapCommand type="{ValidateCygwinPathCommand}"/>
 
-        <domain:SettingModel/>
+        <domain:SettingModel id="applicationModel"/>
     </fx:Declarations>
 
     <fx:Script><![CDATA[
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.ChangeLanguageCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetEnvironmentVariablesCommand;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsCommand;
+        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.GetSettingsFromDBCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.InitDBCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingCommand;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.SaveSettingsCommand;

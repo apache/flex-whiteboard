@@ -19,6 +19,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import flash.utils.Dictionary;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
 
     public class GetEnvironmentVariablesCommand extends AbstractShellCommand {
 
@@ -27,7 +28,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private var _done:Boolean;
 
-        public function execute():void {
+        public function execute(msg:InitApplicationMessage):void {
             executeCommand();
         }
 
@@ -57,7 +58,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 var tuple:Array = row.split("=");
                 settings.environmentVariables[tuple[0]] = tuple[1];
             }
-            result(settings.environmentVariables);
+            result(new CommandCallBackResult(settings.environmentVariables));
         }
 
         override protected function outputDataHandler(event:ProgressEvent):void {

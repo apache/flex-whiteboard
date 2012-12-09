@@ -60,9 +60,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             _done = true;
             if (output.indexOf("Subversion command-line client") > -1) {
                 settings.svnEnabled = true;
-                result(true);
+                result(CommandCallBack.DEFAULT_RESULT);
             } else {
-                error(false);
+                result(CommandCallBack.DEFAULT_ERROR);
             }
 
             return;
