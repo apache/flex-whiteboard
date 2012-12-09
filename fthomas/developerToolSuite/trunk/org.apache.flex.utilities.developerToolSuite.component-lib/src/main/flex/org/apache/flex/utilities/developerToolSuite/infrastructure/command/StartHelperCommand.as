@@ -2,6 +2,8 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     import mx.logging.ILogger;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBack;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackError;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
@@ -20,7 +22,7 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         public var context:Context;
 
         [Inject]
-        public var settings:ISettingsModel;
+        public var settings:SettingModel;
 
         [MessageDispatcher]
         public var dispatch:Function;
@@ -37,22 +39,27 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
 
         [CommandError]
         public function validateJavaPathCommandError(error:CommandCallBackError, trigger:ValidateJavaPathMessage):void {
-            SettingsWindow.show(context);
+            openSettingsWindow()
         }
 
         [CommandError]
         public function validateAntPathCommandError(error:CommandCallBackError, trigger:ValidateAntPathMessage):void {
-            SettingsWindow.show(context);
+            openSettingsWindow()
         }
 
         [CommandError]
         public function validateMavenPathCommandError(error:CommandCallBackError, trigger:ValidateMavenPathMessage):void {
-            SettingsWindow.show(context);
+            openSettingsWindow()
         }
 
         [CommandError]
         public function validateCygwinPathCommandError(error:CommandCallBackError, trigger:ValidateCygwinPathMessage):void {
+            openSettingsWindow()
+        }
+
+        private function openSettingsWindow():void {
             SettingsWindow.show(context);
+            callback(CommandCallBack.DEFAULT_RESULT);
         }
     }
 }
