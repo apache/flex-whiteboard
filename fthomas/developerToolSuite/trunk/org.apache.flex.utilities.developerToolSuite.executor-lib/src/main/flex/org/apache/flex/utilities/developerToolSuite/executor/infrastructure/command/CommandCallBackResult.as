@@ -1,5 +1,5 @@
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
-    public class CommandCallBackResult implements ICommandCallBack{
+    public class CommandCallBackResult implements ICommandCallBack {
 
         private var _result:*;
 

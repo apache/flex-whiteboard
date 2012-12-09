@@ -3,12 +3,12 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackError;
-    import org.apache.flex.utilities.developerToolSuite.infrastructure.message.StartHelperMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.infrastructure.message.StartHelperMessage;
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsWindow;
     import org.spicefactory.parsley.core.context.Context;
 

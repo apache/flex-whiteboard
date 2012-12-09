@@ -54,13 +54,13 @@ limitations under the License.
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.StartHelperMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.StartHelperMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
 

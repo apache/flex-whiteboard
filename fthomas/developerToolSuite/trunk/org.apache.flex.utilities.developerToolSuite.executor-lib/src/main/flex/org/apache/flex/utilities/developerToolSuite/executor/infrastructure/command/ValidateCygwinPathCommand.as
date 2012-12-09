@@ -15,7 +15,6 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
-    import flash.events.ProgressEvent;
     import flash.filesystem.File;
 
     import mx.logging.ILogger;
@@ -63,8 +62,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                     LOG.error("Error resolving CYGWIN_HOME");
                     callback(CommandCallBack.DEFAULT_ERROR);
                     return;
-                }
-                else {
+                } else {
                     LOG.debug("Resolved CYGWIN_HOME");
                     settings.cygwinEnabled = true;
                 }
