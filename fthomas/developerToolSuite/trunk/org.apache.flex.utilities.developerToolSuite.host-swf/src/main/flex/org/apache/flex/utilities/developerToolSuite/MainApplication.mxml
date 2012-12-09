@@ -126,18 +126,6 @@ limitations under the License.
             dispatch(new SaveSettingMessage("appDisplayState", nativeWindow.displayState));
         }
 
-        public function execute():void {
-
-            dispatch(new ValidateJavaPathMessage(applicationSettings.JAVA_HOME));
-            dispatch(new ValidateAntPathMessage(applicationSettings.ANT_HOME));
-            dispatch(new ValidateMavenPathMessage(applicationSettings.MAVEN_HOME));
-            dispatch(new ValidateCygwinPathMessage(applicationSettings.CYGWIN_HOME));
-
-            /*var timer:Timer = new Timer(1000, 1);
-             timer.addEventListener(TimerEvent.TIMER_COMPLETE, timer_timerCompleteHandler);
-             timer.start();*/
-        }
-
         private function addLog():void {
             var parsleyLogger:TraceTarget = new TraceTarget();
             parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
