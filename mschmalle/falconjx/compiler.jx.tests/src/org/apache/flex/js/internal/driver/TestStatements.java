@@ -1,0 +1,373 @@
+/*
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
+package org.apache.flex.js.internal.driver;
+
+import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
+import org.apache.flex.compiler.tree.as.IFileNode;
+import org.apache.flex.compiler.tree.as.IForLoopNode;
+import org.apache.flex.compiler.tree.as.IIfNode;
+import org.apache.flex.compiler.tree.as.ISwitchNode;
+import org.apache.flex.compiler.tree.as.IThrowNode;
+import org.apache.flex.compiler.tree.as.ITryNode;
+import org.apache.flex.compiler.tree.as.IWhileLoopNode;
+import org.apache.flex.compiler.tree.as.IWithNode;
+import org.junit.Test;
+
+/**
+ * @author Michael Schmalle
+ */
+public class TestStatements extends TestWalkerBase
+{
+    //--------------------------------------------------------------------------
+    // if
+    //--------------------------------------------------------------------------
+
+    //----------------------------------
+    // if ()
+    //----------------------------------
+
+    @Test
+    public void testVisitIf_1()
+    {
+        IIfNode node = (IIfNode) getNode("if (a) b++;", IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a)\n\tb++;");
+    }
+
+    @Test
+    public void testVisitIf_2()
+    {
+        IIfNode node = (IIfNode) getNode("if (a) b++; else c++;", IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a)\n\tb++;\nelse\n\tc++;");
+    }
+
+    @Test
+    public void testVisitIf_4()
+    {
+        IIfNode node = (IIfNode) getNode(
+                "if (a) b++; else if (c) d++; else if(e) --f;", IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a)\n\tb++;\nelse if (c)\n\td++;\nelse if (e)\n\t--f;");
+    }
+
+    //----------------------------------
+    // if () { }
+    //----------------------------------
+
+    @Test
+    public void testVisitIf_1a()
+    {
+        IIfNode node = (IIfNode) getNode("if (a) { b++; }", IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a) {\n\tb++;\n}");
+    }
+
+    @Test
+    public void testVisitIf_1b()
+    {
+        IIfNode node = (IIfNode) getNode("if (a) { b++; } else { c++; }",
+                IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a) {\n\tb++;\n} else {\n\tc++;\n}");
+    }
+
+    @Test
+    public void testVisitIf_1c()
+    {
+        IIfNode node = (IIfNode) getNode(
+                "if (a) { b++; } else if (b) { c++; } else { d++; }",
+                IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a) {\n\tb++;\n} else if (b) {\n\tc++;\n} else {\n\td++;\n}");
+    }
+
+    @Test
+    public void testVisitIf_3()
+    {
+        IIfNode node = (IIfNode) getNode(
+                "if (a) b++; else if (c) d++; else --e;", IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a)\n\tb++;\nelse if (c)\n\td++;\nelse\n\t--e;");
+    }
+
+    //----------------------------------
+    // for () { }
+    //----------------------------------
+
+    @Test
+    public void testVisitFor_1a()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for (var i:int = 0; i < len; i++) { break; }",
+                IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for (var i:int = 0; i < len; i++) {\n\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitFor_1b()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for (var i:int = 0; i < len; i++) break;", IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for (var i:int = 0; i < len; i++)\n\tbreak;");
+    }
+
+    @Test
+    public void testVisitFor_2()
+    {
+        IForLoopNode node = (IForLoopNode) getNode("for (;;) { break; }",
+                IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for (;;) {\n\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitForIn_1()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for (var i:int in obj) { break; }", IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for (var i:int in obj) {\n\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitForIn_1a()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for (var i:int in obj)  break; ", IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for (var i:int in obj)\n\tbreak;");
+    }
+
+    @Test
+    public void testVisitForEach_1()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for each(var i:int in obj) { break; }", IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for each (var i:int in obj) {\n\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitForEach_1a()
+    {
+        IForLoopNode node = (IForLoopNode) getNode(
+                "for each(var i:int in obj)  break; ", IForLoopNode.class);
+        visitor.visitForLoop(node);
+        assertOut("for each (var i:int in obj)\n\tbreak;");
+    }
+
+    //----------------------------------
+    // while () { }
+    //----------------------------------
+
+    @Test
+    public void testVisitWhileLoop_1()
+    {
+        IWhileLoopNode node = (IWhileLoopNode) getNode(
+                "while(a > b){a++;--b;}", IWhileLoopNode.class);
+        visitor.visitWhileLoop(node);
+        assertOut("while (a > b) {\n\ta++;\n\t--b;\n}");
+    }
+
+    @Test
+    public void testVisitWhileLoop_1a()
+    {
+        IWhileLoopNode node = (IWhileLoopNode) getNode("while(a > b) a++;",
+                IWhileLoopNode.class);
+        visitor.visitWhileLoop(node);
+        assertOut("while (a > b)\n\ta++;");
+    }
+
+    //----------------------------------
+    // do {} while ()
+    //----------------------------------
+
+    @Test
+    public void testVisitWhileLoop_Do_1()
+    {
+        IWhileLoopNode node = (IWhileLoopNode) getNode(
+                "do {a++;--b;} while(a > b);", IWhileLoopNode.class);
+        visitor.visitWhileLoop(node);
+        assertOut("do {\n\ta++;\n\t--b;\n} while (a > b);");
+    }
+
+    @Test
+    public void testVisitWhileLoop_Do_1a()
+    {
+        IWhileLoopNode node = (IWhileLoopNode) getNode("do a++; while(a > b);",
+                IWhileLoopNode.class);
+        visitor.visitWhileLoop(node);
+        assertOut("do\n\ta++;\nwhile (a > b);");
+    }
+
+    //----------------------------------
+    // throw ()
+    //----------------------------------
+
+    @Test
+    public void testVisitThrow()
+    {
+        IThrowNode node = (IThrowNode) getNode("throw new Error('foo');",
+                IThrowNode.class);
+        visitor.visitThrow(node);
+        assertOut("throw new Error('foo')");
+    }
+
+    //----------------------------------
+    // try {} catch () {} finally {}
+    //----------------------------------
+
+    @Test
+    public void testVisitTry_Catch()
+    {
+        ITryNode node = (ITryNode) getNode("try { a; } catch (e:Error) { b; }",
+                ITryNode.class);
+        visitor.visitTry(node);
+        assertOut("try {\n\ta;\n} catch (e:Error) {\n\tb;\n}");
+    }
+
+    @Test
+    public void testVisitTry_Catch_Finally()
+    {
+        ITryNode node = (ITryNode) getNode(
+                "try { a; } catch (e:Error) { b; } finally { c; }",
+                ITryNode.class);
+        visitor.visitTry(node);
+        assertOut("try {\n\ta;\n} catch (e:Error) {\n\tb;\n} finally {\n\tc;\n}");
+    }
+
+    @Test
+    public void testVisitTry_Catch_Catch_Finally()
+    {
+        ITryNode node = (ITryNode) getNode(
+                "try { a; } catch (e:Error) { b; } catch (f:Error) { c; } finally { d; }",
+                ITryNode.class);
+        visitor.visitTry(node);
+        assertOut("try {\n\ta;\n} catch (e:Error) {\n\tb;\n} catch (f:Error) {\n\tc;\n} finally {\n\td;\n}");
+    }
+
+    @Test
+    public void testVisitTry_CatchEmpty_FinallyEmpty_()
+    {
+        ITryNode node = (ITryNode) getNode(
+                "try { a; } catch (e:Error) {  } finally {  }", ITryNode.class);
+        visitor.visitTry(node);
+        assertOut("try {\n\ta;\n} catch (e:Error) {\n} finally {\n}");
+    }
+
+    //----------------------------------
+    // switch {}
+    //----------------------------------
+
+    @Test
+    public void testVisitSwitch_1()
+    {
+        ISwitchNode node = (ISwitchNode) getNode("switch(i){case 1: break;}",
+                ISwitchNode.class);
+        visitor.visitSwitch(node);
+        assertOut("swtich (i) {\n\tcase 1:\n\t\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitSwitch_1a()
+    {
+        ISwitchNode node = (ISwitchNode) getNode(
+                "switch(i){case 1: { break; }}", ISwitchNode.class);
+        visitor.visitSwitch(node);
+        // TODO case BLOCK statements are SYNTHESIZED so they will never show BRACES
+        // without extra help from us
+        assertOut("swtich (i) {\n\tcase 1:\n\t\tbreak;\n}");
+    }
+
+    @Test
+    public void testVisitSwitch_2()
+    {
+        ISwitchNode node = (ISwitchNode) getNode(
+                "switch(i){case 1: break; default: return;}", ISwitchNode.class);
+        visitor.visitSwitch(node);
+        assertOut("swtich (i) {\n\tcase 1:\n\t\tbreak;\n\tdefault:\n\t\treturn;\n}");
+    }
+
+    //----------------------------------
+    // label : for () {}
+    //----------------------------------
+
+    @Test
+    public void testVisitLabel_1()
+    {
+        LabeledStatementNode node = (LabeledStatementNode) getNode(
+                "foo: for each(var i:int in obj) { break foo; }",
+                LabeledStatementNode.class);
+        visitor.visitLabeledStatement(node);
+        assertOut("foo : for each (var i:int in obj) {\n\tbreak foo;\n}");
+    }
+
+    @Test
+    public void testVisitLabel_1a()
+    {
+        // TODO LabelStatement messes up in finally{} block, something is wrong there
+        LabeledStatementNode node = (LabeledStatementNode) getNode(
+                "foo: for each(var i:int in obj) break foo;",
+                LabeledStatementNode.class);
+        visitor.visitLabeledStatement(node);
+        assertOut("foo : for each (var i:int in obj)\n\tbreak foo;");
+    }
+
+    //----------------------------------
+    // with () {}
+    //----------------------------------
+
+    @Test
+    public void testVisitWith()
+    {
+        IWithNode node = (IWithNode) getNode("with (a) { b; }", IWithNode.class);
+        visitor.visitWith(node);
+        assertOut("with (a) {\n\tb;\n}");
+    }
+
+    @Test
+    public void testVisitWith_1a()
+    {
+        IWithNode node = (IWithNode) getNode("with (a) b;", IWithNode.class);
+        visitor.visitWith(node);
+        assertOut("with (a)\n\tb;");
+    }
+
+    @Test
+    public void testVisit()
+    {
+        IFileNode node = (IFileNode) getNode(
+                "try { a; } catch (e:Error) { if (a) { if (b) { if (c) b; else if (f) a; else e; }} } finally {  }"
+                        + "if (d) for (var i:int = 0; i < len; i++) break;"
+                        + "if (a) { with (ab) { c(); } "
+                        + "do {a++;do a++; while(a > b);} while(c > d); }"
+                        + "if (b) { try { a; throw new Error('foo'); } catch (e:Error) { "
+                        + " switch(i){case 1: break; default: return;}"
+                        + " } catch (f:Error) { c; eee.dd; } finally { "
+                        + "  d;  eee.dd; eee.dd; eee.dd; eee.dd;} }"
+                        + "foo: for each(var i:int in obj) break foo;",
+                IFileNode.class);
+        visitor.visitFile(node);
+        //assertOut("");
+    }
+}
