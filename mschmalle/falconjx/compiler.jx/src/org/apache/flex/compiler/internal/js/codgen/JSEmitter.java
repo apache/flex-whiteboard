@@ -37,11 +37,12 @@ import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
+import org.apache.flex.js.IJSEmitter;
 
 /**
  * @author Michael Schmalle
  */
-public class JSEmitter
+public class JSEmitter implements IJSEmitter
 {
     private static final String NL = "\n";
 
@@ -92,7 +93,8 @@ public class JSEmitter
     {
         write(value);
     }
-
+    
+    @Override
     public void write(String value)
     {
         try

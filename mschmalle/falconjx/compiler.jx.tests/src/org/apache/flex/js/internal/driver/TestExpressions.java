@@ -39,7 +39,7 @@ import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
-import org.apache.flex.js.IASBlockVisitor;
+import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;

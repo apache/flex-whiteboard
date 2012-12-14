@@ -91,8 +91,8 @@ import org.apache.flex.compiler.tree.as.IWithNode;
 import org.apache.flex.compiler.tree.metadata.IMetaTagNode;
 import org.apache.flex.compiler.tree.metadata.IMetaTagsNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
+import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
-import org.apache.flex.js.IASBlockVisitor;
 
 /**
  * A base implementation of the {@link IASBlockVisitor} that will walk the
@@ -104,7 +104,6 @@ public class ASBlockWalker implements IASBlockVisitor
 {
     /**
      * The context stack of the visitor.
-     * 
      * <p>
      * The context can only contain what is beneath them, CLASS contains
      * FUNCTION.
@@ -127,6 +126,11 @@ public class ASBlockWalker implements IASBlockVisitor
     private JSEmitter emitter;
 
     private final List<ICompilerProblem> errors;
+
+    List<ICompilerProblem> getErrors()
+    {
+        return errors;
+    }
 
     //----------------------------------
     // context
@@ -1271,4 +1275,5 @@ public class ASBlockWalker implements IASBlockVisitor
         return node.getContainerType() == ContainerType.IMPLICIT
                 || node.getContainerType() == ContainerType.SYNTHESIZED;
     }
+
 }

@@ -65,8 +65,8 @@ import org.apache.flex.compiler.tree.as.IWithNode;
 import org.apache.flex.compiler.tree.metadata.IMetaTagNode;
 import org.apache.flex.compiler.tree.metadata.IMetaTagsNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
+import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
-import org.apache.flex.js.IASBlockVisitor;
 
 /**
  * @author Michael Schmalle

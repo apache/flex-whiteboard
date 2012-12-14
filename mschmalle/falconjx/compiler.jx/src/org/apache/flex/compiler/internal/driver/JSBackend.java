@@ -39,9 +39,13 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.targets.ITargetProgressMonitor;
 import org.apache.flex.compiler.targets.ITargetSettings;
+import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
 
 /**
+ * A concrete implementation of the {@link IBackend} API where the
+ * {@link ASBlockWalker} is used to traverse the {@link IFileNode} AST.
+ * 
  * @author Michael Schmalle
  */
 public class JSBackend implements IBackend
@@ -79,10 +83,9 @@ public class JSBackend implements IBackend
         JSEmitter emitter = new JSEmitter(out);
         ASBlockWalker walker = new ASBlockWalker(errors, project, emitter);
 
-        BeforeAfterStrategy strategy = new BeforeAfterStrategy();
-        strategy.setHandler(new ASNodeSwitch(walker));
-        strategy.setBefore(new BeforeNodeStrategy(emitter));
-        strategy.setAfter(new AfterNodeStrategy(emitter));
+        BeforeAfterStrategy strategy = new BeforeAfterStrategy(
+                new ASNodeSwitch(walker), new BeforeNodeStrategy(emitter),
+                new AfterNodeStrategy(emitter));
 
         walker.setStrategy(strategy);
 

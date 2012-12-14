@@ -28,25 +28,19 @@ import org.apache.flex.compiler.internal.projects.DefinitionPriority;
 import org.apache.flex.compiler.internal.units.ASCompilationUnit;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.targets.ITarget.TargetType;
-import org.apache.flex.compiler.units.requests.IABCBytesRequestResult;
 import org.apache.flex.compiler.units.requests.IOutgoingDependenciesRequestResult;
 
 /**
  * JSCompilationUnit is the CompilationUnit for compiling ActionScript source
- * files to JavasScript. JSCompilationUnit is derived from ASCompilationUnit and
- * overrides the parts that generate the code. JSCompilationUnit also supports
- * requests for two-pass compilation (see m_needsSecondPass).
- * JSSourceFileHandler provides JSCompilationUnit for *.as files. JSDriver
- * registers JSSourceFileHandler at FlexApplicationProject. This implementation
- * is part of FalconJS. For more details on FalconJS see
- * org.apache.flex.compiler.JSDriver
+ * files to JavasScript.
+ * <p>
+ * JSCompilationUnit is derived from ASCompilationUnit and overrides the parts
+ * that generate the code.
  */
-
 public class JSCompilationUnit extends ASCompilationUnit
 {
-    private IABCBytesRequestResult m_abcBytes = null;
-    private Boolean m_needsSecondPass = false;
-    private Boolean m_inCodeGen = false;
+    @SuppressWarnings("unused")
+    private Boolean inCodeGen = false;
 
     /**
      * Create a compilation unit from an ABC file.
@@ -215,9 +209,9 @@ public class JSCompilationUnit extends ASCompilationUnit
     public void waitForBuildFinish(final Collection<ICompilerProblem> problems,
             TargetType targetType) throws InterruptedException
     {
-        m_inCodeGen = true;
+        inCodeGen = true;
         super.waitForBuildFinish(problems, targetType);
-        m_inCodeGen = false;
+        inCodeGen = false;
     }
 
 }

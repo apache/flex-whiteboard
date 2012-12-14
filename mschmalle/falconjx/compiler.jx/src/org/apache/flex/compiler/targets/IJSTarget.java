@@ -21,21 +21,32 @@ package org.apache.flex.compiler.targets;
 
 import java.util.Collection;
 
+import org.apache.flex.compiler.clients.IBackend;
+import org.apache.flex.compiler.clients.JSConfiguration;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.js.IJSApplication;
 
 /**
+ * The {@link IJSTarget} interface allows the compiler an abstraction to
+ * <em>how</em> the actual JavaScript is built.
+ * <p>
+ * The interface ties into the {@link IBackend} and is created at the start of
+ * compile before the {@link JSConfiguration} class is configured.
+ * 
  * @author Michael Schmalle
+ * 
+ * @see IBackend#createJSTarget(IASProject, ITargetSettings,
+ * ITargetProgressMonitor)
  */
 public interface IJSTarget extends ITarget
 {
-
     /**
      * Build the target JavaScript application and collect problems. Every time
-     * the method is called, a new IJSApplication model is created.
+     * the method is called, a new {@link IJSApplication} model is created.
      * 
      * @param problems compilation problems output
-     * @return IJSApplication if build is success
+     * @return IJSApplication if build is a success.
      */
     IJSApplication build(Collection<ICompilerProblem> problems);
 }

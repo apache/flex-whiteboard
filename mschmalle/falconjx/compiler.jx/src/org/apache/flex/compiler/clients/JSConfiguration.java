@@ -25,6 +25,17 @@ import org.apache.flex.compiler.exceptions.ConfigurationException.BadValue;
 import org.apache.flex.compiler.internal.config.annotations.Config;
 import org.apache.flex.compiler.internal.config.annotations.Mapping;
 
+/**
+ * The {@link JSConfiguration} class holds all compiler arguments needed
+ * for compiling ActionScript to JavaScript.
+ * <p>
+ * Specific flags are implemented here for the configuration to be loaded by
+ * the configure() method of {@link MXMLJSC}.
+ * <p>
+ * This class inherits all compiler arguments from the MXMLC compiler.
+ * 
+ * @author Michael Schmalle
+ */
 public class JSConfiguration extends Configuration
 {
     public JSConfiguration()
@@ -32,21 +43,21 @@ public class JSConfiguration extends Configuration
     }
     
     //
-    // 'jasdoc.main-title' option
+    // 'mxmljsc.foo-bar' option
     //
 
-    private String mainTitle;
+    private String fooBar;
 
-    public String getMainTitle()
+    public String getFooBar()
     {
-        return mainTitle;
+        return fooBar;
     }
 
     @Config(allowMultiple = false)
-    @Mapping({ "jasdoc", "main-title" })
-    public void setMainTitle(ConfigurationValue cv, String value)
+    @Mapping({ "mxmljsc", "foo-bar" })
+    public void setFooBar(ConfigurationValue cv, String value)
             throws BadValue
     {
-        mainTitle = value;
+        fooBar = value;
     }
 }

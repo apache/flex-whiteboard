@@ -27,6 +27,22 @@ import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
+/**
+ * The {@link IJSDocEmitter} interface allows the abstraction of JavaScript
+ * document comments to be emitted per tag.
+ * <p>
+ * The purpose of the API is to clamp emitted output to JavaScript doc tags. The
+ * output can be multiline but is specific to one tag. This allows a full
+ * comment to be created without worrying about how to assemble the tags.
+ * <p>
+ * The current tags were found at
+ * https://developers.google.com/closure/compiler/docs/js-for-compiler#types
+ * <p>
+ * TODO (mschmalle) Might make a comment API and tag API so comments are not
+ * dependent on tag creation IE IJSDocEmitter and IJSDocTagEmitter
+ * 
+ * @author Michael Schmalle
+ */
 public interface IJSDocEmitter
 {
     /*
@@ -84,41 +100,40 @@ public interface IJSDocEmitter
      *         
      * @typedef - Declares an alias for a more complex type. 
      */
-    
+
     // @const
-    
-    
+
     void emitConst(IVariableNode node);
-    
+
     void emitConstructor(IFunctionNode node);
-    
+
     void emitDefine(IVariableNode node);
-    
+
     void emitDeprecated(IASNode node);
-    
+
     void emitEnum(IClassNode node);
-    
+
     void emitExtends(IClassDefinition superDefinition);
-    
+
     void emitImplements(IClassNode node);
-    
+
     void emitInheritDoc(IClassNode node);
-    
+
     void emitLicense(IClassNode node);
-    
+
     void emitOverride(IFunctionNode node);
-    
+
     void emitParam(IParameterNode node);
-    
+
     void emitPrivate(IASNode node);
-    
+
     void emitProtected(IASNode node);
-    
+
     void emitReturn(IFunctionNode node);
-    
+
     void emitThis(ITypeDefinition node);
-    
+
     void emitType(IASNode node);
-    
+
     void emitTypedef(IASNode node);
 }

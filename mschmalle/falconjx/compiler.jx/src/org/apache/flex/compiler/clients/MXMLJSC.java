@@ -483,7 +483,7 @@ public class MXMLJSC
         //JSSharedData.DEBUG = config.debug();
         //JSSharedData.OPTIMIZE = !config.debug() && config.optimize();
 
-        final Set<ICompilationUnit> compilationUnits = new HashSet<ICompilationUnit>();
+        //--- final Set<ICompilationUnit> compilationUnits = new HashSet<ICompilationUnit>();
 
         // XXX // add builtins?
 
@@ -493,21 +493,21 @@ public class MXMLJSC
     public static void registerSWCs(CompilerProject project)
             throws InterruptedException
     {
-        final JSSharedData sharedData = JSSharedData.instance;
-
-        // collect all SWCCompilationUnit in swcUnits
-        final List<ICompilationUnit> swcUnits = new ArrayList<ICompilationUnit>();
-        for (ICompilationUnit cu : project.getCompilationUnits())
-        {
-            //            if (cu instanceof SWCCompilationUnit)
-            //                swcUnits.add(cu);
-            //
-            //            final List<IDefinition> defs = getDefinitions(cu, false);
-            //            for (IDefinition def : defs)
-            //            {
-            //                sharedData.registerDefinition(def);
-            //            }
-        }
+//        final JSSharedData sharedData = JSSharedData.instance;
+//
+//        // collect all SWCCompilationUnit in swcUnits
+//        final List<ICompilationUnit> swcUnits = new ArrayList<ICompilationUnit>();
+//        for (ICompilationUnit cu : project.getCompilationUnits())
+//        {
+//            //            if (cu instanceof SWCCompilationUnit)
+//            //                swcUnits.add(cu);
+//            //
+//            //            final List<IDefinition> defs = getDefinitions(cu, false);
+//            //            for (IDefinition def : defs)
+//            //            {
+//            //                sharedData.registerDefinition(def);
+//            //            }
+//        }
 
     }
 

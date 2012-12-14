@@ -43,6 +43,7 @@ public class JSSharedData
     public static PrintStream STDOUT = System.out;
     public static PrintStream STDERR = System.err;
 
+    @SuppressWarnings("unused")
     private Boolean m_verbose = false;
     private final ReadWriteLock m_verboseLock = new ReentrantReadWriteLock();
 

@@ -19,19 +19,24 @@
 
 package org.apache.flex.compiler.internal.driver.strategy;
 
-import org.apache.flex.compiler.internal.js.codgen.JSEmitter;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
+import org.apache.flex.js.IJSEmitter;
 
+/**
+ * A concrete implementation of the {@link IASNodeStrategy} that allows
+ * {@link IASNode} processing before the current node handler.
+ * 
+ * @author Michael Schmalle
+ */
 public class BeforeNodeStrategy implements IASNodeStrategy
 {
+    private final IJSEmitter emitter;
 
-    private final JSEmitter emitter;
-
-    public BeforeNodeStrategy(JSEmitter emitter)
+    public BeforeNodeStrategy(IJSEmitter emitter)
     {
         this.emitter = emitter;
     }
@@ -50,7 +55,7 @@ public class BeforeNodeStrategy implements IASNodeStrategy
                 if (node.getChildCount() != 0)
                     emitter.indentPush();
             }
-            
+
             // switch cases are SYNTHESIZED
             if (type != ContainerType.IMPLICIT
                     && type != ContainerType.SYNTHESIZED)

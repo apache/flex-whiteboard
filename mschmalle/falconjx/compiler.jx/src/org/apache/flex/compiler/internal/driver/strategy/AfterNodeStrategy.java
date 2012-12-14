@@ -19,21 +19,27 @@
 
 package org.apache.flex.compiler.internal.driver.strategy;
 
-import org.apache.flex.compiler.internal.js.codgen.JSEmitter;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
+import org.apache.flex.js.IJSEmitter;
 
 /**
+ * A concrete implementation of the {@link IASNodeStrategy} that allows
+ * {@link IASNode} processing after the current node handler.
+ * <p>
+ * The class has access to the current {@link IJSEmitter} instance being used to
+ * output source code to the current output buffer.
+ * 
  * @author Michael Schmalle
  */
 public class AfterNodeStrategy implements IASNodeStrategy
 {
-    private final JSEmitter emitter;
+    private final IJSEmitter emitter;
 
-    public AfterNodeStrategy(JSEmitter emitter)
+    public AfterNodeStrategy(IJSEmitter emitter)
     {
         this.emitter = emitter;
     }

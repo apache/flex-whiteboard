@@ -9,7 +9,7 @@ import java.io.Writer;
 import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.driver.JSBackend;
 import org.apache.flex.compiler.internal.js.codgen.JSFilterWriter;
-import org.apache.flex.js.IASBlockVisitor;
+import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.junit.After;
 
 public class TestWalkerBase extends TestBase

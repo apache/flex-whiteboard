@@ -23,29 +23,60 @@ import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**
+ * A concrete implementation of the {@link IASNodeStrategy} that allows a
+ * subclass to either implement the {@link IASNode} handling directly or pass a
+ * child {@link IASNodeStrategy} that this class will delegate it's
+ * {@link #handle(IASNode)} method to.
+ * 
  * @author Michael Schmalle
+ * 
+ * @see BeforeAfterStrategy
  */
 public class ASNodeHandler implements IASNodeStrategy
 {
-    IASNodeStrategy handler;
+    private IASNodeStrategy handler;
 
+    /**
+     * Returns the {@link IASNodeStrategy} currently being used to handle
+     * {@link IASNode} AST.
+     * 
+     * @return The current strategy.
+     */
     public IASNodeStrategy getHandler()
     {
         return handler;
     }
 
-    public void setHandler(IASNodeStrategy filtered)
+    /**
+     * Sets the {@link IASNode} handler strategy.
+     * 
+     * @param handler The {@link IASNodeStrategy} to handle the specific
+     * {@link IASNode}.
+     */
+    public void setHandler(IASNodeStrategy handler)
     {
-        this.handler = filtered;
+        this.handler = handler;
     }
 
+    /**
+     * Constructor, used when this handler directly implements
+     * {@link #handle(IASNode)} and does not composite a child
+     * {@link IASNodeStrategy}.
+     */
     public ASNodeHandler()
     {
     }
 
-    public ASNodeHandler(IASNodeStrategy filtered)
+    /**
+     * Constructor, creates a node strategy that composites a child
+     * {@link IASNodeStrategy} implemented in the {@link #handle(IASNode)}
+     * method.
+     * 
+     * @param handler The {@link IASNode} handler to be used in this strategy.
+     */
+    public ASNodeHandler(IASNodeStrategy handler)
     {
-        this.handler = filtered;
+        this.handler = handler;
     }
 
     @Override
