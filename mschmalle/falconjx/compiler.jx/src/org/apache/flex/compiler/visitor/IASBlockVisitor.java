@@ -17,10 +17,13 @@
  *
  */
 
-package org.apache.flex.js;
+package org.apache.flex.compiler.visitor;
 
+import org.apache.flex.compiler.internal.js.codgen.ASBlockWalker;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
+import org.apache.flex.compiler.internal.visitor.ASNodeSwitch;
+import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
@@ -66,13 +69,31 @@ import org.apache.flex.compiler.tree.metadata.IMetaTagsNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
 
 /**
+ * The {@link IASBlockVisitor} interface allows an {@link IASNodeStrategy} to
+ * delegate within it's {@link IASNodeStrategy#handle(IASNode)} method to this
+ * API's visitor method.
+ * <p>
+ * Currently the {@link ASNodeSwitch} class is a monolithic if else statement
+ * using instanceof to switch on the correct {@link IASNode} interface type.
+ * This is where more experienced developers in Java might know a way that is
+ * more efficient but, currently it works well, performance on the instanceof
+ * will have to be determined.
+ * <p>
+ * <strong>Note</strong> This API is not complete.
+ * 
  * @author Michael Schmalle
+ * 
+ * @see ASBlockWalker
  */
 public interface IASBlockVisitor
 {
+    //--------------------------------------------------------------------------
+    // Top level nodes
+    //--------------------------------------------------------------------------
+
     void visitCompilationUnit(ICompilationUnit unit);
 
-    void visitPackage(IPackageNode element);
+    void visitPackage(IPackageNode node);
 
     void visitFile(IFileNode node);
 
@@ -81,92 +102,36 @@ public interface IASBlockVisitor
     void visitInterface(IInterfaceNode node);
 
     //--------------------------------------------------------------------------
-    
-    void visitLanguageIdentifierNode(ILanguageIdentifierNode node);
-    
+    // Member nodes
+    //--------------------------------------------------------------------------
+
     // block var or field
     void visitVariable(IVariableNode node);
-    
-    void visitIterationFlow(IIterationFlowNode node);
-    
-    // is a IVariableNode
-    void visitParameter(IParameterNode node);
 
     void visitFunction(IFunctionNode node);
+
+    // TODO (mschmalle) Figure out if the indirection is useful
+    void visitConstructor(IFunctionNode node);
 
     void visitGetter(IGetterNode node);
 
     void visitSetter(ISetterNode node);
 
     void visitNamespace(INamespaceNode node);
-    
-    void visitReturn(IReturnNode node);
 
     //--------------------------------------------------------------------------
+    // Statement nodes
+    //--------------------------------------------------------------------------
 
-    void visitBlock(IBlockNode node);
-
-    void visitContainer(IContainerNode node);
-
-    void visitFunctionCall(IFunctionCallNode node);
+    void visitIf(IIfNode node);
 
     void visitForLoop(IForLoopNode node);
 
-    void visitIf(IIfNode node);
-    
     void visitWhileLoop(IWhileLoopNode node);
 
     void visitTry(ITryNode node);
 
     void visitCatch(ICatchNode node);
-
-    //--------------------------------------------------------------------------
-
-    void visitKeyword(IKeywordNode node);
-
-    void visitIdentifier(IIdentifierNode node);
-
-    // this is a IBinaryOperatorNode goes before
-    void visitDynamicAccess(IDynamicAccessNode node);
-
-    void visitNumericLiteral(INumericLiteralNode node);
-
-    void visitLiteral(ILiteralNode node);
-
-    void visitConditional(IConditionalNode node);
-
-    void visitTerminal(ITerminalNode node);
-
-    void visitBinaryOperator(IBinaryOperatorNode node);
-
-    void visitUnaryOperator(IUnaryOperatorNode node);
-
-    void visitDefaultXMLNamespace(IDefaultXMLNamespaceNode node);
-
-    void visitTypedExpression(ITypedExpressionNode node);
-
-    //
-    void visitMetaTags(IMetaTagsNode node);
-
-    void visitMetaTag(IMetaTagNode node);
-
-    void visitEmbed(IEmbedNode node);
-
-    // last
-
-    void visitExpression(IExpressionNode node);
-    
-    // TODO Figure out if the indirection is useful
-    
-    void visitConstructor(IFunctionNode node);
-
-    void visitTernaryOperator(ITernaryOperatorNode node);
-
-    void visitMemberAccessExpression(IMemberAccessExpressionNode node);
-
-    void visitNamespaceAccessExpression(NamespaceAccessExpressionNode node);
-    
-    void visitIObjectLiteralValuePair(IObjectLiteralValuePairNode node);
 
     void visitSwitch(ISwitchNode node);
 
@@ -175,6 +140,84 @@ public interface IASBlockVisitor
     void visitWith(IWithNode node);
 
     void visitThrow(IThrowNode node);
-    
+
+    //--------------------------------------------------------------------------
+    // Statement helper nodes
+    //--------------------------------------------------------------------------
+
+    void visitIterationFlow(IIterationFlowNode node);
+
+    void visitConditional(IConditionalNode node);
+
+    // is a IVariableNode
+    void visitParameter(IParameterNode node);
+
+    void visitIObjectLiteralValuePair(IObjectLiteralValuePairNode node);
+
+    //--------------------------------------------------------------------------
+    // Expression Statement nodes
+    //--------------------------------------------------------------------------
+
+    void visitMemberAccessExpression(IMemberAccessExpressionNode node);
+
+    void visitNamespaceAccessExpression(NamespaceAccessExpressionNode node);
+
+    void visitLanguageIdentifierNode(ILanguageIdentifierNode node);
+
+    void visitReturn(IReturnNode node);
+
+    void visitDefaultXMLNamespace(IDefaultXMLNamespaceNode node);
+
+    void visitTypedExpression(ITypedExpressionNode node);
+
+    // this is a IBinaryOperatorNode goes before
+    void visitDynamicAccess(IDynamicAccessNode node);
+
+    void visitTernaryOperator(ITernaryOperatorNode node);
+
+    //--------------------------------------------------------------------------
+    // Container nodes
+    //--------------------------------------------------------------------------
+
+    // TODO (mschmalle) make sure IContainerNode and IBlock are explicitly different and independent 
+    void visitContainer(IContainerNode node);
+
+    void visitBlock(IBlockNode node);
+
+    //--------------------------------------------------------------------------
+    // Expression nodes
+    //--------------------------------------------------------------------------
+
+    void visitFunctionCall(IFunctionCallNode node);
+
+    void visitBinaryOperator(IBinaryOperatorNode node);
+
+    void visitUnaryOperator(IUnaryOperatorNode node);
+
+    void visitExpression(IExpressionNode node);
+
+    //--------------------------------------------------------------------------
+    // Terminal like Expression nodes
+    //--------------------------------------------------------------------------
+
+    void visitIdentifier(IIdentifierNode node);
+
+    void visitKeyword(IKeywordNode node);
+
+    void visitLiteral(ILiteralNode node);
+
+    void visitNumericLiteral(INumericLiteralNode node);
+
+    void visitTerminal(ITerminalNode node);
+
+    //--------------------------------------------------------------------------
+    // Various nodes
+    //--------------------------------------------------------------------------
+
+    void visitMetaTags(IMetaTagsNode node);
+
+    void visitMetaTag(IMetaTagNode node);
+
+    void visitEmbed(IEmbedNode node);
 
 }
