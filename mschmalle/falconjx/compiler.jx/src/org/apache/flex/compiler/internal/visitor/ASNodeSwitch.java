@@ -21,6 +21,7 @@ package org.apache.flex.compiler.internal.visitor;
 
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
+import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
@@ -69,12 +70,25 @@ import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**
+ * The {@link ASNodeSwitch} class is an {@link IASNodeStrategy} implementation
+ * that handles {@link IASNode} types based on the node interface type.
+ * <p>
+ * All traversable {@link ASTNodeID} node visitor methods are found within the
+ * class {@link #handle(IASNode)} method's if else statements.
+ * 
  * @author Michael Schmalle
  */
 public class ASNodeSwitch implements IASNodeStrategy
 {
     private IASBlockVisitor visitor;
 
+    /**
+     * Creates a new node switch using the {@link #visitor} to handle the
+     * {@link IASNode} in the current traverse.
+     * 
+     * @param visitor The {@link IASBlockVisitor} strategy that will visit an
+     * {@link IASNode} based on it's type.
+     */
     public ASNodeSwitch(IASBlockVisitor visitor)
     {
         this.visitor = visitor;
@@ -83,8 +97,6 @@ public class ASNodeSwitch implements IASNodeStrategy
     @Override
     public void handle(IASNode node)
     {
-        // System.out.println(node.getClass().getName());
-
         if (node instanceof ICompilationUnit)
         {
             visitor.visitCompilationUnit((ICompilationUnit) node);
@@ -97,6 +109,8 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitPackage((IPackageNode) node);
         }
+
+        // ITypeNode
         else if (node instanceof IClassNode)
         {
             visitor.visitClass((IClassNode) node);
@@ -105,6 +119,8 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitInterface((IInterfaceNode) node);
         }
+
+        // IScopedDefinitionNode
         else if (node instanceof IGetterNode)
         {
             visitor.visitGetter((IGetterNode) node);
@@ -113,6 +129,12 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitSetter((ISetterNode) node);
         }
+        else if (node instanceof IFunctionNode)
+        {
+            visitor.visitFunction((IFunctionNode) node);
+        }
+
+        // IVariableNode
         else if (node instanceof IParameterNode)
         {
             visitor.visitParameter((IParameterNode) node);
@@ -121,94 +143,60 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitVariable((IVariableNode) node);
         }
-        else if (node instanceof IFunctionNode)
-        {
-            visitor.visitFunction((IFunctionNode) node);
-        }
         else if (node instanceof INamespaceNode)
         {
             visitor.visitNamespace((INamespaceNode) node);
         }
 
-        //
-        else if (node instanceof IBlockNode)
+        // IStatementNode
+        else if (node instanceof ICatchNode)
         {
-            visitor.visitBlock((IBlockNode) node);
-        }
-        else if (node instanceof IContainerNode)
-        {
-            visitor.visitContainer((IContainerNode) node);
-        }
-        else if (node instanceof LabeledStatementNode)
-        {
-            visitor.visitLabeledStatement((LabeledStatementNode) node);
-        }
-        else if (node instanceof IWhileLoopNode)
-        {
-            visitor.visitWhileLoop((IWhileLoopNode) node);
+            visitor.visitCatch((ICatchNode) node);
         }
         else if (node instanceof IForLoopNode)
         {
             visitor.visitForLoop((IForLoopNode) node);
         }
-        else if (node instanceof IWithNode)
+        else if (node instanceof ITerminalNode)
         {
-            visitor.visitWith((IWithNode) node);
-        }
-        else if (node instanceof ISwitchNode)
-        {
-            visitor.visitSwitch((ISwitchNode) node);
-        }
-        else if (node instanceof IIfNode)
-        {
-            visitor.visitIf((IIfNode) node);
-        }
-        else if (node instanceof IIterationFlowNode)
-        {
-            visitor.visitIterationFlow((IIterationFlowNode) node);
-        }
-        else if (node instanceof IThrowNode)
-        {
-            visitor.visitThrow((IThrowNode) node);
+            visitor.visitTerminal((ITerminalNode) node);
         }
         else if (node instanceof ITryNode)
         {
             visitor.visitTry((ITryNode) node);
         }
-        else if (node instanceof ICatchNode)
+        else if (node instanceof IWithNode)
         {
-            visitor.visitCatch((ICatchNode) node);
+            visitor.visitWith((IWithNode) node);
         }
 
-        else if (node instanceof IFunctionCallNode)
+        // IConditionalNode after statements
+        //  > IConditionalNode > IStatementNode
+        else if (node instanceof IIfNode)
         {
-            visitor.visitFunctionCall((IFunctionCallNode) node);
+            visitor.visitIf((IIfNode) node);
         }
-        else if (node instanceof IObjectLiteralValuePairNode)
+        else if (node instanceof ISwitchNode)
         {
-            visitor.visitIObjectLiteralValuePair((IObjectLiteralValuePairNode) node);
+            visitor.visitSwitch((ISwitchNode) node);
         }
-        else if (node instanceof ITernaryOperatorNode)
+        else if (node instanceof IWhileLoopNode)
         {
-            visitor.visitTernaryOperator((ITernaryOperatorNode) node);
-        }
-        //
-        else if (node instanceof IReturnNode)
-        {
-            visitor.visitReturn((IReturnNode) node);
-        }
-        else if (node instanceof ILanguageIdentifierNode)
-        {
-            visitor.visitLanguageIdentifierNode((ILanguageIdentifierNode) node);
+            visitor.visitWhileLoop((IWhileLoopNode) node);
         }
         else if (node instanceof IConditionalNode)
         {
             visitor.visitConditional((IConditionalNode) node);
         }
 
-        else if (node instanceof IDefaultXMLNamespaceNode)
+        // IExpressionNode
+        else if (node instanceof IEmbedNode)
         {
-            visitor.visitDefaultXMLNamespace((IDefaultXMLNamespaceNode) node);
+            visitor.visitEmbed((IEmbedNode) node);
+        }
+        else if (node instanceof IFunctionCallNode)
+        {
+            visitor.visitFunctionCall((IFunctionCallNode) node);
         }
         else if (node instanceof ITypedExpressionNode)
         {
@@ -218,10 +206,8 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitIdentifier((IIdentifierNode) node);
         }
-        else if (node instanceof IKeywordNode)
-        {
-            visitor.visitKeyword((IKeywordNode) node);
-        }
+
+        // ILiteralNode > IExpressionNode
         else if (node instanceof INumericLiteralNode)
         {
             visitor.visitNumericLiteral((INumericLiteralNode) node);
@@ -231,31 +217,78 @@ public class ASNodeSwitch implements IASNodeStrategy
             visitor.visitLiteral((ILiteralNode) node);
         }
 
-        else if (node instanceof ITerminalNode)
-        {
-            visitor.visitTerminal((ITerminalNode) node);
-        }
-
-        // is IBinaryOperatorNode
+        // IBinaryOperatorNode > IOperator
         else if (node instanceof IMemberAccessExpressionNode)
         {
             visitor.visitMemberAccessExpression((IMemberAccessExpressionNode) node);
-        }
-        else if (node instanceof NamespaceAccessExpressionNode)
-        {
-            visitor.visitNamespaceAccessExpression((NamespaceAccessExpressionNode) node);
         }
         else if (node instanceof IDynamicAccessNode)
         {
             visitor.visitDynamicAccess((IDynamicAccessNode) node);
         }
+        else if (node instanceof NamespaceAccessExpressionNode)
+        {
+            visitor.visitNamespaceAccessExpression((NamespaceAccessExpressionNode) node);
+        }
         else if (node instanceof IBinaryOperatorNode)
         {
             visitor.visitBinaryOperator((IBinaryOperatorNode) node);
         }
+
+        // IUnaryOperatorNode > IOperator
         else if (node instanceof IUnaryOperatorNode)
         {
             visitor.visitUnaryOperator((IUnaryOperatorNode) node);
+        }
+
+        else if (node instanceof IReturnNode)
+        {
+            visitor.visitReturn((IReturnNode) node);
+        }
+        else if (node instanceof IThrowNode)
+        {
+            visitor.visitThrow((IThrowNode) node);
+        }
+        else if (node instanceof ITernaryOperatorNode)
+        {
+            visitor.visitTernaryOperator((ITernaryOperatorNode) node);
+        }
+
+        // Container
+        else if (node instanceof IBlockNode)
+        {
+            visitor.visitBlock((IBlockNode) node);
+        }
+        else if (node instanceof IContainerNode)
+        {
+            visitor.visitContainer((IContainerNode) node);
+        }
+
+        // TODO (mschmalle) Organize leaf
+
+        else if (node instanceof LabeledStatementNode)
+        {
+            visitor.visitLabeledStatement((LabeledStatementNode) node);
+        }
+        else if (node instanceof IIterationFlowNode)
+        {
+            visitor.visitIterationFlow((IIterationFlowNode) node);
+        }
+        else if (node instanceof IObjectLiteralValuePairNode)
+        {
+            visitor.visitIObjectLiteralValuePair((IObjectLiteralValuePairNode) node);
+        }
+        else if (node instanceof ILanguageIdentifierNode)
+        {
+            visitor.visitLanguageIdentifierNode((ILanguageIdentifierNode) node);
+        }
+        else if (node instanceof IDefaultXMLNamespaceNode)
+        {
+            visitor.visitDefaultXMLNamespace((IDefaultXMLNamespaceNode) node);
+        }
+        else if (node instanceof IKeywordNode)
+        {
+            visitor.visitKeyword((IKeywordNode) node);
         }
         else if (node instanceof IMetaTagsNode)
         {
@@ -264,10 +297,6 @@ public class ASNodeSwitch implements IASNodeStrategy
         else if (node instanceof IMetaTagNode)
         {
             visitor.visitMetaTag((IMetaTagNode) node);
-        }
-        else if (node instanceof IEmbedNode)
-        {
-            visitor.visitEmbed((IEmbedNode) node);
         }
 
         else if (node instanceof IExpressionNode)
