@@ -172,7 +172,7 @@ public class TestBase
     protected IASNode getNode(String code, Class<? extends IASNode> type)
     {
         String source = "package {public class A {function a():void {" + code
-                + "}})";
+                + "}}";
         IFileNode node = getFileNode(source);
         if (type.isInstance(node))
             return node;
@@ -184,7 +184,7 @@ public class TestBase
             Class<? extends IASNode> type)
     {
         String source = "package {public class A {function a():void {" + code
-                + "}})";
+                + "}}";
         IFileNode node = getFileNode(source);
         IExpressionNode child = (IExpressionNode) findFirstDescendantOfType(
                 node, type);
@@ -194,7 +194,7 @@ public class TestBase
     protected IUnaryOperatorNode getUnaryNode(String code)
     {
         String source = "package {public class A {function a():void {" + code
-                + "}})";
+                + "}}";
         IFileNode node = getFileNode(source);
         IUnaryOperatorNode child = (IUnaryOperatorNode) findFirstDescendantOfType(
                 node, IUnaryOperatorNode.class);
@@ -204,7 +204,7 @@ public class TestBase
     protected IBinaryOperatorNode getBinaryNode(String code)
     {
         String source = "package {public class A {function a():void {" + code
-                + "}})";
+                + "}}";
         IFileNode node = getFileNode(source);
         IBinaryOperatorNode child = (IBinaryOperatorNode) findFirstDescendantOfType(
                 node, IBinaryOperatorNode.class);
@@ -214,7 +214,7 @@ public class TestBase
     protected IDynamicAccessNode getDynamicAccessNode(String code)
     {
         String source = "package {public class A {function a():void {" + code
-                + "}})";
+                + "}}";
         IFileNode node = getFileNode(source);
         IDynamicAccessNode child = (IDynamicAccessNode) findFirstDescendantOfType(
                 node, IDynamicAccessNode.class);

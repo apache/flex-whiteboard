@@ -19,15 +19,6 @@
 
 package org.apache.flex.js.internal.driver;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.StringWriter;
-import java.io.Writer;
-
-import org.apache.flex.compiler.clients.IBackend;
-import org.apache.flex.compiler.internal.driver.JSBackend;
-import org.apache.flex.compiler.internal.js.codgen.JSFilterWriter;
 import org.apache.flex.compiler.internal.tree.as.ArrayLiteralNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
 import org.apache.flex.compiler.internal.tree.as.ObjectLiteralNode;
@@ -39,43 +30,14 @@ import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
-import org.apache.flex.compiler.visitor.IASBlockVisitor;
-import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @author Michael Schmalle
  */
-public class TestExpressions extends TestBase
+public class TestExpressions extends TestWalkerBase
 {
-    private IASBlockVisitor visitor;
-
-    private Writer out;
-
-    private IBackend backend;
-
-    private JSFilterWriter writer;
-
-    @Override
-    public void setUp()
-    {
-        super.setUp();
-
-        backend = new JSBackend();
-        out = new StringWriter();
-        writer = new JSFilterWriter(out);
-        visitor = backend.createWalker(project, errors, writer);
-    }
-
-    @After
-    public void tearDown()
-    {
-        backend = null;
-        out = null;
-        writer = null;
-        visitor = null;
-    }
 
     // ILanguageIdentifierNode -> IIdentifierNode
 
@@ -715,10 +677,5 @@ public class TestExpressions extends TestBase
         IReturnNode node = (IReturnNode) getNode("return", IReturnNode.class);
         visitor.visitReturn(node);
         assertOut("return");
-    }
-
-    private void assertOut(String code)
-    {
-        assertThat(out.toString(), is(code));
     }
 }
