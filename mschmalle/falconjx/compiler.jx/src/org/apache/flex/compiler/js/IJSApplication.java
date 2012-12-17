@@ -17,35 +17,16 @@
  *
  */
 
-package org.apache.flex.js;
+package org.apache.flex.compiler.js;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
- * A JavaScript writer that outputs cross compiled string data to the
- * output stream.
+ * The JavaScript model interface used when implementing build targets that
+ * create javascript applications cross compiled from actionscript.
  * 
  * @author Michael Schmalle
  */
-public interface IJSWriter extends Closeable
+public interface IJSApplication
 {
-    /**
-     * Start writing to output stream.
-     * 
-     * @param out output stream
-     */
-    void writeTo(OutputStream out);
-
-    /**
-     * Start writing to a file.
-     * 
-     * @param out The output {@link File}.
-     * @return The number of bytes written.
-     */
-    int writeTo(File out) throws FileNotFoundException, IOException;
 
 }

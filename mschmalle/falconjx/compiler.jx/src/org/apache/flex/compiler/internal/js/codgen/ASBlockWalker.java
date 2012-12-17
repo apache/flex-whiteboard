@@ -26,8 +26,10 @@ import java.util.Stack;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IDefinition;
+import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.definitions.IVariableDefinition;
+import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionCallNode;
@@ -92,6 +94,7 @@ import org.apache.flex.compiler.tree.metadata.IMetaTagNode;
 import org.apache.flex.compiler.tree.metadata.IMetaTagsNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
 import org.apache.flex.compiler.visitor.IASBlockVisitor;
+import org.apache.flex.compiler.visitor.IASBlockWalker;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**
@@ -100,7 +103,7 @@ import org.apache.flex.compiler.visitor.IASNodeStrategy;
  * 
  * @author Michael Schmalle
  */
-public class ASBlockWalker implements IASBlockVisitor
+public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 {
     /**
      * The context stack of the visitor.
@@ -188,11 +191,21 @@ public class ASBlockWalker implements IASBlockVisitor
 
     private String classQualifiedName;
 
-    private IClassDefinition classDefinition;
+    private ITypeDefinition typeDefinition;
 
     public ITypeDefinition getCurrentType()
     {
-        return classDefinition;
+        return typeDefinition;
+    }
+
+    public IClassDefinition getCurrentClass()
+    {
+        return (IClassDefinition) typeDefinition;
+    }
+
+    public IInterfaceDefinition getCurrentInterface()
+    {
+        return (IInterfaceDefinition) typeDefinition;
     }
 
     //----------------------------------
@@ -256,13 +269,13 @@ public class ASBlockWalker implements IASBlockVisitor
     @Override
     public void visitClass(IClassNode node)
     {
-        classDefinition = node.getDefinition();
-        classQualifiedName = classDefinition.getQualifiedName();
+        typeDefinition = node.getDefinition();
+        classQualifiedName = typeDefinition.getQualifiedName();
 
         debug("visitClass()");
         pushContext(TraverseContext.TYPE);
-        emitter.emitProvide(classDefinition);
-        emitter.emitRequire(classDefinition);
+        emitter.emitProvide(typeDefinition);
+        emitter.emitRequire(typeDefinition);
 
         // fields, methods, namespaces
         final IDefinitionNode[] members = node.getAllMemberNodes();
@@ -272,14 +285,14 @@ public class ASBlockWalker implements IASBlockVisitor
             // TODO (mschmalle) handle null constructor
         }
 
-        emitter.emitConstructor(currentConstructor);
-        emitter.emitInherits(classDefinition, project);
+//        emitter.emitConstructor(currentConstructor);
+//        emitter.emitInherits(typeDefinition, project);
 
         emitter.emitFields(members);
         emitter.emitMethods(members);
 
         popContext(TraverseContext.TYPE);
-        classDefinition = null;
+        typeDefinition = null;
         currentConstructor = null;
     }
 
@@ -304,10 +317,12 @@ public class ASBlockWalker implements IASBlockVisitor
     public void visitVariable(IVariableNode node)
     {
         debug("visitVariable()");
-        if (inContext(TraverseContext.FIELD))
+        // inContext(TraverseContext.FIELD)
+
+        if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
-            if (node.hasNamespace("private"))
-                return;
+            //if (node.hasNamespace("private"))
+            //    return;
 
             emitter.emitField(node);
         }
@@ -327,7 +342,7 @@ public class ASBlockWalker implements IASBlockVisitor
         if (!inContext(TraverseContext.FUNCTION))
         {
             emitter.emitJSDoc(node, project, node == currentConstructor,
-                    classDefinition);
+                    typeDefinition);
             String key = "";
             if (node instanceof IGetterNode)
                 key = "get_";
@@ -1024,7 +1039,9 @@ public class ASBlockWalker implements IASBlockVisitor
     {
         debug("visitITypedExpression()");
         walk(node.getCollectionNode());
+        emitter.write(".<");
         walk(node.getTypeNode());
+        emitter.write(">");
     }
 
     @Override

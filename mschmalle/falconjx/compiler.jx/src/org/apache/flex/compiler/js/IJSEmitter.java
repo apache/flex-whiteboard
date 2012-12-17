@@ -17,10 +17,11 @@
  *
  */
 
-package org.apache.flex.js;
+package org.apache.flex.compiler.js;
 
 import java.io.Writer;
 
+import org.apache.flex.as.IASEmitter;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**
@@ -29,24 +30,7 @@ import org.apache.flex.compiler.visitor.IASNodeStrategy;
  * 
  * @author Michael Schmalle
  */
-public interface IJSEmitter
+public interface IJSEmitter extends IASEmitter
 {
-    /**
-     * Writes a string to the writer.
-     * 
-     * @param value The string to write to the output buffer.
-     */
-    void write(String value);
 
-    /**
-     * Pushes an indent into the emitter so after newlines are emitted, the
-     * output is correctly formatted.
-     */
-    void indentPush();
-
-    /**
-     * Pops an indent from the emitter so after newlines are emitted, the
-     * output is correctly formatted.
-     */
-    void indentPop();
 }

@@ -17,7 +17,7 @@
  *
  */
 
-package org.apache.flex.js;
+package org.apache.flex.compiler.js;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;

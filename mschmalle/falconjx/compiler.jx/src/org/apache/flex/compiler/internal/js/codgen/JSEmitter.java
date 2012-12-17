@@ -19,14 +19,15 @@
 
 package org.apache.flex.compiler.internal.js.codgen;
 
-import java.io.IOException;
+import java.io.FilterWriter;
 import java.util.ArrayList;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
-import org.apache.flex.compiler.internal.js.codgen.ASBlockWalker.TraverseContext;
+import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.js.IJSEmitter;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
@@ -37,83 +38,25 @@ import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
-import org.apache.flex.js.IJSEmitter;
 
 /**
  * @author Michael Schmalle
  */
-public class JSEmitter implements IJSEmitter
+public class JSEmitter extends ASEmitter implements IJSEmitter
 {
-    private static final String NL = "\n";
-
-    private static final String INDENT_STRING = "\t";
-
     public static boolean javascriptMode = false;
 
-    private final JSFilterWriter out;
-
-    private ASBlockWalker visitor;
-
-    private int currentIndent = 0;
-
     private JSDocEmitter jsdoc;
-
-    public ASBlockWalker getVisitor()
-    {
-        return visitor;
-    }
-
-    public void setVisitor(ASBlockWalker value)
-    {
-        visitor = value;
-    }
 
     public ICompilerProject getProject()
     {
         return getVisitor().getProject();
     }
 
-    public JSEmitter(JSFilterWriter out)
+    public JSEmitter(FilterWriter out)
     {
-        this.out = out;
+        super(out);
         this.jsdoc = new JSDocEmitter(this);
-    }
-
-    void writeNewline()
-    {
-        write(NL);
-    }
-
-    void writeToken(String value)
-    {
-        write(value);
-    }
-
-    void writeSymbol(String value)
-    {
-        write(value);
-    }
-    
-    @Override
-    public void write(String value)
-    {
-        try
-        {
-            out.write(value);
-
-            String indent = "";
-            if (value.indexOf(NL) != -1)
-            {
-                for (int i = 0; i < currentIndent; i++)
-                    indent += INDENT_STRING;
-
-                out.write(indent);
-            }
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
     }
 
     public void emitJSDocPackgeHeader(IPackageNode node)
@@ -211,7 +154,7 @@ public class JSEmitter implements IJSEmitter
 
     public void emitFields(IDefinitionNode[] members)
     {
-        getVisitor().pushContext(TraverseContext.FIELD);
+        //getVisitor().pushContext(TraverseContext.FIELD);
         for (IDefinitionNode node : members)
         {
             if (node instanceof IVariableNode
@@ -220,60 +163,43 @@ public class JSEmitter implements IJSEmitter
                 getVisitor().walk(node);
             }
         }
-        getVisitor().popContext(TraverseContext.FIELD);
+        //getVisitor().popContext(TraverseContext.FIELD);
     }
 
     public void emitMethods(IDefinitionNode[] members)
     {
-        getVisitor().pushContext(TraverseContext.METHOD);
+        //getVisitor().pushContext(TraverseContext.METHOD);
         for (IDefinitionNode node : members)
         {
             if (node instanceof IFunctionNode)
             {
-                if (node != getVisitor().getCurrentConstructor())
+                if (node != getVisitor().getCurrentClass().getConstructor())
                     getVisitor().walk(node);
             }
         }
-        getVisitor().popContext(TraverseContext.METHOD);
-    }
-
-    public void indentPush()
-    {
-        currentIndent++;
-    }
-
-    public void indentPop()
-    {
-        currentIndent--;
-    }
-
-    public void writeIndent()
-    {
-        String indent = "";
-        for (int i = 0; i < currentIndent; i++)
-            indent += INDENT_STRING;
-        write(indent);
+        //getVisitor().popContext(TraverseContext.METHOD);
     }
 
     public void emitField(IVariableNode node)
     {
-        emitJSDocVariable(node);
-        write(getVisitor().getCurrentType().getQualifiedName() + ".prototype."
-                + node.getName());
-        IExpressionNode vnode = node.getAssignedValueNode();
-        if (vnode != null)
-        {
-            write(" = ");
-            getVisitor().walk(vnode);
-        }
-        write(";\n");
+        super.emitField(node);
+        //        emitJSDocVariable(node);
+        //        write(getVisitor().getCurrentType().getQualifiedName() + ".prototype."
+        //                + node.getName());
+        //        IExpressionNode vnode = node.getAssignedValueNode();
+        //        if (vnode != null)
+        //        {
+        //            write(" = ");
+        //            getVisitor().walk(vnode);
+        //        }
+        //        write(";\n");
     }
 
     public void emitVarDeclaration(IVariableNode node)
     {
-        visitor.walk(node.getChild(0)); // VariableExpressionNode
+        getVisitor().walk(node.getChild(0)); // VariableExpressionNode
         write(" ");
-        visitor.walk(node.getNameExpressionNode());
+        getVisitor().walk(node.getNameExpressionNode());
         // add :Type
         if (!javascriptMode)
         {
@@ -289,7 +215,7 @@ public class JSEmitter implements IJSEmitter
                 write(":");
             }
 
-            visitor.walk(node.getVariableTypeNode());
+            getVisitor().walk(node.getVariableTypeNode());
         }
         IExpressionNode vnode = node.getAssignedValueNode();
         if (vnode != null)
@@ -297,15 +223,14 @@ public class JSEmitter implements IJSEmitter
             write(" = ");
             if (vnode instanceof FunctionObjectNode)
             {
-                visitor.pushContext(TraverseContext.FUNCTION);
-                visitor.walk(vnode.getChild(0)); // IFunctionNode
-                visitor.popContext(TraverseContext.FUNCTION);
+                //getVisitor().pushContext(TraverseContext.FUNCTION);
+                getVisitor().walk(vnode.getChild(0)); // IFunctionNode
+                //getVisitor().popContext(TraverseContext.FUNCTION);
             }
             else
             {
-                visitor.walk(vnode);
+                getVisitor().walk(vnode);
             }
         }
     }
-
 }

@@ -23,9 +23,9 @@ import java.util.Collection;
 
 import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.clients.JSConfiguration;
+import org.apache.flex.compiler.js.IJSApplication;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
-import org.apache.flex.js.IJSApplication;
 
 /**
  * The {@link IJSTarget} interface allows the compiler an abstraction to

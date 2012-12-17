@@ -17,15 +17,27 @@
  *
  */
 
-package org.apache.flex.compiler.internal.driver;
+package org.apache.flex.compiler.visitor;
 
-import org.apache.flex.compiler.js.IJSApplication;
+import org.apache.flex.compiler.definitions.IClassDefinition;
+import org.apache.flex.compiler.definitions.IInterfaceDefinition;
+import org.apache.flex.compiler.definitions.ITypeDefinition;
+import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.tree.as.IASNode;
 
-public class JSApplication implements IJSApplication
+/**
+ * @author Michael Schmalle
+ */
+public interface IASBlockWalker extends IASBlockVisitor
 {
+    ICompilerProject getProject();
 
-    public JSApplication()
-    {
-    }
+    ITypeDefinition getCurrentType();
+
+    IClassDefinition getCurrentClass();
+
+    IInterfaceDefinition getCurrentInterface();
+
+    void walk(IASNode node);
 
 }

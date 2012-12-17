@@ -29,6 +29,7 @@ import org.apache.flex.compiler.exceptions.BuildCanceledException;
 import org.apache.flex.compiler.internal.driver.JSApplication;
 import org.apache.flex.compiler.internal.js.codgen.JSSharedData;
 import org.apache.flex.compiler.internal.projects.CompilerProject;
+import org.apache.flex.compiler.js.IJSApplication;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.targets.IJSTarget;
@@ -36,7 +37,6 @@ import org.apache.flex.compiler.targets.ITargetProgressMonitor;
 import org.apache.flex.compiler.targets.ITargetReport;
 import org.apache.flex.compiler.targets.ITargetSettings;
 import org.apache.flex.compiler.units.ICompilationUnit;
-import org.apache.flex.js.IJSApplication;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;

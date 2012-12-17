@@ -54,6 +54,7 @@ import org.apache.flex.compiler.internal.targets.JSTarget;
 import org.apache.flex.compiler.internal.units.ResourceModuleCompilationUnit;
 import org.apache.flex.compiler.internal.units.SourceCompilationUnitFactory;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
+import org.apache.flex.compiler.js.IJSApplication;
 import org.apache.flex.compiler.problems.ConfigurationProblem;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.InternalCompilerProblem;
@@ -62,7 +63,6 @@ import org.apache.flex.compiler.problems.UnexpectedExceptionProblem;
 import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.targets.ITargetSettings;
 import org.apache.flex.compiler.units.ICompilationUnit;
-import org.apache.flex.js.IJSApplication;
 import org.apache.flex.utils.FileUtils;
 import org.apache.flex.utils.FilenameNormalization;
 
