@@ -321,9 +321,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
-            //if (node.hasNamespace("private"))
-            //    return;
-
             emitter.emitField(node);
         }
         else
@@ -337,6 +334,13 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         // XXX (mschmalle) visitFunction() refactor, this is a mess
         debug("visitFunction()");
+        
+        if (SemanticUtils.isMemberDefinition(node.getDefinition()))
+        {
+            emitter.emitMethod(node);
+            return; // TEMP
+        }
+        
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
         if (!inContext(TraverseContext.FUNCTION))

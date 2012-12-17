@@ -21,13 +21,22 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import java.io.FilterWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.flex.as.IASEmitter;
 import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.common.ModifiersSet;
+import org.apache.flex.compiler.definitions.IDefinition;
+import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.definitions.references.INamespaceReference;
+import org.apache.flex.compiler.internal.tree.as.FunctionNode;
+import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
+import org.apache.flex.compiler.tree.as.IFunctionNode;
+import org.apache.flex.compiler.tree.as.IParameterNode;
+import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
@@ -124,15 +133,64 @@ public class ASEmitter implements IASEmitter
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
-    
+
+    @Override
+    public void emitFieldDocumentation(IVariableNode node)
+    {
+    }
+
     @Override
     public void emitField(IVariableNode node)
     {
-        emitDocumentation(node);
-        
+        emitFieldDocumentation(node);
+
         IVariableDefinition definition = (IVariableDefinition) node
                 .getDefinition();
-        
+
+        emitNamespace(definition);
+        emitModifiers(definition);
+        emitMemberKeyword(node);
+        emitMemberName(node);
+        emitType(node.getVariableTypeNode());
+        emitAssignedValue(node.getAssignedValueNode());
+        // the client such as IASBlockWalker is responsible for the 
+        // semi-colon and newline handling
+    }
+
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitMethodDocumentation(IFunctionNode node)
+    {
+    }
+
+    @Override
+    public void emitMethod(IFunctionNode node)
+    {
+        emitMethodDocumentation(node);
+
+        FunctionNode fn = (FunctionNode) node;
+        // XXX (mschmalle) parseFunctionBody() TEMP until I figure out the correct way to do this
+        // will need to pass these problems back to the visitor
+        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
+
+        IFunctionDefinition definition = node.getDefinition();
+
+        emitNamespace(definition);
+        emitModifiers(definition);
+        emitMemberKeyword(node);
+        emitMemberName(node);
+        emitParamters(node.getParameterNodes());
+        emitType(node.getReturnTypeNode());
+        emitMethodScope(node.getScopedNode());
+        // the client such as IASBlockWalker is responsible for the 
+        // semi-colon and newline handling
+    }
+
+    protected void emitNamespace(IDefinition definition)
+    {
         // namespace (public, protected, private, foo_bar)
         // TODO (mschmalle) figure out what to do if there is an explicit internal
         // right now if it's internal, code not produced (implied)
@@ -142,8 +200,10 @@ public class ASEmitter implements IASEmitter
             write(reference.getBaseName());
             write(" ");
         }
-        
-        // madofiers (static)
+    }
+
+    protected void emitModifiers(IDefinition definition)
+    {
         ModifiersSet modifierSet = definition.getModifiers();
         if (modifierSet.hasModifiers())
         {
@@ -153,36 +213,66 @@ public class ASEmitter implements IASEmitter
                 write(" ");
             }
         }
-        
-        // keyword
-        write(node.isConst() ? "const" : "var");
-        write(" ");
-        // name
+    }
+
+    protected void emitMemberKeyword(IDefinitionNode node)
+    {
+        if (node instanceof IVariableNode)
+        {
+            write(((IVariableNode) node).isConst() ? "const" : "var");
+            write(" ");
+        }
+        else if (node instanceof IFunctionNode)
+        {
+            write("function");
+            write(" ");
+        }
+    }
+
+    protected void emitMemberName(IDefinitionNode node)
+    {
         getVisitor().walk(node.getNameExpressionNode());
-        
-        // type
-        IExpressionNode tnode = node.getVariableTypeNode();
+    }
+
+    protected void emitParamters(IParameterNode[] nodes)
+    {
+        write("(");
+        int len = nodes.length;
+        for (int i = 0; i < len; i++)
+        {
+            IParameterNode node = nodes[i];
+            getVisitor().walk(node);
+            if (i < len - 1)
+                write(", ");
+        }
+        write(")");
+    }
+
+    protected void emitType(IExpressionNode node)
+    {
         // TODO (mschmalle) node.getVariableTypeNode() will return "*" if undefined, what to use?
-        if (tnode != null)
+        // or node.getReturnTypeNode()
+        if (node != null)
         {
             write(":");
-            getVisitor().walk(tnode);
+            getVisitor().walk(node);
         }
-        
-        // assigned value
-        IExpressionNode vnode = node.getAssignedValueNode();
-        if (vnode != null)
+    }
+
+    protected void emitAssignedValue(IExpressionNode node)
+    {
+        if (node != null)
         {
             write(" ");
             write("=");
             write(" ");
-            getVisitor().walk(vnode);
+            getVisitor().walk(node);
         }
-        // the client such as IASBlockWalker is responsible for the 
-        // semi-colon and newline handling
     }
 
-    public void emitDocumentation(IVariableNode node)
+    protected void emitMethodScope(IScopedNode node)
     {
+        write(" ");
+        getVisitor().walk(node);
     }
 }

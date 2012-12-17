@@ -21,6 +21,7 @@ package org.apache.flex.as;
 
 import java.io.Writer;
 
+import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
@@ -46,22 +47,37 @@ public interface IASEmitter
     void indentPush();
 
     /**
-     * Pops an indent from the emitter so after newlines are emitted, the
-     * output is correctly formatted.
+     * Pops an indent from the emitter so after newlines are emitted, the output
+     * is correctly formatted.
      */
     void indentPop();
-    
+
     /**
-     * Emit a documentation comment for a Class field {@link IVariableNode}.
+     * Emit a documentation comment for a Class field or constant
+     * {@link IVariableNode}.
      * 
      * @param node The {@link IVariableNode} class field member.
      */
-    void emitDocumentation(IVariableNode node);
-    
+    void emitFieldDocumentation(IVariableNode node);
+
     /**
      * Emit a full Class field member.
      * 
      * @param node The {@link IVariableNode} class field member.
      */
     void emitField(IVariableNode node);
+
+    /**
+     * Emit a documentation comment for a Class method {@link IFunctionNode}.
+     * 
+     * @param node The {@link IFunctionNode} class method member.
+     */
+    void emitMethodDocumentation(IFunctionNode node);
+
+    /**
+     * Emit a full Class or Interface method member.
+     * 
+     * @param node The {@link IFunctionNode} class method member.
+     */
+    void emitMethod(IFunctionNode node);
 }

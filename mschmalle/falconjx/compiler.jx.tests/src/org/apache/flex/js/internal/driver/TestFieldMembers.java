@@ -32,9 +32,7 @@ import org.junit.Test;
 public class TestFieldMembers extends TestWalkerBase
 {
     /*
-     * Field, Constant, Namespace
-     * 
-     * - config block
+     * Field, Constant, [Namespace]
      * 
      * var foo;
      * var foo:int;
