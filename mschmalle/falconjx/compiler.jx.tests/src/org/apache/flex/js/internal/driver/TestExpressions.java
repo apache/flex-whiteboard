@@ -25,11 +25,13 @@ import org.apache.flex.compiler.internal.tree.as.ObjectLiteralNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
+import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IIterationFlowNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
+import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -463,6 +465,36 @@ public class TestExpressions extends TestWalkerBase
     //----------------------------------
     // Other
     //----------------------------------
+
+    @Test
+    public void testAnonymousFunction()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a = function(){};",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:* = function() {\n}");
+    }
+
+    @Test
+    public void testAnonymousFunctionWithParamsReturn()
+    {
+        IVariableNode node = (IVariableNode) getNode(
+                "var a:Object = function(foo:int, bar:String = 'goo'):int{return -1;};",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:Object = function(foo:int, bar:String = 'goo'):int {\n\treturn -1;\n}");
+    }
+
+    @Test
+    public void testAnonymousFunctionAsArgument()
+    {
+        // TODO (mschmalle) using IIfNode in expressions test, any other way to do this without statement?
+        IIfNode node = (IIfNode) getNode(
+                "if (a) {addListener('foo', function(event:Object):void{doit();});}",
+                IIfNode.class);
+        visitor.visitIf(node);
+        assertOut("if (a) {\n\taddListener('foo', function(event:Object):void {\n\t\tdoit();\n\t});\n}");
+    }
 
     @Test
     public void testVisitDynamicAccessNode_1()

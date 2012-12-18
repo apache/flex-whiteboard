@@ -20,29 +20,26 @@
 package org.apache.flex.compiler.internal.js.codgen;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
 import org.apache.flex.as.IASEmitter;
 import org.apache.flex.compiler.definitions.IClassDefinition;
-import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
-import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionCallNode;
-import org.apache.flex.compiler.internal.tree.as.FunctionNode;
+import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
 import org.apache.flex.compiler.internal.tree.as.VariableExpressionNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
-import org.apache.flex.compiler.scopes.IASScope;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
+import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
@@ -69,7 +66,6 @@ import org.apache.flex.compiler.tree.as.IKeywordNode;
 import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode.LiteralType;
-import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.INumericLiteralNode;
@@ -113,6 +109,8 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
      * The context can only contain what is beneath them, CLASS contains
      * FUNCTION.
      */
+    // TODO (mschmalle) definitely having second thoughts about TraverseContext
+    // now that I'm understanding the AST a bit more, this is just garbage overhead
     public enum TraverseContext
     {
         ROOT,
@@ -190,8 +188,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     //----------------------------------
     // currentType
     //----------------------------------
-
-    private String classQualifiedName;
 
     private ITypeDefinition typeDefinition;
 
@@ -272,7 +268,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitClass(IClassNode node)
     {
         typeDefinition = node.getDefinition();
-        classQualifiedName = typeDefinition.getQualifiedName();
 
         debug("visitClass()");
         pushContext(TraverseContext.TYPE);
@@ -319,8 +314,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitVariable(IVariableNode node)
     {
         debug("visitVariable()");
-        // inContext(TraverseContext.FIELD)
-
+        
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
             emitter.emitField(node);
@@ -342,120 +336,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.emitMethod(node);
             return; // TEMP
         }
-
-        FunctionNode fn = (FunctionNode) node;
-        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
-        if (!inContext(TraverseContext.FUNCTION))
-        {
-            //            emitter.emitJSDoc(node, project, node == currentConstructor,
-            //                    typeDefinition);
-            String key = "";
-            if (node instanceof IGetterNode)
-                key = "get_";
-            else if (node instanceof ISetterNode)
-                key = "set_";
-
-            String name = "." + key + node.getName();
-            if (inContext(TraverseContext.CONSTRUCTOR))
-                name = "";
-            // isConstructor
-            emitter.write(classQualifiedName + name + " = function");
-        }
-        else if (inContext(TraverseContext.FUNCTION))
-        {
-            emitter.write("function");
-        }
-
-        walkParamters(node.getParameterNodes());
-
-        IScopedNode scope = node.getScopedNode();
-
-        emitter.write("{");
-        if (scope.getChildCount() > 0)
-            emitter.indentPush();
-        emitter.write("\n");
-        for (int i = 0; i < scope.getChildCount(); i++)
-        {
-            IASNode child = scope.getChild(i);
-            if (i == 0)
-            {
-                IASNode sub = child.getChild(0);
-                // test to see if we are super which is ILanguageIdentifierNode
-                if (child.getNodeID() == ASTNodeID.FunctionCallID
-                        && sub.getNodeID() == ASTNodeID.SuperID)
-                {
-                    // [0] SuperID
-                    // [1] ContainerID
-                    // will emit 'goog.base'
-                    walk(child);
-                    emitter.write("\n");
-
-                    // emit private fields
-                    IClassDefinition parent = (IClassDefinition) node
-                            .getDefinition().getParent();
-                    IASScope ascope = parent.getContainedScope();
-                    Collection<IDefinition> sets = ascope
-                            .getAllLocalDefinitions();
-                    for (IDefinition ldef : sets)
-                    {
-                        if (!(ldef instanceof IVariableDefinition))
-                            continue;
-
-                        IVariableDefinition vdef = (IVariableDefinition) ldef;
-                        if (vdef.isPrivate())
-                        {
-                            emitter.write("this." + ldef.getBaseName());
-                            //Object value = vdef.resolveInitialValue(project);
-                            IVariableNode mnode = (IVariableNode) vdef
-                                    .getNode();
-                            IExpressionNode vnode = mnode
-                                    .getAssignedValueNode();
-                            if (vnode != null)
-                            {
-                                emitter.write(" = ");
-                                walk(vnode);
-                                emitter.write(";");
-
-                            }
-                            if (i != scope.getChildCount() - 1)
-                                emitter.write("\n");
-                            else
-                            {
-                                emitter.indentPop();
-                                emitter.write("\n");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    walk(child);
-                    if (i != scope.getChildCount() - 1)
-                        emitter.write("\n");
-                    else
-                    {
-                        emitter.indentPop();
-                        emitter.write("\n");
-                    }
-                }
-            }
-            else
-            {
-                walk(child);
-                // XXX (mschmalle) this should check for 1 child and not add the \n
-                // because it's taken care of at the end
-                if (i != scope.getChildCount() - 1)
-                    emitter.write("\n");
-                else
-                {
-                    emitter.indentPop();
-                    emitter.write("\n");
-                }
-            }
-        }
-
-        emitter.write("}");
-        emitter.write(";");
     }
 
     @Override
@@ -471,20 +351,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write(" = ");
             walk(anode);
         }
-    }
-
-    private void walkParamters(IParameterNode[] nodes)
-    {
-        emitter.write("(");
-        int len = nodes.length;
-        for (int i = 0; i < len; i++)
-        {
-            IParameterNode node = nodes[i];
-            walk(node);
-            if (i < len - 1)
-                emitter.write(", ");
-        }
-        emitter.write(")\n"); // XXX (mschmalle) what is this doing? param NL
     }
 
     @Override
@@ -610,7 +476,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                 IContainerNode snode = (IContainerNode) enode
                         .getStatementContentsNode();
 
-                boolean isImplicit = snode.getContainerType() == ContainerType.IMPLICIT;
+                final boolean isImplicit = isImplicit(snode);
                 if (isImplicit)
                     emitter.write("\n");
                 else
@@ -633,7 +499,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         {
             IContainerNode cnode = (IContainerNode) elseNode.getChild(0);
             // if an implicit if, add a newline with no space
-            boolean isImplicit = cnode.getContainerType() == ContainerType.IMPLICIT;
+            final boolean isImplicit = isImplicit(cnode);
             if (isImplicit)
                 emitter.write("\n");
             else
@@ -659,12 +525,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     protected void visitForEach(IForLoopNode node)
     {
         debug("visitForEach()");
-        /*
-         * IForLoopNode
-         * [0] IContainerNode
-         *     - IBinaryOperatorInNode[] getConditionalsContainerNode() 
-         * [1] IBlockNode
-         */
         IContainerNode xnode = (IContainerNode) node.getChild(1);
         pushContext(TraverseContext.FOR);
         emitter.write("for");
@@ -687,12 +547,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     protected void visitFor(IForLoopNode node)
     {
         debug("visitFor()");
-        /*
-         * IForLoopNode
-         * [0] IContainerNode
-         *     - IExpressionNode[] getConditionalsContainerNode() 
-         * [1] IBlockNode
-         */
         IContainerNode xnode = (IContainerNode) node.getChild(1);
         pushContext(TraverseContext.FOR);
         emitter.write("for");
@@ -715,7 +569,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write(" ");
         popContext(TraverseContext.FOR);
         walk(node.getStatementContentsNode());
-        //emitter.writeNewline();
     }
 
     protected void visitForInBody(IContainerNode node)
@@ -763,7 +616,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write(" ");
             walk(lnode);
         }
-        //emitter.write(";");
     }
 
     @Override
@@ -813,38 +665,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write("\n");
         }
         emitter.write("}");
-        //emitter.writeNewline();
-    }
-
-    public IConditionalNode[] getCaseNodes(ISwitchNode node)
-    {
-        IBlockNode block = (IBlockNode) node.getChild(1);
-        int childCount = block.getChildCount();
-        ArrayList<IConditionalNode> retVal = new ArrayList<IConditionalNode>(
-                childCount);
-
-        for (int i = 0; i < childCount; i++)
-        {
-            IASNode child = block.getChild(i);
-            if (child instanceof IConditionalNode)
-                retVal.add((IConditionalNode) child);
-        }
-
-        return retVal.toArray(new IConditionalNode[0]);
-    }
-
-    public ITerminalNode getDefaultNode(ISwitchNode node)
-    {
-        IBlockNode block = (IBlockNode) node.getChild(1);
-        int childCount = block.getChildCount();
-        for (int i = childCount - 1; i >= 0; i--)
-        {
-            IASNode child = block.getChild(i);
-            if (child instanceof ITerminalNode)
-                return (ITerminalNode) child;
-        }
-
-        return null;
     }
 
     @Override
@@ -880,7 +700,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             walk(node.getConditionalExpressionNode());
             emitter.write(");");
         }
-        //emitter.writeNewline();
     }
 
     @Override
@@ -917,15 +736,12 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             walk(node.getCatchNode(i));
         }
         ITerminalNode fnode = node.getFinallyNode();
-        //if (fnode == null)
-        //     emitter.write("\n");
         if (fnode != null)
         {
             emitter.write(" ");
             emitter.write("finally");
             emitter.write(" ");
             walk(fnode);
-            //emitter.write("\n");
         }
     }
 
@@ -1119,10 +935,16 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitExpression(IExpressionNode node)
     {
         debug("visitExpression()");
+        // TODO (mschmalle) I think these placements are temp, I am sure a visit method
+        // should exist for FunctionObjectNode, there is no interface for it right now
         if (node instanceof VariableExpressionNode)
         {
             VariableExpressionNode v = (VariableExpressionNode) node;
             walk(v.getTargetVariable());
+        }
+        else if (node instanceof FunctionObjectNode)
+        {
+            emitter.emitFunctionObject(node);
         }
     }
 
@@ -1229,7 +1051,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
     protected void emitFields(IDefinitionNode[] members)
     {
-        //getWalker().pushContext(TraverseContext.FIELD);
         for (IDefinitionNode node : members)
         {
             if (node instanceof IVariableNode
@@ -1238,12 +1059,10 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                 walk(node);
             }
         }
-        //getWalker().popContext(TraverseContext.FIELD);
     }
 
     protected void emitMethods(IDefinitionNode[] members)
     {
-        //getWalker().pushContext(TraverseContext.METHOD);
         for (IDefinitionNode node : members)
         {
             if (node instanceof IFunctionNode)
@@ -1252,10 +1071,9 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                     walk(node);
             }
         }
-        //getWalker().popContext(TraverseContext.METHOD);
     }
 
-    private IFunctionNode getConstructor(IDefinitionNode[] members)
+    protected IFunctionNode getConstructor(IDefinitionNode[] members)
     {
         for (IDefinitionNode node : members)
         {
@@ -1269,7 +1087,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         return null;
     }
 
-    private void debug(String message)
+    protected void debug(String message)
     {
         System.out.println(message);
     }
@@ -1327,4 +1145,36 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                 || node.getContainerType() == ContainerType.SYNTHESIZED;
     }
 
+    // there seems to be a bug in the ISwitchNode.getCaseNodes(), need to file a bug
+    public IConditionalNode[] getCaseNodes(ISwitchNode node)
+    {
+        IBlockNode block = (IBlockNode) node.getChild(1);
+        int childCount = block.getChildCount();
+        ArrayList<IConditionalNode> retVal = new ArrayList<IConditionalNode>(
+                childCount);
+
+        for (int i = 0; i < childCount; i++)
+        {
+            IASNode child = block.getChild(i);
+            if (child instanceof IConditionalNode)
+                retVal.add((IConditionalNode) child);
+        }
+
+        return retVal.toArray(new IConditionalNode[0]);
+    }
+
+    // there seems to be a bug in the ISwitchNode.getDefaultNode(), need to file a bug
+    public ITerminalNode getDefaultNode(ISwitchNode node)
+    {
+        IBlockNode block = (IBlockNode) node.getChild(1);
+        int childCount = block.getChildCount();
+        for (int i = childCount - 1; i >= 0; i--)
+        {
+            IASNode child = block.getChild(i);
+            if (child instanceof ITerminalNode)
+                return (ITerminalNode) child;
+        }
+
+        return null;
+    }
 }

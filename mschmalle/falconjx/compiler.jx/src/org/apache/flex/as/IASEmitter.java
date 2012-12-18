@@ -21,6 +21,8 @@ package org.apache.flex.as;
 
 import java.io.Writer;
 
+import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
@@ -58,8 +60,6 @@ public interface IASEmitter
      * is correctly formatted.
      */
     void indentPop();
-
-    void emitVarDeclaration(IVariableNode node);
 
     /**
      * Emit a documentation comment for a Class field or constant
@@ -117,5 +117,25 @@ public interface IASEmitter
      * @param node The {@link ISetterNode} class setter member.
      */
     void emitSetAccessor(ISetterNode node);
+
+    //--------------------------------------------------------------------------
+    // Expressions
+    //--------------------------------------------------------------------------
+
+    /**
+     * Emit a variable declaration found in expression statements within scoped
+     * blocks.
+     * 
+     * @param node The {@link IVariableNode} or chain of variable nodes.
+     */
+    void emitVarDeclaration(IVariableNode node);
+
+    // TODO (mschmalle) we need IFunctionObjectNode API for FunctionObjectNode
+    /**
+     * Emit an anonymous {@link FunctionObjectNode}.
+     * 
+     * @param node The anonymous {@link FunctionObjectNode}.
+     */
+    void emitFunctionObject(IExpressionNode node);
 
 }

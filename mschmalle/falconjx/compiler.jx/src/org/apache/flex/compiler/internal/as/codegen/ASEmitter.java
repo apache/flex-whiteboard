@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import java.io.FilterWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.apache.flex.as.IASEmitter;
 import org.apache.flex.compiler.common.ASModifier;
@@ -32,7 +31,7 @@ import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.definitions.references.INamespaceReference;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
-import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
@@ -247,10 +246,11 @@ public class ASEmitter implements IASEmitter
             emitMethodDocumentation(node);
         }
 
-        FunctionNode fn = (FunctionNode) node;
+//        FunctionNode fn = (FunctionNode) node;
         // XXX (mschmalle) parseFunctionBody() TEMP until I figure out the correct way to do this
         // will need to pass these problems back to the visitor
-        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
+        // Figure out where this is getting parsed!
+//        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
         IFunctionDefinition definition = node.getDefinition();
 
@@ -298,6 +298,21 @@ public class ASEmitter implements IASEmitter
         // just cheat for now, ISetterNode is a IFunctionNode
         emitMethod(node);
     }
+
+    @Override
+    public void emitFunctionObject(IExpressionNode node)
+    {
+        FunctionObjectNode f = (FunctionObjectNode) node;
+        FunctionNode fnode = f.getFunctionNode();
+        write("function");
+        emitParamters(fnode.getParameterNodes());
+        emitType(fnode.getTypeNode());
+        emitFunctionScope(fnode.getScopedNode());
+    }
+
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
 
     protected void emitNamespace(IDefinition definition)
     {
@@ -395,5 +410,11 @@ public class ASEmitter implements IASEmitter
     {
         getWalker().walk(node);
         write(" ");
+    }
+
+    protected void emitFunctionScope(IScopedNode node)
+    {
+        // TODO (mschmalle) FunctionObjectNode; does this need specific treatment?
+        emitMethodScope(node);
     }
 }

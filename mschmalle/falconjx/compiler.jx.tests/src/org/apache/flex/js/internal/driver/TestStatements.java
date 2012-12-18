@@ -445,7 +445,8 @@ public class TestStatements extends TestWalkerBase
                         + "if (b) { try { a; throw new Error('foo'); } catch (e:Error) { "
                         + " switch(i){case 1: break; default: return;}"
                         + " } catch (f:Error) { c; eee.dd; } finally { "
-                        + "  d;  eee.dd; eee.dd; eee.dd; eee.dd;} }"
+                        + "  d;  var a:Object = function(foo:int, bar:String = 'goo'):int{return -1;};"
+                        + "  eee.dd; eee.dd; eee.dd; eee.dd;} }"
                         + "foo: for each(var i:int in obj) break foo;",
                 IFileNode.class);
         visitor.visitFile(node);
