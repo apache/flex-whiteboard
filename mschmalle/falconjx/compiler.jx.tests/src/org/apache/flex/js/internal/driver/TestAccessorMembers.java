@@ -21,7 +21,6 @@ package org.apache.flex.js.internal.driver;
 
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IFileNode;
-import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.junit.Test;
 
 /**
@@ -39,7 +38,7 @@ public class TestAccessorMembers extends TestWalkerBase
     @Test
     public void testGetAccessor()
     {
-        IFunctionNode node = getAccessor("function get foo():int{return -1;}");
+        IAccessorNode node = getAccessor("function get foo():int{return -1;}");
         visitor.visitFunction(node);
         assertOut("function get foo():int {\n\treturn -1;\n}");
     }
@@ -47,15 +46,31 @@ public class TestAccessorMembers extends TestWalkerBase
     @Test
     public void testGetAccessor_withNamespace()
     {
-        IFunctionNode node = getAccessor("public function get foo():int{return -1;}");
+        IAccessorNode node = getAccessor("public function get foo():int{return -1;}");
         visitor.visitFunction(node);
         assertOut("public function get foo():int {\n\treturn -1;\n}");
     }
 
     @Test
+    public void testGetAccessor_withNamespaceOverride()
+    {
+        IAccessorNode node = getAccessor("public override function get foo():int{return -1;}");
+        visitor.visitFunction(node);
+        assertOut("public override function get foo():int {\n\treturn -1;\n}");
+    }
+
+    @Test
+    public void testGetAccessor_withStatic()
+    {
+        IAccessorNode node = getAccessor("public static function get foo():int{return -1;}");
+        visitor.visitFunction(node);
+        assertOut("public static function get foo():int {\n\treturn -1;\n}");
+    }
+
+    @Test
     public void testSetAccessor()
     {
-        IFunctionNode node = getAccessor("function set foo(value:int):void{}");
+        IAccessorNode node = getAccessor("function set foo(value:int):void{}");
         visitor.visitFunction(node);
         assertOut("function set foo(value:int):void {\n}");
     }
@@ -63,9 +78,25 @@ public class TestAccessorMembers extends TestWalkerBase
     @Test
     public void testSetAccessor_withNamespace()
     {
-        IFunctionNode node = getAccessor("public function set foo(value:int):void{}");
+        IAccessorNode node = getAccessor("public function set foo(value:int):void{}");
         visitor.visitFunction(node);
         assertOut("public function set foo(value:int):void {\n}");
+    }
+
+    @Test
+    public void testSetAccessor_withNamespaceOverride()
+    {
+        IAccessorNode node = getAccessor("public override function set foo(value:int):void{}");
+        visitor.visitFunction(node);
+        assertOut("public override function set foo(value:int):void {\n}");
+    }
+
+    @Test
+    public void testSetAccessor_withStatic()
+    {
+        IAccessorNode node = getAccessor("public override function set foo(value:int):void{}");
+        visitor.visitFunction(node);
+        assertOut("public static function set foo(value:int):void {\n}");
     }
 
     protected IAccessorNode getAccessor(String code)

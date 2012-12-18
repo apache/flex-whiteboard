@@ -173,7 +173,20 @@ public class ASEmitter implements IASEmitter
     @Override
     public void emitMethod(IFunctionNode node)
     {
-        emitMethodDocumentation(node);
+        // see below, this is temp, I don't want a bunch of duplicated code
+        // at them moment, subclasses can refine anyways, we are generalizing
+        if (node instanceof IGetterNode)
+        {
+            emitGetAccessorDocumentation((IGetterNode) node);
+        }
+        else if (node instanceof ISetterNode)
+        {
+            emitSetAccessorDocumentation((ISetterNode) node);
+        }
+        else
+        {
+            emitMethodDocumentation(node);
+        }
 
         FunctionNode fn = (FunctionNode) node;
         // XXX (mschmalle) parseFunctionBody() TEMP until I figure out the correct way to do this
