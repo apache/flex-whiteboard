@@ -94,7 +94,7 @@ public class TestAccessorMembers extends TestWalkerBase
     @Test
     public void testSetAccessor_withStatic()
     {
-        IAccessorNode node = getAccessor("public override function set foo(value:int):void{}");
+        IAccessorNode node = getAccessor("public static function set foo(value:int):void{}");
         visitor.visitFunction(node);
         assertOut("public static function set foo(value:int):void {\n}");
     }

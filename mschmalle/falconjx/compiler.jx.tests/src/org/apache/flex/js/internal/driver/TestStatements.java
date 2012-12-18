@@ -26,6 +26,7 @@ import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
 import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
+import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IWhileLoopNode;
 import org.apache.flex.compiler.tree.as.IWithNode;
 import org.junit.Test;
@@ -38,6 +39,86 @@ public class TestStatements extends TestWalkerBase
     //--------------------------------------------------------------------------
     // if
     //--------------------------------------------------------------------------
+
+    //----------------------------------
+    // var declaration
+    //----------------------------------
+
+    @Test
+    public void testVarDeclaration()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:*");
+    }
+
+    @Test
+    public void testVarDeclaration_withType()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a:int;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:int");
+    }
+
+    @Test
+    public void testVarDeclaration_withTypeAssignedValue()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a:int = 42;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:int = 42");
+    }
+
+    @Test
+    public void testVarDeclaration_withTypeAssignedValueComplex()
+    {
+        IVariableNode node = (IVariableNode) getNode(
+                "var a:Foo = new Foo(42, 'goo');", IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:Foo = new Foo(42, 'goo')");
+    }
+
+    @Test
+    public void testVarDeclaration_withList()
+    {
+        IVariableNode node = (IVariableNode) getNode(
+                "var a:int = 4, b:int = 11, c:int = 42;", IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("var a:int = 4, b:int = 11, c:int = 42");
+    }
+
+    //----------------------------------
+    // const declaration
+    //----------------------------------
+
+    @Test
+    public void testConstDeclaration()
+    {
+        IVariableNode node = (IVariableNode) getNode("const a = 42;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("const a:* = 42");
+    }
+
+    @Test
+    public void testConstDeclaration_withType()
+    {
+        IVariableNode node = (IVariableNode) getNode("const a:int = 42;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("const a:int = 42");
+    }
+
+    @Test
+    public void testConstDeclaration_withList()
+    {
+        IVariableNode node = (IVariableNode) getNode(
+                "const a:int = 4, b:int = 11, c:int = 42;", IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOut("const a:int = 4, b:int = 11, c:int = 42");
+    }
 
     //----------------------------------
     // if ()

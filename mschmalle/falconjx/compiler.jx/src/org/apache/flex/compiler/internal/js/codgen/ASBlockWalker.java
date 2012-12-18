@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
+import org.apache.flex.as.IASEmitter;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
@@ -68,6 +69,7 @@ import org.apache.flex.compiler.tree.as.IKeywordNode;
 import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode.LiteralType;
+import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.INumericLiteralNode;
@@ -126,7 +128,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         SUPER_ARGUMENTS
     }
 
-    private JSEmitter emitter;
+    private IASEmitter emitter;
 
     private final List<ICompilerProblem> errors;
 
@@ -220,12 +222,12 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     }
 
     public ASBlockWalker(List<ICompilerProblem> errors, IASProject project,
-            JSEmitter emitter)
+            IASEmitter emitter)
     {
         this.errors = errors;
         this.project = project;
         this.emitter = emitter;
-        emitter.setVisitor(this);
+        emitter.setWalker(this);
         pushContext(TraverseContext.ROOT);
     }
 
@@ -261,7 +263,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitPackage()");
         pushContext(TraverseContext.PACKAGE);
-        emitter.emitJSDocPackgeHeader(node);
+        //        emitter.emitJSDocPackgeHeader(node);
         walk(findTypeNode(node)); // IClassNode | IInterfaceNode
         popContext(TraverseContext.PACKAGE);
     }
@@ -274,8 +276,8 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
         debug("visitClass()");
         pushContext(TraverseContext.TYPE);
-        emitter.emitProvide(typeDefinition);
-        emitter.emitRequire(typeDefinition);
+        //        emitter.emitProvide(typeDefinition);
+        //        emitter.emitRequire(typeDefinition);
 
         // fields, methods, namespaces
         final IDefinitionNode[] members = node.getAllMemberNodes();
@@ -285,11 +287,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             // TODO (mschmalle) handle null constructor
         }
 
-//        emitter.emitConstructor(currentConstructor);
-//        emitter.emitInherits(typeDefinition, project);
+        //        emitter.emitConstructor(currentConstructor);
+        //        emitter.emitInherits(typeDefinition, project);
 
-        emitter.emitFields(members);
-        emitter.emitMethods(members);
+        emitFields(members);
+        emitMethods(members);
 
         popContext(TraverseContext.TYPE);
         typeDefinition = null;
@@ -334,19 +336,19 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         // XXX (mschmalle) visitFunction() refactor, this is a mess
         debug("visitFunction()");
-        
+
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
             emitter.emitMethod(node);
             return; // TEMP
         }
-        
+
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
         if (!inContext(TraverseContext.FUNCTION))
         {
-            emitter.emitJSDoc(node, project, node == currentConstructor,
-                    typeDefinition);
+            //            emitter.emitJSDoc(node, project, node == currentConstructor,
+            //                    typeDefinition);
             String key = "";
             if (node instanceof IGetterNode)
                 key = "get_";
@@ -567,7 +569,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                 emitter.write(";");
             }
             if (i < len - 1)
-                emitter.writeNewline();
+                emitter.write("\n");
         }
     }
 
@@ -775,7 +777,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         emitter.write(")");
         emitter.write(" {");
         emitter.indentPush();
-        emitter.writeNewline();
+        emitter.write("\n");
 
         IConditionalNode[] cnodes = getCaseNodes(node);
         ITerminalNode dnode = getDefaultNode(node);
@@ -1224,6 +1226,34 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
+
+    protected void emitFields(IDefinitionNode[] members)
+    {
+        //getWalker().pushContext(TraverseContext.FIELD);
+        for (IDefinitionNode node : members)
+        {
+            if (node instanceof IVariableNode
+                    && !(node instanceof IAccessorNode))
+            {
+                walk(node);
+            }
+        }
+        //getWalker().popContext(TraverseContext.FIELD);
+    }
+
+    protected void emitMethods(IDefinitionNode[] members)
+    {
+        //getWalker().pushContext(TraverseContext.METHOD);
+        for (IDefinitionNode node : members)
+        {
+            if (node instanceof IFunctionNode)
+            {
+                if (node != getCurrentClass().getConstructor())
+                    walk(node);
+            }
+        }
+        //getWalker().popContext(TraverseContext.METHOD);
+    }
 
     private IFunctionNode getConstructor(IDefinitionNode[] members)
     {

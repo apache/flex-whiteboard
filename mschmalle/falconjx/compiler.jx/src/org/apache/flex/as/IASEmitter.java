@@ -25,6 +25,7 @@ import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
+import org.apache.flex.compiler.visitor.IASBlockWalker;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**
@@ -35,6 +36,10 @@ import org.apache.flex.compiler.visitor.IASNodeStrategy;
  */
 public interface IASEmitter
 {
+    IASBlockWalker getWalker();
+
+    void setWalker(IASBlockWalker asBlockWalker);
+
     /**
      * Writes a string to the writer.
      * 
@@ -53,6 +58,8 @@ public interface IASEmitter
      * is correctly formatted.
      */
     void indentPop();
+
+    void emitVarDeclaration(IVariableNode node);
 
     /**
      * Emit a documentation comment for a Class field or constant
@@ -110,4 +117,5 @@ public interface IASEmitter
      * @param node The {@link ISetterNode} class setter member.
      */
     void emitSetAccessor(ISetterNode node);
+
 }

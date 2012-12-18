@@ -102,7 +102,7 @@ public class TestFieldMembers extends TestWalkerBase
         visitor.visitVariable(node);
         assertOut("protected var foo:Vector.<Vector.<Vector.<Foo>>>");
     }
-    
+
     @Test
     public void testField_withNamespaceTypeValueComplex()
     {
@@ -110,7 +110,15 @@ public class TestFieldMembers extends TestWalkerBase
         visitor.visitVariable(node);
         assertOut("protected var foo:Foo = new Foo('bar', 42)");
     }
-    
+
+    @Test
+    public void testField_withList()
+    {
+        IVariableNode node = getField("protected var a:int = 4, b:int = 11, c:int = 42;");
+        visitor.visitVariable(node);
+        assertOut("protected var a:int = 4, b:int = 11, c:int = 42");
+    }
+
     //--------------------------------------------------------------------------
     // Constant
     //--------------------------------------------------------------------------

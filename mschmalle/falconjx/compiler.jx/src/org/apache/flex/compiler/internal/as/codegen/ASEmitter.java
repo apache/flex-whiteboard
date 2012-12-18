@@ -30,8 +30,10 @@ import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.definitions.references.INamespaceReference;
+import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
@@ -59,16 +61,16 @@ public class ASEmitter implements IASEmitter
 
     private int currentIndent = 0;
 
-    private IASBlockWalker visitor;
+    private IASBlockWalker walker;
 
-    public IASBlockWalker getVisitor()
+    public IASBlockWalker getWalker()
     {
-        return visitor;
+        return walker;
     }
 
-    public void setVisitor(IASBlockWalker value)
+    public void setWalker(IASBlockWalker value)
     {
-        visitor = value;
+        walker = value;
     }
 
     public ASEmitter(FilterWriter out)
@@ -139,6 +141,42 @@ public class ASEmitter implements IASEmitter
     //--------------------------------------------------------------------------
 
     @Override
+    public void emitVarDeclaration(IVariableNode node)
+    {
+        if (!(node instanceof ChainedVariableNode))
+        {
+            emitMemberKeyword(node);
+        }
+
+        emitDeclarationName(node);
+        emitType(node.getVariableTypeNode());
+        emitAssignedValue(node.getAssignedValueNode());
+
+        if (!(node instanceof ChainedVariableNode))
+        {
+            // check for chained variables
+            int len = node.getChildCount();
+            for (int i = 0; i < len; i++)
+            {
+                IASNode child = node.getChild(i);
+                if (child instanceof ChainedVariableNode)
+                {
+                    write(",");
+                    write(" ");
+                    emitVarDeclaration((IVariableNode) child);
+                }
+            }
+        }
+
+        // the client such as IASBlockWalker is responsible for the 
+        // semi-colon and newline handling
+    }
+
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
+
+    @Override
     public void emitFieldDocumentation(IVariableNode node)
     {
     }
@@ -151,12 +189,33 @@ public class ASEmitter implements IASEmitter
         IVariableDefinition definition = (IVariableDefinition) node
                 .getDefinition();
 
-        emitNamespace(definition);
-        emitModifiers(definition);
-        emitMemberKeyword(node);
+        if (!(node instanceof ChainedVariableNode))
+        {
+            emitNamespace(definition);
+            emitModifiers(definition);
+            emitMemberKeyword(node);
+        }
+
         emitMemberName(node);
         emitType(node.getVariableTypeNode());
         emitAssignedValue(node.getAssignedValueNode());
+
+        if (!(node instanceof ChainedVariableNode))
+        {
+            // check for chained variables
+            int len = node.getChildCount();
+            for (int i = 0; i < len; i++)
+            {
+                IASNode child = node.getChild(i);
+                if (child instanceof ChainedVariableNode)
+                {
+                    write(",");
+                    write(" ");
+                    emitField((IVariableNode) child);
+                }
+            }
+        }
+
         // the client such as IASBlockWalker is responsible for the 
         // semi-colon and newline handling
     }
@@ -282,7 +341,12 @@ public class ASEmitter implements IASEmitter
 
     protected void emitMemberName(IDefinitionNode node)
     {
-        getVisitor().walk(node.getNameExpressionNode());
+        getWalker().walk(node.getNameExpressionNode());
+    }
+
+    protected void emitDeclarationName(IDefinitionNode node)
+    {
+        getWalker().walk(node.getNameExpressionNode());
     }
 
     protected void emitParamters(IParameterNode[] nodes)
@@ -292,7 +356,7 @@ public class ASEmitter implements IASEmitter
         for (int i = 0; i < len; i++)
         {
             IParameterNode node = nodes[i];
-            getVisitor().walk(node);
+            getWalker().walk(node);
             if (i < len - 1)
                 write(", ");
         }
@@ -306,7 +370,7 @@ public class ASEmitter implements IASEmitter
         if (node != null)
         {
             write(":");
-            getVisitor().walk(node);
+            getWalker().walk(node);
         }
     }
 
@@ -317,19 +381,19 @@ public class ASEmitter implements IASEmitter
             write(" ");
             write("=");
             write(" ");
-            getVisitor().walk(node);
+            getWalker().walk(node);
         }
     }
 
     protected void emitMethodScope(IScopedNode node)
     {
         write(" ");
-        getVisitor().walk(node);
+        getWalker().walk(node);
     }
 
     protected void emitAccessorKeyword(IKeywordNode node)
     {
-        getVisitor().walk(node);
+        getWalker().walk(node);
         write(" ");
     }
 }

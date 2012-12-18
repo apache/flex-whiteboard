@@ -26,15 +26,10 @@ import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
-import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.js.IJSEmitter;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.projects.ICompilerProject;
-import org.apache.flex.compiler.tree.as.IAccessorNode;
-import org.apache.flex.compiler.tree.as.IDefinitionNode;
-import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
-import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
@@ -47,11 +42,6 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     public static boolean javascriptMode = false;
 
     private JSDocEmitter jsdoc;
-
-    public ICompilerProject getProject()
-    {
-        return getVisitor().getProject();
-    }
 
     public JSEmitter(FilterWriter out)
     {
@@ -149,35 +139,7 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     {
         // for now, we just call back, this is to allow custom handling
         // straight from the emitter
-        getVisitor().visitConstructor(node);
-    }
-
-    public void emitFields(IDefinitionNode[] members)
-    {
-        //getVisitor().pushContext(TraverseContext.FIELD);
-        for (IDefinitionNode node : members)
-        {
-            if (node instanceof IVariableNode
-                    && !(node instanceof IAccessorNode))
-            {
-                getVisitor().walk(node);
-            }
-        }
-        //getVisitor().popContext(TraverseContext.FIELD);
-    }
-
-    public void emitMethods(IDefinitionNode[] members)
-    {
-        //getVisitor().pushContext(TraverseContext.METHOD);
-        for (IDefinitionNode node : members)
-        {
-            if (node instanceof IFunctionNode)
-            {
-                if (node != getVisitor().getCurrentClass().getConstructor())
-                    getVisitor().walk(node);
-            }
-        }
-        //getVisitor().popContext(TraverseContext.METHOD);
+        getWalker().visitConstructor(node);
     }
 
     public void emitField(IVariableNode node)
@@ -197,40 +159,40 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
 
     public void emitVarDeclaration(IVariableNode node)
     {
-        getVisitor().walk(node.getChild(0)); // VariableExpressionNode
-        write(" ");
-        getVisitor().walk(node.getNameExpressionNode());
-        // add :Type
-        if (!javascriptMode)
-        {
-            IExpressionNode tnode = node.getVariableTypeNode();
-            if (tnode instanceof ILanguageIdentifierNode)
-            {
-                ILanguageIdentifierNode lnode = (ILanguageIdentifierNode) tnode;
-                if (lnode.getKind() != ILanguageIdentifierNode.LanguageIdentifierKind.ANY_TYPE)
-                    write(":");
-            }
-            else
-            {
-                write(":");
-            }
-
-            getVisitor().walk(node.getVariableTypeNode());
-        }
-        IExpressionNode vnode = node.getAssignedValueNode();
-        if (vnode != null)
-        {
-            write(" = ");
-            if (vnode instanceof FunctionObjectNode)
-            {
-                //getVisitor().pushContext(TraverseContext.FUNCTION);
-                getVisitor().walk(vnode.getChild(0)); // IFunctionNode
-                //getVisitor().popContext(TraverseContext.FUNCTION);
-            }
-            else
-            {
-                getVisitor().walk(vnode);
-            }
-        }
+        super.emitVarDeclaration(node);
+        //        getWalker().walk(node.getChild(0)); // VariableExpressionNode
+        //        write(" ");
+        //        getWalker().walk(node.getNameExpressionNode());
+        //        // add :Type
+        //        {
+        //            IExpressionNode tnode = node.getVariableTypeNode();
+        //            if (tnode instanceof ILanguageIdentifierNode)
+        //            {
+        //                ILanguageIdentifierNode lnode = (ILanguageIdentifierNode) tnode;
+        //                if (lnode.getKind() != ILanguageIdentifierNode.LanguageIdentifierKind.ANY_TYPE)
+        //                    write(":");
+        //            }
+        //            else
+        //            {
+        //                write(":");
+        //            }
+        //
+        //            getWalker().walk(node.getVariableTypeNode());
+        //        }
+        //        IExpressionNode vnode = node.getAssignedValueNode();
+        //        if (vnode != null)
+        //        {
+        //            write(" = ");
+        //            if (vnode instanceof FunctionObjectNode)
+        //            {
+        //                //getWalker().pushContext(TraverseContext.FUNCTION);
+        //                getWalker().walk(vnode.getChild(0)); // IFunctionNode
+        //                //getWalker().popContext(TraverseContext.FUNCTION);
+        //            }
+        //            else
+        //            {
+        //                getWalker().walk(vnode);
+        //            }
+        //        }
     }
 }
