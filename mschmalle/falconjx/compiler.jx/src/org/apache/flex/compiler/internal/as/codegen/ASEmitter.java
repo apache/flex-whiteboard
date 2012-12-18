@@ -32,11 +32,15 @@ import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.definitions.references.INamespaceReference;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
+import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IKeywordNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
+import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
@@ -181,12 +185,46 @@ public class ASEmitter implements IASEmitter
         emitNamespace(definition);
         emitModifiers(definition);
         emitMemberKeyword(node);
+
+        // TODO (mschmalle) I'm cheating right here, I haven't "seen" the light
+        // on how to properly and efficiently deal with accessors since they are SO alike
+        // I don't want to lump them in with methods because implementations in the
+        // future need to know the difference without loopholes
+        if (node instanceof IAccessorNode)
+        {
+            emitAccessorKeyword(((IAccessorNode) node).getAccessorKeywordNode());
+        }
+
         emitMemberName(node);
         emitParamters(node.getParameterNodes());
         emitType(node.getReturnTypeNode());
         emitMethodScope(node.getScopedNode());
         // the client such as IASBlockWalker is responsible for the 
         // semi-colon and newline handling
+    }
+
+    @Override
+    public void emitGetAccessorDocumentation(IGetterNode node)
+    {
+    }
+
+    @Override
+    public void emitGetAccessor(IGetterNode node)
+    {
+        // just cheat for now, IGetterNode is a IFunctionNode
+        emitMethod(node);
+    }
+
+    @Override
+    public void emitSetAccessorDocumentation(ISetterNode node)
+    {
+    }
+
+    @Override
+    public void emitSetAccessor(ISetterNode node)
+    {
+        // just cheat for now, ISetterNode is a IFunctionNode
+        emitMethod(node);
     }
 
     protected void emitNamespace(IDefinition definition)
@@ -217,14 +255,14 @@ public class ASEmitter implements IASEmitter
 
     protected void emitMemberKeyword(IDefinitionNode node)
     {
-        if (node instanceof IVariableNode)
-        {
-            write(((IVariableNode) node).isConst() ? "const" : "var");
-            write(" ");
-        }
-        else if (node instanceof IFunctionNode)
+        if (node instanceof IFunctionNode)
         {
             write("function");
+            write(" ");
+        }
+        else if (node instanceof IVariableNode)
+        {
+            write(((IVariableNode) node).isConst() ? "const" : "var");
             write(" ");
         }
     }
@@ -274,5 +312,11 @@ public class ASEmitter implements IASEmitter
     {
         write(" ");
         getVisitor().walk(node);
+    }
+
+    protected void emitAccessorKeyword(IKeywordNode node)
+    {
+        getVisitor().walk(node);
+        write(" ");
     }
 }

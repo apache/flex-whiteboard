@@ -22,6 +22,8 @@ package org.apache.flex.as;
 import java.io.Writer;
 
 import org.apache.flex.compiler.tree.as.IFunctionNode;
+import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
@@ -80,4 +82,32 @@ public interface IASEmitter
      * @param node The {@link IFunctionNode} class method member.
      */
     void emitMethod(IFunctionNode node);
+
+    /**
+     * Emit a documentation comment for a Class method {@link IGetterNode}.
+     * 
+     * @param node The {@link IGetterNode} class accessor member.
+     */
+    void emitGetAccessorDocumentation(IGetterNode node);
+
+    /**
+     * Emit a full Class getter member.
+     * 
+     * @param node The {@link IVariableNode} class getter member.
+     */
+    void emitGetAccessor(IGetterNode node);
+
+    /**
+     * Emit a documentation comment for a Class accessor {@link IGetterNode}.
+     * 
+     * @param node The {@link ISetterNode} class accessor member.
+     */
+    void emitSetAccessorDocumentation(ISetterNode node);
+
+    /**
+     * Emit a full Class setter member.
+     * 
+     * @param node The {@link ISetterNode} class setter member.
+     */
+    void emitSetAccessor(ISetterNode node);
 }
