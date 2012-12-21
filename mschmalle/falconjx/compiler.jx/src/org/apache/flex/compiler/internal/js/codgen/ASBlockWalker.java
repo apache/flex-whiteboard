@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.flex.compiler.as.IASEmitter;
+import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
@@ -39,7 +40,6 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
-import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
@@ -259,14 +259,17 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitPackage()");
         emitter.write("package");
+
         String name = node.getQualifiedName();
         if (name != null && !name.equals(""))
         {
             emitter.write(" ");
-            emitter.write(name);
+            walk(node.getNameExpressionNode());
         }
+
         emitter.write(" ");
         emitter.write("{");
+
         ITypeNode tnode = findTypeNode(node);
         if (tnode != null)
         {
@@ -274,6 +277,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write("\n");
             walk(tnode); // IClassNode | IInterfaceNode
         }
+
         emitter.indentPop();
         emitter.write("\n");
         emitter.write("}");
@@ -286,16 +290,47 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
         debug("visitClass()");
 
-        emitter.write("public");
+        emitter.write(node.getNamespace());
         emitter.write(" ");
+
+        if (node.hasModifier(ASModifier.FINAL))
+        {
+            emitter.write("final");
+            emitter.write(" ");
+        }
         emitter.write("class");
         emitter.write(" ");
-        emitter.write(typeDefinition.getBaseName());
+        walk(node.getNameExpressionNode());
         emitter.write(" ");
-        emitter.write("{");
 
-        //        emitter.emitProvide(typeDefinition);
-        //        emitter.emitRequire(typeDefinition);
+        IExpressionNode bnode = node.getBaseClassExpressionNode();
+        if (bnode != null)
+        {
+            emitter.write("extends");
+            emitter.write(" ");
+            walk(bnode);
+            emitter.write(" ");
+        }
+
+        IExpressionNode[] inodes = node.getImplementedInterfaceNodes();
+        final int ilen = inodes.length;
+        if (ilen != 0)
+        {
+            emitter.write("implements");
+            emitter.write(" ");
+            for (int i = 0; i < ilen; i++)
+            {
+                walk(inodes[i]);
+                if (i < ilen - 1)
+                {
+                    emitter.write(",");
+                    emitter.write(" ");
+                }
+            }
+            emitter.write(" ");
+        }
+
+        emitter.write("{");
 
         // fields, methods, namespaces
         final IDefinitionNode[] members = node.getAllMemberNodes();
@@ -303,18 +338,19 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         {
             emitter.indentPush();
             emitter.write("\n");
-
+            
+            // there is always an implicit constructor if not explicit
             currentConstructor = getConstructor(members);
             if (currentConstructor == null)
             {
                 // TODO (mschmalle) handle null constructor
             }
-
-            //        emitter.emitConstructor(currentConstructor);
-            //        emitter.emitInherits(typeDefinition, project);
-
-            emitFields(members);
-            emitMethods(members);
+            
+            // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            for (IDefinitionNode mnode : members)
+            {
+                walk(mnode);
+            }
 
             emitter.indentPop();
         }
@@ -1079,33 +1115,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
-
-    protected void emitFields(IDefinitionNode[] members)
-    {
-        for (IDefinitionNode node : members)
-        {
-            if (node instanceof IVariableNode
-                    && !(node instanceof IAccessorNode))
-            {
-                walk(node);
-            }
-        }
-    }
-
-    protected void emitMethods(IDefinitionNode[] members)
-    {
-        for (IDefinitionNode node : members)
-        {
-            if (node instanceof IFunctionNode)
-            {
-                IFunctionNode fnode = (IFunctionNode) node;
-                if (!fnode.isConstructor())
-                    walk(node);
-                else
-                    visitConstructor(fnode);
-            }
-        }
-    }
 
     protected IFunctionNode getConstructor(IDefinitionNode[] members)
     {

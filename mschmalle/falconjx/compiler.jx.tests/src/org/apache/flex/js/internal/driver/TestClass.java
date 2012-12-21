@@ -19,6 +19,8 @@
 
 package org.apache.flex.js.internal.driver;
 
+import org.apache.flex.compiler.tree.as.IClassNode;
+import org.apache.flex.compiler.tree.as.IFileNode;
 import org.junit.Test;
 
 /**
@@ -34,8 +36,91 @@ public class TestClass extends TestWalkerBase
     //--------------------------------------------------------------------------
 
     @Test
-    public void testGetAccessor()
+    public void testSimple()
     {
+        IClassNode node = getClassNode("public class A{}");
+        visitor.visitClass(node);
+        assertOut("public class A {\n}");
+    }
 
+    @Test
+    public void testSimpleInternal()
+    {
+        IClassNode node = getClassNode("internal class A{}");
+        visitor.visitClass(node);
+        assertOut("internal class A {\n}");
+    }
+    
+    @Test
+    public void testSimpleFinal()
+    {
+        IClassNode node = getClassNode("public final class A{}");
+        visitor.visitClass(node);
+        assertOut("public final class A {\n}");
+    }
+
+    @Test
+    public void testSimpleExtends()
+    {
+        IClassNode node = getClassNode("public class A extends B {}");
+        visitor.visitClass(node);
+        assertOut("public class A extends B {\n}");
+    }
+
+    @Test
+    public void testSimpleImplements()
+    {
+        IClassNode node = getClassNode("public class A implements IA {}");
+        visitor.visitClass(node);
+        assertOut("public class A implements IA {\n}");
+    }
+
+    @Test
+    public void testSimpleImplementsMultiple()
+    {
+        IClassNode node = getClassNode("public class A implements IA, IB, IC {}");
+        visitor.visitClass(node);
+        assertOut("public class A implements IA, IB, IC {\n}");
+    }
+
+    @Test
+    public void testSimpleExtendsImplements()
+    {
+        IClassNode node = getClassNode("public class A extends B implements IA {}");
+        visitor.visitClass(node);
+        assertOut("public class A extends B implements IA {\n}");
+    }
+
+    @Test
+    public void testSimpleExtendsImplementsMultiple()
+    {
+        IClassNode node = getClassNode("public class A extends B implements IA, IB, IC {}");
+        visitor.visitClass(node);
+        assertOut("public class A extends B implements IA, IB, IC {\n}");
+    }
+
+    @Test
+    public void testSimpleFinalExtendsImplementsMultiple()
+    {
+        IClassNode node = getClassNode("public final class A extends B implements IA, IB, IC {}");
+        visitor.visitClass(node);
+        assertOut("public final class A extends B implements IA, IB, IC {\n}");
+    }
+
+    @Test
+    public void testQualifiedExtendsImplementsMultiple()
+    {
+        IClassNode node = getClassNode("public class A extends goo.B implements foo.bar.IA, goo.foo.IB, baz.boo.IC {}");
+        visitor.visitClass(node);
+        assertOut("public class A extends goo.B implements foo.bar.IA, goo.foo.IB, baz.boo.IC {\n}");
+    }
+    
+    protected IClassNode getClassNode(String code)
+    {
+        String source = "package {" + code + "}";
+        IFileNode node = getFileNode(source);
+        IClassNode child = (IClassNode) findFirstDescendantOfType(node,
+                IClassNode.class);
+        return child;
     }
 }
