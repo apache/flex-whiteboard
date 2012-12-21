@@ -66,7 +66,43 @@ public class TestInterface extends TestWalkerBase
         visitor.visitInterface(node);
         assertOut("public interface IA extends foo.bar.IB, baz.goo.IC, foo.ID {\n}");
     }
-    
+
+    @Test
+    public void testAccessors()
+    {
+        IInterfaceNode node = getInterfaceNode("public interface IA {"
+                + "function get foo1():Object;"
+                + "function set foo1(value:Object):void;}");
+        visitor.visitInterface(node);
+        assertOut("public interface IA {\n\tfunction get foo1():Object;\n\t"
+                + "function set foo1(value:Object):void;\n}");
+    }
+
+    @Test
+    public void testMethods()
+    {
+        IInterfaceNode node = getInterfaceNode("public interface IA {"
+                + "function foo1():Object;"
+                + "function foo1(value:Object):void;}");
+        visitor.visitInterface(node);
+        assertOut("public interface IA {\n\tfunction foo1():Object;\n\t"
+                + "function foo1(value:Object):void;\n}");
+    }
+
+    @Test
+    public void testAccessorsMethods()
+    {
+        IInterfaceNode node = getInterfaceNode("public interface IA {"
+                + "function get foo1():Object;"
+                + "function set foo1(value:Object):void;"
+                + "function baz1():Object;"
+                + "function baz2(value:Object):void;}");
+        visitor.visitInterface(node);
+        assertOut("public interface IA {\n\tfunction get foo1():Object;"
+                + "\n\tfunction set foo1(value:Object):void;\n\tfunction baz1()"
+                + ":Object;\n\tfunction baz2(value:Object):void;\n}");
+    }
+
     protected IInterfaceNode getInterfaceNode(String code)
     {
         String source = "package {" + code + "}";

@@ -34,6 +34,7 @@ import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
@@ -272,7 +273,11 @@ public class ASEmitter implements IASEmitter
         emitMemberName(node);
         emitParamters(node.getParameterNodes());
         emitType(node.getReturnTypeNode());
-        emitMethodScope(node.getScopedNode());
+        if (node.getParent().getParent().getNodeID() == ASTNodeID.ClassID)
+        {
+            emitMethodScope(node.getScopedNode());
+        }
+
         // the client such as IASBlockWalker is responsible for the 
         // semi-colon and newline handling
     }
@@ -315,7 +320,7 @@ public class ASEmitter implements IASEmitter
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
-    
+
     protected void emitNamespace2(IDefinitionNode node)
     {
         String namespace = node.getNamespace();
@@ -325,7 +330,7 @@ public class ASEmitter implements IASEmitter
             write(" ");
         }
     }
-    
+
     protected void emitNamespace(IDefinition definition)
     {
         // namespace (public, protected, private, foo_bar)

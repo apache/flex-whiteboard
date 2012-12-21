@@ -423,9 +423,15 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             emitter.write("\n");
 
             // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            final int len = members.length;
+            int i = 0;
             for (IDefinitionNode mnode : members)
             {
                 walk(mnode);
+                emitter.write(";");
+                if (i < len - 1)
+                    emitter.write("\n");
+                i++;
             }
 
             emitter.indentPop();
@@ -468,6 +474,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         debug("visitFunction()");
 
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
+        {
+            emitter.emitMethod(node);
+            return; // TEMP
+        }
+        else if (node.getParent().getParent().getNodeID() == ASTNodeID.InterfaceID)
         {
             emitter.emitMethod(node);
             return; // TEMP
