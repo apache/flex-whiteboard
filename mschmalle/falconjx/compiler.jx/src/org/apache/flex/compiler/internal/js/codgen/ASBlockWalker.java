@@ -366,6 +366,55 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitInterface(IInterfaceNode node)
     {
         debug("visitInterface()");
+        typeDefinition = node.getDefinition();
+        
+        emitter.write(node.getNamespace());
+        emitter.write(" ");
+        
+        emitter.write("interface");
+        emitter.write(" ");
+        walk(node.getNameExpressionNode());
+        emitter.write(" ");
+        
+        IExpressionNode[] inodes = node.getExtendedInterfaceNodes();
+        final int ilen = inodes.length;
+        if (ilen != 0)
+        {
+            emitter.write("extends");
+            emitter.write(" ");
+            for (int i = 0; i < ilen; i++)
+            {
+                walk(inodes[i]);
+                if (i < ilen - 1)
+                {
+                    emitter.write(",");
+                    emitter.write(" ");
+                }
+            }
+            emitter.write(" ");
+        }
+        
+        emitter.write("{");
+        
+        final IDefinitionNode[] members = node.getAllMemberDefinitionNodes();
+        if (members.length > 0)
+        {
+            emitter.indentPush();
+            emitter.write("\n");
+            
+            // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            for (IDefinitionNode mnode : members)
+            {
+                walk(mnode);
+            }
+
+            emitter.indentPop();
+        }
+        
+        emitter.write("\n");
+        emitter.write("}");
+        
+        typeDefinition = null;
     }
 
     public void visitConstructor(IFunctionNode node)
