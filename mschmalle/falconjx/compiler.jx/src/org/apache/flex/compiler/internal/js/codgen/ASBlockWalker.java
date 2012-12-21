@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.apache.flex.as.IASEmitter;
+import org.apache.flex.compiler.as.IASEmitter;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
@@ -258,10 +258,25 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitPackage(IPackageNode node)
     {
         debug("visitPackage()");
-        pushContext(TraverseContext.PACKAGE);
-        //        emitter.emitJSDocPackgeHeader(node);
-        walk(findTypeNode(node)); // IClassNode | IInterfaceNode
-        popContext(TraverseContext.PACKAGE);
+        emitter.write("package");
+        String name = node.getQualifiedName();
+        if (name != null && !name.equals(""))
+        {
+            emitter.write(" ");
+            emitter.write(name);
+        }
+        emitter.write(" ");
+        emitter.write("{");
+        ITypeNode tnode = findTypeNode(node);
+        if (tnode != null)
+        {
+            emitter.indentPush();
+            emitter.write("\n");
+            walk(tnode); // IClassNode | IInterfaceNode
+        }
+        emitter.indentPop();
+        emitter.write("\n");
+        emitter.write("}");
     }
 
     @Override
@@ -270,25 +285,43 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         typeDefinition = node.getDefinition();
 
         debug("visitClass()");
-        pushContext(TraverseContext.TYPE);
+
+        emitter.write("public");
+        emitter.write(" ");
+        emitter.write("class");
+        emitter.write(" ");
+        emitter.write(typeDefinition.getBaseName());
+        emitter.write(" ");
+        emitter.write("{");
+
         //        emitter.emitProvide(typeDefinition);
         //        emitter.emitRequire(typeDefinition);
 
         // fields, methods, namespaces
         final IDefinitionNode[] members = node.getAllMemberNodes();
-        currentConstructor = getConstructor(members);
-        if (currentConstructor == null)
+        if (members.length > 0)
         {
-            // TODO (mschmalle) handle null constructor
+            emitter.indentPush();
+            emitter.write("\n");
+
+            currentConstructor = getConstructor(members);
+            if (currentConstructor == null)
+            {
+                // TODO (mschmalle) handle null constructor
+            }
+
+            //        emitter.emitConstructor(currentConstructor);
+            //        emitter.emitInherits(typeDefinition, project);
+
+            emitFields(members);
+            emitMethods(members);
+
+            emitter.indentPop();
         }
 
-        //        emitter.emitConstructor(currentConstructor);
-        //        emitter.emitInherits(typeDefinition, project);
+        emitter.write("\n");
+        emitter.write("}");
 
-        emitFields(members);
-        emitMethods(members);
-
-        popContext(TraverseContext.TYPE);
         typeDefinition = null;
         currentConstructor = null;
     }
@@ -305,16 +338,14 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         if (node == null)
             return;
         debug("visitConstructor()");
-        pushContext(TraverseContext.CONSTRUCTOR);
         walk(node);
-        popContext(TraverseContext.CONSTRUCTOR);
     }
 
     @Override
     public void visitVariable(IVariableNode node)
     {
         debug("visitVariable()");
-        
+
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
             emitter.emitField(node);
@@ -1067,8 +1098,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         {
             if (node instanceof IFunctionNode)
             {
-                if (node != getCurrentClass().getConstructor())
+                IFunctionNode fnode = (IFunctionNode) node;
+                if (!fnode.isConstructor())
                     walk(node);
+                else
+                    visitConstructor(fnode);
             }
         }
     }

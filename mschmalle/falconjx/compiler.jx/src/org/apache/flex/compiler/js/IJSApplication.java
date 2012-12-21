@@ -19,6 +19,7 @@
 
 package org.apache.flex.compiler.js;
 
+import org.apache.flex.compiler.as.IApplication;
 
 /**
  * The JavaScript model interface used when implementing build targets that
@@ -26,7 +27,7 @@ package org.apache.flex.compiler.js;
  * 
  * @author Michael Schmalle
  */
-public interface IJSApplication
+public interface IJSApplication extends IApplication
 {
 
 }

@@ -17,7 +17,7 @@
  *
  */
 
-package org.apache.flex.as;
+package org.apache.flex.compiler.as;
 
 import java.io.Writer;
 

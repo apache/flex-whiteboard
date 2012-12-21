@@ -7,8 +7,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.apache.flex.compiler.clients.IBackend;
-import org.apache.flex.compiler.internal.driver.JSBackend;
-import org.apache.flex.compiler.internal.js.codgen.JSFilterWriter;
+import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
+import org.apache.flex.compiler.internal.driver.ASBackend;
 import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.junit.After;
 
@@ -20,7 +20,7 @@ public class TestWalkerBase extends TestBase
 
     private IBackend backend;
 
-    private JSFilterWriter writer;
+    private ASFilterWriter writer;
 
     protected String mCode;
 
@@ -29,9 +29,9 @@ public class TestWalkerBase extends TestBase
     {
         super.setUp();
 
-        backend = new JSBackend();
+        backend = new ASBackend();
         out = new StringWriter();
-        writer = new JSFilterWriter(out);
+        writer = new ASFilterWriter(out);
         visitor = backend.createWalker(project, errors, writer);
     }
 

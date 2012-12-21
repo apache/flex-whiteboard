@@ -21,7 +21,7 @@ package org.apache.flex.compiler.js;
 
 import java.io.Writer;
 
-import org.apache.flex.as.IASEmitter;
+import org.apache.flex.compiler.as.IASEmitter;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
 /**

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.flex.compiler.as.IASWriter;
 import org.apache.flex.compiler.clients.problems.ProblemPrinter;
 import org.apache.flex.compiler.clients.problems.ProblemQuery;
 import org.apache.flex.compiler.clients.problems.WorkspaceProblemFormatter;
@@ -46,7 +47,6 @@ import org.apache.flex.compiler.exceptions.ConfigurationException.MustSpecifyTar
 import org.apache.flex.compiler.exceptions.ConfigurationException.OnlyOneSource;
 import org.apache.flex.compiler.internal.driver.JSBackend;
 import org.apache.flex.compiler.internal.js.codgen.JSSharedData;
-import org.apache.flex.compiler.internal.js.codgen.JSWriter;
 import org.apache.flex.compiler.internal.projects.CompilerProject;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
@@ -61,6 +61,7 @@ import org.apache.flex.compiler.problems.InternalCompilerProblem;
 import org.apache.flex.compiler.problems.UnableToBuildSWFProblem;
 import org.apache.flex.compiler.problems.UnexpectedExceptionProblem;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.targets.ITarget;
 import org.apache.flex.compiler.targets.ITargetSettings;
 import org.apache.flex.compiler.units.ICompilationUnit;
 import org.apache.flex.utils.FileUtils;
@@ -123,7 +124,7 @@ public class MXMLJSC
     private Configurator projectConfigurator;
     private ConfigurationBuffer configBuffer;
     private ICompilationUnit mainCU;
-    private JSTarget target;
+    private ITarget target;
     private ITargetSettings targetSettings;
     private IJSApplication jsTarget;
 
@@ -281,7 +282,7 @@ public class MXMLJSC
 
                         for (ICompilationUnit unit : reachableCompilationUnits)
                         {
-                            JSWriter jswriter = JSSharedData.backend
+                            IASWriter jswriter = JSSharedData.backend
                                     .createWriter(project,
                                             (List<ICompilerProblem>) errors,
                                             unit, false);
@@ -369,7 +370,7 @@ public class MXMLJSC
             return null;
         }
 
-        return target.build(mainCU, problems);
+        return ((JSTarget) target).build(mainCU, problems);
     }
 
     /**
@@ -459,7 +460,7 @@ public class MXMLJSC
         // if (getTargetSettings() == null)
         //     return false;
 
-        target = (JSTarget) JSSharedData.backend.createJSTarget(project,
+        target = (JSTarget) JSSharedData.backend.createTarget(project,
                 getTargetSettings(), null);
 
         return true;
@@ -493,21 +494,21 @@ public class MXMLJSC
     public static void registerSWCs(CompilerProject project)
             throws InterruptedException
     {
-//        final JSSharedData sharedData = JSSharedData.instance;
-//
-//        // collect all SWCCompilationUnit in swcUnits
-//        final List<ICompilationUnit> swcUnits = new ArrayList<ICompilationUnit>();
-//        for (ICompilationUnit cu : project.getCompilationUnits())
-//        {
-//            //            if (cu instanceof SWCCompilationUnit)
-//            //                swcUnits.add(cu);
-//            //
-//            //            final List<IDefinition> defs = getDefinitions(cu, false);
-//            //            for (IDefinition def : defs)
-//            //            {
-//            //                sharedData.registerDefinition(def);
-//            //            }
-//        }
+        //        final JSSharedData sharedData = JSSharedData.instance;
+        //
+        //        // collect all SWCCompilationUnit in swcUnits
+        //        final List<ICompilationUnit> swcUnits = new ArrayList<ICompilationUnit>();
+        //        for (ICompilationUnit cu : project.getCompilationUnits())
+        //        {
+        //            //            if (cu instanceof SWCCompilationUnit)
+        //            //                swcUnits.add(cu);
+        //            //
+        //            //            final List<IDefinition> defs = getDefinitions(cu, false);
+        //            //            for (IDefinition def : defs)
+        //            //            {
+        //            //                sharedData.registerDefinition(def);
+        //            //            }
+        //        }
 
     }
 

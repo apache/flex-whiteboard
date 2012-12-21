@@ -17,17 +17,35 @@
  *
  */
 
-package org.apache.flex.compiler.js;
+package org.apache.flex.compiler.as;
 
-import org.apache.flex.compiler.as.IASWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
- * A JavaScript writer that outputs cross compiled string data to the
+ * An ActionScript writer that outputs cross compiled string data to the
  * output stream.
  * 
  * @author Michael Schmalle
  */
-public interface IJSWriter extends IASWriter
+public interface IASWriter extends Closeable
 {
+    /**
+     * Start writing to output stream.
+     * 
+     * @param out output stream
+     */
+    void writeTo(OutputStream out);
+
+    /**
+     * Start writing to a file.
+     * 
+     * @param out The output {@link File}.
+     * @return The number of bytes written.
+     */
+    int writeTo(File out) throws FileNotFoundException, IOException;
 
 }

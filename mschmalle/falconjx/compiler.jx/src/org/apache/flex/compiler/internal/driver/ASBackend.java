@@ -22,28 +22,25 @@ package org.apache.flex.compiler.internal.driver;
 import java.io.StringWriter;
 import java.util.List;
 
+import org.apache.flex.compiler.as.IASWriter;
 import org.apache.flex.compiler.clients.IBackend;
-import org.apache.flex.compiler.clients.JSConfiguration;
 import org.apache.flex.compiler.config.Configurator;
+import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
 import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
+import org.apache.flex.compiler.internal.as.codegen.ASWriter;
 import org.apache.flex.compiler.internal.driver.strategy.AfterNodeStrategy;
 import org.apache.flex.compiler.internal.driver.strategy.BeforeAfterStrategy;
 import org.apache.flex.compiler.internal.driver.strategy.BeforeNodeStrategy;
 import org.apache.flex.compiler.internal.js.codgen.ASBlockWalker;
-import org.apache.flex.compiler.internal.js.codgen.JSEmitter;
-import org.apache.flex.compiler.internal.js.codgen.JSFilterWriter;
-import org.apache.flex.compiler.internal.js.codgen.JSWriter;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
-import org.apache.flex.compiler.internal.targets.JSTarget;
 import org.apache.flex.compiler.internal.visitor.ASNodeSwitch;
-import org.apache.flex.compiler.js.IJSWriter;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
+import org.apache.flex.compiler.targets.ITarget;
 import org.apache.flex.compiler.targets.ITargetProgressMonitor;
 import org.apache.flex.compiler.targets.ITargetSettings;
 import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.units.ICompilationUnit;
-import org.apache.flex.compiler.visitor.IASBlockWalker;
 
 /**
  * A concrete implementation of the {@link IBackend} API where the
@@ -51,39 +48,38 @@ import org.apache.flex.compiler.visitor.IASBlockWalker;
  * 
  * @author Michael Schmalle
  */
-public class JSBackend implements IBackend
+public class ASBackend implements IBackend
 {
-
     @Override
     public String getOutputExtension()
     {
-        return "js";
+        return "as";
     }
 
     @Override
     public ISourceFileHandler getSourceFileHandlerInstance()
     {
-        return JSSourceFileHandler.INSTANCE;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Configurator createConfigurator()
     {
-        return new Configurator(JSConfiguration.class);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public JSTarget createTarget(IASProject project,
+    public ITarget createTarget(IASProject project,
             ITargetSettings settings, ITargetProgressMonitor monitor)
     {
-        return new JSTarget(project, settings, monitor);
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public IASBlockWalker createWalker(IASProject project,
+    public ASBlockWalker createWalker(IASProject project,
             List<ICompilerProblem> errors, ASFilterWriter out)
     {
-        JSEmitter emitter = new JSEmitter(out);
+        ASEmitter emitter = new ASEmitter(out);
         ASBlockWalker walker = new ASBlockWalker(errors, project, emitter);
 
         BeforeAfterStrategy strategy = new BeforeAfterStrategy(
@@ -96,19 +92,18 @@ public class JSBackend implements IBackend
     }
 
     @Override
-    public JSFilterWriter createFilterWriter(IASProject project)
+    public ASFilterWriter createFilterWriter(IASProject project)
     {
         StringWriter out = new StringWriter();
-        JSFilterWriter writer = new JSFilterWriter(out);
+        ASFilterWriter writer = new ASFilterWriter(out);
         return writer;
     }
 
     @Override
-    public IJSWriter createWriter(IASProject project,
+    public IASWriter createWriter(IASProject project,
             List<ICompilerProblem> problems, ICompilationUnit compilationUnit,
             boolean enableDebug)
     {
-        return new JSWriter(project, problems, compilationUnit, enableDebug);
+        return new ASWriter(project, problems, compilationUnit, enableDebug);
     }
-
 }

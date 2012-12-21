@@ -19,13 +19,14 @@
 
 package org.apache.flex.compiler.internal.js.codgen;
 
-import java.io.FilterWriter;
 import java.io.Writer;
+
+import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
 
 /**
  * @author Michael Schmalle
  */
-public class JSFilterWriter extends FilterWriter
+public class JSFilterWriter extends ASFilterWriter
 {
 
     public JSFilterWriter(Writer out)

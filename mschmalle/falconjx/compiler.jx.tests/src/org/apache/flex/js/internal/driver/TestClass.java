@@ -17,17 +17,25 @@
  *
  */
 
-package org.apache.flex.compiler.js;
+package org.apache.flex.js.internal.driver;
 
-import org.apache.flex.compiler.as.IASWriter;
+import org.junit.Test;
 
 /**
- * A JavaScript writer that outputs cross compiled string data to the
- * output stream.
+ * This class tests the production of valid ActionScript3 code for Class
+ * production.
  * 
  * @author Michael Schmalle
  */
-public interface IJSWriter extends IASWriter
+public class TestClass extends TestWalkerBase
 {
+    //--------------------------------------------------------------------------
+    // Accessor
+    //--------------------------------------------------------------------------
 
+    @Test
+    public void testGetAccessor()
+    {
+
+    }
 }

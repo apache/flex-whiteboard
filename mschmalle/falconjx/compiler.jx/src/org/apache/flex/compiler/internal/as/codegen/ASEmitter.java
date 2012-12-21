@@ -21,8 +21,9 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import java.io.FilterWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
-import org.apache.flex.as.IASEmitter;
+import org.apache.flex.compiler.as.IASEmitter;
 import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.common.ModifiersSet;
 import org.apache.flex.compiler.definitions.IDefinition;
@@ -32,6 +33,7 @@ import org.apache.flex.compiler.definitions.references.INamespaceReference;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
@@ -190,7 +192,7 @@ public class ASEmitter implements IASEmitter
 
         if (!(node instanceof ChainedVariableNode))
         {
-            emitNamespace(definition);
+            emitNamespace2(node);
             emitModifiers(definition);
             emitMemberKeyword(node);
         }
@@ -246,15 +248,15 @@ public class ASEmitter implements IASEmitter
             emitMethodDocumentation(node);
         }
 
-//        FunctionNode fn = (FunctionNode) node;
+        FunctionNode fn = (FunctionNode) node;
         // XXX (mschmalle) parseFunctionBody() TEMP until I figure out the correct way to do this
         // will need to pass these problems back to the visitor
         // Figure out where this is getting parsed!
-//        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
+        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
         IFunctionDefinition definition = node.getDefinition();
 
-        emitNamespace(definition);
+        emitNamespace2(node);
         emitModifiers(definition);
         emitMemberKeyword(node);
 
@@ -313,7 +315,17 @@ public class ASEmitter implements IASEmitter
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
-
+    
+    protected void emitNamespace2(IDefinitionNode node)
+    {
+        String namespace = node.getNamespace();
+        if (namespace != null && !namespace.equals("internal"))
+        {
+            write(namespace);
+            write(" ");
+        }
+    }
+    
     protected void emitNamespace(IDefinition definition)
     {
         // namespace (public, protected, private, foo_bar)

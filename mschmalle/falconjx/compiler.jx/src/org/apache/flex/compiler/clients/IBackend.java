@@ -22,18 +22,19 @@ package org.apache.flex.compiler.clients;
 import java.io.File;
 import java.util.List;
 
+import org.apache.flex.compiler.as.IASWriter;
 import org.apache.flex.compiler.config.Configurator;
-import org.apache.flex.compiler.internal.js.codgen.ASBlockWalker;
-import org.apache.flex.compiler.internal.js.codgen.JSFilterWriter;
-import org.apache.flex.compiler.internal.js.codgen.JSWriter;
+import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
 import org.apache.flex.compiler.internal.targets.JSTarget;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.targets.ITarget;
 import org.apache.flex.compiler.targets.ITargetProgressMonitor;
 import org.apache.flex.compiler.targets.ITargetSettings;
 import org.apache.flex.compiler.units.ICompilationUnit;
+import org.apache.flex.compiler.visitor.IASBlockWalker;
 
 /**
  * The backend strategy for the {@link MXMLJSC} javascript compiler.
@@ -70,15 +71,15 @@ public interface IBackend
      * of {@link ICompilationUnit}s.
      * @return A new {@link JSTarget} used during compilation.
      */
-    JSTarget createJSTarget(IASProject project, ITargetSettings settings,
+    ITarget createTarget(IASProject project, ITargetSettings settings,
             ITargetProgressMonitor monitor);
 
-    JSFilterWriter createFilterWriter(IASProject project);
+    ASFilterWriter createFilterWriter(IASProject project);
 
-    JSWriter createWriter(IASProject project, List<ICompilerProblem> errors,
+    IASWriter createWriter(IASProject project, List<ICompilerProblem> errors,
             ICompilationUnit compilationUnit, boolean enableDebug);
 
-    ASBlockWalker createWalker(IASProject project,
-            List<ICompilerProblem> errors, JSFilterWriter writer);
+    IASBlockWalker createWalker(IASProject project,
+            List<ICompilerProblem> errors, ASFilterWriter writer);
 
 }

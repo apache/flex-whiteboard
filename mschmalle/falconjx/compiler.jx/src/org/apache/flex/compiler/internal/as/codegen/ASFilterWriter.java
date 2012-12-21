@@ -17,17 +17,26 @@
  *
  */
 
-package org.apache.flex.compiler.js;
+package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.as.IASWriter;
+import java.io.FilterWriter;
+import java.io.Writer;
 
 /**
- * A JavaScript writer that outputs cross compiled string data to the
- * output stream.
- * 
  * @author Michael Schmalle
  */
-public interface IJSWriter extends IASWriter
+public class ASFilterWriter extends FilterWriter
 {
+
+    public ASFilterWriter(Writer out)
+    {
+        super(out);
+    }
+
+    @Override
+    public String toString()
+    {
+        return out.toString();
+    }
 
 }

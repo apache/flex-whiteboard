@@ -17,17 +17,16 @@
  *
  */
 
-package org.apache.flex.compiler.js;
+package org.apache.flex.compiler.as;
 
-import org.apache.flex.compiler.as.IASWriter;
 
 /**
- * A JavaScript writer that outputs cross compiled string data to the
- * output stream.
+ * The ActionScript model interface used when implementing build targets that
+ * create javascript applications cross compiled from actionscript.
  * 
  * @author Michael Schmalle
  */
-public interface IJSWriter extends IASWriter
+public interface IApplication
 {
 
 }

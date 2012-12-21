@@ -19,7 +19,7 @@
 
 package org.apache.flex.compiler.internal.driver.strategy;
 
-import org.apache.flex.compiler.js.IJSEmitter;
+import org.apache.flex.compiler.as.IASEmitter;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
@@ -34,9 +34,9 @@ import org.apache.flex.compiler.visitor.IASNodeStrategy;
  */
 public class BeforeNodeStrategy implements IASNodeStrategy
 {
-    private final IJSEmitter emitter;
+    private final IASEmitter emitter;
 
-    public BeforeNodeStrategy(IJSEmitter emitter)
+    public BeforeNodeStrategy(IASEmitter emitter)
     {
         this.emitter = emitter;
     }
