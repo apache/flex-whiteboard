@@ -50,7 +50,7 @@ public class TestClass extends TestWalkerBase
         visitor.visitClass(node);
         assertOut("internal class A {\n}");
     }
-    
+
     @Test
     public void testSimpleFinal()
     {
@@ -114,7 +114,90 @@ public class TestClass extends TestWalkerBase
         visitor.visitClass(node);
         assertOut("public class A extends goo.B implements foo.bar.IA, goo.foo.IB, baz.boo.IC {\n}");
     }
+
+    @Test
+    public void testConstructor()
+    {
+        IClassNode node = getClassNode("public class A {public function A(){super('foo', 42);}}");
+        visitor.visitClass(node);
+        assertOut("public class A {\n\tpublic function A() {\n\t\tsuper('foo', 42);\n\t}\n}");
+    }
     
+    @Test
+    public void testFields()
+    {
+        IClassNode node = getClassNode("public class A {public var a:Object;protected var b:String; "
+                + "private var c:int; internal var d:uint; var e:Number}");
+        visitor.visitClass(node);
+        assertOut("public class A {\n\tpublic var a:Object;\n\tprotected var b:String;"
+                + "\n\tprivate var c:int;\n\tvar d:uint;\n\tvar e:Number;\n}");
+    }
+
+    @Test
+    public void testConstants()
+    {
+        IClassNode node = getClassNode("public class A {" +
+        		"public static const A:int = 42;" +
+        		"protected static const B:Number = 42;" +
+                "private static const C:Number = 42;" +
+                "foo_bar static const C:String = 'me' + 'you';");
+        visitor.visitClass(node);
+        assertOut("public class A {\n\tpublic static const A:int = 42;\n\t" +
+        		"protected static const B:Number = 42;\n\tprivate static const " +
+        		"C:Number = 42;\n\tfoo_bar static const C:String = 'me' + 'you';\n}");
+    }
+    
+    @Test
+    public void testAccessors()
+    {
+        IClassNode node = getClassNode("public class A {"
+                + "public function get foo1():Object{return null;}"
+                + "public function set foo1(value:Object):void{}"
+                + "protected function get foo2():Object{return null;}"
+                + "protected function set foo2(value:Object):void{}"
+                + "private function get foo3():Object{return null;}"
+                + "private function set foo3(value:Object):void{}"
+                + "internal function get foo5():Object{return null;}"
+                + "internal function set foo5(value:Object):void{}"
+                + "foo_bar function get foo6():Object{return null;}"
+                + "foo_bar function set foo6(value:Object):void{}" + "}");
+        visitor.visitClass(node);
+        assertOut("public class A {\n\tpublic function get foo1():Object {"
+                + "\n\t\treturn null;\n\t}\n\tpublic function set foo1(value:Object)"
+                + ":void {\n\t}\n\tprotected function get foo2():Object {\n\t\treturn "
+                + "null;\n\t}\n\tprotected function set foo2(value:Object):void "
+                + "{\n\t}\n\tprivate function get foo3():Object {\n\t\treturn null;"
+                + "\n\t}\n\tprivate function set foo3(value:Object):void {\n\t}\n\t"
+                + "function get foo5():Object {\n\t\treturn null;\n\t}\n\tfunction set "
+                + "foo5(value:Object):void {\n\t}\n\tfoo_bar function get foo6():Object "
+                + "{\n\t\treturn null;\n\t}\n\tfoo_bar function set "
+                + "foo6(value:Object):void {\n\t}\n}");
+    }
+
+    @Test
+    public void testMethods()
+    {
+        IClassNode node = getClassNode("public class A {"
+                + "public function foo1():Object{return null;}"
+                + "public final function foo1a():Object{return null;}"
+                + "override public function foo1b():Object{return super.foo1b();}"
+                + "protected function foo2(value:Object):void{}"
+                + "private function foo3(value:Object):void{}"
+                + "internal function foo5(value:Object):void{}"
+                + "foo_bar function foo6(value:Object):void{}"
+                + "public static function foo7(value:Object):void{}"
+                + "foo_bar static function foo7(value:Object):void{}" + "}");
+        visitor.visitClass(node);
+        assertOut("public class A {\n\tpublic function foo1():Object {\n\t\treturn "
+                + "null;\n\t}\n\tpublic final function foo1a():Object {\n\t\treturn "
+                + "null;\n\t}\n\tpublic override function foo1b():Object {\n\t\treturn "
+                + "super.foo1b();\n\t}\n\tprotected function foo2(value:Object):void "
+                + "{\n\t}\n\tprivate function foo3(value:Object):void {\n\t}\n\tfunction "
+                + "foo5(value:Object):void {\n\t}\n\tfoo_bar function foo6(value:Object"
+                + "):void {\n\t}\n\tpublic static function foo7(value:Object):void {\n\t}"
+                + "\n\tfoo_bar static function foo7(value:Object):void {\n\t}\n}");
+    }
+
     protected IClassNode getClassNode(String code)
     {
         String source = "package {" + code + "}";

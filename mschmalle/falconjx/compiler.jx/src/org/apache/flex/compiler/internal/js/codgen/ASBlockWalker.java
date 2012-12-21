@@ -338,18 +338,38 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         {
             emitter.indentPush();
             emitter.write("\n");
-            
+
             // there is always an implicit constructor if not explicit
             currentConstructor = getConstructor(members);
             if (currentConstructor == null)
             {
                 // TODO (mschmalle) handle null constructor
             }
-            
+
             // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            final int len = members.length;
+            int i = 0;
             for (IDefinitionNode mnode : members)
             {
                 walk(mnode);
+                if (mnode.getNodeID() == ASTNodeID.VariableID)
+                {
+                    emitter.write(";");
+                    if (i < len - 1)
+                        emitter.write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.FunctionID)
+                {
+                    if (i < len - 1)
+                        emitter.write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.GetterID
+                        || mnode.getNodeID() == ASTNodeID.SetterID)
+                {
+                    if (i < len - 1)
+                        emitter.write("\n");
+                }
+                i++;
             }
 
             emitter.indentPop();
@@ -367,15 +387,15 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitInterface()");
         typeDefinition = node.getDefinition();
-        
+
         emitter.write(node.getNamespace());
         emitter.write(" ");
-        
+
         emitter.write("interface");
         emitter.write(" ");
         walk(node.getNameExpressionNode());
         emitter.write(" ");
-        
+
         IExpressionNode[] inodes = node.getExtendedInterfaceNodes();
         final int ilen = inodes.length;
         if (ilen != 0)
@@ -393,15 +413,15 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             }
             emitter.write(" ");
         }
-        
+
         emitter.write("{");
-        
+
         final IDefinitionNode[] members = node.getAllMemberDefinitionNodes();
         if (members.length > 0)
         {
             emitter.indentPush();
             emitter.write("\n");
-            
+
             // TODO (mschmalle) Check to see if the node order is the order of member parsed
             for (IDefinitionNode mnode : members)
             {
@@ -410,10 +430,10 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
             emitter.indentPop();
         }
-        
+
         emitter.write("\n");
         emitter.write("}");
-        
+
         typeDefinition = null;
     }
 
@@ -521,9 +541,9 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         if (inContext(TraverseContext.SUPER_ARGUMENTS))
         {
-            emitter.write("this");
-            if (nodes.length > 0)
-                emitter.write(", ");
+            //emitter.write("this");
+            //if (nodes.length > 0)
+            //    emitter.write(", ");
         }
 
         int len = nodes.length;
