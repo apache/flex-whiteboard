@@ -258,29 +258,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitPackage(IPackageNode node)
     {
         debug("visitPackage()");
-        emitter.write("package");
 
-        String name = node.getQualifiedName();
-        if (name != null && !name.equals(""))
-        {
-            emitter.write(" ");
-            walk(node.getNameExpressionNode());
-        }
-
-        emitter.write(" ");
-        emitter.write("{");
-
-        ITypeNode tnode = findTypeNode(node);
-        if (tnode != null)
-        {
-            emitter.indentPush();
-            emitter.write("\n");
-            walk(tnode); // IClassNode | IInterfaceNode
-        }
-
-        emitter.indentPop();
-        emitter.write("\n");
-        emitter.write("}");
+        emitter.emitPackageHeader(node);
+        emitter.emitPackageHeaderContents(node);
+        emitter.emitPackageContents(node);
+        emitter.emitPackageFooter(node);
     }
 
     @Override

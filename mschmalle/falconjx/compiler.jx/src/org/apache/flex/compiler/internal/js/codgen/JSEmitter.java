@@ -54,12 +54,6 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
         jsdoc.emmitPackageHeader(node);
     }
 
-    public void emitProvide(ITypeDefinition definition)
-    {
-        write("goog.provide('" + definition.getQualifiedName() + "');");
-        writeNewline();
-    }
-
     public void emitRequire(ITypeDefinition definition)
     {
         IPackageDefinition parent = (IPackageDefinition) definition.getParent();

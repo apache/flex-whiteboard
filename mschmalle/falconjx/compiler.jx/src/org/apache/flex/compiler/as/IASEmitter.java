@@ -25,6 +25,7 @@ import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
@@ -60,6 +61,14 @@ public interface IASEmitter
      * is correctly formatted.
      */
     void indentPop();
+
+    void emitPackageHeader(IPackageNode node);
+
+    void emitPackageHeaderContents(IPackageNode node);
+
+    void emitPackageContents(IPackageNode node);
+
+    void emitPackageFooter(IPackageNode node);
 
     /**
      * Emit a documentation comment for a Class field or constant

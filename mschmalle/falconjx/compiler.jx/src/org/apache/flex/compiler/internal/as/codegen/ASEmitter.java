@@ -42,9 +42,11 @@ import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
+import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
@@ -136,6 +138,51 @@ public class ASEmitter implements IASEmitter
     public void writeSymbol(String value)
     {
         write(value);
+    }
+
+    //--------------------------------------------------------------------------
+    // IPackageNode
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitPackageHeader(IPackageNode node)
+    {
+        write("package");
+
+        String name = node.getQualifiedName();
+        if (name != null && !name.equals(""))
+        {
+            write(" ");
+            getWalker().walk(node.getNameExpressionNode());
+        }
+
+        write(" ");
+        write("{");
+    }
+
+    @Override
+    public void emitPackageHeaderContents(IPackageNode node)
+    {
+    }
+
+    @Override
+    public void emitPackageContents(IPackageNode node)
+    {
+        ITypeNode tnode = findTypeNode(node);
+        if (tnode != null)
+        {
+            indentPush();
+            write("\n");
+            getWalker().walk(tnode); // IClassNode | IInterfaceNode
+        }
+    }
+
+    @Override
+    public void emitPackageFooter(IPackageNode node)
+    {
+        indentPop();
+        write("\n");
+        write("}");
     }
 
     //--------------------------------------------------------------------------
@@ -433,5 +480,31 @@ public class ASEmitter implements IASEmitter
     {
         // TODO (mschmalle) FunctionObjectNode; does this need specific treatment?
         emitMethodScope(node);
+    }
+
+    protected ITypeNode findTypeNode(IPackageNode node)
+    {
+        IScopedNode scope = node.getScopedNode();
+        for (int i = 0; i < scope.getChildCount(); i++)
+        {
+            IASNode child = scope.getChild(i);
+            if (child instanceof ITypeNode)
+                return (ITypeNode) child;
+        }
+        return null;
+    }
+    
+    protected static IFunctionNode getConstructor(IDefinitionNode[] members)
+    {
+        for (IDefinitionNode node : members)
+        {
+            if (node instanceof IFunctionNode)
+            {
+                IFunctionNode fnode = (IFunctionNode) node;
+                if (fnode.isConstructor())
+                    return fnode;
+            }
+        }
+        return null;
     }
 }

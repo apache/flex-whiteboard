@@ -19,6 +19,7 @@
 
 package org.apache.flex.compiler.internal.driver;
 
+import java.io.FilterWriter;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -73,8 +74,8 @@ public class JSBackend implements IBackend
     }
 
     @Override
-    public JSTarget createTarget(IASProject project,
-            ITargetSettings settings, ITargetProgressMonitor monitor)
+    public JSTarget createTarget(IASProject project, ITargetSettings settings,
+            ITargetProgressMonitor monitor)
     {
         return new JSTarget(project, settings, monitor);
     }
@@ -83,7 +84,7 @@ public class JSBackend implements IBackend
     public IASBlockWalker createWalker(IASProject project,
             List<ICompilerProblem> errors, ASFilterWriter out)
     {
-        JSEmitter emitter = new JSEmitter(out);
+        JSEmitter emitter = createEmitter(out);
         ASBlockWalker walker = new ASBlockWalker(errors, project, emitter);
 
         BeforeAfterStrategy strategy = new BeforeAfterStrategy(
@@ -109,6 +110,11 @@ public class JSBackend implements IBackend
             boolean enableDebug)
     {
         return new JSWriter(project, problems, compilationUnit, enableDebug);
+    }
+
+    protected JSEmitter createEmitter(FilterWriter out)
+    {
+        return new JSEmitter(out);
     }
 
 }
