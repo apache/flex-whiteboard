@@ -435,6 +435,7 @@ public class ASEmitter implements IASEmitter
         for (int i = 0; i < len; i++)
         {
             IParameterNode node = nodes[i];
+            // this will call emitParameter(node)
             getWalker().walk(node);
             if (i < len - 1)
                 write(", ");
@@ -442,6 +443,20 @@ public class ASEmitter implements IASEmitter
         write(")");
     }
 
+    @Override
+    public void emitParameter(IParameterNode node)
+    {
+        getWalker().walk(node.getNameExpressionNode());
+        write(":");
+        getWalker().walk(node.getVariableTypeNode());
+        IExpressionNode anode = node.getAssignedValueNode();
+        if (anode != null)
+        {
+            write(" = ");
+            getWalker().walk(anode);
+        }
+    }
+    
     protected void emitType(IExpressionNode node)
     {
         // TODO (mschmalle) node.getVariableTypeNode() will return "*" if undefined, what to use?
@@ -507,4 +522,6 @@ public class ASEmitter implements IASEmitter
         }
         return null;
     }
+
+
 }

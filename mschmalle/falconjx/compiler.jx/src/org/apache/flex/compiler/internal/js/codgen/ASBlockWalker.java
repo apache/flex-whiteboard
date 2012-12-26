@@ -471,15 +471,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitParameter(IParameterNode node)
     {
         debug("visitParameter()");
-        walk(node.getNameExpressionNode());
-        emitter.write(":");
-        walk(node.getVariableTypeNode());
-        IExpressionNode anode = node.getAssignedValueNode();
-        if (anode != null)
-        {
-            emitter.write(" = ");
-            walk(anode);
-        }
+        emitter.emitParameter(node);
     }
 
     @Override

@@ -25,8 +25,11 @@ import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.driver.JSBackend;
 import org.apache.flex.compiler.internal.js.codgen.JSEmitter;
 import org.apache.flex.compiler.internal.js.codgen.JSGoogEmitter;
+import org.apache.flex.compiler.internal.js.codgen.JSSharedData;
 import org.apache.flex.compiler.tree.as.IFileNode;
+import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.js.internal.driver.TestWalkerBase;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -59,6 +62,38 @@ public class TestGoogEmiter extends TestWalkerBase
         //assertOut("");
     }
 
+    @Test
+    public void testSimpleParameterReturnType()
+    {
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function foo(bar:int):int{\n}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A = function(bar) {\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Test
+    public void testSimpleMultipleParameter()
+    {
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function foo(bar:int, baz:String, goo:A):void{\n}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A = function(bar, baz, goo) {\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Ignore
+    @Test
+    public void testSimpleMultipleParameter_JSDoc()
+    {
+        // jsdoc still needs to be sorted out before tests are executing
+        IFunctionNode node = getMethod("function foo(bar:int, baz:String, goo:A):void{\n}");
+        visitor.visitFunction(node);
+        assertOut("/**\n * @this {foo.bar.A}\n * @param {int} bar\n * @param {String} baz\n"
+                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A = "
+                + "function(bar, baz, goo) {\n}");
+    }
+
     protected IBackend createBackend()
     {
         return new GoogBackend();
@@ -71,5 +106,14 @@ public class TestGoogEmiter extends TestWalkerBase
         {
             return new JSGoogEmitter(out);
         }
+    }
+
+    protected IFunctionNode getMethod(String code)
+    {
+        String source = "package foo.bar {public class A {" + code + "}}";
+        IFileNode node = getFileNode(source);
+        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
+                IFunctionNode.class);
+        return child;
     }
 }

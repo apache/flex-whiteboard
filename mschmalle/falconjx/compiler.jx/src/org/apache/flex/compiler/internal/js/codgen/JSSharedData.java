@@ -36,6 +36,10 @@ public class JSSharedData
     public static final String COMPILER_VERSION = "329449.1";
 
     public final static JSSharedData instance = new JSSharedData();
+    
+    // TODO (mschmalle) Temp until I figure out the correct place for configuration
+    public static boolean OUTPUT_JSDOC = true;
+    
     public static IBackend backend;
     public static String OUTPUT_EXTENSION;
     public static Workspace workspace;

@@ -24,13 +24,16 @@ import java.util.ArrayList;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
+import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
+import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
@@ -69,9 +72,12 @@ public class JSGoogEmitter extends JSEmitter
         ITypeNode type = findTypeNode(node);
         IClassNode cnode = (IClassNode) type;
         classDefinition = cnode.getDefinition();
+
         // constructor
         emitConstructor((IFunctionNode) classDefinition.getConstructor()
                 .getNode());
+        write(";\n");
+        write("\n");
 
         IDefinitionNode[] members = cnode.getAllMemberNodes();
         for (IDefinitionNode dnode : members)
@@ -79,6 +85,8 @@ public class JSGoogEmitter extends JSEmitter
             if (dnode instanceof IVariableNode)
             {
                 emitField((IVariableNode) dnode);
+                write(";\n");
+                write("\n");
             }
         }
 
@@ -86,7 +94,12 @@ public class JSGoogEmitter extends JSEmitter
         {
             if (dnode instanceof IFunctionNode)
             {
-                emitMethod((IFunctionNode) dnode);
+                if (!((IFunctionNode) dnode).isConstructor())
+                {
+                    emitMethod((IFunctionNode) dnode);
+                    write(";\n");
+                    write("\n");
+                }
             }
         }
     }
@@ -101,9 +114,9 @@ public class JSGoogEmitter extends JSEmitter
     {
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
-        
+
         emitJSDocConstructor(node, getWalker().getProject());
-        
+
         String qname = classDefinition.getQualifiedName();
         write(qname);
         write(" ");
@@ -112,8 +125,6 @@ public class JSGoogEmitter extends JSEmitter
         write("function");
         emitParamters(node.getParameterNodes());
         emitMethodScope(node.getScopedNode());
-        write("\n");
-        write("\n");
     }
 
     public void emitField(IVariableNode node)
@@ -127,8 +138,42 @@ public class JSGoogEmitter extends JSEmitter
             write(" = ");
             getWalker().walk(vnode);
         }
-        write(";\n");
-        write("\n");
+    }
+
+    public void emitJSDoc(IFunctionNode node, ICompilerProject project,
+            boolean isConstructor, ITypeDefinition type)
+    {
+        // TODO (mschmalle) change method signature, remove type
+        // this is a temp override until I change the method signature
+        // unit testing dosn't have access to the type, we need to use the AST to get the definition
+        if (type == null)
+        {
+            ITypeNode tnode = (ITypeNode) node
+                    .getAncestorOfType(ITypeNode.class);
+            type = (ITypeDefinition) tnode.getDefinition();
+        }
+
+        if (node instanceof IFunctionNode)
+        {
+            if (isConstructor)
+            {
+                emitJSDocConstructor(node, project);
+            }
+            else
+            {
+                jsdoc.begin();
+                jsdoc.emitThis(type);
+                // @param
+                IParameterNode[] parameters = node.getParameterNodes();
+                for (IParameterNode pnode : parameters)
+                {
+                    jsdoc.emitParam(pnode);
+                }
+                // @return
+                jsdoc.emitReturn(node);
+                jsdoc.end();
+            }
+        }
     }
 
     @Override
@@ -136,12 +181,12 @@ public class JSGoogEmitter extends JSEmitter
     {
         if (node.isConstructor())
             return;
-        
+
         emitJSDoc(node, getWalker().getProject(), false, classDefinition);
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
-        String qname = classDefinition.getQualifiedName();
+        String qname = getTypeDefinition(node).getQualifiedName();
         write(qname);
         write(" ");
         write("=");
@@ -149,13 +194,27 @@ public class JSGoogEmitter extends JSEmitter
         write("function");
         emitParamters(node.getParameterNodes());
         emitMethodScope(node.getScopedNode());
-        write("\n");
-        write("\n");
+    }
+
+    @Override
+    public void emitParameter(IParameterNode node)
+    {
+        // only the name gets output in JS
+        getWalker().walk(node.getNameExpressionNode());
     }
 
     public JSGoogEmitter(FilterWriter out)
     {
         super(out);
+    }
+
+    private ITypeDefinition getTypeDefinition(IDefinitionNode node)
+    {
+        if (classDefinition != null)
+            return classDefinition;
+
+        ITypeNode tnode = (ITypeNode) node.getAncestorOfType(ITypeNode.class);
+        return (ITypeDefinition) tnode.getDefinition();
     }
 
 }

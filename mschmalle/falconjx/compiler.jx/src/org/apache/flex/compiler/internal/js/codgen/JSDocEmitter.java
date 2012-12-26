@@ -32,6 +32,12 @@ import org.apache.flex.compiler.tree.as.IVariableNode;
 public class JSDocEmitter implements IJSDocEmitter
 {
 
+    public void write(String value)
+    {
+        if (JSSharedData.OUTPUT_JSDOC)
+            emitter.write(value);
+    }
+
     private JSEmitter emitter;
 
     public JSDocEmitter(JSEmitter emitter)
@@ -49,7 +55,7 @@ public class JSDocEmitter implements IJSDocEmitter
     @Override
     public void emitConstructor(IFunctionNode node)
     {
-        emitter.write(" * @constructor\n");
+        write(" * @constructor\n");
     }
 
     @Override
@@ -76,8 +82,7 @@ public class JSDocEmitter implements IJSDocEmitter
     @Override
     public void emitExtends(IClassDefinition superDefinition)
     {
-        emitter.write(" * @extends {" + superDefinition.getQualifiedName()
-                + "}\n");
+        write(" * @extends {" + superDefinition.getQualifiedName() + "}\n");
     }
 
     @Override
@@ -111,8 +116,8 @@ public class JSDocEmitter implements IJSDocEmitter
     @Override
     public void emitParam(IParameterNode node)
     {
-        emitter.write(" * @param {" + node.getVariableType() + "} "
-                + node.getName() + "\n");
+        write(" * @param {" + node.getVariableType() + "} " + node.getName()
+                + "\n");
     }
 
     @Override
@@ -135,13 +140,13 @@ public class JSDocEmitter implements IJSDocEmitter
         // TODO convert js types
         String rtype = node.getReturnType();
         if (rtype != null)
-            emitter.write(" * @return {" + rtype + "}\n");
+            write(" * @return {" + rtype + "}\n");
     }
 
     @Override
     public void emitThis(ITypeDefinition type)
     {
-        emitter.write(" * @this {" + type.getQualifiedName() + "}\n");
+        write(" * @this {" + type.getQualifiedName() + "}\n");
     }
 
     @Override
@@ -149,7 +154,7 @@ public class JSDocEmitter implements IJSDocEmitter
     {
         //String type = SemanticUtils.getTypeOfStem(node, emitter.getProject());
         String type = ((IVariableNode) node).getVariableType(); // XXX need to map to js types
-        emitter.write(" * @type {" + type + "}\n");
+        write(" * @type {" + type + "}\n");
     }
 
     @Override
@@ -164,18 +169,18 @@ public class JSDocEmitter implements IJSDocEmitter
     public void emmitPackageHeader(IPackageNode node)
     {
         begin();
-        emitter.write(" * " + JSSharedData.getTimeStampString());
+        write(" * " + JSSharedData.getTimeStampString());
         end();
     }
 
     public void begin()
     {
-        emitter.write("/**\n");
+        write("/**\n");
     }
 
     public void end()
     {
-        emitter.write(" */\n");
+        write(" */\n");
     }
 
 }

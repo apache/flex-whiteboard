@@ -26,6 +26,7 @@ import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
+import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
@@ -126,6 +127,8 @@ public interface IASEmitter
      * @param node The {@link ISetterNode} class setter member.
      */
     void emitSetAccessor(ISetterNode node);
+
+    void emitParameter(IParameterNode node);
 
     //--------------------------------------------------------------------------
     // Expressions

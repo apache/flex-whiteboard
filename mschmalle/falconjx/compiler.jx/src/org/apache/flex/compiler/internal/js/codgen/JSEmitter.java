@@ -41,7 +41,7 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
 {
     public static boolean javascriptMode = false;
 
-    private JSDocEmitter jsdoc;
+    protected JSDocEmitter jsdoc;
 
     public JSEmitter(FilterWriter out)
     {
