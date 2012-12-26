@@ -192,7 +192,13 @@ public class JSGoogEmitter extends JSEmitter
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
         String qname = getTypeDefinition(node).getQualifiedName();
-        write(qname);
+        if (qname != null && !qname.equals(""))
+        {
+            write(qname);
+            write(".");
+        }
+        
+        emitMemberName(node);
         write(" ");
         write("=");
         write(" ");

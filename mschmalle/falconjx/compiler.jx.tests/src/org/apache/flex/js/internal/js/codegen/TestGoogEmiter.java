@@ -63,12 +63,22 @@ public class TestGoogEmiter extends TestWalkerBase
     }
 
     @Test
+    public void testSimpleMethod()
+    {
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethodSimple("function method1():void{\n}");
+        visitor.visitFunction(node);
+        assertOut("A.method1 = function() {\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Test
     public void testSimpleParameterReturnType()
     {
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function foo(bar:int):int{\n}");
+        IFunctionNode node = getMethod("function method1(bar:int):int{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A = function(bar) {\n}");
+        assertOut("foo.bar.A.method1 = function(bar) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
@@ -76,9 +86,9 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimpleMultipleParameter()
     {
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function foo(bar:int, baz:String, goo:A):void{\n}");
+        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A = function(bar, baz, goo) {\n}");
+        assertOut("foo.bar.A.method1 = function(bar, baz, goo) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
@@ -87,10 +97,10 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimpleMultipleParameter_JSDoc()
     {
         // jsdoc still needs to be sorted out before tests are executing
-        IFunctionNode node = getMethod("function foo(bar:int, baz:String, goo:A):void{\n}");
+        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
         assertOut("/**\n * @this {foo.bar.A}\n * @param {int} bar\n * @param {String} baz\n"
-                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A = "
+                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A.method1 = "
                 + "function(bar, baz, goo) {\n}");
     }
 
@@ -98,7 +108,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testDefaultParameter_NoBody()
     {
         /*
-        foo.bar.A = function(bar, bax) {
+        foo.bar.A.method1 = function(bar, bax) {
             if (arguments.length < 2) {
                 if (arguments.length < 1) {
                     bar = 42;
@@ -108,9 +118,9 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function foo(bar:int = 42, bax:int = 4):void{\n}");
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+        assertOut("foo.bar.A.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
                 + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
@@ -119,7 +129,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testDefaultParameter_Body()
     {
         /*
-        foo.bar.A = function(bar, bax) {
+        foo.bar.A.method1 = function(bar, bax) {
             if (arguments.length < 2) {
                 if (arguments.length < 1) {
                     bar = 42;
@@ -129,9 +139,9 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function foo(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+        assertOut("foo.bar.A.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
                 + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
                 + "if (a)\n\t\tfoo();\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -141,7 +151,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testDefaultParameter()
     {
         /*
-         foo.bar.A = function(p1, p2, p3, p4) {
+         foo.bar.A.method1 = function(p1, p2, p3, p4) {
             if (arguments.length < 4) {
                 if (arguments.length < 3) {
                     p3 = 3;
@@ -152,9 +162,9 @@ public class TestGoogEmiter extends TestWalkerBase
          }
          */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function foo(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
+        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
+        assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
                 + "{\n\t\tif (arguments.length < 3) {\n\t\t\tp3 = 3;\n\t\t}\n\t\tp4 = 4;\n\t}"
                 + "\n\treturn p1 + p2 + p3 + p4;\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -172,6 +182,15 @@ public class TestGoogEmiter extends TestWalkerBase
         {
             return new JSGoogEmitter(out);
         }
+    }
+
+    protected IFunctionNode getMethodSimple(String code)
+    {
+        String source = "package {public class A {" + code + "}}";
+        IFileNode node = getFileNode(source);
+        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
+                IFunctionNode.class);
+        return child;
     }
 
     protected IFunctionNode getMethod(String code)
