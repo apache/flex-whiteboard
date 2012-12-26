@@ -64,6 +64,11 @@ public class ASEmitter implements IASEmitter
     private final FilterWriter out;
 
     private int currentIndent = 0;
+    
+    protected int getCurrentIndent()
+    {
+        return currentIndent;
+    }
 
     private IASBlockWalker walker;
 
@@ -104,7 +109,15 @@ public class ASEmitter implements IASEmitter
             throw new RuntimeException(e);
         }
     }
-
+    
+    protected String getIndent(int numIndent)
+    {
+        String indent = "";
+        for (int i = 0; i < numIndent; i++)
+            indent += INDENT_STRING;
+        return indent;
+    }
+    
     @Override
     public void indentPush()
     {
@@ -456,7 +469,7 @@ public class ASEmitter implements IASEmitter
             getWalker().walk(anode);
         }
     }
-    
+
     protected void emitType(IExpressionNode node)
     {
         // TODO (mschmalle) node.getVariableTypeNode() will return "*" if undefined, what to use?
@@ -477,6 +490,12 @@ public class ASEmitter implements IASEmitter
             write(" ");
             getWalker().walk(node);
         }
+    }
+
+    @Override
+    public void emitFunctionBlockHeader(IFunctionNode node)
+    {
+        // nothing to do in AS
     }
 
     protected void emitMethodScope(IScopedNode node)
@@ -508,7 +527,7 @@ public class ASEmitter implements IASEmitter
         }
         return null;
     }
-    
+
     protected static IFunctionNode getConstructor(IDefinitionNode[] members)
     {
         for (IDefinitionNode node : members)
@@ -522,6 +541,5 @@ public class ASEmitter implements IASEmitter
         }
         return null;
     }
-
 
 }

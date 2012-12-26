@@ -545,6 +545,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitBlock(IBlockNode node)
     {
         debug("visitBlock()");
+        if (node.getParent().getNodeID() == ASTNodeID.FunctionID)
+        {
+            emitter.emitFunctionBlockHeader((IFunctionNode) node.getParent());
+        }
+        
         final int len = node.getChildCount();
         for (int i = 0; i < len; i++)
         {

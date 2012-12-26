@@ -21,6 +21,10 @@ package org.apache.flex.compiler.internal.js.codgen;
 
 import java.io.FilterWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
@@ -34,6 +38,7 @@ import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
+import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
@@ -197,6 +202,70 @@ public class JSGoogEmitter extends JSEmitter
     }
 
     @Override
+    public void emitFunctionBlockHeader(IFunctionNode node)
+    {
+        emitDefaultParameterCodeBlock(node);
+    }
+
+    private void emitDefaultParameterCodeBlock(IFunctionNode node)
+    {
+        // TODO (mschmalle) test for ... rest 
+        // if default parameters exist, produce the init code
+        IParameterNode[] pnodes = node.getParameterNodes();
+        Map<Integer, IParameterNode> defaults = getDefaults(pnodes);
+        final StringBuilder code = new StringBuilder();
+        if (defaults != null)
+        {
+            List<IParameterNode> parameters = new ArrayList<IParameterNode>(
+                    defaults.values());
+            Collections.reverse(parameters);
+            
+            int len = defaults.size();
+            int numDefaults = 0;
+            // make the header in reverse order
+            for (IParameterNode pnode : parameters)
+            {
+                if (pnode != null)
+                {
+                    code.append(getIndent(numDefaults));
+                    code.append("if (arguments.length < " + len + ") {\n");
+                    numDefaults++;
+                }
+                len--;
+            }
+            
+            Collections.reverse(parameters);
+            for (IParameterNode pnode : parameters)
+            {
+                if (pnode != null)
+                {
+                    code.append(getIndent(numDefaults));
+                    code.append(pnode.getName());
+                    code.append(" = ");
+                    code.append(pnode.getDefaultValue());
+                    code.append(";\n");
+                    code.append(getIndent(numDefaults - 1));
+                    code.append("}");
+                    if (numDefaults > 1)
+                        code.append("\n");
+                    numDefaults--;
+                }
+            }
+            IScopedNode sbn = node.getScopedNode();
+            boolean hasBody = sbn.getChildCount() > 0;
+            // adds the current block indent to the generated code
+            String indent = getIndent(getCurrentIndent() + (!hasBody ? 1 : 0));
+            String result = code.toString().replaceAll("\n", "\n" + indent);
+            // if the block dosn't have a body (children), need to add indent to head
+            if (!hasBody)
+                result = indent + result;
+            // have to add newline after the replace or we get an extra indent
+            result += "\n";
+            write(result);
+        }
+    }
+
+    @Override
     public void emitParameter(IParameterNode node)
     {
         // only the name gets output in JS
@@ -215,6 +284,31 @@ public class JSGoogEmitter extends JSEmitter
 
         ITypeNode tnode = (ITypeNode) node.getAncestorOfType(ITypeNode.class);
         return (ITypeDefinition) tnode.getDefinition();
+    }
+
+    private Map<Integer, IParameterNode> getDefaults(IParameterNode[] nodes)
+    {
+        Map<Integer, IParameterNode> result = new HashMap<Integer, IParameterNode>();
+        int i = 0;
+        boolean hasDefaults = false;
+        for (IParameterNode node : nodes)
+        {
+            if (node.hasDefaultValue())
+            {
+                hasDefaults = true;
+                result.put(i, node);
+            }
+            else
+            {
+                result.put(i, null);
+            }
+            i++;
+        }
+
+        if (!hasDefaults)
+            return null;
+
+        return result;
     }
 
 }

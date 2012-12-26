@@ -94,6 +94,72 @@ public class TestGoogEmiter extends TestWalkerBase
                 + "function(bar, baz, goo) {\n}");
     }
 
+    @Test
+    public void testDefaultParameter_NoBody()
+    {
+        /*
+        foo.bar.A = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function foo(bar:int = 42, bax:int = 4):void{\n}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Test
+    public void testDefaultParameter_Body()
+    {
+        /*
+        foo.bar.A = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function foo(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
+                + "if (a)\n\t\tfoo();\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Test
+    public void testDefaultParameter()
+    {
+        /*
+         foo.bar.A = function(p1, p2, p3, p4) {
+            if (arguments.length < 4) {
+                if (arguments.length < 3) {
+                    p3 = 3;
+                }
+                p4 = 4;
+            }
+            return p1 + p2 + p3 + p4;
+         }
+         */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function foo(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
+                + "{\n\t\tif (arguments.length < 3) {\n\t\t\tp3 = 3;\n\t\t}\n\t\tp4 = 4;\n\t}"
+                + "\n\treturn p1 + p2 + p3 + p4;\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
     protected IBackend createBackend()
     {
         return new GoogBackend();

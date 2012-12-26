@@ -150,4 +150,6 @@ public interface IASEmitter
      */
     void emitFunctionObject(IExpressionNode node);
 
+    void emitFunctionBlockHeader(IFunctionNode node);
+
 }
