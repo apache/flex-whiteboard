@@ -197,7 +197,7 @@ public class JSGoogEmitter extends JSEmitter
             write(qname);
             write(".");
         }
-        
+
         emitMemberName(node);
         write(" ");
         write("=");
@@ -210,13 +210,13 @@ public class JSGoogEmitter extends JSEmitter
     @Override
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
-        if (JSSharedData.OUTPUT_ALTERNATE) 
+        if (JSSharedData.OUTPUT_ALTERNATE)
         {
-        	emitDefaultParameterCodeBlock_Alternate(node);
-        } 
-        else 
+            emitDefaultParameterCodeBlock_Alternate(node);
+        }
+        else
         {
-        	emitDefaultParameterCodeBlock(node);
+            emitDefaultParameterCodeBlock(node);
         }
     }
 
@@ -232,7 +232,7 @@ public class JSGoogEmitter extends JSEmitter
             List<IParameterNode> parameters = new ArrayList<IParameterNode>(
                     defaults.values());
             Collections.reverse(parameters);
-            
+
             int len = defaults.size();
             int numDefaults = 0;
             // make the header in reverse order
@@ -246,7 +246,7 @@ public class JSGoogEmitter extends JSEmitter
                 }
                 len--;
             }
-            
+
             Collections.reverse(parameters);
             for (IParameterNode pnode : parameters)
             {
@@ -281,39 +281,45 @@ public class JSGoogEmitter extends JSEmitter
     private void emitDefaultParameterCodeBlock_Alternate(IFunctionNode node)
     {
         // (erikdebruin) implemented alternative approach to handling 
-    	//               default parameter values in JS
+        //               default parameter values in JS
 
-    	IParameterNode[] pnodes = node.getParameterNodes();
-        
+        IParameterNode[] pnodes = node.getParameterNodes();
+
         Map<Integer, IParameterNode> defaults = getDefaults(pnodes);
-        
+
+        if (!hasBody(node))
+        {
+            indentPush();
+            write("\t");
+        }
+
         final StringBuilder code = new StringBuilder();
-        
+
         if (defaults != null)
         {
             List<IParameterNode> parameters = new ArrayList<IParameterNode>(
                     defaults.values());
-            
+
             int numDefaults = 0;
             for (IParameterNode pnode : parameters)
             {
                 if (pnode != null)
                 {
-                	if (numDefaults > 0)
-                		code.append(getIndent(getCurrentIndent()));
-                	
-                    code.append(
-                    		pnode.getName() + 
-                    		" = typeof " + pnode.getName() + " !== 'undefined' ? " + 
-                    		pnode.getName() + " : " + 
-                    		pnode.getDefaultValue() + ";\n");
-                    
+                    if (numDefaults > 0)
+                        code.append(getIndent(getCurrentIndent()));
+
+                    code.append(pnode.getName() + " = typeof "
+                            + pnode.getName() + " !== 'undefined' ? "
+                            + pnode.getName() + " : " + pnode.getDefaultValue()
+                            + ";\n");
+
                     numDefaults++;
                 }
             }
 
-            code.append("\n");
-            
+            if (!hasBody(node))
+                indentPop();
+
             write(code.toString());
         }
     }
@@ -364,4 +370,9 @@ public class JSGoogEmitter extends JSEmitter
         return result;
     }
 
+    private static boolean hasBody(IFunctionNode node)
+    {
+        IScopedNode scope = node.getScopedNode();
+        return scope.getChildCount() > 0;
+    }
 }

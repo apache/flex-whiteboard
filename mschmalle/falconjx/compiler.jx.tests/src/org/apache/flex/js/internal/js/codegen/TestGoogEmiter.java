@@ -188,8 +188,27 @@ public class TestGoogEmiter extends TestWalkerBase
         assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n" +
         		"\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n" +
         		"\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n" +
-        		"\n" +
                 "\treturn p1 + p2 + p3 + p4;\n}");
+        JSSharedData.OUTPUT_ALTERNATE = false;
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+    
+    @Test
+    public void testDefaultParameter_AlternateNoBody()
+    {
+        /*
+        foo.bar.A.method1 = function(p1, p2, p3, p4) {
+            p3 = typeof p3 !== 'undefined' ? p3 : 3;
+            p4 = typeof p4 !== 'undefined' ? p4 : 4;
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        JSSharedData.OUTPUT_ALTERNATE = true;
+        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n" +
+        		"\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n" +
+        		"\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n}");
         JSSharedData.OUTPUT_ALTERNATE = false;
         JSSharedData.OUTPUT_JSDOC = true;
     }
