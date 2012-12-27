@@ -210,7 +210,14 @@ public class JSGoogEmitter extends JSEmitter
     @Override
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
-        emitDefaultParameterCodeBlock(node);
+        if (JSSharedData.OUTPUT_ALTERNATE) 
+        {
+        	emitDefaultParameterCodeBlock_Alternate(node);
+        } 
+        else 
+        {
+        	emitDefaultParameterCodeBlock(node);
+        }
     }
 
     private void emitDefaultParameterCodeBlock(IFunctionNode node)
@@ -268,6 +275,46 @@ public class JSGoogEmitter extends JSEmitter
             // have to add newline after the replace or we get an extra indent
             result += "\n";
             write(result);
+        }
+    }
+
+    private void emitDefaultParameterCodeBlock_Alternate(IFunctionNode node)
+    {
+        // (erikdebruin) implemented alternative approach to handling 
+    	//               default parameter values in JS
+
+    	IParameterNode[] pnodes = node.getParameterNodes();
+        
+        Map<Integer, IParameterNode> defaults = getDefaults(pnodes);
+        
+        final StringBuilder code = new StringBuilder();
+        
+        if (defaults != null)
+        {
+            List<IParameterNode> parameters = new ArrayList<IParameterNode>(
+                    defaults.values());
+            
+            int numDefaults = 0;
+            for (IParameterNode pnode : parameters)
+            {
+                if (pnode != null)
+                {
+                	if (numDefaults > 0)
+                		code.append(getIndent(getCurrentIndent()));
+                	
+                    code.append(
+                    		pnode.getName() + 
+                    		" = typeof " + pnode.getName() + " !== 'undefined' ? " + 
+                    		pnode.getName() + " : " + 
+                    		pnode.getDefaultValue() + ";\n");
+                    
+                    numDefaults++;
+                }
+            }
+
+            code.append("\n");
+            
+            write(code.toString());
         }
     }
 

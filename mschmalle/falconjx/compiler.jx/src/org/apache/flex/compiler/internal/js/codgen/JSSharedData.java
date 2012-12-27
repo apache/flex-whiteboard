@@ -39,6 +39,7 @@ public class JSSharedData
     
     // TODO (mschmalle) Temp until I figure out the correct place for configuration
     public static boolean OUTPUT_JSDOC = true;
+    public static boolean OUTPUT_ALTERNATE = false;
     
     public static IBackend backend;
     public static String OUTPUT_EXTENSION;
