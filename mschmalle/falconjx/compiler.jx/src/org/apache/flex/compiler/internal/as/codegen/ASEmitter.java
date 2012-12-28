@@ -23,7 +23,8 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.flex.compiler.as.IASEmitter;
+import org.apache.flex.compiler.as.codegen.IASEmitter;
+import org.apache.flex.compiler.as.codegen.IDocEmitter;
 import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.common.ModifiersSet;
 import org.apache.flex.compiler.definitions.IDefinition;
@@ -62,6 +63,20 @@ public class ASEmitter implements IASEmitter
     protected static final String INDENT_STRING = "\t";
 
     private final FilterWriter out;
+    
+    private IDocEmitter docEmitter;
+    
+    @Override
+    public IDocEmitter getDocEmitter()
+    {
+        return docEmitter;
+    }
+
+    @Override
+    public void setDocEmitter(IDocEmitter value)
+    {
+        docEmitter = value;
+    }
 
     private int currentIndent = 0;
     
@@ -72,11 +87,13 @@ public class ASEmitter implements IASEmitter
 
     private IASBlockWalker walker;
 
+    @Override
     public IASBlockWalker getWalker()
     {
         return walker;
     }
 
+    @Override
     public void setWalker(IASBlockWalker value)
     {
         walker = value;

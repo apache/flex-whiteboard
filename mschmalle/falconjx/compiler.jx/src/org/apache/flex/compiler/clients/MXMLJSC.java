@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.flex.compiler.as.IASWriter;
+import org.apache.flex.compiler.as.codegen.IASWriter;
 import org.apache.flex.compiler.clients.problems.ProblemPrinter;
 import org.apache.flex.compiler.clients.problems.ProblemQuery;
 import org.apache.flex.compiler.clients.problems.WorkspaceProblemFormatter;
@@ -45,8 +45,8 @@ import org.apache.flex.compiler.exceptions.ConfigurationException;
 import org.apache.flex.compiler.exceptions.ConfigurationException.IOError;
 import org.apache.flex.compiler.exceptions.ConfigurationException.MustSpecifyTarget;
 import org.apache.flex.compiler.exceptions.ConfigurationException.OnlyOneSource;
-import org.apache.flex.compiler.internal.driver.JSBackend;
-import org.apache.flex.compiler.internal.js.codgen.JSSharedData;
+import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
+import org.apache.flex.compiler.internal.js.driver.JSBackend;
 import org.apache.flex.compiler.internal.projects.CompilerProject;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
@@ -460,7 +460,7 @@ public class MXMLJSC
         // if (getTargetSettings() == null)
         //     return false;
 
-        target = (JSTarget) JSSharedData.backend.createTarget(project,
+        target = JSSharedData.backend.createTarget(project,
                 getTargetSettings(), null);
 
         return true;

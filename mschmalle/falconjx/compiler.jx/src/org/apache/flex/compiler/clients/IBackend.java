@@ -22,7 +22,9 @@ package org.apache.flex.compiler.clients;
 import java.io.File;
 import java.util.List;
 
-import org.apache.flex.compiler.as.IASWriter;
+import org.apache.flex.compiler.as.codegen.IASEmitter;
+import org.apache.flex.compiler.as.codegen.IASWriter;
+import org.apache.flex.compiler.as.codegen.IDocEmitter;
 import org.apache.flex.compiler.config.Configurator;
 import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
@@ -63,7 +65,7 @@ public interface IBackend
 
     /**
      * Creates a javascript target that will be used to build the compiled
-     * javascript source file.
+     * javascript source file.  
      * 
      * @param project The current {@link ICompilerProject}.
      * @param settings The target's custom settings.
@@ -74,6 +76,8 @@ public interface IBackend
     ITarget createTarget(IASProject project, ITargetSettings settings,
             ITargetProgressMonitor monitor);
 
+    IDocEmitter createDocEmitter(IASEmitter emitter);
+
     ASFilterWriter createFilterWriter(IASProject project);
 
     IASWriter createWriter(IASProject project, List<ICompilerProblem> errors,
@@ -81,5 +85,7 @@ public interface IBackend
 
     IASBlockWalker createWalker(IASProject project,
             List<ICompilerProblem> errors, ASFilterWriter writer);
+
+
 
 }

@@ -17,7 +17,7 @@
  *
  */
 
-package org.apache.flex.compiler.internal.as.codegen;
+package org.apache.flex.compiler.internal.js.codegen;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,14 +25,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.js.codegen.IJSWriter;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.IASProject;
 import org.apache.flex.compiler.units.ICompilationUnit;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
-public class ASWriter implements IJSWriter
+public class JSWriter implements IJSWriter
 {
     private IASProject project;
 
@@ -49,7 +48,7 @@ public class ASWriter implements IJSWriter
      * @param application the JSApplication model to be encoded
      * @param useCompression use ZLIB compression if true
      */
-    public ASWriter(IASProject project, List<ICompilerProblem> problems,
+    public JSWriter(IASProject project, List<ICompilerProblem> problems,
             ICompilationUnit compilationUnit, boolean enableDebug)
     {
         this.project = project;
@@ -67,7 +66,7 @@ public class ASWriter implements IJSWriter
     @Override
     public void writeTo(OutputStream out)
     {
-        ASFilterWriter writer = JSSharedData.backend
+        JSFilterWriter writer = (JSFilterWriter) JSSharedData.backend
                 .createFilterWriter(project);
 
         IASBlockWalker walker = JSSharedData.backend.createWalker(project,

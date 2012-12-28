@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.flex.compiler.exceptions.BuildCanceledException;
-import org.apache.flex.compiler.internal.driver.JSApplication;
-import org.apache.flex.compiler.internal.js.codgen.JSSharedData;
+import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
+import org.apache.flex.compiler.internal.js.driver.JSApplication;
 import org.apache.flex.compiler.internal.projects.CompilerProject;
 import org.apache.flex.compiler.js.IJSApplication;
 import org.apache.flex.compiler.problems.ICompilerProblem;

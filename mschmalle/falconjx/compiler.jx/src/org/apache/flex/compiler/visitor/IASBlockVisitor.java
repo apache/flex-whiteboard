@@ -19,10 +19,10 @@
 
 package org.apache.flex.compiler.visitor;
 
-import org.apache.flex.compiler.internal.js.codgen.ASBlockWalker;
+import org.apache.flex.compiler.internal.as.codegen.ASBlockWalker;
+import org.apache.flex.compiler.internal.as.visitor.ASNodeSwitch;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
-import org.apache.flex.compiler.internal.visitor.ASNodeSwitch;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
