@@ -147,6 +147,16 @@ public class ASEmitter implements IASEmitter
         currentIndent--;
     }
 
+    // (erikdebruin) I needed a way to add a semi-colon after the closing curly
+    //               bracket of a block in the 'goog'-ified output. Instead of 
+    // 				 subclassing 'ASAfterNodeStrategy' and  copying
+    //               the entire function body, I thought I might use this little
+    //               utility method and override that. Am I doing it right?
+    public void writeBlockClose()
+    {
+        write("}");
+    }
+
     public void writeIndent()
     {
         String indent = "";

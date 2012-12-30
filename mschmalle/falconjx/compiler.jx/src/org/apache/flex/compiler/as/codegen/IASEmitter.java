@@ -62,6 +62,11 @@ public interface IASEmitter
     void indentPush();
 
     /**
+     * Writes the block closing character(s)
+     */
+    void writeBlockClose();
+
+    /**
      * Pops an indent from the emitter so after newlines are emitted, the output
      * is correctly formatted.
      */

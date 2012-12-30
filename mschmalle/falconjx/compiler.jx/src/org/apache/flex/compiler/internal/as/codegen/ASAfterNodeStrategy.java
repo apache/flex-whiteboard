@@ -60,7 +60,9 @@ public class ASAfterNodeStrategy implements IASNodeStrategy
                     emitter.indentPop();
                     emitter.write("\n");
                 }
-                emitter.write("}");
+                
+                // (erikdebruin) moved this to utility method to allow overriding
+                emitter.writeBlockClose();
             }
             else if (type == ContainerType.IMPLICIT
                     || type == ContainerType.SYNTHESIZED)

@@ -117,4 +117,11 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
         //        }
     }
 
+    @Override
+    public void writeBlockClose()
+    {
+    	super.writeBlockClose();
+        
+    	write(";");
+    }
 }

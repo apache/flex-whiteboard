@@ -91,15 +91,21 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitOverride(IFunctionNode node)
     {
-        // TODO Auto-generated method stub
-
+        write(" * @override\n");
     }
 
     @Override
     public void emitParam(IParameterNode node)
     {
-        write(" * @param {" + node.getVariableType() + "} " + node.getName()
-                + "\n");
+    	String postfix = (node.getDefaultValue() == null) ? "" : "=";
+    	
+    	String paramType = "";
+    	if (node.isRest())
+    		paramType = "...";
+    	else
+    		paramType = convertASTypeToJS(node.getVariableType());
+    	
+        write(" * @param {" + paramType + postfix + "} " + node.getName() + "\n");
     }
 
     @Override
@@ -122,7 +128,7 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
         // TODO convert js types
         String rtype = node.getReturnType();
         if (rtype != null)
-            write(" * @return {" + rtype + "}\n");
+            write(" * @return {" + convertASTypeToJS(rtype) + "}\n");
     }
 
     @Override
@@ -135,8 +141,9 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     public void emitType(IASNode node)
     {
         //String type = SemanticUtils.getTypeOfStem(node, emitter.getProject());
-        String type = ((IVariableNode) node).getVariableType(); // XXX need to map to js types
-        write(" * @type {" + type + "}\n");
+        String type = ((IVariableNode) node).getVariableType(); 
+        // XXX need to map to js types
+        write(" * @type {" + convertASTypeToJS(type) + "}\n");
     }
 
     @Override
@@ -153,6 +160,24 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
         begin();
         write(" * " + JSSharedData.getTimeStampString());
         end();
+    }
+
+    //--------------------------------------------------------------------------
+
+    private String convertASTypeToJS(String name)
+    {
+    	String result = name;
+    	
+    	if (name.equals(""))
+    		result = "*";
+    	
+    	if (name.equals("String"))
+    		result = "string";
+    	
+    	if (name.equals("int") || name.equals("uint"))
+    		result = "number";
+    	
+        return result;
     }
 
 }

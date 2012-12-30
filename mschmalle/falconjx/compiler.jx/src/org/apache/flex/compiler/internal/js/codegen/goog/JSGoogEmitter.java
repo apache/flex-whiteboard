@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
@@ -228,17 +229,64 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             }
             else
             {
-                getDoc().begin();
-                getDoc().emitThis(type);
+            	Boolean hasDoc = false;
+            	
+                // @this
+                // TODO (erikdebruin) only emit @this when there actually is 
+                //                    a 'this' reference in the method block
+            	/*
+                if (false)
+                {
+                    getDoc().begin();
+                	hasDoc = true;
+                	
+                	getDoc().emitThis(type);
+                }
+                //*/
+                
                 // @param
                 IParameterNode[] parameters = node.getParameterNodes();
                 for (IParameterNode pnode : parameters)
                 {
+                	if (!hasDoc)
+                	{
+                        getDoc().begin();
+                    	hasDoc = true;
+                	}
+                		
                     getDoc().emitParam(pnode);
                 }
+                
                 // @return
-                getDoc().emitReturn(node);
-                getDoc().end();
+                // TODO (erikdebruin) only emit @return when there actually is 
+                //					  a return value defined
+                String returnType = node.getReturnType();
+                if (returnType != "")
+                {
+                	if (!hasDoc)
+                	{
+                        getDoc().begin();
+                    	hasDoc = true;
+                	}
+                		
+                	getDoc().emitReturn(node);
+                }
+                
+                // @override
+                Boolean override = node.hasModifier(ASModifier.OVERRIDE);
+                if (override)
+                {
+                	if (!hasDoc)
+                	{
+                        getDoc().begin();
+                    	hasDoc = true;
+                	}
+                		
+                	getDoc().emitOverride(node);
+                }
+                
+                if (hasDoc)
+                	getDoc().end();
             }
         }
     }
@@ -260,6 +308,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         {
             write(qname);
             write(".");
+            if (!fn.hasModifier(ASModifier.STATIC))
+            	write("prototype.");
         }
 
         emitMemberName(node);
@@ -274,6 +324,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     @Override
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
+        emitRestParameterCodeBlock(node);
+        
         if (JSSharedData.OUTPUT_ALTERNATE)
         {
             emitDefaultParameterCodeBlock_Alternate(node);
@@ -391,6 +443,24 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         }
     }
 
+    private void emitRestParameterCodeBlock(IFunctionNode node)
+    {
+        IParameterNode[] pnodes = node.getParameterNodes();
+
+        IParameterNode rest = getRest(pnodes);
+        if (rest != null)
+        {
+            final StringBuilder code = new StringBuilder();
+
+            code.append(rest.getName() + " = "
+                    + "Array.prototype.slice.call(arguments, "
+                    + (pnodes.length - 1)
+                    + ");\n");
+
+            write(code.toString());
+        }
+    }
+
     @Override
     public void emitParameter(IParameterNode node)
     {
@@ -426,6 +496,17 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             return null;
 
         return result;
+    }
+
+    private IParameterNode getRest(IParameterNode[] nodes)
+    {
+        for (IParameterNode node : nodes)
+        {
+            if (node.isRest())
+                return node;
+        }
+
+        return null;
     }
 
     private static ITypeDefinition getTypeDefinition(IDefinitionNode node)
