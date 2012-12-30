@@ -41,12 +41,24 @@ public class TestGoogMethodMembers extends TestMethodMembers
 	// 10) can we safely ignore the 'public' and custom namespaces?
 
     @Override
+    public void tearDown()
+    {
+        super.tearDown();
+        // XXX (mschmalle) We really have to get rid of these globals.
+        // I had all tests in TestGoogEmitter fail because this wasn't switched back
+        // to false in your tests below, this proves these are bad and are just 
+        // left from FalconJS
+        // not switching this back to false was leaving extra \t in method blocks
+        JSSharedData.OUTPUT_ALTERNATE = false;
+    }
+    
+    @Override
     @Test
     public void testMethod()
     {
         IFunctionNode node = getMethod("function foo(){}");
         visitor.visitFunction(node);
-        assertOut("A.prototype.foo = function() {\n};");
+        assertOut("A.prototype.foo = function() {\n}");
     }
 
     @Override
@@ -55,7 +67,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo():int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @return {number}\n */\nA.prototype.foo = function() {\n\treturn -1;\n};");
+        assertOut("/**\n * @return {number}\n */\nA.prototype.foo = function() {\n\treturn -1;\n}");
     }
 
     @Override
@@ -64,7 +76,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo(bar):int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {*} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\treturn -1;\n};");
+        assertOut("/**\n * @param {*} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\treturn -1;\n}");
     }
 
     @Override
@@ -73,7 +85,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo(bar:String):int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\treturn -1;\n}");
     }
 
     @Override
@@ -83,7 +95,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
         IFunctionNode node = getMethod("function foo(bar:String = \"baz\"):int{\treturn -1;}");
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tbar = typeof bar !== 'undefined' ? bar : \"baz\";\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tbar = typeof bar !== 'undefined' ? bar : \"baz\";\n\treturn -1;\n}");
     }
 
     @Test
@@ -91,7 +103,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo(bar:String = \"baz\"):int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tif (arguments.length < 1) {\n\t\tbar = \"baz\";\n\t}\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tif (arguments.length < 1) {\n\t\tbar = \"baz\";\n\t}\n\treturn -1;\n}");
     }
 
     @Override
@@ -101,7 +113,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
         IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
     @Test
@@ -109,7 +121,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tif (arguments.length < 2) {\n\t\tbaz = null;\n\t}\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tif (arguments.length < 2) {\n\t\tbaz = null;\n\t}\n\treturn -1;\n}");
     }
 
     @Override
@@ -118,7 +130,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("function foo(bar:String, ...rest):int{\treturn -1;}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @param {...} rest\n * @return {number}\n */\nA.prototype.foo = function(bar, rest) {\n\trest = Array.prototype.slice.call(arguments, 1);\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {...} rest\n * @return {number}\n */\nA.prototype.foo = function(bar, rest) {\n\trest = Array.prototype.slice.call(arguments, 1);\n\treturn -1;\n}");
     }
 
     @Override
@@ -129,7 +141,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         // we ignore the 'public' namespace completely
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
     @Override
@@ -140,7 +152,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         // we ignore the custom namespaces completely (are there side effects I'm missing?)
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
     
     @Override
@@ -153,7 +165,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
         // (erikdebruin) here we actually DO want to declare the method
         //               directly on the 'class' constructor instead of the
         //               prototype!
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
     @Override
@@ -163,7 +175,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
         IFunctionNode node = getMethod("public override function foo(bar:String, baz:int = null):int{\treturn -1;}");
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
-        assertOutDebug("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
     @Override
@@ -173,7 +185,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
         IFunctionNode node = getMethod("override public function foo(bar:String, baz:int = null):int{return -1;}");
     	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n};");
+        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
     @Override

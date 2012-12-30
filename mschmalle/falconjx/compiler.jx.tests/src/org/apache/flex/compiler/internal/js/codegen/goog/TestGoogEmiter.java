@@ -64,7 +64,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethodSimple("function method1():void{\n}");
         visitor.visitFunction(node);
-        assertOut("A.method1 = function() {\n}");
+        assertOut("A.prototype.method1 = function() {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
@@ -74,7 +74,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int):int{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(bar) {\n}");
+        assertOut("foo.bar.A.prototype.method1 = function(bar) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
@@ -84,7 +84,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(bar, baz, goo) {\n}");
+        assertOut("foo.bar.A.prototype.method1 = function(bar, baz, goo) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
@@ -96,7 +96,7 @@ public class TestGoogEmiter extends TestWalkerBase
         IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
         assertOut("/**\n * @this {foo.bar.A}\n * @param {int} bar\n * @param {String} baz\n"
-                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A.method1 = "
+                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A.prototype.method1 = "
                 + "function(bar, baz, goo) {\n}");
     }
 
@@ -116,7 +116,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
                 + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
@@ -137,7 +137,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
                 + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
                 + "if (a)\n\t\tfoo();\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -160,7 +160,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
+        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
                 + "{\n\t\tif (arguments.length < 3) {\n\t\t\tp3 = 3;\n\t\t}\n\t\tp4 = 4;\n\t}"
                 + "\n\treturn p1 + p2 + p3 + p4;\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -181,7 +181,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_ALTERNATE = true;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n"
+        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
                 + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
                 + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n"
                 + "\treturn p1 + p2 + p3 + p4;\n}");
@@ -202,7 +202,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_ALTERNATE = true;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.method1 = function(p1, p2, p3, p4) {\n"
+        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
                 + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
                 + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n}");
         JSSharedData.OUTPUT_ALTERNATE = false;
