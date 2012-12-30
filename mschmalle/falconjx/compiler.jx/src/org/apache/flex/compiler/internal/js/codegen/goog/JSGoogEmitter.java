@@ -32,11 +32,13 @@ import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
+import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogEmitter;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
@@ -88,6 +90,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         getDoc().emitConstructor(node);
         if (superClass != null)
             getDoc().emitExtends(superClass);
+        if (containsThisReference(node))
+            getDoc().emitThis(parent);
         getDoc().end();
     }
 
@@ -229,64 +233,60 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             }
             else
             {
-            	Boolean hasDoc = false;
-            	
+                boolean hasDoc = false;
+
                 // @this
-                // TODO (erikdebruin) only emit @this when there actually is 
-                //                    a 'this' reference in the method block
-            	/*
-                if (false)
+                if (containsThisReference(node))
                 {
                     getDoc().begin();
-                	hasDoc = true;
-                	
-                	getDoc().emitThis(type);
+                    hasDoc = true;
+
+                    getDoc().emitThis(type);
                 }
-                //*/
-                
+
                 // @param
                 IParameterNode[] parameters = node.getParameterNodes();
                 for (IParameterNode pnode : parameters)
                 {
-                	if (!hasDoc)
-                	{
+                    if (!hasDoc)
+                    {
                         getDoc().begin();
-                    	hasDoc = true;
-                	}
-                		
+                        hasDoc = true;
+                    }
+
                     getDoc().emitParam(pnode);
                 }
-                
+
                 // @return
                 // TODO (erikdebruin) only emit @return when there actually is 
                 //					  a return value defined
                 String returnType = node.getReturnType();
                 if (returnType != "")
                 {
-                	if (!hasDoc)
-                	{
+                    if (!hasDoc)
+                    {
                         getDoc().begin();
-                    	hasDoc = true;
-                	}
-                		
-                	getDoc().emitReturn(node);
+                        hasDoc = true;
+                    }
+
+                    getDoc().emitReturn(node);
                 }
-                
+
                 // @override
                 Boolean override = node.hasModifier(ASModifier.OVERRIDE);
                 if (override)
                 {
-                	if (!hasDoc)
-                	{
+                    if (!hasDoc)
+                    {
                         getDoc().begin();
-                    	hasDoc = true;
-                	}
-                		
-                	getDoc().emitOverride(node);
+                        hasDoc = true;
+                    }
+
+                    getDoc().emitOverride(node);
                 }
-                
+
                 if (hasDoc)
-                	getDoc().end();
+                    getDoc().end();
             }
         }
     }
@@ -295,7 +295,10 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     public void emitMethod(IFunctionNode node)
     {
         if (node.isConstructor())
+        {
+            emitConstructor(node);
             return;
+        }
 
         IClassDefinition definition = getClassDefinition(node);
 
@@ -309,7 +312,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             write(qname);
             write(".");
             if (!fn.hasModifier(ASModifier.STATIC))
-            	write("prototype.");
+                write("prototype.");
         }
 
         emitMemberName(node);
@@ -325,7 +328,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
         emitRestParameterCodeBlock(node);
-        
+
         if (JSSharedData.OUTPUT_ALTERNATE)
         {
             emitDefaultParameterCodeBlock_Alternate(node);
@@ -454,8 +457,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
             code.append(rest.getName() + " = "
                     + "Array.prototype.slice.call(arguments, "
-                    + (pnodes.length - 1)
-                    + ");\n");
+                    + (pnodes.length - 1) + ");\n");
 
             write(code.toString());
         }
@@ -526,5 +528,25 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     {
         IScopedNode scope = node.getScopedNode();
         return scope.getChildCount() > 0;
+    }
+
+    private static boolean containsThisReference(IASNode node)
+    {
+        final int len = node.getChildCount();
+        for (int i = 0; i < len; i++)
+        {
+            final IASNode child = node.getChild(i);
+            if (child.getChildCount() > 0)
+            {
+                return containsThisReference(child);
+            }
+            else
+            {
+                if (SemanticUtils.isThisKeyword(child))
+                    return true;
+            }
+        }
+
+        return false;
     }
 }

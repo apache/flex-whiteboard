@@ -188,6 +188,37 @@ public class TestGoogMethodMembers extends TestMethodMembers
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
+    //--------------------------------------------------------------------------
+    // Doc Specific Tests 
+    //--------------------------------------------------------------------------
+    
+    @Test
+    public void testConstructor_withThisInBody()
+    {
+        IFunctionNode node = getMethod("public function A(){this.foo;}");
+        visitor.visitConstructor(node);
+        // TODO Erik; Do we need the @this tag if it's annotated with @constructor?
+        // Right now I have it inserting if 'this' is present in the constructor scope
+        assertOut("/**\n * @constructor\n * @this {A}\n */\nA = function() {\n\tthis.foo;\n}");
+    }
+    
+    @Test
+    public void testMethod_withThisInBody()
+    {
+        IFunctionNode node = getMethod("function foo(){this.foo;}");
+        visitor.visitFunction(node);
+        assertOut("/**\n * @this {A}\n */\nA.prototype.foo = function() {\n\tthis.foo;\n}");
+    }
+    
+    @Test
+    public void testMethod_withThisInBodyComplex()
+    {
+        IFunctionNode node = getMethod("function foo(){if(true){while(i){this.bar(42);}}}");
+        visitor.visitFunction(node);
+        assertOut("/**\n * @this {A}\n */\nA.prototype.foo = function() {\n\tif (true) " +
+        		"{\n\t\twhile (i) {\n\t\t\tthis.bar(42);\n\t\t}\n\t}\n}");
+    }
+    
     @Override
     protected IFunctionNode getMethod(String code)
     {
