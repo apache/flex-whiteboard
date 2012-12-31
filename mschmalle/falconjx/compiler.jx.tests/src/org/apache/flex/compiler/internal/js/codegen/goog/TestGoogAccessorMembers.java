@@ -24,6 +24,7 @@ import org.apache.flex.compiler.internal.as.codegen.TestAccessorMembers;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.junit.Test;
 
 /**
@@ -63,7 +64,8 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     {
         IGetterNode node = (IGetterNode) getAccessor("public function get foo():int{return -1;}");
         visitor.visitGetter(node);
-        //assertOut("");
+        assertOut("Object.defineProperty(\n\tA.prototype, \n\t'foo', "
+                + "\n\t{get:function() {\n\t\treturn -1;\n\t}, configurable:true}\n)");
     }
 
     @Override
@@ -72,6 +74,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     {
         IAccessorNode node = getAccessor("public override function get foo():int{return -1;}");
         visitor.visitFunction(node);
+        // TODO [TestGoog] public override get
         //assertOut("");
     }
 
@@ -81,6 +84,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     {
         IAccessorNode node = getAccessor("public static function get foo():int{return -1;}");
         visitor.visitFunction(node);
+        // TODO [TestGoog] public static get
         //assertOut("");
     }
 
@@ -88,18 +92,28 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     @Test
     public void testSetAccessor()
     {
-        IAccessorNode node = getAccessor("function set foo(value:int):void{}");
-        visitor.visitFunction(node);
-        //assertOut("Object.defineProperty(A.prototype, 'foo', {set: function(value) {}, configurable: true});");
+        /*
+        Object.defineProperty(
+            A.prototype, 
+            'foo', 
+            {set:function(value) {
+            }, configurable:true}
+        )
+         */
+        ISetterNode node = (ISetterNode) getAccessor("function set foo(value:int):void{}");
+        visitor.visitSetter(node);
+        assertOut("Object.defineProperty(\n\tA.prototype, \n\t'foo', \n\t{set:function(value)"
+                + " {\n\t}, configurable:true}\n)");
     }
 
     @Override
     @Test
     public void testSetAccessor_withNamespace()
     {
-        IAccessorNode node = getAccessor("public function set foo(value:int):void{}");
-        visitor.visitFunction(node);
-        //assertOut("");
+        ISetterNode node = (ISetterNode) getAccessor("public function set foo(value:int):void{}");
+        visitor.visitSetter(node);
+        assertOut("Object.defineProperty(\n\tA.prototype, \n\t'foo', \n\t{set:function(value)"
+                + " {\n\t}, configurable:true}\n)");
     }
 
     @Override
@@ -108,6 +122,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     {
         IAccessorNode node = getAccessor("public override function set foo(value:int):void{}");
         visitor.visitFunction(node);
+        // TODO [TestGoog] public override set
         //assertOut("");
     }
 
@@ -117,6 +132,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     {
         IAccessorNode node = getAccessor("public static function set foo(value:int):void{}");
         visitor.visitFunction(node);
+        // TODO [TestGoog] public static set
         //assertOut("");
     }
 

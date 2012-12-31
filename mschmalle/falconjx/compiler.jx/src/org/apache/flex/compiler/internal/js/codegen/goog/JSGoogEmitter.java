@@ -50,6 +50,7 @@ import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
+import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
@@ -297,6 +298,12 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
     @Override
     public void emitGetAccessor(IGetterNode node)
+    {
+        emitObjectDefineProperty(node);
+    }
+    
+    @Override
+    public void emitSetAccessor(ISetterNode node)
     {
         emitObjectDefineProperty(node);
     }
