@@ -489,14 +489,14 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitGetter(IGetterNode node)
     {
         debug("visitGetter()");
-        visitFunction(node);
+        emitter.emitGetAccessor(node);
     }
 
     @Override
     public void visitSetter(ISetterNode node)
     {
         debug("visitSetter()");
-        visitFunction(node);
+        emitter.emitSetAccessor(node);
     }
 
     @Override

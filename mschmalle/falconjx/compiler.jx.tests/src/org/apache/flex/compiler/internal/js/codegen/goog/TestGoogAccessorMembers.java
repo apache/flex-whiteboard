@@ -23,10 +23,11 @@ import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.as.codegen.TestAccessorMembers;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
+import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.junit.Test;
 
 /**
- * This class tests the production of valid 'goog' JS code for Class Accessor 
+ * This class tests the production of valid 'goog' JS code for Class Accessor
  * members.
  * 
  * @author Michael Schmalle
@@ -34,24 +35,34 @@ import org.junit.Test;
  */
 public class TestGoogAccessorMembers extends TestAccessorMembers
 {
-	// TODO (erikdebruin)
-	//  1) do we have to compile with '--language_in=ECMASCRIPT5'?
-	
+    // TODO (erikdebruin)
+    //  1) do we have to compile with '--language_in=ECMASCRIPT5'?
+
     @Override
     @Test
     public void testGetAccessor()
     {
-    	IAccessorNode node = getAccessor("function get foo():int{return -1;}");
-        visitor.visitFunction(node);
-        //assertOut("Object.defineProperty(A.prototype, 'foo', {get: function() {return -1;}, configurable: true});");
+        /*
+        Object.defineProperty(
+            A.prototype, 
+            'foo', 
+            {get:function() {
+                return -1;
+            }, configurable:true}
+        )
+         */
+        IGetterNode node = (IGetterNode) getAccessor("function get foo():int{return -1;}");
+        visitor.visitGetter(node);
+        assertOut("Object.defineProperty(\n\tA.prototype, \n\t'foo', "
+                + "\n\t{get:function() {\n\t\treturn -1;\n\t}, configurable:true}\n)");
     }
 
     @Override
     @Test
     public void testGetAccessor_withNamespace()
     {
-        IAccessorNode node = getAccessor("public function get foo():int{return -1;}");
-        visitor.visitFunction(node);
+        IGetterNode node = (IGetterNode) getAccessor("public function get foo():int{return -1;}");
+        visitor.visitGetter(node);
         //assertOut("");
     }
 
@@ -77,7 +88,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
     @Test
     public void testSetAccessor()
     {
-    	IAccessorNode node = getAccessor("function set foo(value:int):void{}");
+        IAccessorNode node = getAccessor("function set foo(value:int):void{}");
         visitor.visitFunction(node);
         //assertOut("Object.defineProperty(A.prototype, 'foo', {set: function(value) {}, configurable: true});");
     }

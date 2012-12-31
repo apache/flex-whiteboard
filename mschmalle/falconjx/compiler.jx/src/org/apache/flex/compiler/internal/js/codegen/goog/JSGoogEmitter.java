@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.definitions.IClassDefinition;
+import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
@@ -38,11 +39,14 @@ import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogEmitter;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
+import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
+import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
@@ -289,6 +293,12 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
                     getDoc().end();
             }
         }
+    }
+
+    @Override
+    public void emitGetAccessor(IGetterNode node)
+    {
+        emitObjectDefineProperty(node);
     }
 
     @Override
@@ -548,5 +558,56 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         }
 
         return false;
+    }
+
+    private void emitObjectDefineProperty(IAccessorNode node)
+    {
+        /*
+        Object.defineProperty(
+            A.prototype, 
+            'foo', 
+            {get: function() {return -1;}, 
+            configurable: true}
+         );
+        */
+        // head
+        write("Object.defineProperty(");
+        indentPush();
+        write("\n");
+
+        // Type
+        IFunctionDefinition definition = node.getDefinition();
+        ITypeDefinition type = (ITypeDefinition) definition.getParent();
+        write(type.getQualifiedName());
+        write(".");
+        write("prototype");
+        write(", ");
+        write("\n");
+
+        // name
+        write("'");
+        write(definition.getBaseName());
+        write("'");
+        write(", ");
+        write("\n");
+
+        // info object
+        // declaration
+        write("{");
+        write(node.getNodeID() == ASTNodeID.GetterID ? "get" : "set");
+        write(":");
+        write("function");
+        emitParamters(node.getParameterNodes());
+
+        emitMethodScope(node.getScopedNode());
+
+        write(", ");
+        write("configurable:true");
+        write("}");
+        indentPop();
+        write("\n");
+
+        // tail, no colon; parent container will add it
+        write(")");
     }
 }
