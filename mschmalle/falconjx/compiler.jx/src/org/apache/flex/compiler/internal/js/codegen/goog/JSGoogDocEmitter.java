@@ -111,15 +111,13 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitPrivate(IASNode node)
     {
-        // TODO Auto-generated method stub
-
+        write(" * @private\n");
     }
 
     @Override
     public void emitProtected(IASNode node)
     {
-        // TODO Auto-generated method stub
-
+        write(" * @protected\n");
     }
 
     @Override
@@ -176,6 +174,11 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     	
     	if (name.equals("int") || name.equals("uint"))
     		result = "number";
+    	
+    	// TODO (erikdebruin) this will not work right with nested Vector
+    	//                    declarations...
+    	if (name.matches("Vector.<.*>"))
+    		result = name.replace("Vector", "Array");
     	
         return result;
     }

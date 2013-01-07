@@ -79,7 +79,20 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     public void emitJSDocVariable(IVariableNode node)
     {
         getDoc().begin();
+        
+        // emit namespace annotation
+        String ns = node.getNamespace();
+        if (ns == "private")
+        {
+        	getDoc().emitPrivate(node);
+        }
+        else if (ns == "protected")
+        {	
+        	getDoc().emitProtected(node);
+        }
+        
         getDoc().emitType(node);
+        
         getDoc().end();
     }
 
