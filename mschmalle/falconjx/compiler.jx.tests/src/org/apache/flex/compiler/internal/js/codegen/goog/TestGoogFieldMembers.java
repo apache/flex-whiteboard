@@ -137,54 +137,49 @@ public class TestGoogFieldMembers extends TestFieldMembers
     //--------------------------------------------------------------------------
 
     @Override
-    @Ignore
     @Test
     public void testConstant()
     {
         IVariableNode node = getField("static const foo;");
         visitor.visitVariable(node);
-        // TODO (mschmalle) is * type even possible for a constant?
-        assertOut("");
+        assertOut("/**\n * @const\n * @type {*}\n */\nA.foo");
     }
 
     @Override
-    @Ignore
     @Test
     public void testConstant_withType()
     {
         IVariableNode node = getField("static const foo:int;");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("/**\n * @const\n * @type {number}\n */\nA.foo");
     }
 
     @Override
-    @Ignore
     @Test
     public void testConstant_withTypeValue()
     {
         IVariableNode node = getField("static const foo:int = 420;");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("/**\n * @const\n * @type {number}\n */\nA.foo = 420");
     }
 
     @Override
-    @Ignore
     @Test
     public void testConstant_withNamespaceTypeValue()
     {
         IVariableNode node = getField("private static const foo:int = 420;");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("/**\n * @private\n * @const\n * @type {number}\n */\nA.foo = 420");
     }
 
     @Override
-    @Ignore
     @Test
     public void testConstant_withCustomNamespaceTypeValue()
     {
         IVariableNode node = getField("mx_internal static const foo:int = 420;");
         visitor.visitVariable(node);
-        assertOut("");
+        // we ignore custom namespaces completely (are there side effects I'm missing?)
+        assertOut("/**\n * @const\n * @type {number}\n */\nA.foo = 420");
     }
 
     @Override

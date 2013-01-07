@@ -91,6 +91,9 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         	getDoc().emitProtected(node);
         }
         
+        if (node.isConst())
+        	getDoc().emitConst(node);
+        
         getDoc().emitType(node);
         
         getDoc().end();
@@ -220,7 +223,12 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         IClassDefinition definition = getClassDefinition(node);
 
         emitJSDocVariable(node);
-        write(definition.getQualifiedName() + ".prototype." + node.getName());
+        
+        String root = "";
+        if (!node.isConst())
+        	root = "prototype.";
+        write(definition.getQualifiedName() + "." + root + node.getName());
+        
         IExpressionNode vnode = node.getAssignedValueNode();
         if (vnode != null)
         {

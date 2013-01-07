@@ -26,8 +26,7 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitConst(IVariableNode node)
     {
-        // TODO Auto-generated method stub
-
+        write(" * @const\n");
     }
 
     @Override
