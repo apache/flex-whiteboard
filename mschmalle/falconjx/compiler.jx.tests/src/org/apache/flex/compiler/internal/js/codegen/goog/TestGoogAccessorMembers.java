@@ -52,6 +52,7 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
             }, configurable:true}
         )
          */
+    	// TODO (erikdebruin) add 'goog' type declaration
         IGetterNode node = (IGetterNode) getAccessor("function get foo():int{return -1;}");
         visitor.visitGetter(node);
         assertOut("Object.defineProperty(\n\tA.prototype, \n\t'foo', "
