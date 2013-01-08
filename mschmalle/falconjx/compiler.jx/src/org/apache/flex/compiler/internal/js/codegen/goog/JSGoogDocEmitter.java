@@ -190,7 +190,7 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     	if (name.equals("String"))
     		result = "string";
     	
-    	if (name.equals("int") || name.equals("uint"))
+    	if (name.equals("int") || name.equals("uint") || name.equals("Number"))
     		result = "number";
     	
     	// TODO (erikdebruin) this will not work right with nested Vector
