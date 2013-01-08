@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -37,11 +36,9 @@ public class TestGlobalConstants extends TestWalkerBase
         assertOut("var a:Number = Infinity");
     }
 
-    @Ignore
     @Test
     public void testNegativeInfinity()
     {
-    	// TODO (erikdebruin) Mike, why is this failing?
         IVariableNode node = getField("var a:Number = -Infinity;");
         visitor.visitVariable(node);
         assertOut("var a:Number = -Infinity");

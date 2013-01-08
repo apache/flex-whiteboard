@@ -69,6 +69,14 @@ public class TestGoogFieldMembers extends TestFieldMembers
         assertOut("/**\n * @type {number}\n */\nA.prototype.foo = 420");
     }
 
+    @Test
+    public void testField_withTypeValue_Negative()
+    {
+        IVariableNode node = getField("var foo:int = -420;");
+        visitor.visitVariable(node);
+        assertOut("/**\n * @type {number}\n */\nA.prototype.foo = -420");
+    }
+
     @Override
     @Test
     public void testField_withNamespaceTypeValue()

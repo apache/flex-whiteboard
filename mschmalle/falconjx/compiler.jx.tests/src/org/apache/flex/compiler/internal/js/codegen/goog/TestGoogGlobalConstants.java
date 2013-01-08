@@ -24,7 +24,6 @@ import org.apache.flex.compiler.internal.as.codegen.TestGlobalConstants;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IVariableNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -43,7 +42,6 @@ public class TestGoogGlobalConstants extends TestGlobalConstants
         assertOut("A.prototype.a = Infinity");
     }
 
-    @Ignore
     @Override
     @Test
     public void testNegativeInfinity()
