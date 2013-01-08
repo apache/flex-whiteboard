@@ -54,7 +54,7 @@ public class TestGoogEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        assertOut("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('org.apache.flex.html.staticControls.TextButton');\n\n/**\n * @constructor\n */\ncom.example.components.MyTextButton = function() {\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n};\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {Number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
+        assertOutDebug("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('org.apache.flex.html.staticControls.TextButton');\n\n/**\n * @constructor\n */\ncom.example.components.MyTextButton = function() {\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n};\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
     }
 
     @Test
