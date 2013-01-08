@@ -17,26 +17,26 @@
  *
  */
 
-package org.apache.flex.compiler.internal.js.codegen.goog;
+package org.apache.flex.compiler.internal.js.codegen.amd;
 
 import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.as.codegen.TestWalkerBase;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
-import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
+import org.apache.flex.compiler.internal.js.driver.amd.AMDBackend;
 import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * This class tests the production of 'goog' JavaScript output.
+ * This class tests the production of 'AMD' JavaScript output.
  * <p>
  * Note; this is a complete prototype more used in figuring out where
  * abstraction and indirection is needed concerning the AS -> JS translations.
  * 
  * @author Michael Schmalle
  */
-public class TestGoogEmiter extends TestWalkerBase
+public class TestAMDEmiter extends TestWalkerBase
 {
     // emitPackageHeader()
     // emitImports()
@@ -104,64 +104,72 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testDefaultParameter()
     {
         /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-        	p3 = typeof p3 !== 'undefined' ? p3 : 3;
-        	p4 = typeof p4 !== 'undefined' ? p4 : 4;
-        		
+         foo.bar.A.method1 = function(p1, p2, p3, p4) {
+            if (arguments.length < 4) {
+                if (arguments.length < 3) {
+                    p3 = 3;
+                }
+                p4 = 4;
+            }
             return p1 + p2 + p3 + p4;
-        }
-        */
+         }
+         */
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
-                + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
-                + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n"
-                + "\treturn p1 + p2 + p3 + p4;\n}");
+        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
+                + "{\n\t\tif (arguments.length < 3) {\n\t\t\tp3 = 3;\n\t\t}\n\t\tp4 = 4;\n\t}"
+                + "\n\treturn p1 + p2 + p3 + p4;\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
-    
+
     @Test
     public void testDefaultParameter_Body()
     {
         /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-            p3 = typeof p3 !== 'undefined' ? p3 : 3;
-            p4 = typeof p4 !== 'undefined' ? p4 : 4;
+        foo.bar.A.method1 = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
-        assertOutDebug("foo.bar.A.prototype.method1 = function(bar, bax) {\n"
-                + "\tbar = typeof bar !== 'undefined' ? bar : 42;\n"
-                + "\tbax = typeof bax !== 'undefined' ? bax : 4;\n"
-                + "\tif (a)\n\t\tfoo();\n}");
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
+                + "if (a)\n\t\tfoo();\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
     @Test
-    public void testDefaultParameter_NoBody()
+    public void testDefaultParameter_NoBody_Alternate()
     {
         /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-            p3 = typeof p3 !== 'undefined' ? p3 : 3;
-            p4 = typeof p4 !== 'undefined' ? p4 : 4;
+        foo.bar.A.method1 = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
-                + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
-                + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n}");
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
     @Override
     protected IBackend createBackend()
     {
-        return new GoogBackend();
+        return new AMDBackend();
     }
 
     protected IFunctionNode getMethodSimple(String code)

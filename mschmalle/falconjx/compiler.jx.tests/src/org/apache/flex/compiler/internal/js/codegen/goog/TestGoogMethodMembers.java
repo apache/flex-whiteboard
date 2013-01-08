@@ -21,10 +21,8 @@ package org.apache.flex.compiler.internal.js.codegen.goog;
 
 import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.as.codegen.TestMethodMembers;
-import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -85,16 +83,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
         assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tbar = typeof bar !== 'undefined' ? bar : \"baz\";\n\treturn -1;\n}");
     }
 
-    @Ignore
-    @Test
-    public void testMethod_withDefaultParameterTypeReturnType_Alternate()
-    {
-    	// (erikdebruin) this tests the 'alternate' handling of default values
-        IFunctionNode node = getMethod("function foo(bar:String = \"baz\"):int{\treturn -1;}");
-        visitor.visitFunction(node);
-        assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tif (arguments.length < 1) {\n\t\tbar = \"baz\";\n\t}\n\treturn -1;\n}");
-    }
-
     @Override
     @Test
     public void testMethod_withMultipleDefaultParameterTypeReturnType()
@@ -102,16 +90,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
         IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
-    }
-
-    @Ignore
-    @Test
-    public void testMethod_withMultipleDefaultParameterTypeReturnType_Alternate()
-    {
-    	// (erikdebruin) this tests the 'alternate' handling of default values
-        IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
-        visitor.visitFunction(node);
-        assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tif (arguments.length < 2) {\n\t\tbaz = null;\n\t}\n\treturn -1;\n}");
     }
 
     @Override
