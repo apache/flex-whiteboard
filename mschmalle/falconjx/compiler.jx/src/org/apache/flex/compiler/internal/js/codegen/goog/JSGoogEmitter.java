@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.js.codegen.goog;
 
 import java.io.FilterWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
-import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
@@ -367,17 +365,11 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     {
         emitRestParameterCodeBlock(node);
 
-        if (JSSharedData.OUTPUT_ALTERNATE)
-        {
-            emitDefaultParameterCodeBlock_Alternate(node);
-        }
-        else
-        {
-            emitDefaultParameterCodeBlock(node);
-        }
+        emitDefaultParameterCodeBlock(node);
     }
 
-    private void emitDefaultParameterCodeBlock(IFunctionNode node)
+    /*
+    private void emitDefaultParameterCodeBlock_Alternate(IFunctionNode node)
     {
         // TODO (mschmalle) test for ... rest 
         // if default parameters exist, produce the init code
@@ -437,26 +429,29 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             write(result);
         }
     }
-
-    private void emitDefaultParameterCodeBlock_Alternate(IFunctionNode node)
+	*/
+    
+    private void emitDefaultParameterCodeBlock(IFunctionNode node)
     {
         // (erikdebruin) implemented alternative approach to handling 
         //               default parameter values in JS
 
         IParameterNode[] pnodes = node.getParameterNodes();
+        if (pnodes.length == 0)
+            return;
 
         Map<Integer, IParameterNode> defaults = getDefaults(pnodes);
-
-        if (!hasBody(node))
-        {
-            indentPush();
-            write("\t");
-        }
 
         final StringBuilder code = new StringBuilder();
 
         if (defaults != null)
         {
+            if (!hasBody(node))
+            {
+                indentPush();
+                write("\t");
+            }
+
             List<IParameterNode> parameters = new ArrayList<IParameterNode>(
                     defaults.values());
 

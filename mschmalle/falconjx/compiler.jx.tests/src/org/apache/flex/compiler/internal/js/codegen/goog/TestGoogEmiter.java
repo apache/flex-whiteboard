@@ -101,51 +101,31 @@ public class TestGoogEmiter extends TestWalkerBase
     }
 
     @Test
-    public void testDefaultParameter_NoBody()
-    {
-        /*
-        foo.bar.A.method1 = function(bar, bax) {
-            if (arguments.length < 2) {
-                if (arguments.length < 1) {
-                    bar = 42;
-                }
-                bax = 4;
-            }
-        }
-        */
-        JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
-        visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
-                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
-        JSSharedData.OUTPUT_JSDOC = true;
-    }
-
-    @Test
-    public void testDefaultParameter_Body()
-    {
-        /*
-        foo.bar.A.method1 = function(bar, bax) {
-            if (arguments.length < 2) {
-                if (arguments.length < 1) {
-                    bar = 42;
-                }
-                bax = 4;
-            }
-        }
-        */
-        JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
-        visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
-                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
-                + "if (a)\n\t\tfoo();\n}");
-        JSSharedData.OUTPUT_JSDOC = true;
-    }
-
-    @Test
     public void testDefaultParameter()
     {
+        /*
+        foo.bar.A.method1 = function(p1, p2, p3, p4) {
+        	p3 = typeof p3 !== 'undefined' ? p3 : 3;
+        	p4 = typeof p4 !== 'undefined' ? p4 : 4;
+        		
+            return p1 + p2 + p3 + p4;
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
+                + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
+                + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n"
+                + "\treturn p1 + p2 + p3 + p4;\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+    
+    @Ignore
+    @Test
+    public void testDefaultParameter_Alternate()
+    {
+    	// (erikdebruin) this tests the 'alternate' handling of default values
         /*
          foo.bar.A.method1 = function(p1, p2, p3, p4) {
             if (arguments.length < 4) {
@@ -167,30 +147,7 @@ public class TestGoogEmiter extends TestWalkerBase
     }
 
     @Test
-    public void testDefaultParameter_Alternate()
-    {
-        /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-        	p3 = typeof p3 !== 'undefined' ? p3 : 3;
-        	p4 = typeof p4 !== 'undefined' ? p4 : 4;
-        		
-            return p1 + p2 + p3 + p4;
-        }
-        */
-        JSSharedData.OUTPUT_JSDOC = false;
-        JSSharedData.OUTPUT_ALTERNATE = true;
-        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
-        visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
-                + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
-                + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n"
-                + "\treturn p1 + p2 + p3 + p4;\n}");
-        JSSharedData.OUTPUT_ALTERNATE = false;
-        JSSharedData.OUTPUT_JSDOC = true;
-    }
-
-    @Test
-    public void testDefaultParameter_AlternateNoBody()
+    public void testDefaultParameter_Body()
     {
         /*
         foo.bar.A.method1 = function(p1, p2, p3, p4) {
@@ -199,13 +156,77 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        JSSharedData.OUTPUT_ALTERNATE = true;
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        visitor.visitFunction(node);
+        assertOutDebug("foo.bar.A.prototype.method1 = function(bar, bax) {\n"
+                + "\tbar = typeof bar !== 'undefined' ? bar : 42;\n"
+                + "\tbax = typeof bax !== 'undefined' ? bax : 4;\n"
+                + "\tif (a)\n\t\tfoo();\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Ignore
+    @Test
+    public void testDefaultParameter_Body_Alternate()
+    {
+    	// (erikdebruin) this tests the 'alternate' handling of default values
+        /*
+        foo.bar.A.method1 = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
+                + "if (a)\n\t\tfoo();\n}");
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Test
+    public void testDefaultParameter_NoBody()
+    {
+        /*
+        foo.bar.A.method1 = function(p1, p2, p3, p4) {
+            p3 = typeof p3 !== 'undefined' ? p3 : 3;
+            p4 = typeof p4 !== 'undefined' ? p4 : 4;
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
                 + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
                 + "\tp4 = typeof p4 !== 'undefined' ? p4 : 4;\n}");
-        JSSharedData.OUTPUT_ALTERNATE = false;
+        JSSharedData.OUTPUT_JSDOC = true;
+    }
+
+    @Ignore
+    @Test
+    public void testDefaultParameter_NoBody_Alternate()
+    {
+    	// (erikdebruin) this tests the 'alternate' handling of default values
+        /*
+        foo.bar.A.method1 = function(bar, bax) {
+            if (arguments.length < 2) {
+                if (arguments.length < 1) {
+                    bar = 42;
+                }
+                bax = 4;
+            }
+        }
+        */
+        JSSharedData.OUTPUT_JSDOC = false;
+        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
+        visitor.visitFunction(node);
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
         JSSharedData.OUTPUT_JSDOC = true;
     }
 

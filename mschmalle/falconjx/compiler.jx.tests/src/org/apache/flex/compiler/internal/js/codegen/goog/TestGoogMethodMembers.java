@@ -24,6 +24,7 @@ import org.apache.flex.compiler.internal.as.codegen.TestMethodMembers;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -37,21 +38,8 @@ public class TestGoogMethodMembers extends TestMethodMembers
 	// TODO (erikdebruin)
 	//  1) ideally '@this' should only be included in the annotation if there is
 	//     actually a reference to 'this' in the function body
-	//  9) switch 'alternate' indicator to point to 'Wienberg style', not mine ;-)
 	// 10) can we safely ignore the 'public' and custom namespaces?
 
-    @Override
-    public void tearDown()
-    {
-        super.tearDown();
-        // XXX (mschmalle) We really have to get rid of these globals.
-        // I had all tests in TestGoogEmitter fail because this wasn't switched back
-        // to false in your tests below, this proves these are bad and are just 
-        // left from FalconJS
-        // not switching this back to false was leaving extra \t in method blocks
-        JSSharedData.OUTPUT_ALTERNATE = false;
-    }
-    
     @Override
     @Test
     public void testMethod()
@@ -93,14 +81,15 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withDefaultParameterTypeReturnType()
     {
         IFunctionNode node = getMethod("function foo(bar:String = \"baz\"):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tbar = typeof bar !== 'undefined' ? bar : \"baz\";\n\treturn -1;\n}");
     }
 
+    @Ignore
     @Test
     public void testMethod_withDefaultParameterTypeReturnType_Alternate()
     {
+    	// (erikdebruin) this tests the 'alternate' handling of default values
         IFunctionNode node = getMethod("function foo(bar:String = \"baz\"):int{\treturn -1;}");
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string=} bar\n * @return {number}\n */\nA.prototype.foo = function(bar) {\n\tif (arguments.length < 1) {\n\t\tbar = \"baz\";\n\t}\n\treturn -1;\n}");
@@ -111,14 +100,15 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withMultipleDefaultParameterTypeReturnType()
     {
         IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
 
+    @Ignore
     @Test
     public void testMethod_withMultipleDefaultParameterTypeReturnType_Alternate()
     {
+    	// (erikdebruin) this tests the 'alternate' handling of default values
         IFunctionNode node = getMethod("function foo(bar:String, baz:int = null):int{\treturn -1;}");
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tif (arguments.length < 2) {\n\t\tbaz = null;\n\t}\n\treturn -1;\n}");
@@ -138,7 +128,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withNamespace()
     {
         IFunctionNode node = getMethod("public function foo(bar:String, baz:int = null):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         // we ignore the 'public' namespace completely
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
@@ -149,7 +138,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withNamespaceCustom()
     {
         IFunctionNode node = getMethod("mx_internal function foo(bar:String, baz:int = null):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         // we ignore the custom namespaces completely (are there side effects I'm missing?)
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
@@ -160,7 +148,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withNamespaceModifiers()
     {
         IFunctionNode node = getMethod("public static function foo(bar:String, baz:int = null):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         // (erikdebruin) here we actually DO want to declare the method
         //               directly on the 'class' constructor instead of the
@@ -173,7 +160,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withNamespaceModifierOverride()
     {
         IFunctionNode node = getMethod("public override function foo(bar:String, baz:int = null):int{\treturn -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
@@ -183,7 +169,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testMethod_withNamespaceModifierOverrideBackwards()
     {
         IFunctionNode node = getMethod("override public function foo(bar:String, baz:int = null):int{return -1;}");
-    	JSSharedData.OUTPUT_ALTERNATE = true;
         visitor.visitFunction(node);
         assertOut("/**\n * @param {string} bar\n * @param {number=} baz\n * @return {number}\n * @override\n */\nA.prototype.foo = function(bar, baz) {\n\tbaz = typeof baz !== 'undefined' ? baz : null;\n\treturn -1;\n}");
     }
@@ -219,14 +204,6 @@ public class TestGoogMethodMembers extends TestMethodMembers
         		"{\n\t\twhile (i) {\n\t\t\tthis.bar(42);\n\t\t}\n\t}\n}");
     }
     
-    @Override
-    protected IFunctionNode getMethod(String code)
-    {
-    	JSSharedData.OUTPUT_ALTERNATE = false;
-    	
-    	return super.getMethod(code);
-    }
-
     @Override
     protected IBackend createBackend()
     {
