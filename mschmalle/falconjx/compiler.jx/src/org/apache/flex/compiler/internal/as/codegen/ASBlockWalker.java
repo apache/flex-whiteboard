@@ -1023,7 +1023,9 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         if (node.getNodeID() == ASTNodeID.Op_PreIncrID
                 || node.getNodeID() == ASTNodeID.Op_PreDecrID
                 || node.getNodeID() == ASTNodeID.Op_BitwiseNotID
-                || node.getNodeID() == ASTNodeID.Op_LogicalNotID)
+                || node.getNodeID() == ASTNodeID.Op_LogicalNotID
+                || node.getNodeID() == ASTNodeID.Op_SubtractID
+                || node.getNodeID() == ASTNodeID.Op_AddID)
         {
             emitter.write(node.getOperator().getOperatorText());
             walk(node.getOperandNode());
