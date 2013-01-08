@@ -22,6 +22,7 @@ package org.apache.flex.compiler.as.codegen;
 import java.io.Writer;
 
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
@@ -160,5 +161,16 @@ public interface IASEmitter
     void emitFunctionObject(IExpressionNode node);
 
     void emitFunctionBlockHeader(IFunctionNode node);
+
+    //--------------------------------------------------------------------------
+    // Operators
+    //--------------------------------------------------------------------------
+
+    /**
+     * Emit an operator statement.
+     * 
+     * @param node The {@link IBinaryOperatorNode} or chain of variable nodes.
+     */
+    void emitBinaryOperator(IBinaryOperatorNode node);
 
 }

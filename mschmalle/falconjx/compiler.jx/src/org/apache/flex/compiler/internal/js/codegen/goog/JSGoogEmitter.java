@@ -41,11 +41,13 @@ import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
+import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IIdentifierNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
@@ -575,5 +577,53 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
         // tail, no colon; parent container will add it
         write(")");
+    }
+
+    //--------------------------------------------------------------------------
+    // Operators
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitBinaryOperator(IBinaryOperatorNode node)
+    {
+    	ASTNodeID id = node.getNodeID();
+    	
+    	if (id == ASTNodeID.Op_AsID || id == ASTNodeID.Op_IsID)
+        {
+        	// TODO (erikdebruin) replace: this is a placeholder for the 
+    		//                    eventual implementation
+            write((id == ASTNodeID.Op_AsID) ? "as(" : "is(");
+            getWalker().walk(node.getLeftOperandNode());
+            write(", ");
+            getWalker().walk(node.getRightOperandNode());
+            write(")");
+        }
+        else
+        {
+        	getWalker().walk(node.getLeftOperandNode());
+
+            if (id != ASTNodeID.Op_CommaID)
+                write(" ");
+            
+            // (erikdebruin) rewrite 'a &&= b' to 'a = a && b'
+            if (id == ASTNodeID.Op_LogicalAndAssignID || id == ASTNodeID.Op_LogicalOrAssignID)
+            {
+            	IIdentifierNode lnode = (IIdentifierNode) node.getLeftOperandNode();
+            	
+                write("=");
+                write(" ");
+                write(lnode.getName());
+                write(" ");
+                write((id == ASTNodeID.Op_LogicalAndAssignID) ? ASTNodeID.Op_LogicalAndID.getParaphrase() : ASTNodeID.Op_LogicalOrID.getParaphrase());
+            }
+            else
+            {
+            	write(node.getOperator().getOperatorText());
+            }
+            
+            write(" ");
+            
+            getWalker().walk(node.getRightOperandNode());
+        }
     }
 }

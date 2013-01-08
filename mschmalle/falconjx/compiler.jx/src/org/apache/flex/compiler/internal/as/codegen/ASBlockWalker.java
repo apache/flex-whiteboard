@@ -1008,12 +1008,8 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitBinaryOperator(" + node.getOperator().getOperatorText()
                 + ")");
-        walk(node.getLeftOperandNode());
-        if (node.getNodeID() != ASTNodeID.Op_CommaID)
-            emitter.write(" ");
-        emitter.write(node.getOperator().getOperatorText());
-        emitter.write(" ");
-        walk(node.getRightOperandNode());
+        
+        emitter.emitBinaryOperator(node);
     }
 
     @Override

@@ -23,8 +23,13 @@ import java.io.FilterWriter;
 
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
+import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
+import org.apache.flex.compiler.internal.tree.as.FunctionNode;
+import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.tree.as.IASNode;
+import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
@@ -62,6 +67,20 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     }
 
     @Override
+    public void emitFunctionObject(IExpressionNode node)
+    {
+        FunctionObjectNode f = (FunctionObjectNode) node;
+        
+        FunctionNode fnode = f.getFunctionNode();
+        
+        write("function");
+        
+        emitParamters(fnode.getParameterNodes());
+       
+        emitFunctionScope(fnode.getScopedNode());
+    }
+
+    @Override
     public void emitField(IVariableNode node)
     {
         super.emitField(node);
@@ -80,41 +99,29 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     @Override
     public void emitVarDeclaration(IVariableNode node)
     {
-        super.emitVarDeclaration(node);
-        //        getWalker().walk(node.getChild(0)); // VariableExpressionNode
-        //        write(" ");
-        //        getWalker().walk(node.getNameExpressionNode());
-        //        // add :Type
-        //        {
-        //            IExpressionNode tnode = node.getVariableTypeNode();
-        //            if (tnode instanceof ILanguageIdentifierNode)
-        //            {
-        //                ILanguageIdentifierNode lnode = (ILanguageIdentifierNode) tnode;
-        //                if (lnode.getKind() != ILanguageIdentifierNode.LanguageIdentifierKind.ANY_TYPE)
-        //                    write(":");
-        //            }
-        //            else
-        //            {
-        //                write(":");
-        //            }
-        //
-        //            getWalker().walk(node.getVariableTypeNode());
-        //        }
-        //        IExpressionNode vnode = node.getAssignedValueNode();
-        //        if (vnode != null)
-        //        {
-        //            write(" = ");
-        //            if (vnode instanceof FunctionObjectNode)
-        //            {
-        //                //getWalker().pushContext(TraverseContext.FUNCTION);
-        //                getWalker().walk(vnode.getChild(0)); // IFunctionNode
-        //                //getWalker().popContext(TraverseContext.FUNCTION);
-        //            }
-        //            else
-        //            {
-        //                getWalker().walk(vnode);
-        //            }
-        //        }
+        if (!(node instanceof ChainedVariableNode))
+        {
+            emitMemberKeyword(node);
+        }
+
+        emitDeclarationName(node);
+        emitAssignedValue(node.getAssignedValueNode());
+
+        if (!(node instanceof ChainedVariableNode))
+        {
+            // check for chained variables
+            int len = node.getChildCount();
+            for (int i = 0; i < len; i++)
+            {
+                IASNode child = node.getChild(i);
+                if (child instanceof ChainedVariableNode)
+                {
+                    write(",");
+                    write(" ");
+                    emitVarDeclaration((IVariableNode) child);
+                }
+            }
+        }
     }
 
     @Override

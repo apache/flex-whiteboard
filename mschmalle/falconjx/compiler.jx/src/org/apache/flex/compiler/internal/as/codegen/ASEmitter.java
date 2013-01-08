@@ -38,6 +38,7 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
+import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
@@ -542,7 +543,7 @@ public class ASEmitter implements IASEmitter
         // TODO (mschmalle) FunctionObjectNode; does this need specific treatment?
         emitMethodScope(node);
     }
-
+    
     protected ITypeNode findTypeNode(IPackageNode node)
     {
         IScopedNode scope = node.getScopedNode();
@@ -569,4 +570,18 @@ public class ASEmitter implements IASEmitter
         return null;
     }
 
+    //--------------------------------------------------------------------------
+    // Operators
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitBinaryOperator(IBinaryOperatorNode node)
+    {
+        getWalker().walk(node.getLeftOperandNode());
+        if (node.getNodeID() != ASTNodeID.Op_CommaID)
+            write(" ");
+        write(node.getOperator().getOperatorText());
+        write(" ");
+        getWalker().walk(node.getRightOperandNode());
+    }
 }
