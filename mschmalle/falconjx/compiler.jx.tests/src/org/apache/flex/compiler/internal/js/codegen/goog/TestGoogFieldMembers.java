@@ -55,7 +55,6 @@ public class TestGoogFieldMembers extends TestFieldMembers
     @Test
     public void testField_withType()
     {
-    	// same as 'testField' 
         IVariableNode node = getField("var foo:int;");
         visitor.visitVariable(node);
         assertOut("/**\n * @type {number}\n */\nA.prototype.foo");
@@ -65,7 +64,6 @@ public class TestGoogFieldMembers extends TestFieldMembers
     @Test
     public void testField_withTypeValue()
     {
-    	// same as 'testField' 
         IVariableNode node = getField("var foo:int = 420;");
         visitor.visitVariable(node);
         assertOut("/**\n * @type {number}\n */\nA.prototype.foo = 420");
@@ -86,7 +84,7 @@ public class TestGoogFieldMembers extends TestFieldMembers
     {
         IVariableNode node = getField("mx_internal var foo:int = 420;");
         visitor.visitVariable(node);
-        // we ignore custom namespaces completely (are there side effects I'm missing?)
+        // (erikdebruin) we ignore custom namespaces completely (are there side effects I'm missing?)
         assertOut("/**\n * @type {number}\n */\nA.prototype.foo = 420");
     }
 
@@ -120,16 +118,12 @@ public class TestGoogFieldMembers extends TestFieldMembers
     }
 
     @Override
-    @Ignore
     @Test
     public void testField_withList()
     {
-    	// TODO (erikdebruin) I think we need to write out all the 'chained'
-    	//                    declarations on their own lines to get the 
-    	//                    annotations right
         IVariableNode node = getField("protected var a:int = 4, b:int = 11, c:int = 42;");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("/**\n * @protected\n * @type {number}\n */\nA.prototype.a = 4;\n\n/**\n * @protected\n * @type {number}\n */\nA.prototype.b = 11;\n\n/**\n * @protected\n * @type {number}\n */\nA.prototype.c = 42");
     }
 
     //--------------------------------------------------------------------------
@@ -178,7 +172,7 @@ public class TestGoogFieldMembers extends TestFieldMembers
     {
         IVariableNode node = getField("mx_internal static const foo:int = 420;");
         visitor.visitVariable(node);
-        // we ignore custom namespaces completely (are there side effects I'm missing?)
+        // (erikdebruin) we ignore custom namespaces completely (are there side effects I'm missing?)
         assertOut("/**\n * @const\n * @type {number}\n */\nA.foo = 420");
     }
 

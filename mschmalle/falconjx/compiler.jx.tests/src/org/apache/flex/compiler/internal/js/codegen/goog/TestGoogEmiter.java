@@ -25,7 +25,6 @@ import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -55,7 +54,7 @@ public class TestGoogEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        //assertOut("");
+        assertOut("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('org.apache.flex.html.staticControls.TextButton');\n\n/**\n * @constructor\n */\ncom.example.components.MyTextButton = function() {\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n};\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {Number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
     }
 
     @Test
@@ -88,16 +87,12 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = true;
     }
 
-    @Ignore
     @Test
     public void testSimpleMultipleParameter_JSDoc()
     {
-        // jsdoc still needs to be sorted out before tests are executing
         IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
-        assertOut("/**\n * @this {foo.bar.A}\n * @param {int} bar\n * @param {String} baz\n"
-                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A.prototype.method1 = "
-                + "function(bar, baz, goo) {\n}");
+        assertOut("/**\n * @param {number} bar\n * @param {string} baz\n * @param {A} goo\n */\nfoo.bar.A.prototype.method1 = function(bar, baz, goo) {\n}");
     }
 
     @Test
@@ -133,7 +128,7 @@ public class TestGoogEmiter extends TestWalkerBase
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
-        assertOutDebug("foo.bar.A.prototype.method1 = function(bar, bax) {\n"
+        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n"
                 + "\tbar = typeof bar !== 'undefined' ? bar : 42;\n"
                 + "\tbax = typeof bax !== 'undefined' ? bax : 4;\n"
                 + "\tif (a)\n\t\tfoo();\n}");

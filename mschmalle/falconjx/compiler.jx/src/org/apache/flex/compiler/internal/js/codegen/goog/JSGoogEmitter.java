@@ -32,6 +32,7 @@ import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
+import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogEmitter;
@@ -67,11 +68,6 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------
-
-    public void emitJSDocPackgeHeader(IPackageNode node)
-    {
-        //        getDocEmitter().emmitPackageHeader(node);
-    }
 
     @Override
     public void emitJSDocVariable(IVariableNode node)
@@ -221,7 +217,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         IClassDefinition definition = getClassDefinition(node);
 
         emitJSDocVariable(node);
-        
+
         String root = "";
         if (!node.isConst())
         	root = "prototype.";
@@ -232,6 +228,21 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         {
             write(" = ");
             getWalker().walk(vnode);
+        }
+
+        if (!(node instanceof ChainedVariableNode))
+        {
+            int len = node.getChildCount();
+            for (int i = 0; i < len; i++)
+            {
+                IASNode child = node.getChild(i);
+                if (child instanceof ChainedVariableNode)
+                {
+                    write(";");
+                    write("\n\n");
+                    emitField((IVariableNode) child);
+                }
+            }
         }
     }
 
@@ -282,10 +293,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
                 }
 
                 // @return
-                // TODO (erikdebruin) only emit @return when there actually is 
-                //					  a return value defined
                 String returnType = node.getReturnType();
-                if (returnType != "")
+                if (returnType != "" && returnType != "void")
                 {
                     if (!hasDoc)
                     {
@@ -368,74 +377,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         emitDefaultParameterCodeBlock(node);
     }
 
-    /*
-    private void emitDefaultParameterCodeBlock_Alternate(IFunctionNode node)
-    {
-        // TODO (mschmalle) test for ... rest 
-        // if default parameters exist, produce the init code
-        IParameterNode[] pnodes = node.getParameterNodes();
-        Map<Integer, IParameterNode> defaults = getDefaults(pnodes);
-        if (pnodes.length == 0)
-            return;
-
-        final StringBuilder code = new StringBuilder();
-        if (defaults != null)
-        {
-            List<IParameterNode> parameters = new ArrayList<IParameterNode>(
-                    defaults.values());
-            Collections.reverse(parameters);
-
-            int len = defaults.size();
-            int numDefaults = 0;
-            // make the header in reverse order
-            for (IParameterNode pnode : parameters)
-            {
-                if (pnode != null)
-                {
-                    code.append(getIndent(numDefaults));
-                    code.append("if (arguments.length < " + len + ") {\n");
-                    numDefaults++;
-                }
-                len--;
-            }
-
-            Collections.reverse(parameters);
-            for (IParameterNode pnode : parameters)
-            {
-                if (pnode != null)
-                {
-                    code.append(getIndent(numDefaults));
-                    code.append(pnode.getName());
-                    code.append(" = ");
-                    code.append(pnode.getDefaultValue());
-                    code.append(";\n");
-                    code.append(getIndent(numDefaults - 1));
-                    code.append("}");
-                    if (numDefaults > 1)
-                        code.append("\n");
-                    numDefaults--;
-                }
-            }
-            IScopedNode sbn = node.getScopedNode();
-            boolean hasBody = sbn.getChildCount() > 0;
-            // adds the current block indent to the generated code
-            String indent = getIndent(getCurrentIndent() + (!hasBody ? 1 : 0));
-            String result = code.toString().replaceAll("\n", "\n" + indent);
-            // if the block dosn't have a body (children), need to add indent to head
-            if (!hasBody)
-                result = indent + result;
-            // have to add newline after the replace or we get an extra indent
-            result += "\n";
-            write(result);
-        }
-    }
-	*/
-    
     private void emitDefaultParameterCodeBlock(IFunctionNode node)
     {
-        // (erikdebruin) implemented alternative approach to handling 
-        //               default parameter values in JS
-
         IParameterNode[] pnodes = node.getParameterNodes();
         if (pnodes.length == 0)
             return;
