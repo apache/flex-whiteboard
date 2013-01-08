@@ -39,6 +39,7 @@ import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
+import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
@@ -226,6 +227,97 @@ public class ASEmitter implements IASEmitter
         write("}");
     }
 
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitClass(IClassNode node)
+    {
+        write(node.getNamespace());
+        write(" ");
+
+        if (node.hasModifier(ASModifier.FINAL))
+        {
+            write("final");
+            write(" ");
+        }
+        write("class");
+        write(" ");
+        getWalker().walk(node.getNameExpressionNode());
+        write(" ");
+
+        IExpressionNode bnode = node.getBaseClassExpressionNode();
+        if (bnode != null)
+        {
+            write("extends");
+            write(" ");
+            getWalker().walk(bnode);
+            write(" ");
+        }
+
+        IExpressionNode[] inodes = node.getImplementedInterfaceNodes();
+        final int ilen = inodes.length;
+        if (ilen != 0)
+        {
+            write("implements");
+            write(" ");
+            for (int i = 0; i < ilen; i++)
+            {
+            	getWalker().walk(inodes[i]);
+                if (i < ilen - 1)
+                {
+                    write(",");
+                    write(" ");
+                }
+            }
+            write(" ");
+        }
+
+        write("{");
+
+        // fields, methods, namespaces
+        final IDefinitionNode[] members = node.getAllMemberNodes();
+        if (members.length > 0)
+        {
+            indentPush();
+            write("\n");
+
+            // TODO (mschmalle) handle null constructor
+
+            // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            final int len = members.length;
+            int i = 0;
+            for (IDefinitionNode mnode : members)
+            {
+                getWalker().walk(mnode);
+                if (mnode.getNodeID() == ASTNodeID.VariableID)
+                {
+                    write(";");
+                    if (i < len - 1)
+                        write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.FunctionID)
+                {
+                    if (i < len - 1)
+                        write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.GetterID
+                        || mnode.getNodeID() == ASTNodeID.SetterID)
+                {
+                    if (i < len - 1)
+                        write("\n");
+                }
+                i++;
+            }
+
+            indentPop();
+        }
+
+        write("\n");
+        write("}");
+    }
+    
     //--------------------------------------------------------------------------
     // 
     //--------------------------------------------------------------------------

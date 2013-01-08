@@ -84,7 +84,7 @@ public class TestGoogExpressions extends TestExpressions
                 "var a:Object = function(foo:int, bar:String = 'goo'):int{return -1;};",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOutDebug("var a = function(foo, bar) {\n\tbar = typeof bar !== 'undefined' ? bar : 'goo';\n\treturn -1;\n}");
+        assertOut("var a = function(foo, bar) {\n\tbar = typeof bar !== 'undefined' ? bar : 'goo';\n\treturn -1;\n}");
     }
 
     @Override

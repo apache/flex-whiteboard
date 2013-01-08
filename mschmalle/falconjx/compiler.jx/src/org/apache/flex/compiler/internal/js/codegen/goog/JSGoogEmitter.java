@@ -156,14 +156,26 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             return;
 
         IClassNode cnode = (IClassNode) type;
-        IClassDefinition definition = cnode.getDefinition();
+        
+        emitClass(cnode);
+    }
+
+    @Override
+    public void emitPackageFooter(IPackageNode node)
+    {
+    }
+
+    @Override
+    public void emitClass(IClassNode node)
+    {
+        IClassDefinition definition = node.getDefinition();
 
         // constructor
         emitConstructor((IFunctionNode) definition.getConstructor().getNode());
         write(";\n");
         write("\n");
 
-        IDefinitionNode[] members = cnode.getAllMemberNodes();
+        IDefinitionNode[] members = node.getAllMemberNodes();
         for (IDefinitionNode dnode : members)
         {
             if (dnode instanceof IVariableNode)
@@ -186,17 +198,97 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
                 }
             }
         }
-    }
 
-    @Override
-    public void emitPackageFooter(IPackageNode node)
-    {
-    }
+        /*
+    	write(node.getNamespace());
+        write(" ");
 
-    @Override
-    public void emitConstructor(IFunctionNode node)
-    {
+        if (node.hasModifier(ASModifier.FINAL))
+        {
+            write("final");
+            write(" ");
+        }
+        write("class");
+        write(" ");
+        getWalker().walk(node.getNameExpressionNode());
+        write(" ");
+
+        IExpressionNode bnode = node.getBaseClassExpressionNode();
+        if (bnode != null)
+        {
+            write("extends");
+            write(" ");
+            getWalker().walk(bnode);
+            write(" ");
+        }
+
+        IExpressionNode[] inodes = node.getImplementedInterfaceNodes();
+        final int ilen = inodes.length;
+        if (ilen != 0)
+        {
+            write("implements");
+            write(" ");
+            for (int i = 0; i < ilen; i++)
+            {
+            	getWalker().walk(inodes[i]);
+                if (i < ilen - 1)
+                {
+                    write(",");
+                    write(" ");
+                }
+            }
+            write(" ");
+        }
+
+        write("{");
+
+        // fields, methods, namespaces
+        final IDefinitionNode[] members = node.getAllMemberNodes();
+        if (members.length > 0)
+        {
+            indentPush();
+            write("\n");
+
+            final int len = members.length;
+            int i = 0;
+            for (IDefinitionNode mnode : members)
+            {
+                getWalker().walk(mnode);
+                if (mnode.getNodeID() == ASTNodeID.VariableID)
+                {
+                    write(";");
+                    if (i < len - 1)
+                        write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.FunctionID)
+                {
+                    if (i < len - 1)
+                        write("\n");
+                }
+                else if (mnode.getNodeID() == ASTNodeID.GetterID
+                        || mnode.getNodeID() == ASTNodeID.SetterID)
+                {
+                    if (i < len - 1)
+                        write("\n");
+                }
+                i++;
+            }
+
+            indentPop();
+        }
+
+        write("\n");
+        write("}");
+        */
+    }
+    
+	@Override
+	public void emitConstructor(IFunctionNode node)
+	{
         IClassDefinition definition = getClassDefinition(node);
+        IClassNode cnode = (IClassNode) definition.getNode();
+    	
+        IExpressionNode bnode = cnode.getBaseClassExpressionNode();
 
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
@@ -210,7 +302,19 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         write(" ");
         write("function");
         emitParamters(node.getParameterNodes());
-        emitMethodScope(node.getScopedNode());
+        if (node.getScopedNode().getChildCount() > 0 || bnode != null)
+        	emitMethodScope(node.getScopedNode());
+        else
+        	write(" {\n}");
+        
+        if (bnode != null)
+        {
+            write("\ngoog.inherits('");
+            write("childClass");
+            write("', '");
+            write("parentClass");
+            write("')");
+        }
     }
 
     @Override
@@ -374,6 +478,23 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     @Override
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
+    	// TODO (erikdebruin) create helper method
+        IClassDefinition definition = getClassDefinition(node);
+
+        IClassNode cnode = (IClassNode) definition.getNode();
+    	
+        IExpressionNode bnode = cnode.getBaseClassExpressionNode();
+        if (bnode != null)
+        {
+            if (!hasBody(node))
+            {
+                write("\t");
+            }
+            
+        	// TODO (erikdebruin) handle arguments when calling super
+            write("goog.base(this, optArgs);\n\n");
+        }
+        
         emitRestParameterCodeBlock(node);
 
         emitDefaultParameterCodeBlock(node);

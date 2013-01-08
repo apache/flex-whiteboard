@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
-import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
@@ -278,100 +277,9 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     @Override
     public void visitClass(IClassNode node)
     {
-        typeDefinition = node.getDefinition();
-
         debug("visitClass()");
 
-        emitter.write(node.getNamespace());
-        emitter.write(" ");
-
-        if (node.hasModifier(ASModifier.FINAL))
-        {
-            emitter.write("final");
-            emitter.write(" ");
-        }
-        emitter.write("class");
-        emitter.write(" ");
-        walk(node.getNameExpressionNode());
-        emitter.write(" ");
-
-        IExpressionNode bnode = node.getBaseClassExpressionNode();
-        if (bnode != null)
-        {
-            emitter.write("extends");
-            emitter.write(" ");
-            walk(bnode);
-            emitter.write(" ");
-        }
-
-        IExpressionNode[] inodes = node.getImplementedInterfaceNodes();
-        final int ilen = inodes.length;
-        if (ilen != 0)
-        {
-            emitter.write("implements");
-            emitter.write(" ");
-            for (int i = 0; i < ilen; i++)
-            {
-                walk(inodes[i]);
-                if (i < ilen - 1)
-                {
-                    emitter.write(",");
-                    emitter.write(" ");
-                }
-            }
-            emitter.write(" ");
-        }
-
-        emitter.write("{");
-
-        // fields, methods, namespaces
-        final IDefinitionNode[] members = node.getAllMemberNodes();
-        if (members.length > 0)
-        {
-            emitter.indentPush();
-            emitter.write("\n");
-
-            // there is always an implicit constructor if not explicit
-            currentConstructor = getConstructor(members);
-            if (currentConstructor == null)
-            {
-                // TODO (mschmalle) handle null constructor
-            }
-
-            // TODO (mschmalle) Check to see if the node order is the order of member parsed
-            final int len = members.length;
-            int i = 0;
-            for (IDefinitionNode mnode : members)
-            {
-                walk(mnode);
-                if (mnode.getNodeID() == ASTNodeID.VariableID)
-                {
-                    emitter.write(";");
-                    if (i < len - 1)
-                        emitter.write("\n");
-                }
-                else if (mnode.getNodeID() == ASTNodeID.FunctionID)
-                {
-                    if (i < len - 1)
-                        emitter.write("\n");
-                }
-                else if (mnode.getNodeID() == ASTNodeID.GetterID
-                        || mnode.getNodeID() == ASTNodeID.SetterID)
-                {
-                    if (i < len - 1)
-                        emitter.write("\n");
-                }
-                i++;
-            }
-
-            emitter.indentPop();
-        }
-
-        emitter.write("\n");
-        emitter.write("}");
-
-        typeDefinition = null;
-        currentConstructor = null;
+        emitter.emitClass(node);
     }
 
     @Override

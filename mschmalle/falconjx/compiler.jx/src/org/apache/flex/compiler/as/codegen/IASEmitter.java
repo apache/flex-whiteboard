@@ -23,6 +23,7 @@ import java.io.Writer;
 
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
+import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
@@ -80,6 +81,13 @@ public interface IASEmitter
     void emitPackageContents(IPackageNode node);
 
     void emitPackageFooter(IPackageNode node);
+
+    /**
+     * Emit a Class.
+     * 
+     * @param node The {@link IClassNode} class.
+     */
+    void emitClass(IClassNode node);
 
     /**
      * Emit a documentation comment for a Class field or constant
