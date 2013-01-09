@@ -500,7 +500,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         IClassNode cnode = (IClassNode) node.getAncestorOfType(IClassNode.class);
     	
         IExpressionNode bnode = cnode.getBaseClassExpressionNode();
-        if (bnode != null)
+        if (bnode != null && node.isConstructor())
         {
             if (!hasBody(node))
                 write("\t");
