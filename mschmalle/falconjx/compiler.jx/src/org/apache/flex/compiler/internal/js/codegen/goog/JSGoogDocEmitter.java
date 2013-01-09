@@ -21,6 +21,7 @@ package org.apache.flex.compiler.internal.js.codegen.goog;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
+import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.internal.js.codegen.JSDocEmitter;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
@@ -78,18 +79,14 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitExtends(IClassDefinition superDefinition)
     {
-        final String qname = superDefinition.getQualifiedName();
-        // TODO (mschmalle) test Object is this the only class that dosn't need a tag?
-        if (qname.equals("Object"))
-            return;
-        write(" * @extends {" + qname + "}\n");
+        write(" * @extends {" + superDefinition.getQualifiedName() + "}\n");
     }
 
     @Override
-    public void emitImplements(IClassNode node)
+    public void emitImplements(IReference reference)
     {
-        // TODO Auto-generated method stub
-
+    	// TODO (erikdebruin) we need to get the fully qualified name...
+        write(" * @implements {" + reference.getName() + "}\n");
     }
 
     @Override

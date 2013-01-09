@@ -30,6 +30,7 @@ import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
+import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
@@ -96,19 +97,26 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     }
 
     @Override
-    public void emitJSDocConstructor(IFunctionNode node,
-            ICompilerProject project)
+    public void emitJSDocConstructor(IFunctionNode node, ICompilerProject project)
     {
-        IClassDefinition parent = (IClassDefinition) node.getDefinition()
-                .getParent();
-        IClassDefinition superClass = parent.resolveBaseClass(project);
-
         getDoc().begin();
+        
         getDoc().emitConstructor(node);
-        if (superClass != null)
-            getDoc().emitExtends(superClass);
-        if (containsThisReference(node))
-            getDoc().emitThis(parent);
+        
+        boolean hasSuperClass = hasSuperClass(node, project);
+        if (hasSuperClass)
+            getDoc().emitExtends(getSuperClassDefinition(node, project));
+        
+        boolean implementsInterfaces = implementsInterfaces(node);
+        if (implementsInterfaces)
+        {
+        	IReference[] references = getImplementedInterfaces(node);
+            for (IReference reference : references)
+            {
+            	getDoc().emitImplements(reference);
+            }
+        }
+        
         getDoc().end();
     }
 
@@ -286,34 +294,36 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 	public void emitConstructor(IFunctionNode node)
 	{
         IClassDefinition definition = getClassDefinition(node);
-        IClassNode cnode = (IClassNode) definition.getNode();
-    	
-        IExpressionNode bnode = cnode.getBaseClassExpressionNode();
-
+        
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
-        emitJSDocConstructor(node, getWalker().getProject());
+        ICompilerProject project = getWalker().getProject();
+        
+        emitJSDocConstructor(node, project);
 
-        String qname = definition.getQualifiedName();
-        write(qname);
+        boolean hasSuperClass = hasSuperClass(node, project);
+        
+    	String qname = definition.getQualifiedName();
+    	write(qname);
         write(" ");
         write("=");
         write(" ");
         write("function");
         emitParamters(node.getParameterNodes());
-        if (node.getScopedNode().getChildCount() > 0 || bnode != null)
+        if (node.getScopedNode().getChildCount() > 0 || hasSuperClass)
         	emitMethodScope(node.getScopedNode());
         else
         	write(" {\n}");
         
-        if (bnode != null)
+        if (hasSuperClass)
         {
-            write("\ngoog.inherits('");
-            write("childClass");
-            write("', '");
-            write("parentClass");
-            write("')");
+            write("\ngoog.inherits(");
+            write(qname);
+            write(", ");
+            String sname = getSuperClassDefinition(node, project).getQualifiedName();
+            write(sname);
+            write(")");
         }
     }
 
@@ -478,26 +488,26 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     @Override
     public void emitFunctionBlockHeader(IFunctionNode node)
     {
-    	// TODO (erikdebruin) create helper method
-        IClassDefinition definition = getClassDefinition(node);
+    	emitSuperCallCodeBlock(node);
+        
+        emitRestParameterCodeBlock(node);
 
-        IClassNode cnode = (IClassNode) definition.getNode();
+        emitDefaultParameterCodeBlock(node);
+    }
+
+    private void emitSuperCallCodeBlock(IFunctionNode node)
+    {
+        IClassNode cnode = (IClassNode) node.getAncestorOfType(IClassNode.class);
     	
         IExpressionNode bnode = cnode.getBaseClassExpressionNode();
         if (bnode != null)
         {
             if (!hasBody(node))
-            {
                 write("\t");
-            }
             
         	// TODO (erikdebruin) handle arguments when calling super
-            write("goog.base(this, optArgs);\n\n");
+            write("goog.base(this);\n");
         }
-        
-        emitRestParameterCodeBlock(node);
-
-        emitDefaultParameterCodeBlock(node);
     }
 
     private void emitDefaultParameterCodeBlock(IFunctionNode node)
@@ -618,9 +628,35 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
     private static IClassDefinition getClassDefinition(IDefinitionNode node)
     {
-        IClassNode tnode = (IClassNode) node
-                .getAncestorOfType(IClassNode.class);
+        IClassNode tnode = (IClassNode) node.getAncestorOfType(IClassNode.class);
         return tnode.getDefinition();
+    }
+
+    private static IClassDefinition getSuperClassDefinition(IDefinitionNode node, ICompilerProject project)
+    {
+        IClassDefinition parent = (IClassDefinition) node.getDefinition().getParent();
+        IClassDefinition superClass = parent.resolveBaseClass(project);
+        return superClass;
+    }
+
+    private static boolean hasSuperClass(IDefinitionNode node, ICompilerProject project)
+    {
+    	IClassDefinition superClassDefinition = getSuperClassDefinition(node, project);
+    	String qname = superClassDefinition.getQualifiedName();
+    	return superClassDefinition != null && !qname.equals("Object");
+    }
+
+    private static IReference[] getImplementedInterfaces(IDefinitionNode node)
+    {
+    	IClassDefinition classDefinition = getClassDefinition(node);
+    	IReference[] interfaceReferences = classDefinition.getImplementedInterfaceReferences();
+    	return interfaceReferences;
+    }
+
+    private static boolean implementsInterfaces(IDefinitionNode node)
+    {
+    	IReference[] interfaceReferences = getImplementedInterfaces(node);
+    	return interfaceReferences.length > 0;
     }
 
     private static boolean hasBody(IFunctionNode node)

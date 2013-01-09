@@ -21,6 +21,7 @@ package org.apache.flex.compiler.js.codegen.goog;
 
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
+import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.js.codegen.IJSDocEmitter;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
@@ -116,7 +117,8 @@ public interface IJSGoogDocEmitter extends IJSDocEmitter
 
     void emitExtends(IClassDefinition superDefinition);
 
-    void emitImplements(IClassNode node);
+    //void emitImplements(IClassNode node);
+    void emitImplements(IReference reference);
 
     void emitInheritDoc(IClassNode node);
 

@@ -45,8 +45,8 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimple()
     {
         String code = "package com.example.components {"
-                + "import org.apache.flex.html.staticControls.TextButton;"
-                + "public class MyTextButton extends TextButton {"
+                + "import spark.components.Button;"
+                + "public class MyTextButton extends Button {"
                 + "public function MyTextButton() {if (foo() != 42) { bar(); } }"
                 + "private var _privateVar:String = \"do \";"
                 + "public var publicProperty:Number = 100;"
@@ -54,7 +54,7 @@ public class TestGoogEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        assertOutDebug("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('org.apache.flex.html.staticControls.TextButton');\n\n/**\n * @constructor\n */\ncom.example.components.MyTextButton = function() {\n\tgoog.base(this, optArgs);\n\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n}\ngoog.inherits('childClass', 'parentClass');\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\tgoog.base(this, optArgs);\n\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
+        assertOutDebug("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('spark.components.Button');\n\n/**\n * @constructor\n * @extends {spark.components.Button}\n */\ncom.example.components.MyTextButton = function() {\n\tgoog.base(this);\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n}\ngoog.inherits(com.example.components.MyTextButton, spark.components.Button);\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\tgoog.base(this);\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
     }
 
     @Test

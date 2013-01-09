@@ -160,9 +160,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     {
         IFunctionNode node = getMethod("public function A(){this.foo;}");
         visitor.visitConstructor(node);
-        // TODO Erik; Do we need the @this tag if it's annotated with @constructor?
-        // Right now I have it inserting if 'this' is present in the constructor scope
-        assertOut("/**\n * @constructor\n * @this {A}\n */\nA = function() {\n\tthis.foo;\n}");
+        assertOut("/**\n * @constructor\n */\nA = function() {\n\tthis.foo;\n}");
     }
     
     @Test

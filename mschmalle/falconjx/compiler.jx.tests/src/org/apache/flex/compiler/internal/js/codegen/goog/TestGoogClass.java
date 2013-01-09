@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.js.codegen.goog;
 
 import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.as.codegen.TestClass;
-import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IFileNode;
@@ -71,69 +70,67 @@ public class TestGoogClass extends TestClass
     @Test
     public void testSimpleExtends()
     {
-        IClassNode node = getClassNode("public class A extends B {public function A() {}}");
+		// TODO (erikdebruin) why do we need to put use an 'actual' component 
+		//                    (e.g. spark.components.Button) here if we want to 
+		//                    trigger the '@extends' notation?
+        IClassNode node = getClassNode("public class A extends Button {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n\tgoog.base(this, optArgs);\n\n}\ngoog.inherits('childClass', 'parentClass');\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testSimpleImplements()
     {
-        IClassNode node = getClassNode("public class A implements IA {}");
+        IClassNode node = getClassNode("public class A implements IEventDispatcher {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n};\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testSimpleImplementsMultiple()
     {
-        IClassNode node = getClassNode("public class A implements IA, IB, IC {}");
+        IClassNode node = getClassNode("public class A implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n};\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testSimpleExtendsImplements()
     {
-        IClassNode node = getClassNode("public class A extends B implements IA {}");
+        IClassNode node = getClassNode("public class A extends Button implements IEventDispatcher {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testSimpleExtendsImplementsMultiple()
     {
-        IClassNode node = getClassNode("public class A extends B implements IA, IB, IC {}");
+        IClassNode node = getClassNode("public class A extends Button implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testSimpleFinalExtendsImplementsMultiple()
     {
-        IClassNode node = getClassNode("public final class A extends B implements IA, IB, IC {}");
+		// TODO (erikdebruin) 'final' keyword: see 'testSimpleFinal' above
+        IClassNode node = getClassNode("public final class A extends Button implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testQualifiedExtendsImplementsMultiple()
     {
-        IClassNode node = getClassNode("public class A extends goo.B implements foo.bar.IA, goo.foo.IB, baz.boo.IC {}");
+        IClassNode node = getClassNode("public class A extends spark.components.Button implements flash.events.IEventDispatcher, mx.logging.ILogger {public function A() {}}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
     }
 
 	@Ignore
@@ -144,13 +141,10 @@ public class TestGoogClass extends TestClass
 		// TODO (erikdebruin) replace 'super' call with 'goog.base()'... Can you
 		//                    call 'super' if the class doesn't extend any other?
         IClassNode node = getClassNode("public class A {public function A() {super('foo', 42);}}");
-        JSSharedData.OUTPUT_JSDOC = false;
         visitor.visitClass(node);
-        JSSharedData.OUTPUT_JSDOC = true;
-        assertOut("org.apache.flex.A = function() {\n\tsuper('foo', 42);\n};\n\n");
+        assertOut("");
     }
     
-	@Ignore
 	@Override
     @Test
     public void testFields()
@@ -158,10 +152,9 @@ public class TestGoogClass extends TestClass
         IClassNode node = getClassNode("public class A {public var a:Object;protected var b:String; "
                 + "private var c:int; internal var d:uint; var e:Number}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @type {Object}\n */\norg.apache.flex.A.prototype.a;\n\n/**\n * @protected\n * @type {string}\n */\norg.apache.flex.A.prototype.b;\n\n/**\n * @private\n * @type {number}\n */\norg.apache.flex.A.prototype.c;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.d;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.e;\n\n");
     }
 
-	@Ignore
 	@Override
     @Test
     public void testConstants()
@@ -172,7 +165,7 @@ public class TestGoogClass extends TestClass
                 "private static const C:Number = 42;" +
                 "foo_bar static const C:String = 'me' + 'you';");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOutDebug("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @const\n * @type {number}\n */\norg.apache.flex.A.A = 42;\n\n/**\n * @protected\n * @const\n * @type {number}\n */\norg.apache.flex.A.B = 42;\n\n/**\n * @private\n * @const\n * @type {number}\n */\norg.apache.flex.A.C = 42;\n\n/**\n * @const\n * @type {string}\n */\norg.apache.flex.A.C = 'me' + 'you';\n\n");
     }
     
 	@Ignore
@@ -180,6 +173,7 @@ public class TestGoogClass extends TestClass
     @Test
     public void testAccessors()
     {
+		// TODO (erikdebruin) fix accessor handling first
         IClassNode node = getClassNode("public class A {"
                 + "public function get foo1():Object{return null;}"
                 + "public function set foo1(value:Object):void{}"
@@ -192,7 +186,7 @@ public class TestGoogClass extends TestClass
                 + "foo_bar function get foo6():Object{return null;}"
                 + "foo_bar function set foo6(value:Object):void{}" + "}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("");
     }
 
 	@Ignore
@@ -200,6 +194,8 @@ public class TestGoogClass extends TestClass
     @Test
     public void testMethods()
     {
+		// TODO (erikdebruin) 1) handle namespaces (private, protected, custom)
+		//                    2) handle 'super' calls
         IClassNode node = getClassNode("public class A {"
                 + "public function foo1():Object{return null;}"
                 + "public final function foo1a():Object{return null;}"
@@ -211,13 +207,13 @@ public class TestGoogClass extends TestClass
                 + "public static function foo7(value:Object):void{}"
                 + "foo_bar static function foo7(value:Object):void{}" + "}");
         visitor.visitClass(node);
-        //assertOut("");
+        assertOut("");
     }
 
 	@Override
     protected IClassNode getClassNode(String code)
     {
-        String source = "package org.apache.flex {" + code + "}";
+        String source = "package org.apache.flex {import flash.events.IEventDispatcher;import mx.logging.ILogger;import spark.components.Button;" + code + "}";
         IFileNode node = getFileNode(source);
         IClassNode child = (IClassNode) findFirstDescendantOfType(node, IClassNode.class);
         return child;
