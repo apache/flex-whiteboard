@@ -28,7 +28,6 @@ import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
-import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 
 /**
@@ -40,13 +39,6 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     public JSEmitter(FilterWriter out)
     {
         super(out);
-    }
-
-    public void emitConstructor(IFunctionNode node)
-    {
-        // for now, we just call back, this is to allow custom handling
-        // straight from the emitter
-        getWalker().visitConstructor(node);
     }
 
     @Override

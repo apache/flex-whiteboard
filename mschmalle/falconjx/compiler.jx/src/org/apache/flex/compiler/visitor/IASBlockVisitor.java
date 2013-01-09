@@ -110,9 +110,6 @@ public interface IASBlockVisitor
 
     void visitFunction(IFunctionNode node);
 
-    // TODO (mschmalle) Figure out if the indirection is useful
-    void visitConstructor(IFunctionNode node);
-
     void visitGetter(IGetterNode node);
 
     void visitSetter(ISetterNode node);

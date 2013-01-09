@@ -58,29 +58,24 @@ public class JSAMDEmitter extends JSEmitter implements IJSAMDEmitter
     //--------------------------------------------------------------------------
 
     @Override
-    public void emitConstructor(IFunctionNode node)
-    {
-        IClassDefinition definition = getClassDefinition(node);
-
-        FunctionNode fn = (FunctionNode) node;
-        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
-
-        String qname = definition.getQualifiedName();
-        write(qname);
-        write(" ");
-        write("=");
-        write(" ");
-        write("function");
-        emitParamters(node.getParameterNodes());
-        emitMethodScope(node.getScopedNode());
-    }
-
-    @Override
     public void emitMethod(IFunctionNode node)
     {
         if (node.isConstructor())
         {
-            emitConstructor(node);
+            IClassDefinition definition = getClassDefinition(node);
+
+            FunctionNode fn = (FunctionNode) node;
+            fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
+
+            String qname = definition.getQualifiedName();
+            write(qname);
+            write(" ");
+            write("=");
+            write(" ");
+            write("function");
+            emitParamters(node.getParameterNodes());
+            emitMethodScope(node.getScopedNode());
+
             return;
         }
 

@@ -291,16 +291,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     }
 
     @Override
-    public void visitConstructor(IFunctionNode node)
-    {
-        // TODO (mschmalle) what to do about missing constructor node?
-        if (node == null)
-            return;
-        debug("visitConstructor()");
-        walk(node);
-    }
-
-    @Override
     public void visitVariable(IVariableNode node)
     {
         debug("visitVariable()");

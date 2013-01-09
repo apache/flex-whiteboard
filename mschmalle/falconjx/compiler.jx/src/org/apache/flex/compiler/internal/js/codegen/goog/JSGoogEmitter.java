@@ -129,7 +129,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         IClassDefinition definition = node.getDefinition();
 
         // constructor
-        emitConstructor((IFunctionNode) definition.getConstructor().getNode());
+        emitMethod((IFunctionNode) definition.getConstructor().getNode());
         write(";\n");
         write("\n");
 
@@ -240,43 +240,6 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
         */
     }
     
-	@Override
-	public void emitConstructor(IFunctionNode node)
-	{
-        IClassDefinition definition = getClassDefinition(node);
-        
-        FunctionNode fn = (FunctionNode) node;
-        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
-
-        ICompilerProject project = getWalker().getProject();
-        
-        getDoc().emitMethodDoc(node, project);
-
-        boolean hasSuperClass = hasSuperClass(node, project);
-        
-    	String qname = definition.getQualifiedName();
-    	write(qname);
-        write(" ");
-        write("=");
-        write(" ");
-        write("function");
-        emitParamters(node.getParameterNodes());
-        if (node.getScopedNode().getChildCount() > 0 || hasSuperClass)
-        	emitMethodScope(node.getScopedNode());
-        else
-        	write(" {\n}");
-        
-        if (hasSuperClass)
-        {
-            write("\ngoog.inherits(");
-            write(qname);
-            write(", ");
-            String sname = getSuperClassDefinition(node, project).getQualifiedName();
-            write(sname);
-            write(")");
-        }
-    }
-
     @Override
     public void emitField(IVariableNode node)
     {
@@ -327,32 +290,62 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     @Override
     public void emitMethod(IFunctionNode node)
     {
-        if (node.isConstructor())
-        {
-            emitConstructor(node);
-            return;
-        }
-
-        getDoc().emitMethodDoc(node, getWalker().getProject());
-        
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
+        ICompilerProject project = getWalker().getProject();
+        
+        getDoc().emitMethodDoc(node, project);
+        
+        boolean isConstructor = node.isConstructor();
+        
         String qname = getTypeDefinition(node).getQualifiedName();
         if (qname != null && !qname.equals(""))
         {
             write(qname);
-            write(".");
-            if (!fn.hasModifier(ASModifier.STATIC))
-                write("prototype.");
+            if (!isConstructor)
+            {
+            	write(".");
+            	if (!fn.hasModifier(ASModifier.STATIC))
+	            {
+	                write("prototype");
+	            	write(".");
+	            }
+            }
         }
 
-        emitMemberName(node);
+        if (!isConstructor)
+    		emitMemberName(node);
+        
         write(" ");
         write("=");
         write(" ");
         write("function");
+        
         emitParamters(node.getParameterNodes());
+
+        if (isConstructor)
+        {
+            boolean hasSuperClass = hasSuperClass(node, project);
+
+            if (node.getScopedNode().getChildCount() > 0 || hasSuperClass)
+            	emitMethodScope(node.getScopedNode());
+            else
+            	write(" {\n}");
+            
+            if (hasSuperClass)
+            {
+                write("\ngoog.inherits(");
+                write(qname);
+                write(", ");
+                String sname = getSuperClassDefinition(node, project).getQualifiedName();
+                write(sname);
+                write(")");
+            }
+            
+            return;
+        }
+
         emitMethodScope(node.getScopedNode());
     }
 

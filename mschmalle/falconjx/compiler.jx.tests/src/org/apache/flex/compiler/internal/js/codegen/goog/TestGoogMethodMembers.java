@@ -159,7 +159,7 @@ public class TestGoogMethodMembers extends TestMethodMembers
     public void testConstructor_withThisInBody()
     {
         IFunctionNode node = getMethod("public function A(){this.foo;}");
-        visitor.visitConstructor(node);
+        visitor.visitFunction(node);
         assertOut("/**\n * @constructor\n */\nA = function() {\n\tthis.foo;\n}");
     }
     
