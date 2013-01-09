@@ -276,6 +276,47 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     }
 
     @Override
+    public void emitVarDeclaration(IVariableNode node)
+    {
+        if (!(node instanceof ChainedVariableNode) && !node.isConst())
+        {
+            emitMemberKeyword(node);
+        }
+
+        IExpressionNode avnode = node.getAssignedValueNode();
+    	
+        if (avnode != null)
+        {
+	        String opCode = avnode.getNodeID().getParaphrase();
+	        if (opCode != "AnonymousFunction")
+	        	getDoc().emitVarDoc(node);
+        }
+        else
+        {
+        	getDoc().emitVarDoc(node);
+        }
+        
+        emitDeclarationName(node);
+        emitAssignedValue(avnode);
+
+        if (!(node instanceof ChainedVariableNode))
+        {
+            // check for chained variables
+            int len = node.getChildCount();
+            for (int i = 0; i < len; i++)
+            {
+                IASNode child = node.getChild(i);
+                if (child instanceof ChainedVariableNode)
+                {
+                    write(",");
+                    write(" ");
+                    emitVarDeclaration((IVariableNode) child);
+                }
+            }
+        }
+    }
+    
+    @Override
     public void emitGetAccessor(IGetterNode node)
     {
         emitObjectDefineProperty(node);

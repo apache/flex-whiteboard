@@ -73,7 +73,7 @@ public class TestGoogExpressions extends TestExpressions
         IVariableNode node = (IVariableNode) getNode("var a = function(){};",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOut("var a = function() {\n}");
+        assertOut("var /** @type {*} */ a = function() {\n}");
     }
 
     @Override
@@ -84,7 +84,7 @@ public class TestGoogExpressions extends TestExpressions
                 "var a:Object = function(foo:int, bar:String = 'goo'):int{return -1;};",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOut("var a = function(foo, bar) {\n\tbar = typeof bar !== 'undefined' ? bar : 'goo';\n\treturn -1;\n}");
+        assertOut("var /** @type {Object} */ a = function(foo, bar) {\n\tbar = typeof bar !== 'undefined' ? bar : 'goo';\n\treturn -1;\n}");
     }
 
     @Override

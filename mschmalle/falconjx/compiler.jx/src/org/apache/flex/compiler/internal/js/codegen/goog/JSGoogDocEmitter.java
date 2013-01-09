@@ -157,6 +157,23 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     }
 
     @Override
+    public void emitVarDoc(IVariableNode node)
+    {
+        if (!node.isConst())
+        {	
+        	emitTypeShort(node);
+        }
+        else
+        {
+        	write("\n"); // TODO (erikdebruin) check if this is needed
+        	begin();
+        	emitConst(node);
+        	emitType(node);
+        	end();
+        }
+    }
+    
+    @Override
     public void emitConst(IVariableNode node)
     {
         write(" * @const\n");
@@ -259,10 +276,14 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitType(IASNode node)
     {
-        //String type = SemanticUtils.getTypeOfStem(node, emitter.getProject());
         String type = ((IVariableNode) node).getVariableType(); 
-        // XXX need to map to js types
         write(" * @type {" + convertASTypeToJS(type) + "}\n");
+    }
+
+    public void emitTypeShort(IASNode node)
+    {
+        String type = ((IVariableNode) node).getVariableType(); 
+        write("/** @type {" + convertASTypeToJS(type) + "} */ ");
     }
 
     @Override

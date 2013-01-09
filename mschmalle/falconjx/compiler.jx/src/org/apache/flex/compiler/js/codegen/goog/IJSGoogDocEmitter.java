@@ -53,6 +53,8 @@ public interface IJSGoogDocEmitter extends IJSDocEmitter
 
     void emitMethodDoc(IFunctionNode node, ICompilerProject project);
 
+    void emitVarDoc(IVariableNode node);
+    
     /*
      * https://developers.google.com/closure/compiler/docs/js-for-compiler#types
      *- @const - Marks a variable as read-only. The compiler can inline @const variables

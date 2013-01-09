@@ -22,13 +22,10 @@ package org.apache.flex.compiler.internal.js.codegen;
 import java.io.FilterWriter;
 
 import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
-import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
-import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
-import org.apache.flex.compiler.tree.as.IVariableNode;
 
 /**
  * @author Michael Schmalle
@@ -55,31 +52,4 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
         emitFunctionScope(fnode.getScopedNode());
     }
 
-    @Override
-    public void emitVarDeclaration(IVariableNode node)
-    {
-        if (!(node instanceof ChainedVariableNode))
-        {
-            emitMemberKeyword(node);
-        }
-
-        emitDeclarationName(node);
-        emitAssignedValue(node.getAssignedValueNode());
-
-        if (!(node instanceof ChainedVariableNode))
-        {
-            // check for chained variables
-            int len = node.getChildCount();
-            for (int i = 0; i < len; i++)
-            {
-                IASNode child = node.getChild(i);
-                if (child instanceof ChainedVariableNode)
-                {
-                    write(",");
-                    write(" ");
-                    emitVarDeclaration((IVariableNode) child);
-                }
-            }
-        }
-    }
 }
