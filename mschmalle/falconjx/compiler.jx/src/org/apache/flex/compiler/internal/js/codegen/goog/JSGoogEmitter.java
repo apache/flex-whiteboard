@@ -30,9 +30,7 @@ import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IPackageDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
-import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.internal.js.codegen.JSEmitter;
-import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
@@ -66,58 +64,6 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     IJSGoogDocEmitter getDoc()
     {
         return (IJSGoogDocEmitter) getDocEmitter();
-    }
-
-    //--------------------------------------------------------------------------
-    // 
-    //--------------------------------------------------------------------------
-
-    @Override
-    public void emitJSDocVariable(IVariableNode node)
-    {
-        getDoc().begin();
-        
-        // emit namespace annotation
-        String ns = node.getNamespace();
-        if (ns == "private")
-        {
-        	getDoc().emitPrivate(node);
-        }
-        else if (ns == "protected")
-        {	
-        	getDoc().emitProtected(node);
-        }
-        
-        if (node.isConst())
-        	getDoc().emitConst(node);
-        
-        getDoc().emitType(node);
-        
-        getDoc().end();
-    }
-
-    @Override
-    public void emitJSDocConstructor(IFunctionNode node, ICompilerProject project)
-    {
-        getDoc().begin();
-        
-        getDoc().emitConstructor(node);
-        
-        boolean hasSuperClass = hasSuperClass(node, project);
-        if (hasSuperClass)
-            getDoc().emitExtends(getSuperClassDefinition(node, project));
-        
-        boolean implementsInterfaces = implementsInterfaces(node);
-        if (implementsInterfaces)
-        {
-        	IReference[] references = getImplementedInterfaces(node);
-            for (IReference reference : references)
-            {
-            	getDoc().emitImplements(reference);
-            }
-        }
-        
-        getDoc().end();
     }
 
     //--------------------------------------------------------------------------
@@ -172,6 +118,10 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     public void emitPackageFooter(IPackageNode node)
     {
     }
+
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
 
     @Override
     public void emitClass(IClassNode node)
@@ -300,7 +250,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
         ICompilerProject project = getWalker().getProject();
         
-        emitJSDocConstructor(node, project);
+        getDoc().emitMethodDoc(node, project);
 
         boolean hasSuperClass = hasSuperClass(node, project);
         
@@ -332,7 +282,7 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     {
         IClassDefinition definition = getClassDefinition(node);
 
-        emitJSDocVariable(node);
+        getDoc().emitFieldDoc(node);
 
         String root = "";
         if (!node.isConst())
@@ -363,84 +313,6 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     }
 
     @Override
-    public void emitJSDoc(IFunctionNode node, ICompilerProject project,
-            boolean isConstructor, ITypeDefinition type)
-    {
-        // TODO (mschmalle) change method signature, remove type
-        // this is a temp override until I change the method signature
-        // unit testing dosn't have access to the type, we need to use the AST to get the definition
-        if (type == null)
-        {
-            ITypeNode tnode = (ITypeNode) node
-                    .getAncestorOfType(ITypeNode.class);
-            type = (ITypeDefinition) tnode.getDefinition();
-        }
-
-        if (node instanceof IFunctionNode)
-        {
-            if (isConstructor)
-            {
-                emitJSDocConstructor(node, project);
-            }
-            else
-            {
-                boolean hasDoc = false;
-
-                // @this
-                if (containsThisReference(node))
-                {
-                    getDoc().begin();
-                    hasDoc = true;
-
-                    getDoc().emitThis(type);
-                }
-
-                // @param
-                IParameterNode[] parameters = node.getParameterNodes();
-                for (IParameterNode pnode : parameters)
-                {
-                    if (!hasDoc)
-                    {
-                        getDoc().begin();
-                        hasDoc = true;
-                    }
-
-                    getDoc().emitParam(pnode);
-                }
-
-                // @return
-                String returnType = node.getReturnType();
-                if (returnType != "" && returnType != "void")
-                {
-                    if (!hasDoc)
-                    {
-                        getDoc().begin();
-                        hasDoc = true;
-                    }
-
-                    getDoc().emitReturn(node);
-                }
-
-                // @override
-                Boolean override = node.hasModifier(ASModifier.OVERRIDE);
-                if (override)
-                {
-                    if (!hasDoc)
-                    {
-                        getDoc().begin();
-                        hasDoc = true;
-                    }
-
-                    getDoc().emitOverride(node);
-                }
-
-                if (hasDoc)
-                    getDoc().end();
-            }
-        }
-    }
-
-    @Override
     public void emitGetAccessor(IGetterNode node)
     {
         emitObjectDefineProperty(node);
@@ -461,9 +333,8 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             return;
         }
 
-        IClassDefinition definition = getClassDefinition(node);
-
-        emitJSDoc(node, getWalker().getProject(), false, definition);
+        getDoc().emitMethodDoc(node, getWalker().getProject());
+        
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
@@ -646,43 +517,10 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
     	return superClassDefinition != null && !qname.equals("Object");
     }
 
-    private static IReference[] getImplementedInterfaces(IDefinitionNode node)
-    {
-    	IClassDefinition classDefinition = getClassDefinition(node);
-    	IReference[] interfaceReferences = classDefinition.getImplementedInterfaceReferences();
-    	return interfaceReferences;
-    }
-
-    private static boolean implementsInterfaces(IDefinitionNode node)
-    {
-    	IReference[] interfaceReferences = getImplementedInterfaces(node);
-    	return interfaceReferences.length > 0;
-    }
-
     private static boolean hasBody(IFunctionNode node)
     {
         IScopedNode scope = node.getScopedNode();
         return scope.getChildCount() > 0;
-    }
-
-    private static boolean containsThisReference(IASNode node)
-    {
-        final int len = node.getChildCount();
-        for (int i = 0; i < len; i++)
-        {
-            final IASNode child = node.getChild(i);
-            if (child.getChildCount() > 0)
-            {
-                return containsThisReference(child);
-            }
-            else
-            {
-                if (SemanticUtils.isThisKeyword(child))
-                    return true;
-            }
-        }
-
-        return false;
     }
 
     private void emitObjectDefineProperty(IAccessorNode node)

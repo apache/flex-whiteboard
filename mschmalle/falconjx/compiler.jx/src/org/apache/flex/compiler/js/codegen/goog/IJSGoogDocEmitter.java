@@ -23,6 +23,7 @@ import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.js.codegen.IJSDocEmitter;
+import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
@@ -47,11 +48,16 @@ import org.apache.flex.compiler.tree.as.IVariableNode;
  */
 public interface IJSGoogDocEmitter extends IJSDocEmitter
 {
+	
+    //void emitConstructorDoc(IFunctionNode node, ICompilerProject project);
+
+    void emitFieldDoc(IVariableNode node);
+
+    void emitMethodDoc(IFunctionNode node, ICompilerProject project);
+
     /*
      * https://developers.google.com/closure/compiler/docs/js-for-compiler#types
      *- @const - Marks a variable as read-only. The compiler can inline @const variables
-     *
-     *- @constructor - Marks a function as a constructor.
      *
      *- @define - Indicates a constant that can be overridden by the compiler at compile-time.
      *
@@ -103,11 +109,7 @@ public interface IJSGoogDocEmitter extends IJSDocEmitter
      * @typedef - Declares an alias for a more complex type. 
      */
 
-    // @const
-
     void emitConst(IVariableNode node);
-
-    void emitConstructor(IFunctionNode node);
 
     void emitDefine(IVariableNode node);
 
@@ -117,7 +119,6 @@ public interface IJSGoogDocEmitter extends IJSDocEmitter
 
     void emitExtends(IClassDefinition superDefinition);
 
-    //void emitImplements(IClassNode node);
     void emitImplements(IReference reference);
 
     void emitInheritDoc(IClassNode node);

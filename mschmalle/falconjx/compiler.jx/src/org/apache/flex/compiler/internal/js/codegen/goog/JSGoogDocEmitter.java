@@ -19,13 +19,16 @@
 
 package org.apache.flex.compiler.internal.js.codegen.goog;
 
+import org.apache.flex.compiler.common.ASModifier;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.definitions.references.IReference;
 import org.apache.flex.compiler.internal.js.codegen.JSDocEmitter;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
+import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
 import org.apache.flex.compiler.js.codegen.goog.IJSGoogDocEmitter;
+import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
@@ -39,20 +42,124 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     public JSGoogDocEmitter(IJSEmitter emitter)
     {
         super(emitter);
-        // TODO Auto-generated constructor stub
     }
     
+    @Override
+    public void emitFieldDoc(IVariableNode node)
+    {
+        begin();
+        
+        String ns = node.getNamespace();
+        if (ns == "private")
+        {
+        	emitPrivate(node);
+        }
+        else if (ns == "protected")
+        {	
+        	emitProtected(node);
+        }
+        
+        if (node.isConst())
+        	emitConst(node);
+        
+        emitType(node);
+        
+        end();
+    }
+    
+    @Override
+    public void emitMethodDoc(IFunctionNode node, ICompilerProject project)
+    {
+        IClassNode cnode = (IClassNode) node.getAncestorOfType(IClassNode.class);
+        IClassDefinition classDefinition = cnode.getDefinition();
+
+        if (node instanceof IFunctionNode)
+        {
+            boolean hasDoc = false;
+
+            if (node.isConstructor())
+            {
+                begin();
+                hasDoc = true;
+                
+                write(" * @constructor\n");
+                
+                IClassDefinition parent = (IClassDefinition) node.getDefinition().getParent();
+                IClassDefinition superClass = parent.resolveBaseClass(project);
+            	String qname = superClass.getQualifiedName();
+            	
+                if (superClass != null && !qname.equals("Object"))
+                    emitExtends(superClass);
+                
+            	IReference[] interfaceReferences = classDefinition.getImplementedInterfaceReferences();
+                if (interfaceReferences.length > 0)
+                {
+                    for (IReference reference : interfaceReferences)
+                    {
+                    	emitImplements(reference);
+                    }
+                }
+            }
+            else
+            {
+                // @this
+                if (containsThisReference(node))
+                {
+                    begin();
+                    hasDoc = true;
+
+                    emitThis(classDefinition);
+                }
+
+                // @param
+                IParameterNode[] parameters = node.getParameterNodes();
+                for (IParameterNode pnode : parameters)
+                {
+                    if (!hasDoc)
+                    {
+                        begin();
+                        hasDoc = true;
+                    }
+
+                    emitParam(pnode);
+                }
+
+                // @return
+                String returnType = node.getReturnType();
+                if (returnType != "" && returnType != "void")
+                {
+                    if (!hasDoc)
+                    {
+                        begin();
+                        hasDoc = true;
+                    }
+
+                    emitReturn(node);
+                }
+
+                // @override
+                Boolean override = node.hasModifier(ASModifier.OVERRIDE);
+                if (override)
+                {
+                    if (!hasDoc)
+                    {
+                        begin();
+                        hasDoc = true;
+                    }
+
+                    emitOverride(node);
+                }
+            }
+            
+            if (hasDoc)
+                end();
+        }
+    }
 
     @Override
     public void emitConst(IVariableNode node)
     {
         write(" * @const\n");
-    }
-
-    @Override
-    public void emitConstructor(IFunctionNode node)
-    {
-        write(" * @constructor\n");
     }
 
     @Override
@@ -138,7 +245,6 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     @Override
     public void emitReturn(IFunctionNode node)
     {
-        // TODO convert js types
         String rtype = node.getReturnType();
         if (rtype != null)
             write(" * @return {" + convertASTypeToJS(rtype) + "}\n");
@@ -177,6 +283,26 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
 
     //--------------------------------------------------------------------------
 
+    private boolean containsThisReference(IASNode node)
+    {
+        final int len = node.getChildCount();
+        for (int i = 0; i < len; i++)
+        {
+            final IASNode child = node.getChild(i);
+            if (child.getChildCount() > 0)
+            {
+                return containsThisReference(child);
+            }
+            else
+            {
+                if (SemanticUtils.isThisKeyword(child))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     private String convertASTypeToJS(String name)
     {
     	String result = name;
@@ -190,8 +316,7 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     	if (name.equals("int") || name.equals("uint") || name.equals("Number"))
     		result = "number";
     	
-    	// TODO (erikdebruin) this will not work right with nested Vector
-    	//                    declarations...
+    	// TODO (erikdebruin) this will not work with nested Vector declarations...
     	if (name.matches("Vector.<.*>"))
     		result = name.replace("Vector", "Array");
     	

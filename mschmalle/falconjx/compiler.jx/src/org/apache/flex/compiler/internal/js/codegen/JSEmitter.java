@@ -21,13 +21,11 @@ package org.apache.flex.compiler.internal.js.codegen;
 
 import java.io.FilterWriter;
 
-import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.as.codegen.ASEmitter;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.js.codegen.IJSEmitter;
-import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
@@ -42,21 +40,6 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
     public JSEmitter(FilterWriter out)
     {
         super(out);
-    }
-
-    // TODO this signature doesn't feel right
-    public void emitJSDoc(IFunctionNode node, ICompilerProject project,
-            boolean isConstructor, ITypeDefinition type)
-    {
-    }
-
-    public void emitJSDocVariable(IVariableNode node)
-    {
-    }
-
-    public void emitJSDocConstructor(IFunctionNode node,
-            ICompilerProject project)
-    {
     }
 
     public void emitConstructor(IFunctionNode node)
@@ -78,22 +61,6 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
         emitParamters(fnode.getParameterNodes());
        
         emitFunctionScope(fnode.getScopedNode());
-    }
-
-    @Override
-    public void emitField(IVariableNode node)
-    {
-        super.emitField(node);
-        //        emitJSDocVariable(node);
-        //        write(getVisitor().getCurrentType().getQualifiedName() + ".prototype."
-        //                + node.getName());
-        //        IExpressionNode vnode = node.getAssignedValueNode();
-        //        if (vnode != null)
-        //        {
-        //            write(" = ");
-        //            getVisitor().walk(vnode);
-        //        }
-        //        write(";\n");
     }
 
     @Override
@@ -122,13 +89,5 @@ public class JSEmitter extends ASEmitter implements IJSEmitter
                 }
             }
         }
-    }
-
-    @Override
-    public void writeBlockClose()
-    {
-    	super.writeBlockClose();
-        
-    	//write(";");
     }
 }

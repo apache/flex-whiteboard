@@ -37,7 +37,6 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
-import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
@@ -58,15 +57,6 @@ public class JSAMDEmitter extends JSEmitter implements IJSAMDEmitter
     // 
     //--------------------------------------------------------------------------
 
-    public void emitJSDocPackgeHeader(IPackageNode node)
-    {
-        //        getDocEmitter().emmitPackageHeader(node);
-    }
-
-    //--------------------------------------------------------------------------
-    // 
-    //--------------------------------------------------------------------------
-
     @Override
     public void emitConstructor(IFunctionNode node)
     {
@@ -74,8 +64,6 @@ public class JSAMDEmitter extends JSEmitter implements IJSAMDEmitter
 
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
-
-        emitJSDocConstructor(node, getWalker().getProject());
 
         String qname = definition.getQualifiedName();
         write(qname);
@@ -96,9 +84,6 @@ public class JSAMDEmitter extends JSEmitter implements IJSAMDEmitter
             return;
         }
 
-        IClassDefinition definition = getClassDefinition(node);
-
-        emitJSDoc(node, getWalker().getProject(), false, definition);
         FunctionNode fn = (FunctionNode) node;
         fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
 
