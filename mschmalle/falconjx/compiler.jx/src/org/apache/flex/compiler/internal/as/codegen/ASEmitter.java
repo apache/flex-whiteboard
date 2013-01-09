@@ -44,6 +44,7 @@ import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
@@ -308,6 +309,62 @@ public class ASEmitter implements IASEmitter
                     if (i < len - 1)
                         write("\n");
                 }
+                i++;
+            }
+
+            indentPop();
+        }
+
+        write("\n");
+        write("}");
+    }
+    
+    @Override
+    public void emitInterface(IInterfaceNode node)
+    {
+        write(node.getNamespace());
+        write(" ");
+
+        write("interface");
+        write(" ");
+        getWalker().walk(node.getNameExpressionNode());
+        write(" ");
+
+        IExpressionNode[] inodes = node.getExtendedInterfaceNodes();
+        final int ilen = inodes.length;
+        if (ilen != 0)
+        {
+            write("extends");
+            write(" ");
+            for (int i = 0; i < ilen; i++)
+            {
+            	getWalker().walk(inodes[i]);
+                if (i < ilen - 1)
+                {
+                    write(",");
+                    write(" ");
+                }
+            }
+            write(" ");
+        }
+
+        write("{");
+
+        final IDefinitionNode[] members = node.getAllMemberDefinitionNodes();
+        if (members.length > 0)
+        {
+            indentPush();
+            write("\n");
+
+            // TODO (mschmalle) Check to see if the node order is the order of member parsed
+            final int len = members.length;
+            int i = 0;
+            for (IDefinitionNode mnode : members)
+            {
+            	getWalker().walk(mnode);
+                write(";");
+                if (i < len - 1)
+                    write("\n");
                 i++;
             }
 

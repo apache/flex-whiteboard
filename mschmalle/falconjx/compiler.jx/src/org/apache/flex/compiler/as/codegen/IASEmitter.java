@@ -27,6 +27,7 @@ import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
@@ -88,6 +89,13 @@ public interface IASEmitter
      * @param node The {@link IClassNode} class.
      */
     void emitClass(IClassNode node);
+
+    /**
+     * Emit an Interface.
+     * 
+     * @param node The {@link IInterfaceNode} class.
+     */
+    void emitInterface(IInterfaceNode node);
 
     /**
      * Emit a documentation comment for a Class field or constant
