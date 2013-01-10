@@ -26,7 +26,6 @@ import org.apache.flex.compiler.as.codegen.IASEmitter;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
-import org.apache.flex.compiler.internal.definitions.ClassDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
@@ -258,7 +257,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitNamespace(INamespaceNode node)
     {
         debug("visitNamespace()");
-        // TODO (mschmalle) visitNamespace()
+        emitter.emitNamespace(node);
     }
 
     @Override

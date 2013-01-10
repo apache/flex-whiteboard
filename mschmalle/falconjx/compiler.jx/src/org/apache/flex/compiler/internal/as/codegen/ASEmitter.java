@@ -31,7 +31,6 @@ import org.apache.flex.compiler.constants.IASKeywordConstants;
 import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IFunctionDefinition;
 import org.apache.flex.compiler.definitions.IVariableDefinition;
-import org.apache.flex.compiler.definitions.references.INamespaceReference;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
@@ -47,6 +46,7 @@ import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
@@ -435,7 +435,7 @@ public class ASEmitter implements IASEmitter
 
         if (!(node instanceof ChainedVariableNode))
         {
-            emitNamespace2(node);
+            emitNamespaceIdentifier(node);
             emitModifiers(definition);
             emitMemberKeyword(node);
         }
@@ -499,7 +499,7 @@ public class ASEmitter implements IASEmitter
 
         IFunctionDefinition definition = node.getDefinition();
 
-        emitNamespace2(node);
+        emitNamespaceIdentifier(node);
         emitModifiers(definition);
         emitMemberKeyword(node);
 
@@ -563,25 +563,30 @@ public class ASEmitter implements IASEmitter
     // 
     //--------------------------------------------------------------------------
 
-    protected void emitNamespace2(IDefinitionNode node)
+    @Override
+    public void emitNamespace(INamespaceNode node)
     {
-        String namespace = node.getNamespace();
-        if (namespace != null && !namespace.equals(IASKeywordConstants.INTERNAL))
-        {
-            write(namespace);
-            write(SPACE);
-        }
+        emitNamespaceIdentifier(node);
+        writeToken(IASKeywordConstants.NAMESPACE);
+        write(SPACE);
+        emitMemberName(node);
+        write(SPACE);
+        write("=");
+        write(SPACE);
+        getWalker().walk(node.getNamespaceURINode());
     }
 
-    protected void emitNamespace(IDefinition definition)
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
+
+    protected void emitNamespaceIdentifier(IDefinitionNode node)
     {
-        // namespace (public, protected, private, foo_bar)
-        // TODO (mschmalle) figure out what to do if there is an explicit internal
-        // right now if it's internal, code not produced (implied)
-        if (!definition.isInternal())
+        String namespace = node.getNamespace();
+        if (namespace != null
+                && !namespace.equals(IASKeywordConstants.INTERNAL))
         {
-            INamespaceReference reference = definition.getNamespaceReference();
-            write(reference.getBaseName());
+            write(namespace);
             write(SPACE);
         }
     }
@@ -738,4 +743,5 @@ public class ASEmitter implements IASEmitter
         write(SPACE);
         getWalker().walk(node.getRightOperandNode());
     }
+
 }

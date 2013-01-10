@@ -28,6 +28,7 @@ import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
+import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
@@ -50,7 +51,7 @@ public interface IASEmitter
     IDocEmitter getDocEmitter();
 
     void setDocEmitter(IDocEmitter value);
-    
+
     /**
      * Writes a string to the writer.
      * 
@@ -155,6 +156,13 @@ public interface IASEmitter
     void emitSetAccessor(ISetterNode node);
 
     void emitParameter(IParameterNode node);
+    
+    /**
+     * Emit a namespace member.
+     * 
+     * @param node The {@link INamespaceNode} class member.
+     */
+    void emitNamespace(INamespaceNode node);
 
     //--------------------------------------------------------------------------
     // Expressions

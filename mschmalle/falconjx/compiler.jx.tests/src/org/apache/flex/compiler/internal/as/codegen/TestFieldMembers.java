@@ -19,6 +19,8 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
+import org.apache.flex.compiler.tree.as.IFileNode;
+import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.junit.Test;
 
@@ -161,5 +163,42 @@ public class TestFieldMembers extends TestWalkerBase
         IVariableNode node = getField("mx_internal static const foo:int = 420;");
         visitor.visitVariable(node);
         assertOut("mx_internal static const foo:int = 420");
+    }
+    
+    //--------------------------------------------------------------------------
+    // Namespace
+    //--------------------------------------------------------------------------
+
+    @Test
+    public void testNamespace()
+    {
+        INamespaceNode node = getNamespace("namespace ns = \"http://whatever\";");
+        visitor.visitNamespace(node);
+        assertOut("namespace ns = \"http://whatever\"");
+    }
+
+    @Test
+    public void testNamespace_public()
+    {
+        INamespaceNode node = getNamespace("public namespace ns = \"http://whatever\";");
+        visitor.visitNamespace(node);
+        assertOut("public namespace ns = \"http://whatever\"");
+    }
+
+    @Test
+    public void testNamespace_protected()
+    {
+        INamespaceNode node = getNamespace("protected namespace ns = \"http://whatever\";");
+        visitor.visitNamespace(node);
+        assertOut("protected namespace ns = \"http://whatever\"");
+    }
+    
+    protected INamespaceNode getNamespace(String code)
+    {
+        String source = "package {public class A {" + code + "}}";
+        IFileNode node = getFileNode(source);
+        INamespaceNode child = (INamespaceNode) findFirstDescendantOfType(node,
+                INamespaceNode.class);
+        return child;
     }
 }
