@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
 import org.apache.flex.compiler.definitions.IClassDefinition;
@@ -30,7 +29,6 @@ import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
-import org.apache.flex.compiler.internal.tree.as.FunctionCallNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
@@ -102,29 +100,6 @@ import org.apache.flex.compiler.visitor.IASNodeStrategy;
  */
 public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 {
-    /**
-     * The context stack of the visitor.
-     * <p>
-     * The context can only contain what is beneath them, CLASS contains
-     * FUNCTION.
-     */
-    // TODO (mschmalle) definitely having second thoughts about TraverseContext
-    // now that I'm understanding the AST a bit more, this is just garbage overhead
-    public enum TraverseContext
-    {
-        ROOT,
-        FILE,
-        PACKAGE,
-        TYPE,
-        CONSTRUCTOR,
-        FIELD,
-        METHOD,
-        BLOCK,
-        FOR,
-        FUNCTION,
-        SUPER_ARGUMENTS
-    }
-
     private IASEmitter emitter;
 
     private final List<ICompilerProblem> errors;
@@ -132,29 +107,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     List<ICompilerProblem> getErrors()
     {
         return errors;
-    }
-
-    //----------------------------------
-    // context
-    //----------------------------------
-
-    private Stack<TraverseContext> contexts = new Stack<ASBlockWalker.TraverseContext>();
-
-    public void pushContext(TraverseContext value)
-    {
-        contexts.push(value);
-    }
-
-    public void popContext(TraverseContext lastContext)
-    {
-        TraverseContext popped = contexts.pop();
-        if (lastContext != popped)
-            throw new RuntimeException("Popped context not the same");
-    }
-
-    private boolean inContext(TraverseContext context)
-    {
-        return contexts.peek() == context;
     }
 
     //----------------------------------
@@ -227,7 +179,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         this.project = project;
         this.emitter = emitter;
         emitter.setWalker(this);
-        pushContext(TraverseContext.ROOT);
     }
 
     @Override
@@ -286,7 +237,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitInterface(IInterfaceNode node)
     {
         debug("visitInterface()");
-        
+
         emitter.emitInterface(node);
     }
 
@@ -363,30 +314,13 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
 
         walk(node.getNameNode());
 
-        if (((FunctionCallNode) node).isSuperExpression())
-        {
-            pushContext(TraverseContext.SUPER_ARGUMENTS);
-        }
-
         emitter.write("(");
         walkArguments(node.getArgumentNodes());
         emitter.write(")");
-
-        if (((FunctionCallNode) node).isSuperExpression())
-        {
-            popContext(TraverseContext.SUPER_ARGUMENTS);
-        }
     }
 
     private void walkArguments(IExpressionNode[] nodes)
     {
-        if (inContext(TraverseContext.SUPER_ARGUMENTS))
-        {
-            //emitter.write("this");
-            //if (nodes.length > 0)
-            //    emitter.write(", ");
-        }
-
         int len = nodes.length;
         for (int i = 0; i < len; i++)
         {
@@ -508,7 +442,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitForEach()");
         IContainerNode xnode = (IContainerNode) node.getChild(1);
-        pushContext(TraverseContext.FOR);
         emitter.write("for");
         emitter.write(" ");
         emitter.write("each");
@@ -522,7 +455,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         if (!isImplicit(xnode))
             emitter.write(" ");
 
-        popContext(TraverseContext.FOR);
         walk(node.getStatementContentsNode());
     }
 
@@ -530,7 +462,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitFor()");
         IContainerNode xnode = (IContainerNode) node.getChild(1);
-        pushContext(TraverseContext.FOR);
+
         emitter.write("for");
         emitter.write(" ");
         emitter.write("(");
@@ -549,7 +481,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         emitter.write(")");
         if (!isImplicit(xnode))
             emitter.write(" ");
-        popContext(TraverseContext.FOR);
+
         walk(node.getStatementContentsNode());
     }
 
@@ -853,7 +785,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitBinaryOperator(" + node.getOperator().getOperatorText()
                 + ")");
-        
+
         emitter.emitBinaryOperator(node);
     }
 
