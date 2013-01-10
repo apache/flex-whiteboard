@@ -21,7 +21,6 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IFileNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -60,11 +59,9 @@ public class TestClass extends TestWalkerBase
         assertOut("public final class A {\n}");
     }
 
-    @Ignore
     @Test
     public void testSimpleDynamic()
     {
-    	// TODO (erikdebruin/mschmalle) 'dynamic' keyword is omitted by the compiler
         IClassNode node = getClassNode("public dynamic class A{}");
         visitor.visitClass(node);
         assertOut("public dynamic class A {\n}");
