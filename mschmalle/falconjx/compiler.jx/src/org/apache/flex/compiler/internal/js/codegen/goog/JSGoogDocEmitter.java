@@ -330,16 +330,13 @@ public class JSGoogDocEmitter extends JSDocEmitter implements IJSGoogDocEmitter
     	
     	if (name.equals(""))
     		result = "*";
-    	
-    	if (name.equals("String"))
-    		result = "string";
-    	
-    	if (name.equals("int") || name.equals("uint") || name.equals("Number"))
+    	else if (name.equals("Boolean") || name.equals("String") || name.equals("Number"))
+    		result = result.toLowerCase();
+    	else if (name.equals("int") || name.equals("uint"))
     		result = "number";
-    	
-    	// TODO (erikdebruin) this will not work with nested Vector declarations...
-    	if (name.matches("Vector.<.*>"))
-    		result = name.replace("Vector", "Array");
+    	else if (name.matches("Vector.<.*>"))
+    		// TODO (erikdebruin) will this work with nested Vector declarations?
+        	result = name.replace("Vector", "Array");
     	
         return result;
     }
