@@ -466,6 +466,37 @@ public class TestExpressions extends TestWalkerBase
     // Other
     //----------------------------------
 
+    @Ignore
+    @Test
+    public void testParentheses_1()
+    {
+    	// TODO (erikdebruin/mschmalle) what happens to the parentheses?
+        IVariableNode node = (IVariableNode) getNode("var a = (a + b);",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOutDebug("var a = (a + b)");
+    }
+
+    @Ignore
+    @Test
+    public void testParentheses_2()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a = (a + b) - c;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOutDebug("var a = (a + b) - c");
+    }
+
+    @Ignore
+    @Test
+    public void testParentheses_3()
+    {
+        IVariableNode node = (IVariableNode) getNode("var a = ((a + b) - (c + d)) * e;",
+                IVariableNode.class);
+        visitor.visitVariable(node);
+        assertOutDebug("var a = ((a + b) - (c + d)) * e");
+    }
+
     @Test
     public void testAnonymousFunction()
     {
@@ -658,6 +689,16 @@ public class TestExpressions extends TestWalkerBase
         IUnaryOperatorNode node = getUnaryNode("typeof(a)");
         visitor.visitUnaryOperator(node);
         assertOut("typeof(a)");
+    }
+
+    @Ignore
+    @Test
+    public void testVisitUnaryOperatorNode_Typeof_NoParens()
+    {
+    	// TODO (erikdebruin/mschmalle) this notation is also valid in AS/JS
+        IUnaryOperatorNode node = getUnaryNode("typeof a");
+        visitor.visitUnaryOperator(node);
+        assertOut("typeof a");
     }
 
     @Test
