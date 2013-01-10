@@ -23,6 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
+import org.apache.flex.compiler.definitions.IClassDefinition;
+import org.apache.flex.compiler.definitions.IDefinition;
+import org.apache.flex.compiler.definitions.IInterfaceDefinition;
+import org.apache.flex.compiler.internal.definitions.ClassDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
@@ -221,18 +225,11 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     @Override
     public void visitFunction(IFunctionNode node)
     {
-        // XXX (mschmalle) visitFunction() refactor, this is a mess
         debug("visitFunction()");
 
-        if (SemanticUtils.isMemberDefinition(node.getDefinition()))
+        if (isMemberDefinition(node.getDefinition()))
         {
             emitter.emitMethod(node);
-            return; // TEMP
-        }
-        else if (node.getParent().getParent().getNodeID() == ASTNodeID.InterfaceID)
-        {
-            emitter.emitMethod(node);
-            return; // TEMP
         }
     }
 
@@ -1000,6 +997,13 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         return node.getContainerType() == ContainerType.IMPLICIT
                 || node.getContainerType() == ContainerType.SYNTHESIZED;
+    }
+
+    private static boolean isMemberDefinition(IDefinition definition)
+    {
+        return definition != null
+                && (definition.getParent() instanceof IClassDefinition || definition
+                        .getParent() instanceof IInterfaceDefinition);
     }
 
     // there seems to be a bug in the ISwitchNode.getCaseNodes(), need to file a bug
