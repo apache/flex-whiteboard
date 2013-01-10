@@ -2,10 +2,13 @@ package org.apache.flex.compiler.internal.as.codegen;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -98,17 +101,33 @@ public class TestBase
         return null;
     }
 
-    protected IFileNode getFileNode(String code)
+    protected IFileNode getFileNode(String input)
+    {
+    	return getFileNode(input, false);
+    }
+    
+    protected IFileNode getFileNode(String input, boolean isFileName)
     {
         String tempDir = FilenameNormalization.normalize("temp"); // ensure this exists
 
         File tempASFile = null;
         try
         {
-            tempASFile = File.createTempFile(getClass().getSimpleName(), ".as",
-                    new File(tempDir));
+        	String tempFileName = (isFileName) ? input : getClass().getSimpleName();
+        	
+        	tempASFile = File.createTempFile(tempFileName, ".as", new File(tempDir));
             tempASFile.deleteOnExit();
-
+	
+            String code = "";
+            if (!isFileName)
+            {
+            	code = input;
+            }
+            else
+            {
+            	code = getCodeFromFile("input", false);
+            }
+            
             BufferedWriter out = new BufferedWriter(new FileWriter(tempASFile));
             out.write(code);
             out.close();
@@ -172,6 +191,34 @@ public class TestBase
         }
 
         return fileNode;
+    }
+    
+    protected String getCodeFromFile(String fileName, boolean isJS)
+    {
+        String testFileDir = FilenameNormalization.normalize("test-files");
+        
+        File testFile = new File(testFileDir + "/" + fileName + (isJS ? ".js" : ".as"));
+        
+        String code = "";
+        try
+        {
+        	BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(testFile), "UTF8"));
+            
+        	String line = in.readLine();
+        	
+            while (line != null) 
+            {
+            	code += line + "\n";
+            	line = in.readLine();
+            }
+            
+        	in.close();
+        }
+        catch (Exception e)
+        {
+        }
+        
+    	return code;
     }
 
     protected IASNode getNode(String code, Class<? extends IASNode> type)
