@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -145,14 +144,5 @@ public class TestMethodMembers extends TestWalkerBase
         IFunctionNode node = getMethod("override public function foo(bar:String, baz:int = null):int{return -1;}");
         visitor.visitFunction(node);
         assertOut("public override function foo(bar:String, baz:int = null):int {\n\treturn -1;\n}");
-    }
-
-    protected IFunctionNode getMethod(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
     }
 }

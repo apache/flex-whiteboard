@@ -61,7 +61,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimpleMethod()
     {
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethodSimple("function method1():void{\n}");
+        IFunctionNode node = getMethod("function method1():void{\n}");
         visitor.visitFunction(node);
         assertOut("A.prototype.method1 = function() {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -71,7 +71,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimpleParameterReturnType()
     {
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int):int{\n}");
+        IFunctionNode node = getMethodWithPackage("function method1(bar:int):int{\n}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(bar) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -81,7 +81,7 @@ public class TestGoogEmiter extends TestWalkerBase
     public void testSimpleMultipleParameter()
     {
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
+        IFunctionNode node = getMethodWithPackage("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(bar, baz, goo) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
@@ -90,7 +90,7 @@ public class TestGoogEmiter extends TestWalkerBase
     @Test
     public void testSimpleMultipleParameter_JSDoc()
     {
-        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
+        IFunctionNode node = getMethodWithPackage("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
         assertOut("/**\n * @param {number} bar\n * @param {string} baz\n * @param {A} goo\n */\nfoo.bar.A.prototype.method1 = function(bar, baz, goo) {\n}");
     }
@@ -107,7 +107,7 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
+        IFunctionNode node = getMethodWithPackage("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
                 + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
@@ -126,7 +126,7 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        IFunctionNode node = getMethodWithPackage("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n"
                 + "\tbar = typeof bar !== 'undefined' ? bar : 42;\n"
@@ -145,7 +145,7 @@ public class TestGoogEmiter extends TestWalkerBase
         }
         */
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
+        IFunctionNode node = getMethodWithPackage("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
         visitor.visitFunction(node);
         assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n"
                 + "\tp3 = typeof p3 !== 'undefined' ? p3 : 3;\n"
@@ -157,23 +157,5 @@ public class TestGoogEmiter extends TestWalkerBase
     protected IBackend createBackend()
     {
         return new GoogBackend();
-    }
-
-    protected IFunctionNode getMethodSimple(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
-    }
-
-    protected IFunctionNode getMethod(String code)
-    {
-        String source = "package foo.bar {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
     }
 }

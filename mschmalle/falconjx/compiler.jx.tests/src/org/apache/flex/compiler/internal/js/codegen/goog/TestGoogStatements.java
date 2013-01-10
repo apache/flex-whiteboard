@@ -241,7 +241,6 @@ public class TestGoogStatements extends TestStatements
     // label : for () {}
     //----------------------------------
 
-    @Ignore
     @Override
     @Test
     public void testVisitLabel_1()
@@ -250,10 +249,9 @@ public class TestGoogStatements extends TestStatements
                 "foo: for each(var i:int in obj) { break foo; }",
                 LabeledStatementNode.class);
         visitor.visitLabeledStatement(node);
-        assertOut("foo : for each (var i:int in obj) {\n\tbreak foo;\n}");
+        assertOutDebug("foo : for each (var /** @type {number} */ i in obj) {\n\tbreak foo;\n}");
     }
 
-    @Ignore
     @Override
     @Test
     public void testVisitLabel_1a()
@@ -263,7 +261,7 @@ public class TestGoogStatements extends TestStatements
                 "foo: for each(var i:int in obj) break foo;",
                 LabeledStatementNode.class);
         visitor.visitLabeledStatement(node);
-        assertOut("foo : for each (var i:int in obj)\n\tbreak foo;");
+        assertOutDebug("foo : for each (var /** @type {number} */ i in obj)\n\tbreak foo;");
     }
 
     //----------------------------------

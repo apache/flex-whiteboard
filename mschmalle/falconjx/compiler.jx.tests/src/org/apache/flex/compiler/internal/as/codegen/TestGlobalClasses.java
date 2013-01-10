@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.junit.Ignore;
@@ -285,20 +284,5 @@ public class TestGlobalClasses extends TestWalkerBase
     	IVariableNode node = getVariable("var a:XMLList = new XMLList('<!-- comment -->');");
     	visitor.visitVariable(node);
     	assertOut("var a:XMLList = new XMLList('<!-- comment -->')");
-    }
-
-    protected IFunctionNode getMethod(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
-    }
-
-    protected IVariableNode getVariable(String code)
-    {
-    	IVariableNode node = (IVariableNode) getNode(code, IVariableNode.class);
-        return node;
     }
 }

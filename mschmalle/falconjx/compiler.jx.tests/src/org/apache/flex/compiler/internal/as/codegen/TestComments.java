@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -74,14 +73,5 @@ public class TestComments extends TestWalkerBase
     	IFunctionNode node = getMethod("function a():void {/**\n * line comment\n */};");
         visitor.visitFunction(node);
         assertOut("function a():void {\n\t/**\n\t * line comment\n\t */};");
-    }
-
-    protected IFunctionNode getMethod(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
     }
 }

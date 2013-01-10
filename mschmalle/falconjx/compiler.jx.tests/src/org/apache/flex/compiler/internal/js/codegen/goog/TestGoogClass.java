@@ -68,6 +68,17 @@ public class TestGoogClass extends TestClass
 
 	@Override
     @Test
+    public void testSimpleDynamic()
+    {
+		// TODO (erikdebruin) is there a 'goog' equivalent for the 
+		//                    'dynamic' keyword?
+        IClassNode node = getClassNode("public dynamic class A{}");
+        visitor.visitClass(node);
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n");
+    }
+
+	@Override
+    @Test
     public void testSimpleExtends()
     {
 		// TODO (erikdebruin) why do we need to put use an 'actual' component 

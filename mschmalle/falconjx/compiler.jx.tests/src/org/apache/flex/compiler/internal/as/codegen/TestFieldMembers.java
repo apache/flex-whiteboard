@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.junit.Test;
 
@@ -162,14 +161,5 @@ public class TestFieldMembers extends TestWalkerBase
         IVariableNode node = getField("mx_internal static const foo:int = 420;");
         visitor.visitVariable(node);
         assertOut("mx_internal static const foo:int = 420");
-    }
-
-    protected IVariableNode getField(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IVariableNode child = (IVariableNode) findFirstDescendantOfType(node,
-                IVariableNode.class);
-        return child;
     }
 }

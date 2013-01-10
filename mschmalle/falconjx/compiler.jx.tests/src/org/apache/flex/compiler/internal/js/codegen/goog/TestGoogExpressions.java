@@ -24,7 +24,9 @@ import org.apache.flex.compiler.internal.as.codegen.TestExpressions;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
+import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IIfNode;
+import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,6 +37,30 @@ import org.junit.Test;
  */
 public class TestGoogExpressions extends TestExpressions
 {
+
+	// TODO (erikdebruin) implement 'goog.base' call for 'super'
+
+	@Ignore
+	@Override
+    @Test
+    public void testVisitLanguageIdentifierNode_SuperMethod_1()
+    {
+        IMemberAccessExpressionNode node = (IMemberAccessExpressionNode) getNode(
+                "if (a) super.foo();", IMemberAccessExpressionNode.class);
+        visitor.visitMemberAccessExpression(node);
+        assertOut("goog.base(this, 'foo')");
+    }
+
+	@Ignore
+    @Override
+    @Test
+    public void testVisitLanguageIdentifierNode_SuperMethod_2()
+    {
+        IFunctionCallNode node = (IFunctionCallNode) getNode(
+                "if (a) super.foo(a, b, c);", IFunctionCallNode.class);
+        visitor.visitFunctionCall(node);
+        assertOut("goog.base(this, 'foo', a, b, c)");
+    }
 	
     //----------------------------------
     // Primary expression keywords

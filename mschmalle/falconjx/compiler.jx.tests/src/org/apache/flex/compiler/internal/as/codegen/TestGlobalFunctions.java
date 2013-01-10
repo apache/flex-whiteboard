@@ -206,10 +206,4 @@ public class TestGlobalFunctions extends TestWalkerBase
     	visitor.visitVariable(node);
     	assertOut("var a:XMLList = XMLList('<!-- comment -->')");
     }
-
-    protected IVariableNode getVariable(String code)
-    {
-    	IVariableNode node = (IVariableNode) getNode(code, IVariableNode.class);
-        return node;
-    }
 }

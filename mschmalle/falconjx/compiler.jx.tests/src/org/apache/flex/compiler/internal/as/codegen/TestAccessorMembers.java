@@ -20,7 +20,6 @@
 package org.apache.flex.compiler.internal.as.codegen;
 
 import org.apache.flex.compiler.tree.as.IAccessorNode;
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.junit.Test;
 
 /**
@@ -97,14 +96,5 @@ public class TestAccessorMembers extends TestWalkerBase
         IAccessorNode node = getAccessor("public static function set foo(value:int):void{}");
         visitor.visitFunction(node);
         assertOut("public static function set foo(value:int):void {\n}");
-    }
-
-    protected IAccessorNode getAccessor(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IAccessorNode child = (IAccessorNode) findFirstDescendantOfType(node,
-                IAccessorNode.class);
-        return child;
     }
 }

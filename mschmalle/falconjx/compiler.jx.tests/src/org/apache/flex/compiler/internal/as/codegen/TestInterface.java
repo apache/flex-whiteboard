@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.junit.Test;
 
@@ -101,14 +100,5 @@ public class TestInterface extends TestWalkerBase
         assertOut("public interface IA {\n\tfunction get foo1():Object;"
                 + "\n\tfunction set foo1(value:Object):void;\n\tfunction baz1()"
                 + ":Object;\n\tfunction baz2(value:Object):void;\n}");
-    }
-
-    protected IInterfaceNode getInterfaceNode(String code)
-    {
-        String source = "package {" + code + "}";
-        IFileNode node = getFileNode(source);
-        IInterfaceNode child = (IInterfaceNode) findFirstDescendantOfType(node,
-                IInterfaceNode.class);
-        return child;
     }
 }

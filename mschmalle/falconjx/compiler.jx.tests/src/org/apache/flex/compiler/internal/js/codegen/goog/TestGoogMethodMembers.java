@@ -34,9 +34,7 @@ import org.junit.Test;
 public class TestGoogMethodMembers extends TestMethodMembers
 {
 	// TODO (erikdebruin)
-	//  1) ideally '@this' should only be included in the annotation if there is
-	//     actually a reference to 'this' in the function body
-	// 10) can we safely ignore the 'public' and custom namespaces?
+	// 1) can we safely ignore custom namespaces?
 
     @Override
     @Test
