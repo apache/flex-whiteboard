@@ -61,14 +61,12 @@ public class TestGlobalClasses extends TestWalkerBase
         assertOut("var a:Boolean = new Boolean(1)");
     }
 
-    @Ignore
     @Test
     public void testClass()
     {
-    	// TODO (erikdebruin) how to test?
-        IVariableNode node = getVariable("");
+        IVariableNode node = getVariable("var a:Class = Class(FooBar)");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("var a:Class = Class(FooBar)");
     }
 
     @Test

@@ -22,6 +22,7 @@ package org.apache.flex.compiler.internal.as.codegen;
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
 import org.apache.flex.compiler.as.codegen.IDocEmitter;
@@ -70,6 +71,15 @@ public class ASEmitter implements IASEmitter
 
     private final FilterWriter out;
 
+    List<ICompilerProblem> problems;
+    
+    // (mschmalle) think about how this should be implemented, we can add our
+    // own problems to this, they don't just have to be parse problems
+    public List<ICompilerProblem> getProblems()
+    {
+        return problems;
+    }
+
     private IDocEmitter docEmitter;
 
     @Override
@@ -108,6 +118,7 @@ public class ASEmitter implements IASEmitter
     public ASEmitter(FilterWriter out)
     {
         this.out = out;
+        problems = new ArrayList<ICompilerProblem>();
     }
 
     @Override
@@ -361,7 +372,6 @@ public class ASEmitter implements IASEmitter
             indentPush();
             write(NL);
 
-            // TODO (mschmalle) Check to see if the node order is the order of member parsed
             final int len = members.length;
             int i = 0;
             for (IDefinitionNode mnode : members)
@@ -492,10 +502,7 @@ public class ASEmitter implements IASEmitter
         }
 
         FunctionNode fn = (FunctionNode) node;
-        // XXX (mschmalle) parseFunctionBody() TEMP until I figure out the correct way to do this
-        // will need to pass these problems back to the visitor
-        // Figure out where this is getting parsed!
-        fn.parseFunctionBody(new ArrayList<ICompilerProblem>());
+        fn.parseFunctionBody(problems);
 
         IFunctionDefinition definition = node.getDefinition();
 
@@ -503,7 +510,7 @@ public class ASEmitter implements IASEmitter
         emitModifiers(definition);
         emitMemberKeyword(node);
 
-        // TODO (mschmalle) I'm cheating right here, I haven't "seen" the light
+        // I'm cheating right here, I haven't "seen" the light
         // on how to properly and efficiently deal with accessors since they are SO alike
         // I don't want to lump them in with methods because implementations in the
         // future need to know the difference without loopholes
