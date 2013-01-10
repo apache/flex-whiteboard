@@ -19,9 +19,6 @@
 
 package org.apache.flex.compiler.visitor;
 
-import org.apache.flex.compiler.definitions.IClassDefinition;
-import org.apache.flex.compiler.definitions.IInterfaceDefinition;
-import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.tree.as.IASNode;
 
@@ -30,14 +27,19 @@ import org.apache.flex.compiler.tree.as.IASNode;
  */
 public interface IASBlockWalker extends IASBlockVisitor
 {
+    /**
+     * Returns the current {@link ICompilerProject} for the traverse state.
+     */
     ICompilerProject getProject();
 
-    ITypeDefinition getCurrentType();
-
-    IClassDefinition getCurrentClass();
-
-    IInterfaceDefinition getCurrentInterface();
-
+    /**
+     * Traverses an {@link IASNode} based on the semantics of the known node.
+     * <p>
+     * Typically uses the {@link IASNodeStrategy#handle(IASNode)} to delegate
+     * how the node will be traversed.
+     * 
+     * @param node The {@link IASNode} to traverse using the current strategy
+     */
     void walk(IASNode node);
 
 }

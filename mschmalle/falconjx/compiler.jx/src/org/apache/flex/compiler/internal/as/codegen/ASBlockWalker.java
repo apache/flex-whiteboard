@@ -23,9 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
-import org.apache.flex.compiler.definitions.IClassDefinition;
-import org.apache.flex.compiler.definitions.IInterfaceDefinition;
-import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
 import org.apache.flex.compiler.internal.tree.as.ContainerNode;
@@ -135,41 +132,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public IASProject getProject()
     {
         return project;
-    }
-
-    //----------------------------------
-    // currentType
-    //----------------------------------
-
-    private ITypeDefinition typeDefinition;
-
-    @Override
-    public ITypeDefinition getCurrentType()
-    {
-        return typeDefinition;
-    }
-
-    @Override
-    public IClassDefinition getCurrentClass()
-    {
-        return (IClassDefinition) typeDefinition;
-    }
-
-    @Override
-    public IInterfaceDefinition getCurrentInterface()
-    {
-        return (IInterfaceDefinition) typeDefinition;
-    }
-
-    //----------------------------------
-    // currentConstructor
-    //----------------------------------
-
-    private IFunctionNode currentConstructor;
-
-    public IFunctionNode getCurrentConstructor()
-    {
-        return currentConstructor;
     }
 
     public ASBlockWalker(List<ICompilerProblem> errors, IASProject project,
