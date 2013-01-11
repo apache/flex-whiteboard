@@ -105,8 +105,8 @@ public class TestGoogFieldMembers extends TestFieldMembers
         assertOut("/**\n * @protected\n * @type {Array.<Foo>}\n */\nA.prototype.foo");
     }
 
-    @Override
     @Ignore
+    @Override
     @Test
     public void testField_withNamespaceTypeCollectionComplex()
     {

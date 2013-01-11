@@ -37,10 +37,6 @@ import org.junit.Test;
  */
 public class TestGoogEmiter extends TestWalkerBase
 {
-    // emitPackageHeader()
-    // emitImports()
-    // emitClass()
-
     @Test
     public void testSimple()
     {
@@ -54,7 +50,7 @@ public class TestGoogEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        assertOutDebug("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('spark.components.Button');\n\n/**\n * @constructor\n * @extends {spark.components.Button}\n */\ncom.example.components.MyTextButton = function() {\n\tgoog.base(this);\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n}\ngoog.inherits(com.example.components.MyTextButton, spark.components.Button);\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\treturn \"Don't \" + _privateVar + value;\n};\n\n");
+        assertOut("goog.provide('com.example.components.MyTextButton');\n\ngoog.require('spark.components.Button');\n\n/**\n * @constructor\n * @extends {spark.components.Button}\n */\ncom.example.components.MyTextButton = function() {\n\tgoog.base(this);\n\tif (foo() != 42) {\n\t\tbar();\n\t}\n}\ngoog.inherits(com.example.components.MyTextButton, spark.components.Button);\n\n/**\n * @private\n * @type {string}\n */\ncom.example.components.MyTextButton.prototype._privateVar = \"do \";\n\n/**\n * @type {number}\n */\ncom.example.components.MyTextButton.prototype.publicProperty = 100;\n\n/**\n * @param {string} value\n * @return {string}\n */\ncom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\treturn \"Don't \" + _privateVar + value;\n};");
     }
 
     @Test
@@ -98,14 +94,6 @@ public class TestGoogEmiter extends TestWalkerBase
     @Test
     public void testDefaultParameter()
     {
-        /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-        	p3 = typeof p3 !== 'undefined' ? p3 : 3;
-        	p4 = typeof p4 !== 'undefined' ? p4 : 4;
-        		
-            return p1 + p2 + p3 + p4;
-        }
-        */
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethodWithPackage("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
         visitor.visitFunction(node);
@@ -119,12 +107,6 @@ public class TestGoogEmiter extends TestWalkerBase
     @Test
     public void testDefaultParameter_Body()
     {
-        /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-            p3 = typeof p3 !== 'undefined' ? p3 : 3;
-            p4 = typeof p4 !== 'undefined' ? p4 : 4;
-        }
-        */
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethodWithPackage("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
         visitor.visitFunction(node);
@@ -138,12 +120,6 @@ public class TestGoogEmiter extends TestWalkerBase
     @Test
     public void testDefaultParameter_NoBody()
     {
-        /*
-        foo.bar.A.method1 = function(p1, p2, p3, p4) {
-            p3 = typeof p3 !== 'undefined' ? p3 : 3;
-            p4 = typeof p4 !== 'undefined' ? p4 : 4;
-        }
-        */
         JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethodWithPackage("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{}");
         visitor.visitFunction(node);

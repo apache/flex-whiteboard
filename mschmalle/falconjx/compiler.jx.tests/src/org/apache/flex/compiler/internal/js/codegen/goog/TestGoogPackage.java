@@ -23,7 +23,6 @@ import org.apache.flex.compiler.clients.IBackend;
 import org.apache.flex.compiler.internal.as.codegen.TestPackage;
 import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IFileNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,14 +33,6 @@ import org.junit.Test;
  */
 public class TestGoogPackage extends TestPackage
 {
-    // TODO (erikdebruin)
-    // 2) empty classes don't get a JS block (curly brackets)
-    //    - do we produce implicit constructors?
-    // 4) there is an extra line after the 'goog.provide' line: remove
-    // 5) there are two extra lines at the end of the code: remove
-    // 6) constructor body in 'testPackageQualified_ClassBodyMethodContents'
-    //    contains code that is not yet 'goog'-ified
-
     @Override
     @Test
     public void testPackage_Simple()
@@ -61,7 +52,6 @@ public class TestGoogPackage extends TestPackage
     }
 
     @Override
-    @Ignore
     @Test
     public void testPackageSimple_Class()
     {
@@ -69,40 +59,41 @@ public class TestGoogPackage extends TestPackage
         // All class nodes in AST get either an implicit or explicit constructor
         // this is an implicit and the way I have the before/after handler working
         // with block disallows implicit blocks from getting { }
+    	
+    	// (erikdebruin) the constuctor IS the class definition, in 'goog' JS,
+    	//               therefor we need to write out implicit constructors 
+    	//               (if I understand the term correctly)
+    	
         IFileNode node = getFileNode("package {public class A{}}");
         visitor.visitFile(node);
-        assertOut("");
+        assertOut("goog.provide('A');\n\n/**\n * @constructor\n */\nA = function() {\n};");
     }
 
     @Override
-    @Ignore
     @Test
     public void testPackageQualified_Class()
     {
-        // same here; see testPackageSimple_Class
         IFileNode node = getFileNode("package foo.bar.baz {public class A{}}");
         visitor.visitFile(node);
-        assertOut("");
+        assertOut("goog.provide('foo.bar.baz.A');\n\n/**\n * @constructor\n */\nfoo.bar.baz.A = function() {\n};");
     }
 
     @Override
     @Test
     public void testPackageQualified_ClassBody()
     {
-        // there is still two newlines at the end and after provide which shouldn't happen
-        // I'll look into that if you don't get to it
         IFileNode node = getFileNode("package foo.bar.baz {public class A{public function A(){}}}");
         visitor.visitFile(node);
-        assertOut("goog.provide('foo.bar.baz.A');\n\n\n/**\n * @constructor\n */\nfoo.bar.baz.A = function() {\n};\n\n");
+        assertOut("goog.provide('foo.bar.baz.A');\n\n/**\n * @constructor\n */\nfoo.bar.baz.A = function() {\n};");
     }
 
     @Override
     @Test
     public void testPackageQualified_ClassBodyMethodContents()
     {
-        IFileNode node = getFileNode("package foo.bar.baz {public class A{public function A(){if (a){for each(var i:Object in obj){doit();}}}}}");
+        IFileNode node = getFileNode("package foo.bar.baz {public class A{public function A(){if (a){for (var i:Object in obj){doit();}}}}}");
         visitor.visitFile(node);
-        //assertOut("");
+        assertOut("goog.provide('foo.bar.baz.A');\n\n/**\n * @constructor\n */\nfoo.bar.baz.A = function() {\n\tif (a) {\n\t\tfor (var /** @type {Object} */ i in obj) {\n\t\t\tdoit();\n\t\t}\n\t}\n};");
     }
 
     @Override

@@ -211,6 +211,7 @@ public class TestBase
             	code += line + "\n";
             	line = in.readLine();
             }
+            code = code.substring(0, code.length() - 1); // (erikdebruin) remove last line break
             
         	in.close();
         }

@@ -37,14 +37,12 @@ import org.junit.Test;
  */
 public class TestGoogExpressions extends TestExpressions
 {
-
-	// TODO (erikdebruin) implement 'goog.base' call for 'super'
-
 	@Ignore
 	@Override
     @Test
     public void testVisitLanguageIdentifierNode_SuperMethod_1()
     {
+		// TODO (erikdebruin) implement 'goog.base' call for 'super'
         IMemberAccessExpressionNode node = (IMemberAccessExpressionNode) getNode(
                 "if (a) super.foo();", IMemberAccessExpressionNode.class);
         visitor.visitMemberAccessExpression(node);
@@ -165,7 +163,7 @@ public class TestGoogExpressions extends TestExpressions
     	NamespaceAccessExpressionNode node = (NamespaceAccessExpressionNode) getExpressionNode(
                 "a::b", NamespaceAccessExpressionNode.class);
         visitor.visitNamespaceAccessExpression(node);
-        assertOut("a::b");
+        assertOut("");
     }
 
     @Ignore
@@ -178,7 +176,7 @@ public class TestGoogExpressions extends TestExpressions
         NamespaceAccessExpressionNode node = (NamespaceAccessExpressionNode) getExpressionNode(
                 "a::b::c", NamespaceAccessExpressionNode.class);
         visitor.visitNamespaceAccessExpression(node);
-        assertOut("a::b::c");
+        assertOut("");
     }
 
     protected IBackend createBackend()

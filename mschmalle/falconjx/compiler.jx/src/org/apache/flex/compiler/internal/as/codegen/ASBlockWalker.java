@@ -494,7 +494,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitSwitch(ISwitchNode node)
     {
         debug("visitSwitch()");
-        emitter.write("swtich");
+        emitter.write("switch");
         emitter.write(" ");
         emitter.write("(");
         walk(node.getChild(0));

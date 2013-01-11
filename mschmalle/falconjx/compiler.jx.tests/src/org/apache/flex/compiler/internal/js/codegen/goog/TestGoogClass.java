@@ -41,7 +41,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A{}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -52,7 +52,7 @@ public class TestGoogClass extends TestClass
 		//                    'internal' namespace?
         IClassNode node = getClassNode("internal class A{}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -63,7 +63,7 @@ public class TestGoogClass extends TestClass
 		//                    'final' keyword?
         IClassNode node = getClassNode("public final class A{}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -74,7 +74,7 @@ public class TestGoogClass extends TestClass
 		//                    'dynamic' keyword?
         IClassNode node = getClassNode("public dynamic class A{}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -86,7 +86,7 @@ public class TestGoogClass extends TestClass
 		//                    trigger the '@extends' notation?
         IClassNode node = getClassNode("public class A extends Button {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);");
     }
 
 	@Override
@@ -95,7 +95,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A implements IEventDispatcher {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -104,7 +104,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n};\n\n");
+        assertOut("/**\n * @constructor\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n};");
     }
 
 	@Override
@@ -113,7 +113,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A extends Button implements IEventDispatcher {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);");
     }
 
 	@Override
@@ -122,7 +122,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A extends Button implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);");
     }
 
 	@Override
@@ -132,7 +132,7 @@ public class TestGoogClass extends TestClass
 		// TODO (erikdebruin) 'final' keyword: see 'testSimpleFinal' above
         IClassNode node = getClassNode("public final class A extends Button implements IEventDispatcher, ILogger {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);");
     }
 
 	@Override
@@ -141,7 +141,7 @@ public class TestGoogClass extends TestClass
     {
         IClassNode node = getClassNode("public class A extends spark.components.Button implements flash.events.IEventDispatcher, mx.logging.ILogger {public function A() {}}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);\n\n");
+        assertOut("/**\n * @constructor\n * @extends {spark.components.Button}\n * @implements {IEventDispatcher}\n * @implements {ILogger}\n */\norg.apache.flex.A = function() {\n\tgoog.base(this);\n}\ngoog.inherits(org.apache.flex.A, spark.components.Button);");
     }
 
 	@Ignore
@@ -163,7 +163,7 @@ public class TestGoogClass extends TestClass
         IClassNode node = getClassNode("public class A {public var a:Object;protected var b:String; "
                 + "private var c:int; internal var d:uint; var e:Number}");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @type {Object}\n */\norg.apache.flex.A.prototype.a;\n\n/**\n * @protected\n * @type {string}\n */\norg.apache.flex.A.prototype.b;\n\n/**\n * @private\n * @type {number}\n */\norg.apache.flex.A.prototype.c;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.d;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.e;\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @type {Object}\n */\norg.apache.flex.A.prototype.a;\n\n/**\n * @protected\n * @type {string}\n */\norg.apache.flex.A.prototype.b;\n\n/**\n * @private\n * @type {number}\n */\norg.apache.flex.A.prototype.c;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.d;\n\n/**\n * @type {number}\n */\norg.apache.flex.A.prototype.e;");
     }
 
 	@Override
@@ -176,7 +176,7 @@ public class TestGoogClass extends TestClass
                 "private static const C:Number = 42;" +
                 "foo_bar static const C:String = 'me' + 'you';");
         visitor.visitClass(node);
-        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @const\n * @type {number}\n */\norg.apache.flex.A.A = 42;\n\n/**\n * @protected\n * @const\n * @type {number}\n */\norg.apache.flex.A.B = 42;\n\n/**\n * @private\n * @const\n * @type {number}\n */\norg.apache.flex.A.C = 42;\n\n/**\n * @const\n * @type {string}\n */\norg.apache.flex.A.C = 'me' + 'you';\n\n");
+        assertOut("/**\n * @constructor\n */\norg.apache.flex.A = function() {\n};\n\n/**\n * @const\n * @type {number}\n */\norg.apache.flex.A.A = 42;\n\n/**\n * @protected\n * @const\n * @type {number}\n */\norg.apache.flex.A.B = 42;\n\n/**\n * @private\n * @const\n * @type {number}\n */\norg.apache.flex.A.C = 42;\n\n/**\n * @const\n * @type {string}\n */\norg.apache.flex.A.C = 'me' + 'you';");
     }
     
 	@Ignore

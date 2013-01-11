@@ -470,11 +470,11 @@ public class TestExpressions extends TestWalkerBase
     @Test
     public void testParentheses_1()
     {
-    	// TODO (erikdebruin/mschmalle) what happens to the parentheses?
+    	// TODO (erikdebruin/mschmalle) why aren't parentheses preserved?
         IVariableNode node = (IVariableNode) getNode("var a = (a + b);",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOutDebug("var a = (a + b)");
+        assertOut("var a = (a + b)");
     }
 
     @Ignore
@@ -484,7 +484,7 @@ public class TestExpressions extends TestWalkerBase
         IVariableNode node = (IVariableNode) getNode("var a = (a + b) - c;",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOutDebug("var a = (a + b) - c");
+        assertOut("var a = (a + b) - c");
     }
 
     @Ignore
@@ -494,7 +494,7 @@ public class TestExpressions extends TestWalkerBase
         IVariableNode node = (IVariableNode) getNode("var a = ((a + b) - (c + d)) * e;",
                 IVariableNode.class);
         visitor.visitVariable(node);
-        assertOutDebug("var a = ((a + b) - (c + d)) * e");
+        assertOut("var a = ((a + b) - (c + d)) * e");
     }
 
     @Test

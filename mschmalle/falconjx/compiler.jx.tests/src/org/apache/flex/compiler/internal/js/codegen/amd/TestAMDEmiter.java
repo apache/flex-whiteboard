@@ -25,7 +25,6 @@ import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
 import org.apache.flex.compiler.internal.js.driver.amd.AMDBackend;
 import org.apache.flex.compiler.tree.as.IFileNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -38,13 +37,11 @@ import org.junit.Test;
  */
 public class TestAMDEmiter extends TestWalkerBase
 {
-    // emitPackageHeader()
-    // emitImports()
-    // emitClass()
-
-    @Test
+	@Test
     public void testSimple()
     {
+		// (erikdebruin) this test isn't outputting JS; ignoring for now, as
+		//               we are not (yet) working on AMD JS output
         String code = "package com.example.components {"
                 + "import org.apache.flex.html.staticControls.TextButton;"
                 + "public class MyTextButton extends TextButton {"
@@ -55,49 +52,37 @@ public class TestAMDEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        //assertOut("");
+        assertOutDebug("package com.example.components {\n\tpublic class MyTextButton extends TextButton {\n\t\tcom.example.components.MyTextButton = function() {\n\t\t\tif (foo() != 42) {\n\t\t\t\tbar();\n\t\t\t}\n\t\t}\n\t\tprivate var _privateVar:String = \"do \";\n\t\tpublic var publicProperty:Number = 100;\n\t\tcom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\t\t\treturn \"Don't \" + _privateVar + value;\n\t\t}\n\t}\n}");
     }
 
     @Test
     public void testSimpleMethod()
     {
+        IFunctionNode node = getMethod("function method1():void{\n}");
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethodSimple("function method1():void{\n}");
         visitor.visitFunction(node);
-        assertOut("A.prototype.method1 = function() {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
+        assertOut("A.prototype.method1 = function() {\n}");
     }
 
     @Test
     public void testSimpleParameterReturnType()
     {
-        JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int):int{\n}");
+        JSSharedData.OUTPUT_JSDOC = false;
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
+        assertOut("A.prototype.method1 = function(bar) {\n}");
     }
 
     @Test
     public void testSimpleMultipleParameter()
     {
+        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         JSSharedData.OUTPUT_JSDOC = false;
-        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar, baz, goo) {\n}");
         JSSharedData.OUTPUT_JSDOC = true;
-    }
-
-    @Ignore
-    @Test
-    public void testSimpleMultipleParameter_JSDoc()
-    {
-        // jsdoc still needs to be sorted out before tests are executing
-        IFunctionNode node = getMethod("function method1(bar:int, baz:String, goo:A):void{\n}");
-        visitor.visitFunction(node);
-        assertOut("/**\n * @this {foo.bar.A}\n * @param {int} bar\n * @param {String} baz\n"
-                + " * @param {A} goo\n * @return {void}\n */\nfoo.bar.A.prototype.method1 = "
-                + "function(bar, baz, goo) {\n}");
+        assertOut("A.prototype.method1 = function(bar, baz, goo) {\n}");
     }
 
     @Test
@@ -114,13 +99,13 @@ public class TestAMDEmiter extends TestWalkerBase
             return p1 + p2 + p3 + p4;
          }
          */
-        JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(p1:int, p2:int, p3:int = 3, p4:int = 4):int{return p1 + p2 + p3 + p4;}");
+        JSSharedData.OUTPUT_JSDOC = false;
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
+        JSSharedData.OUTPUT_JSDOC = true;
+        assertOut("A.prototype.method1 = function(p1, p2, p3, p4) {\n\tif (arguments.length < 4) "
                 + "{\n\t\tif (arguments.length < 3) {\n\t\t\tp3 = 3;\n\t\t}\n\t\tp4 = 4;\n\t}"
                 + "\n\treturn p1 + p2 + p3 + p4;\n}");
-        JSSharedData.OUTPUT_JSDOC = true;
     }
 
     @Test
@@ -136,13 +121,13 @@ public class TestAMDEmiter extends TestWalkerBase
             }
         }
         */
-        JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{if (a) foo();}");
+        JSSharedData.OUTPUT_JSDOC = false;
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+        JSSharedData.OUTPUT_JSDOC = true;
+        assertOut("A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
                 + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n\t"
                 + "if (a)\n\t\tfoo();\n}");
-        JSSharedData.OUTPUT_JSDOC = true;
     }
 
     @Test
@@ -158,35 +143,17 @@ public class TestAMDEmiter extends TestWalkerBase
             }
         }
         */
-        JSSharedData.OUTPUT_JSDOC = false;
         IFunctionNode node = getMethod("function method1(bar:int = 42, bax:int = 4):void{\n}");
+        JSSharedData.OUTPUT_JSDOC = false;
         visitor.visitFunction(node);
-        assertOut("foo.bar.A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
-                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
         JSSharedData.OUTPUT_JSDOC = true;
+        assertOut("A.prototype.method1 = function(bar, bax) {\n\tif (arguments.length < 2) {\n\t\t"
+                + "if (arguments.length < 1) {\n\t\t\tbar = 42;\n\t\t}\n\t\tbax = 4;\n\t}\n}");
     }
 
     @Override
     protected IBackend createBackend()
     {
         return new AMDBackend();
-    }
-
-    protected IFunctionNode getMethodSimple(String code)
-    {
-        String source = "package {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
-    }
-
-    protected IFunctionNode getMethod(String code)
-    {
-        String source = "package foo.bar {public class A {" + code + "}}";
-        IFileNode node = getFileNode(source);
-        IFunctionNode child = (IFunctionNode) findFirstDescendantOfType(node,
-                IFunctionNode.class);
-        return child;
     }
 }

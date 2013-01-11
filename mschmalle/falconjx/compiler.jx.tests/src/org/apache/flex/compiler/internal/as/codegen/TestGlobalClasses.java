@@ -101,14 +101,12 @@ public class TestGlobalClasses extends TestWalkerBase
         assertOut("var a:EvalError = new EvalError()");
     }
 
-    @Ignore
     @Test
     public void testFunction()
     {
-    	// TODO (erikdebruin) how to test?
-        IVariableNode node = getVariable("");
+        IVariableNode node = getVariable("var a:Function = new Function();");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("var a:Function = new Function()");
     }
 
     @Test

@@ -72,7 +72,7 @@ public class TestGoogGlobalClasses extends TestGlobalClasses
     @Test
     public void testClass()
     {
-    	// TODO (erikdebruin) how to test?
+    	// TODO (erikdebruin) how to represent this in 'goog' JS?
         IVariableNode node = getVariable("");
         visitor.visitVariable(node);
         assertOut("");
@@ -114,15 +114,13 @@ public class TestGoogGlobalClasses extends TestGlobalClasses
         assertOut("var /** @type {EvalError} */ a = new EvalError()");
     }
 
-    @Ignore
     @Override
     @Test
     public void testFunction()
     {
-    	// TODO (erikdebruin) how to test?
-        IVariableNode node = getVariable("");
+        IVariableNode node = getVariable("var a:Function = new Function();");
         visitor.visitVariable(node);
-        assertOut("");
+        assertOut("var /** @type {Function} */ a = new Function()");
     }
 
     @Override
@@ -286,7 +284,7 @@ public class TestGoogGlobalClasses extends TestGlobalClasses
     @Test
     public void testVector()
     {
-    	// TODO (erikdebruin) loose the '.<String>' notation in the JS output
+    	// TODO (erikdebruin) loose the '.<String>' in the output: Vector.<String>
     	IVariableNode node = getVariable("var a:Vector.<String> = new Vector.<String>(['Hello', 'World']);");
     	visitor.visitVariable(node);
     	assertOut("var /** @type {Array.<String>} */ a = new Vector.<String>(['Hello','World'])");

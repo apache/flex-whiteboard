@@ -99,7 +99,14 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             write("goog.require('" + imp + "');");
             write("\n");
         }
-        write("\n");
+        
+        // (erikdebruin) only write 'closing' line break when there are 
+        //               actually imports...
+        if (list.size() > 1 || 
+        	(list.size() == 1 && list.get(0).indexOf("__AS3__") == -1))
+        {
+        	write("\n");
+        }
     }
 
     @Override
@@ -130,17 +137,16 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
 
         // constructor
         emitMethod((IFunctionNode) definition.getConstructor().getNode());
-        write(";\n");
-        write("\n");
+        write(";");
 
         IDefinitionNode[] members = node.getAllMemberNodes();
         for (IDefinitionNode dnode : members)
         {
             if (dnode instanceof IVariableNode)
             {
+                write("\n\n");
                 emitField((IVariableNode) dnode);
-                write(";\n");
-                write("\n");
+                write(";");
             }
         }
 
@@ -150,9 +156,9 @@ public class JSGoogEmitter extends JSEmitter implements IJSGoogEmitter
             {
                 if (!((IFunctionNode) dnode).isConstructor())
                 {
+                    write("\n\n");
                     emitMethod((IFunctionNode) dnode);
-                    write(";\n");
-                    write("\n");
+                    write(";");
                 }
             }
         }

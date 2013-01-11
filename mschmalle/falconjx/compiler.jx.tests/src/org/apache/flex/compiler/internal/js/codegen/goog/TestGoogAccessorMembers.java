@@ -25,6 +25,7 @@ import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -69,24 +70,26 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
                 + "\n\t{get:function() {\n\t\treturn -1;\n\t}, configurable:true}\n)");
     }
 
+    @Ignore
     @Override
     @Test
     public void testGetAccessor_withNamespaceOverride()
     {
+        // TODO (erikdebruin) public override get
         IAccessorNode node = getAccessor("public override function get foo():int{return -1;}");
         visitor.visitFunction(node);
-        // TODO [TestGoog] public override get
-        //assertOut("");
+        assertOut("");
     }
 
+    @Ignore
     @Override
     @Test
     public void testGetAccessor_withStatic()
     {
+        // TODO (erikdebruin) public static get
         IAccessorNode node = getAccessor("public static function get foo():int{return -1;}");
         visitor.visitFunction(node);
-        // TODO [TestGoog] public static get
-        //assertOut("");
+        assertOut("");
     }
 
     @Override
@@ -117,24 +120,26 @@ public class TestGoogAccessorMembers extends TestAccessorMembers
                 + " {\n\t}, configurable:true}\n)");
     }
 
+    @Ignore
     @Override
     @Test
     public void testSetAccessor_withNamespaceOverride()
     {
+        // TODO (erikdebruin) public override set
         IAccessorNode node = getAccessor("public override function set foo(value:int):void{}");
         visitor.visitFunction(node);
-        // TODO [TestGoog] public override set
-        //assertOut("");
+        assertOut("");
     }
 
+    @Ignore
     @Override
     @Test
     public void testSetAccessor_withStatic()
     {
+        // TODO (erikdebruin) public static set
         IAccessorNode node = getAccessor("public static function set foo(value:int):void{}");
         visitor.visitFunction(node);
-        // TODO [TestGoog] public static set
-        //assertOut("");
+        assertOut("");
     }
 
     @Override
