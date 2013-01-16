@@ -43,6 +43,7 @@ import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
+import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
@@ -52,6 +53,7 @@ import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
+import org.apache.flex.compiler.tree.as.IStatementNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
@@ -72,7 +74,7 @@ public class ASEmitter implements IASEmitter
     private final FilterWriter out;
 
     List<ICompilerProblem> problems;
-    
+
     // (mschmalle) think about how this should be implemented, we can add our
     // own problems to this, they don't just have to be parse problems
     public List<ICompilerProblem> getProblems()
@@ -710,30 +712,39 @@ public class ASEmitter implements IASEmitter
         emitMethodScope(node);
     }
 
-    protected ITypeNode findTypeNode(IPackageNode node)
+    @Override
+    public void emitStatement(IASNode node)
     {
-        IScopedNode scope = node.getScopedNode();
-        for (int i = 0; i < scope.getChildCount(); i++)
+        getWalker().walk(node);
+        // XXX (mschmalle) this should be in the after handler?
+        if (node.getParent().getNodeID() != ASTNodeID.LabledStatementID
+                && !(node instanceof IStatementNode))
         {
-            IASNode child = scope.getChild(i);
-            if (child instanceof ITypeNode)
-                return (ITypeNode) child;
+            write(";");
         }
-        return null;
+
+        if (!isLastStatement(node))
+            write("\n");
     }
 
-    protected static IFunctionNode getConstructor(IDefinitionNode[] members)
+    //--------------------------------------------------------------------------
+    // 
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void emitFunctionCall(IFunctionCallNode node)
     {
-        for (IDefinitionNode node : members)
+        if (node.isNewExpression())
         {
-            if (node instanceof IFunctionNode)
-            {
-                IFunctionNode fnode = (IFunctionNode) node;
-                if (fnode.isConstructor())
-                    return fnode;
-            }
+            write("new");
+            write(" ");
         }
-        return null;
+
+        getWalker().walk(node.getNameNode());
+
+        write("(");
+        walkArguments(node.getArgumentNodes());
+        write(")");
     }
 
     //--------------------------------------------------------------------------
@@ -751,4 +762,67 @@ public class ASEmitter implements IASEmitter
         getWalker().walk(node.getRightOperandNode());
     }
 
+    //--------------------------------------------------------------------------
+    // Utility
+    //--------------------------------------------------------------------------
+
+    protected ITypeNode findTypeNode(IPackageNode node)
+    {
+        IScopedNode scope = node.getScopedNode();
+        for (int i = 0; i < scope.getChildCount(); i++)
+        {
+            IASNode child = scope.getChild(i);
+            if (child instanceof ITypeNode)
+                return (ITypeNode) child;
+        }
+        return null;
+    }
+
+    private void walkArguments(IExpressionNode[] nodes)
+    {
+        int len = nodes.length;
+        for (int i = 0; i < len; i++)
+        {
+            IExpressionNode node = nodes[i];
+            getWalker().walk(node);
+            if (i < len - 1)
+                write(", ");
+        }
+    }
+
+    //--------------------------------------------------------------------------
+    // Static Utility
+    //--------------------------------------------------------------------------
+
+    protected static IFunctionNode getConstructor(IDefinitionNode[] members)
+    {
+        for (IDefinitionNode node : members)
+        {
+            if (node instanceof IFunctionNode)
+            {
+                IFunctionNode fnode = (IFunctionNode) node;
+                if (fnode.isConstructor())
+                    return fnode;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isLastStatement(IASNode node)
+    {
+        return getChildIndex(node.getParent(), node) == node.getParent()
+                .getChildCount() - 1;
+    }
+
+    // this is not fair that we have to do this if (i < len - 1)
+    private static int getChildIndex(IASNode parent, IASNode node)
+    {
+        final int len = parent.getChildCount();
+        for (int i = 0; i < len; i++)
+        {
+            if (parent.getChild(i) == node)
+                return i;
+        }
+        return -1;
+    }
 }

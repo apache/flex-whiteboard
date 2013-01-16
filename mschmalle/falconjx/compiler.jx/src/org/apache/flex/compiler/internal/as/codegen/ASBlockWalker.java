@@ -264,29 +264,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitFunctionCall(IFunctionCallNode node)
     {
         debug("visitFunctionCall()");
-        if (node.isNewExpression())
-        {
-            emitter.write("new");
-            emitter.write(" ");
-        }
-
-        walk(node.getNameNode());
-
-        emitter.write("(");
-        walkArguments(node.getArgumentNodes());
-        emitter.write(")");
-    }
-
-    private void walkArguments(IExpressionNode[] nodes)
-    {
-        int len = nodes.length;
-        for (int i = 0; i < len; i++)
-        {
-            IExpressionNode node = nodes[i];
-            walk(node);
-            if (i < len - 1)
-                emitter.write(", ");
-        }
+        emitter.emitFunctionCall(node);
     }
 
     @Override
@@ -301,15 +279,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         final int len = node.getChildCount();
         for (int i = 0; i < len; i++)
         {
-            walk(node.getChild(i));
-            // XXX (mschmalle) this should be in the after handler?
-            if (node.getParent().getNodeID() != ASTNodeID.LabledStatementID
-                    && !(node.getChild(i) instanceof IStatementNode))
-            {
-                emitter.write(";");
-            }
-            if (i < len - 1)
-                emitter.write("\n");
+            emitter.emitStatement(node.getChild(i));
         }
     }
 
