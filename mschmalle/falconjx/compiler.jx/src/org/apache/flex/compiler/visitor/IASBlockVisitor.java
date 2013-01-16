@@ -28,7 +28,6 @@ import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
-import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IEmbedNode;
@@ -142,8 +141,6 @@ public interface IASBlockVisitor
     //--------------------------------------------------------------------------
 
     void visitIterationFlow(IIterationFlowNode node);
-
-    void visitConditional(IConditionalNode node);
 
     // is a IVariableNode
     void visitParameter(IParameterNode node);

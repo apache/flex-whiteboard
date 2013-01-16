@@ -36,6 +36,7 @@ import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
+import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
@@ -58,6 +59,7 @@ import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IIterationFlowNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
@@ -65,6 +67,7 @@ import org.apache.flex.compiler.tree.as.INumericLiteralNode;
 import org.apache.flex.compiler.tree.as.IObjectLiteralValuePairNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
+import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IStatementNode;
@@ -75,6 +78,7 @@ import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
+import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.tree.as.IWhileLoopNode;
@@ -999,6 +1003,18 @@ public class ASEmitter implements IASEmitter
         getWalker().walk(node.getStatementContentsNode());
     }
 
+    @Override
+    public void emitReturn(IReturnNode node)
+    {
+        write("return");
+        IExpressionNode rnode = node.getReturnValueNode();
+        if (rnode != null && rnode.getNodeID() != ASTNodeID.NilID)
+        {
+            write(" ");
+            getWalker().walk(rnode);
+        }
+    }
+
     //--------------------------------------------------------------------------
     // Expressions
     //--------------------------------------------------------------------------
@@ -1303,5 +1319,74 @@ public class ASEmitter implements IASEmitter
         write(":");
         write(" ");
         getWalker().walk(node.getLabeledStatement());
+    }
+
+    @Override
+    public void emitNamespaceAccessExpression(NamespaceAccessExpressionNode node)
+    {
+        getWalker().walk(node.getLeftOperandNode());
+        write(node.getOperator().getOperatorText());
+        getWalker().walk(node.getRightOperandNode());
+    }
+
+    @Override
+    public void emitUnaryOperator(IUnaryOperatorNode node)
+    {
+        if (node.getNodeID() == ASTNodeID.Op_PreIncrID
+                || node.getNodeID() == ASTNodeID.Op_PreDecrID
+                || node.getNodeID() == ASTNodeID.Op_BitwiseNotID
+                || node.getNodeID() == ASTNodeID.Op_LogicalNotID
+                || node.getNodeID() == ASTNodeID.Op_SubtractID
+                || node.getNodeID() == ASTNodeID.Op_AddID)
+        {
+            write(node.getOperator().getOperatorText());
+            getWalker().walk(node.getOperandNode());
+        }
+
+        else if (node.getNodeID() == ASTNodeID.Op_PostIncrID
+                || node.getNodeID() == ASTNodeID.Op_PostDecrID)
+        {
+            getWalker().walk(node.getOperandNode());
+            write(node.getOperator().getOperatorText());
+        }
+        else if (node.getNodeID() == ASTNodeID.Op_DeleteID
+                || node.getNodeID() == ASTNodeID.Op_VoidID)
+        {
+            write(node.getOperator().getOperatorText());
+            write(" ");
+            getWalker().walk(node.getOperandNode());
+        }
+        else if (node.getNodeID() == ASTNodeID.Op_TypeOfID)
+        {
+            write(node.getOperator().getOperatorText());
+            write("(");
+            getWalker().walk(node.getOperandNode());
+            write(")");
+        }
+    }
+
+    @Override
+    public void emitLanguageIdentifier(ILanguageIdentifierNode node)
+    {
+        if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.ANY_TYPE)
+        {
+            write("*");
+        }
+        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.REST)
+        {
+            write("...");
+        }
+        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.SUPER)
+        {
+            write("super");
+        }
+        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.THIS)
+        {
+            write("this");
+        }
+        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.VOID)
+        {
+            write("void");
+        }
     }
 }

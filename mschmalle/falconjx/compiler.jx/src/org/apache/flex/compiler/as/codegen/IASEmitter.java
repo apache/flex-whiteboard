@@ -23,6 +23,7 @@ import java.io.Writer;
 
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
+import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
@@ -40,6 +41,7 @@ import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IIterationFlowNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.ILanguageIdentifierNode;
 import org.apache.flex.compiler.tree.as.ILiteralNode;
 import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
@@ -47,12 +49,14 @@ import org.apache.flex.compiler.tree.as.INumericLiteralNode;
 import org.apache.flex.compiler.tree.as.IObjectLiteralValuePairNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
+import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
 import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
+import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IWhileLoopNode;
 import org.apache.flex.compiler.tree.as.IWithNode;
@@ -275,6 +279,8 @@ public interface IASEmitter
      */
     void emitLabelStatement(LabeledStatementNode node);
 
+    void emitReturn(IReturnNode node);
+
     //--------------------------------------------------------------------------
     // Expressions
     //--------------------------------------------------------------------------
@@ -311,6 +317,8 @@ public interface IASEmitter
 
     void emitIterationFlow(IIterationFlowNode node);
 
+    void emitNamespaceAccessExpression(NamespaceAccessExpressionNode node);
+
     void emitMemberAccessExpression(IMemberAccessExpressionNode node);
 
     void emitDynamicAccess(IDynamicAccessNode node);
@@ -331,6 +339,8 @@ public interface IASEmitter
     // Operators
     //--------------------------------------------------------------------------
 
+    void emitUnaryOperator(IUnaryOperatorNode node);
+
     /**
      * Emit an operator statement.
      * 
@@ -345,4 +355,7 @@ public interface IASEmitter
     //--------------------------------------------------------------------------
 
     void emitKeyword(IKeywordNode node);
+
+    void emitLanguageIdentifier(ILanguageIdentifierNode node);
+
 }

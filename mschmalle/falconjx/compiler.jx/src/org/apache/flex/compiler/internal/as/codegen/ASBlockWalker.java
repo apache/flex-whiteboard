@@ -39,7 +39,6 @@ import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
-import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
@@ -434,9 +433,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
             NamespaceAccessExpressionNode node)
     {
         debug("visitNamespaceAccessExpression()");
-        walk(node.getLeftOperandNode());
-        emitter.write(node.getOperator().getOperatorText());
-        walk(node.getRightOperandNode());
+        emitter.emitNamespaceAccessExpression(node);
     }
 
     @Override
@@ -458,7 +455,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitBinaryOperator(" + node.getOperator().getOperatorText()
                 + ")");
-
         emitter.emitBinaryOperator(node);
     }
 
@@ -466,47 +462,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitUnaryOperator(IUnaryOperatorNode node)
     {
         debug("visitUnaryOperator()");
-        if (node.getNodeID() == ASTNodeID.Op_PreIncrID
-                || node.getNodeID() == ASTNodeID.Op_PreDecrID
-                || node.getNodeID() == ASTNodeID.Op_BitwiseNotID
-                || node.getNodeID() == ASTNodeID.Op_LogicalNotID
-                || node.getNodeID() == ASTNodeID.Op_SubtractID
-                || node.getNodeID() == ASTNodeID.Op_AddID)
-        {
-            emitter.write(node.getOperator().getOperatorText());
-            walk(node.getOperandNode());
-        }
-
-        else if (node.getNodeID() == ASTNodeID.Op_PostIncrID
-                || node.getNodeID() == ASTNodeID.Op_PostDecrID)
-        {
-            walk(node.getOperandNode());
-            emitter.write(node.getOperator().getOperatorText());
-        }
-        else if (node.getNodeID() == ASTNodeID.Op_DeleteID
-                || node.getNodeID() == ASTNodeID.Op_VoidID)
-        {
-            emitter.write(node.getOperator().getOperatorText());
-            emitter.write(" ");
-            walk(node.getOperandNode());
-        }
-        else if (node.getNodeID() == ASTNodeID.Op_TypeOfID)
-        {
-            emitter.write(node.getOperator().getOperatorText());
-            emitter.write("(");
-            walk(node.getOperandNode());
-            emitter.write(")");
-        }
-    }
-
-    @Override
-    public void visitConditional(IConditionalNode node)
-    {
-        debug("visitConditional()");
-        emitter.write("(");
-        walk(node.getConditionalExpressionNode());
-        emitter.write(")");
-        walk(node.getStatementContentsNode());
+        emitter.emitUnaryOperator(node);
     }
 
     @Override
@@ -562,13 +518,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitReturn(IReturnNode node)
     {
         debug("visitReturn()");
-        emitter.write("return");
-        IExpressionNode rnode = node.getReturnValueNode();
-        if (rnode != null && rnode.getNodeID() != ASTNodeID.NilID)
-        {
-            emitter.write(" ");
-            walk(rnode);
-        }
+        emitter.emitReturn(node);
     }
 
     @Override
@@ -595,26 +545,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     @Override
     public void visitLanguageIdentifierNode(ILanguageIdentifierNode node)
     {
-        if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.ANY_TYPE)
-        {
-            emitter.write("*");
-        }
-        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.REST)
-        {
-            emitter.write("...");
-        }
-        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.SUPER)
-        {
-            emitter.write("super");
-        }
-        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.THIS)
-        {
-            emitter.write("this");
-        }
-        else if (node.getKind() == ILanguageIdentifierNode.LanguageIdentifierKind.VOID)
-        {
-            emitter.write("void");
-        }
+        emitter.emitLanguageIdentifier(node);
     }
 
     //--------------------------------------------------------------------------

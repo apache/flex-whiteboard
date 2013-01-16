@@ -27,7 +27,6 @@ import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
-import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IEmbedNode;
@@ -183,11 +182,7 @@ public class ASNodeSwitch implements IASNodeStrategy
         {
             visitor.visitWhileLoop((IWhileLoopNode) node);
         }
-        else if (node instanceof IConditionalNode)
-        {
-            visitor.visitConditional((IConditionalNode) node);
-        }
-
+        
         // IExpressionNode
         else if (node instanceof IEmbedNode)
         {
