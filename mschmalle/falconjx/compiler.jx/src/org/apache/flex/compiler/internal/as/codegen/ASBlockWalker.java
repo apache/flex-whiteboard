@@ -19,7 +19,6 @@
 
 package org.apache.flex.compiler.internal.as.codegen;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.flex.compiler.as.codegen.IASEmitter;
@@ -45,7 +44,6 @@ import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
-import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IEmbedNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
@@ -70,14 +68,12 @@ import org.apache.flex.compiler.tree.as.IObjectLiteralValuePairNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IReturnNode;
-import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
 import org.apache.flex.compiler.tree.as.ITerminalNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
-import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
 import org.apache.flex.compiler.tree.as.IUnaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
@@ -146,10 +142,15 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     }
 
     @Override
+    public void walk(IASNode node)
+    {
+        getStrategy().handle(node);
+    }
+
+    @Override
     public void visitCompilationUnit(ICompilationUnit unit)
     {
         debug("visitCompilationUnit()");
-
         IFileNode node = null;
         try
         {
@@ -182,7 +183,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitPackage(IPackageNode node)
     {
         debug("visitPackage()");
-
         emitter.emitPackageHeader(node);
         emitter.emitPackageHeaderContents(node);
         emitter.emitPackageContents(node);
@@ -193,7 +193,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitClass(IClassNode node)
     {
         debug("visitClass()");
-
         emitter.emitClass(node);
     }
 
@@ -201,7 +200,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitInterface(IInterfaceNode node)
     {
         debug("visitInterface()");
-
         emitter.emitInterface(node);
     }
 
@@ -209,7 +207,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitVariable(IVariableNode node)
     {
         debug("visitVariable()");
-
         if (SemanticUtils.isMemberDefinition(node.getDefinition()))
         {
             emitter.emitField(node);
@@ -224,7 +221,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitFunction(IFunctionNode node)
     {
         debug("visitFunction()");
-
         if (isMemberDefinition(node.getDefinition()))
         {
             emitter.emitMethod(node);
@@ -296,63 +292,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitIf(IIfNode node)
     {
         debug("visitIf()");
-        IConditionalNode conditional = (IConditionalNode) node.getChild(0);
-
-        IContainerNode xnode = (IContainerNode) conditional
-                .getStatementContentsNode();
-
-        emitter.write("if");
-        emitter.write(" ");
-        emitter.write("(");
-        walk(conditional.getChild(0)); // conditional expression
-        emitter.write(")");
-        if (!isImplicit(xnode))
-            emitter.write(" ");
-
-        walk(conditional.getChild(1)); // BlockNode
-        IConditionalNode[] nodes = node.getElseIfNodes();
-        if (nodes.length > 0)
-        {
-            for (int i = 0; i < nodes.length; i++)
-            {
-                IConditionalNode enode = nodes[i];
-                IContainerNode snode = (IContainerNode) enode
-                        .getStatementContentsNode();
-
-                final boolean isImplicit = isImplicit(snode);
-                if (isImplicit)
-                    emitter.write("\n");
-                else
-                    emitter.write(" ");
-
-                emitter.write("else if");
-                emitter.write(" ");
-                emitter.write("(");
-                walk(enode.getChild(0));
-                emitter.write(")");
-                if (!isImplicit)
-                    emitter.write(" ");
-
-                walk(enode.getChild(1)); // ConditionalNode
-            }
-        }
-
-        ITerminalNode elseNode = node.getElseNode();
-        if (elseNode != null)
-        {
-            IContainerNode cnode = (IContainerNode) elseNode.getChild(0);
-            // if an implicit if, add a newline with no space
-            final boolean isImplicit = isImplicit(cnode);
-            if (isImplicit)
-                emitter.write("\n");
-            else
-                emitter.write(" ");
-            emitter.write("else");
-            if (!isImplicit)
-                emitter.write(" ");
-
-            walk(elseNode); // TerminalNode
-        }
+        emitter.emitIf(node);
     }
 
     @Override
@@ -394,49 +334,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitSwitch(ISwitchNode node)
     {
         debug("visitSwitch()");
-        emitter.write("switch");
-        emitter.write(" ");
-        emitter.write("(");
-        walk(node.getChild(0));
-        emitter.write(")");
-        emitter.write(" {");
-        emitter.indentPush();
-        emitter.write("\n");
-
-        IConditionalNode[] cnodes = getCaseNodes(node);
-        ITerminalNode dnode = getDefaultNode(node);
-
-        for (int i = 0; i < cnodes.length; i++)
-        {
-            IConditionalNode casen = cnodes[i];
-            IContainerNode cnode = (IContainerNode) casen.getChild(1);
-            emitter.write("case");
-            emitter.write(" ");
-            walk(casen.getConditionalExpressionNode());
-            emitter.write(":");
-            if (!isImplicit(cnode))
-                emitter.write(" ");
-            walk(casen.getStatementContentsNode());
-            if (i == cnodes.length - 1 && dnode == null)
-            {
-                emitter.indentPop();
-                emitter.write("\n");
-            }
-            else
-                emitter.write("\n");
-        }
-        if (dnode != null)
-        {
-            IContainerNode cnode = (IContainerNode) dnode.getChild(0);
-            emitter.write("default");
-            emitter.write(":");
-            if (!isImplicit(cnode))
-                emitter.write(" ");
-            walk(dnode);
-            emitter.indentPop();
-            emitter.write("\n");
-        }
-        emitter.write("}");
+        emitter.emitSwitch(node);
     }
 
     @Override
@@ -445,90 +343,40 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         debug("visitWhileLoopNode()");
         if (node.getKind() == WhileLoopKind.WHILE)
         {
-            IContainerNode cnode = (IContainerNode) node.getChild(1);
-            emitter.write("while");
-            emitter.write(" ");
-            emitter.write("(");
-            walk(node.getConditionalExpressionNode());
-            emitter.write(")");
-            if (!isImplicit(cnode))
-                emitter.write(" ");
-            walk(node.getStatementContentsNode());
+            emitter.emitWhileLoop(node);
         }
         else if (node.getKind() == WhileLoopKind.DO)
         {
-            IContainerNode cnode = (IContainerNode) node.getChild(0);
-            emitter.write("do");
-            if (!isImplicit(cnode))
-                emitter.write(" ");
-            walk(node.getStatementContentsNode());
-            if (!isImplicit(cnode))
-                emitter.write(" ");
-            else
-                emitter.write("\n"); // TODO (mschmalle) there is something wrong here, block should NL
-            emitter.write("while");
-            emitter.write(" ");
-            emitter.write("(");
-            walk(node.getConditionalExpressionNode());
-            emitter.write(");");
+            emitter.emitDoLoop(node);
         }
     }
 
     @Override
     public void visitWith(IWithNode node)
     {
-        IContainerNode cnode = (IContainerNode) node.getChild(1);
-        emitter.write("with");
-        emitter.write(" ");
-        emitter.write("(");
-        walk(node.getTargetNode());
-        emitter.write(")");
-        if (!isImplicit(cnode))
-            emitter.write(" ");
-        walk(node.getStatementContentsNode());
+        debug("visitWith()");
+        emitter.emitWith(node);
     }
 
     @Override
     public void visitThrow(IThrowNode node)
     {
-        emitter.write("throw");
-        emitter.write(" ");
-        walk(node.getThrownExpressionNode());
+        debug("visitThrow()");
+        emitter.emitThrow(node);
     }
 
     @Override
     public void visitTry(ITryNode node)
     {
         debug("visitTry()");
-        emitter.write("try");
-        emitter.write(" ");
-        walk(node.getStatementContentsNode());
-        for (int i = 0; i < node.getCatchNodeCount(); i++)
-        {
-            walk(node.getCatchNode(i));
-        }
-        ITerminalNode fnode = node.getFinallyNode();
-        if (fnode != null)
-        {
-            emitter.write(" ");
-            emitter.write("finally");
-            emitter.write(" ");
-            walk(fnode);
-        }
+        emitter.emitTry(node);
     }
 
     @Override
     public void visitCatch(ICatchNode node)
     {
         debug("visitCatch()");
-        emitter.write(" ");
-        emitter.write("catch");
-        emitter.write(" ");
-        emitter.write("(");
-        walk(node.getCatchParameterNode());
-        emitter.write(")");
-        emitter.write(" ");
-        walk(node.getStatementContentsNode());
+        emitter.emitCatch(node);
     }
 
     @Override
@@ -819,20 +667,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     // 
     //--------------------------------------------------------------------------
 
-    protected IFunctionNode getConstructor(IDefinitionNode[] members)
-    {
-        for (IDefinitionNode node : members)
-        {
-            if (node instanceof IFunctionNode)
-            {
-                IFunctionNode fnode = (IFunctionNode) node;
-                if (fnode.isConstructor())
-                    return fnode;
-            }
-        }
-        return null;
-    }
-
     protected void debug(String message)
     {
         System.out.println(message);
@@ -868,73 +702,10 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     //  
     //--------------------------------------------------------------------------
 
-    @SuppressWarnings("unused")
-    private static boolean hasTypeNode(IPackageNode node)
-    {
-        return node.getScopedNode().getChildCount() != 0;
-    }
-
-    ITypeNode findTypeNode(IPackageNode node)
-    {
-        IScopedNode scope = node.getScopedNode();
-        for (int i = 0; i < scope.getChildCount(); i++)
-        {
-            IASNode child = scope.getChild(i);
-            if (child instanceof ITypeNode)
-                return (ITypeNode) child;
-        }
-        return null;
-    }
-
-    @Override
-    public void walk(IASNode node)
-    {
-        getStrategy().handle(node);
-    }
-
-    private static final boolean isImplicit(IContainerNode node)
-    {
-        return node.getContainerType() == ContainerType.IMPLICIT
-                || node.getContainerType() == ContainerType.SYNTHESIZED;
-    }
-
     private static boolean isMemberDefinition(IDefinition definition)
     {
         return definition != null
                 && (definition.getParent() instanceof IClassDefinition || definition
                         .getParent() instanceof IInterfaceDefinition);
-    }
-
-    // there seems to be a bug in the ISwitchNode.getCaseNodes(), need to file a bug
-    public IConditionalNode[] getCaseNodes(ISwitchNode node)
-    {
-        IBlockNode block = (IBlockNode) node.getChild(1);
-        int childCount = block.getChildCount();
-        ArrayList<IConditionalNode> retVal = new ArrayList<IConditionalNode>(
-                childCount);
-
-        for (int i = 0; i < childCount; i++)
-        {
-            IASNode child = block.getChild(i);
-            if (child instanceof IConditionalNode)
-                retVal.add((IConditionalNode) child);
-        }
-
-        return retVal.toArray(new IConditionalNode[0]);
-    }
-
-    // there seems to be a bug in the ISwitchNode.getDefaultNode(), need to file a bug
-    public ITerminalNode getDefaultNode(ISwitchNode node)
-    {
-        IBlockNode block = (IBlockNode) node.getChild(1);
-        int childCount = block.getChildCount();
-        for (int i = childCount - 1; i >= 0; i--)
-        {
-            IASNode child = block.getChild(i);
-            if (child instanceof ITerminalNode)
-                return (ITerminalNode) child;
-        }
-
-        return null;
     }
 }

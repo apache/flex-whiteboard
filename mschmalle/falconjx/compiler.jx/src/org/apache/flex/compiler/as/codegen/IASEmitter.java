@@ -25,18 +25,25 @@ import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
+import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
+import org.apache.flex.compiler.tree.as.ISwitchNode;
+import org.apache.flex.compiler.tree.as.IThrowNode;
+import org.apache.flex.compiler.tree.as.ITryNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
+import org.apache.flex.compiler.tree.as.IWhileLoopNode;
+import org.apache.flex.compiler.tree.as.IWithNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 import org.apache.flex.compiler.visitor.IASNodeStrategy;
 
@@ -180,6 +187,13 @@ public interface IASEmitter
     void emitStatement(IASNode node);
 
     /**
+     * Emit a <code>if(){}else if(){}else{}</code> statement.
+     * 
+     * @param node The {@link IIfNode} node.
+     */
+    void emitIf(IIfNode node);
+
+    /**
      * Emit a <code>for each</code> statement.
      * 
      * @param node The {@link IForLoopNode} node.
@@ -192,6 +206,55 @@ public interface IASEmitter
      * @param node The {@link IForLoopNode} node.
      */
     void emitForLoop(IForLoopNode node);
+
+    /**
+     * Emit a <code>switch(){}</code> statement.
+     * 
+     * @param node The {@link ISwitchNode} node.
+     */
+    void emitSwitch(ISwitchNode node);
+
+    /**
+     * Emit a <code>while(){}</code> statement.
+     * 
+     * @param node The {@link IWhileLoopNode} node.
+     */
+    void emitWhileLoop(IWhileLoopNode node);
+
+    /**
+     * Emit a <code>do{}while()</code> statement.
+     * 
+     * @param node The {@link IWhileLoopNode} node.
+     */
+    void emitDoLoop(IWhileLoopNode node);
+
+    /**
+     * Emit a <code>with(){}</code> statement.
+     * 
+     * @param node The {@link IWithNode} node.
+     */
+    void emitWith(IWithNode node);
+
+    /**
+     * Emit a <code>throw</code> statement.
+     * 
+     * @param node The {@link IThrowNode} node.
+     */
+    void emitThrow(IThrowNode node);
+
+    /**
+     * Emit a <code>try{}</code> statement.
+     * 
+     * @param node The {@link ITryNode} node.
+     */
+    void emitTry(ITryNode node);
+
+    /**
+     * Emit a <code>catch(){}</code> statement.
+     * 
+     * @param node The {@link ICatchNode} node.
+     */
+    void emitCatch(ICatchNode node);
 
     //--------------------------------------------------------------------------
     // Expressions

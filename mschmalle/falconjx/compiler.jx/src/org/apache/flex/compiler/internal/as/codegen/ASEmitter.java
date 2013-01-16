@@ -40,7 +40,10 @@ import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
+import org.apache.flex.compiler.tree.as.IBlockNode;
+import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
+import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
@@ -48,6 +51,7 @@ import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
@@ -56,9 +60,15 @@ import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IStatementNode;
+import org.apache.flex.compiler.tree.as.ISwitchNode;
+import org.apache.flex.compiler.tree.as.ITerminalNode;
+import org.apache.flex.compiler.tree.as.IThrowNode;
+import org.apache.flex.compiler.tree.as.ITryNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
+import org.apache.flex.compiler.tree.as.IWhileLoopNode;
+import org.apache.flex.compiler.tree.as.IWithNode;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
 /**
@@ -735,6 +745,68 @@ public class ASEmitter implements IASEmitter
     }
 
     @Override
+    public void emitIf(IIfNode node)
+    {
+        IConditionalNode conditional = (IConditionalNode) node.getChild(0);
+
+        IContainerNode xnode = (IContainerNode) conditional
+                .getStatementContentsNode();
+
+        write("if");
+        write(" ");
+        write("(");
+        getWalker().walk(conditional.getChild(0)); // conditional expression
+        write(")");
+        if (!isImplicit(xnode))
+            write(" ");
+
+        getWalker().walk(conditional.getChild(1)); // BlockNode
+        IConditionalNode[] nodes = node.getElseIfNodes();
+        if (nodes.length > 0)
+        {
+            for (int i = 0; i < nodes.length; i++)
+            {
+                IConditionalNode enode = nodes[i];
+                IContainerNode snode = (IContainerNode) enode
+                        .getStatementContentsNode();
+
+                final boolean isImplicit = isImplicit(snode);
+                if (isImplicit)
+                    write("\n");
+                else
+                    write(" ");
+
+                write("else if");
+                write(" ");
+                write("(");
+                getWalker().walk(enode.getChild(0));
+                write(")");
+                if (!isImplicit)
+                    write(" ");
+
+                getWalker().walk(enode.getChild(1)); // ConditionalNode
+            }
+        }
+
+        ITerminalNode elseNode = node.getElseNode();
+        if (elseNode != null)
+        {
+            IContainerNode cnode = (IContainerNode) elseNode.getChild(0);
+            // if an implicit if, add a newline with no space
+            final boolean isImplicit = isImplicit(cnode);
+            if (isImplicit)
+                write("\n");
+            else
+                write(" ");
+            write("else");
+            if (!isImplicit)
+                write(" ");
+
+            getWalker().walk(elseNode); // TerminalNode
+        }
+    }
+
+    @Override
     public void emitForEachLoop(IForLoopNode node)
     {
         IContainerNode xnode = (IContainerNode) node.getChild(1);
@@ -778,6 +850,142 @@ public class ASEmitter implements IASEmitter
         if (!isImplicit(xnode))
             write(" ");
 
+        getWalker().walk(node.getStatementContentsNode());
+    }
+
+    @Override
+    public void emitSwitch(ISwitchNode node)
+    {
+        write("switch");
+        write(" ");
+        write("(");
+        getWalker().walk(node.getChild(0));
+        write(")");
+        write(" {");
+        indentPush();
+        write("\n");
+
+        IConditionalNode[] cnodes = getCaseNodes(node);
+        ITerminalNode dnode = getDefaultNode(node);
+
+        for (int i = 0; i < cnodes.length; i++)
+        {
+            IConditionalNode casen = cnodes[i];
+            IContainerNode cnode = (IContainerNode) casen.getChild(1);
+            write("case");
+            write(" ");
+            getWalker().walk(casen.getConditionalExpressionNode());
+            write(":");
+            if (!isImplicit(cnode))
+                write(" ");
+            getWalker().walk(casen.getStatementContentsNode());
+            if (i == cnodes.length - 1 && dnode == null)
+            {
+                indentPop();
+                write("\n");
+            }
+            else
+                write("\n");
+        }
+        if (dnode != null)
+        {
+            IContainerNode cnode = (IContainerNode) dnode.getChild(0);
+            write("default");
+            write(":");
+            if (!isImplicit(cnode))
+                write(" ");
+            getWalker().walk(dnode);
+            indentPop();
+            write("\n");
+        }
+        write("}");
+    }
+
+    @Override
+    public void emitWhileLoop(IWhileLoopNode node)
+    {
+        IContainerNode cnode = (IContainerNode) node.getChild(1);
+        write("while");
+        write(" ");
+        write("(");
+        getWalker().walk(node.getConditionalExpressionNode());
+        write(")");
+        if (!isImplicit(cnode))
+            write(" ");
+        getWalker().walk(node.getStatementContentsNode());
+    }
+
+    @Override
+    public void emitDoLoop(IWhileLoopNode node)
+    {
+        IContainerNode cnode = (IContainerNode) node.getChild(0);
+        write("do");
+        if (!isImplicit(cnode))
+            write(" ");
+        getWalker().walk(node.getStatementContentsNode());
+        if (!isImplicit(cnode))
+            write(" ");
+        else
+            write("\n"); // TODO (mschmalle) there is something wrong here, block should NL
+        write("while");
+        write(" ");
+        write("(");
+        getWalker().walk(node.getConditionalExpressionNode());
+        write(");");
+    }
+
+    @Override
+    public void emitWith(IWithNode node)
+    {
+        IContainerNode cnode = (IContainerNode) node.getChild(1);
+        write("with");
+        write(" ");
+        write("(");
+        getWalker().walk(node.getTargetNode());
+        write(")");
+        if (!isImplicit(cnode))
+            write(" ");
+        getWalker().walk(node.getStatementContentsNode());
+    }
+
+    @Override
+    public void emitThrow(IThrowNode node)
+    {
+        write("throw");
+        write(" ");
+        getWalker().walk(node.getThrownExpressionNode());
+    }
+
+    @Override
+    public void emitTry(ITryNode node)
+    {
+        write("try");
+        write(" ");
+        getWalker().walk(node.getStatementContentsNode());
+        for (int i = 0; i < node.getCatchNodeCount(); i++)
+        {
+            getWalker().walk(node.getCatchNode(i));
+        }
+        ITerminalNode fnode = node.getFinallyNode();
+        if (fnode != null)
+        {
+            write(" ");
+            write("finally");
+            write(" ");
+            getWalker().walk(fnode);
+        }
+    }
+
+    @Override
+    public void emitCatch(ICatchNode node)
+    {
+        write(" ");
+        write("catch");
+        write(" ");
+        write("(");
+        getWalker().walk(node.getCatchParameterNode());
+        write(")");
+        write(" ");
         getWalker().walk(node.getStatementContentsNode());
     }
 
@@ -913,5 +1121,42 @@ public class ASEmitter implements IASEmitter
         {
             getWalker().walk(node2);
         }
+    }
+
+    //--------------------------------------------------------------------------
+    // Temp: These need JIRA tickets
+    //--------------------------------------------------------------------------
+
+    // there seems to be a bug in the ISwitchNode.getCaseNodes(), need to file a bug
+    public IConditionalNode[] getCaseNodes(ISwitchNode node)
+    {
+        IBlockNode block = (IBlockNode) node.getChild(1);
+        int childCount = block.getChildCount();
+        ArrayList<IConditionalNode> retVal = new ArrayList<IConditionalNode>(
+                childCount);
+
+        for (int i = 0; i < childCount; i++)
+        {
+            IASNode child = block.getChild(i);
+            if (child instanceof IConditionalNode)
+                retVal.add((IConditionalNode) child);
+        }
+
+        return retVal.toArray(new IConditionalNode[0]);
+    }
+
+    // there seems to be a bug in the ISwitchNode.getDefaultNode(), need to file a bug
+    public ITerminalNode getDefaultNode(ISwitchNode node)
+    {
+        IBlockNode block = (IBlockNode) node.getChild(1);
+        int childCount = block.getChildCount();
+        for (int i = childCount - 1; i >= 0; i--)
+        {
+            IASNode child = block.getChild(i);
+            if (child instanceof ITerminalNode)
+                return (ITerminalNode) child;
+        }
+
+        return null;
     }
 }
