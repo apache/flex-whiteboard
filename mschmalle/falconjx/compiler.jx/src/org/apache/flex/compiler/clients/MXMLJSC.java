@@ -46,7 +46,7 @@ import org.apache.flex.compiler.exceptions.ConfigurationException.IOError;
 import org.apache.flex.compiler.exceptions.ConfigurationException.MustSpecifyTarget;
 import org.apache.flex.compiler.exceptions.ConfigurationException.OnlyOneSource;
 import org.apache.flex.compiler.internal.js.codegen.JSSharedData;
-import org.apache.flex.compiler.internal.js.driver.JSBackend;
+import org.apache.flex.compiler.internal.js.driver.goog.GoogBackend;
 import org.apache.flex.compiler.internal.projects.CompilerProject;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.apache.flex.compiler.internal.projects.ISourceFileHandler;
@@ -105,7 +105,8 @@ public class MXMLJSC
     {
         long startTime = System.nanoTime();
 
-        final IBackend backend = new JSBackend();
+        //final IBackend backend = new JSBackend();
+        final IBackend backend = new GoogBackend();
         final MXMLJSC mxmlc = new MXMLJSC(backend);
         final Set<ICompilerProblem> problems = new HashSet<ICompilerProblem>();
         final int exitCode = mxmlc.mainNoExit(args, problems, true);
@@ -265,39 +266,40 @@ public class MXMLJSC
                 }
 
                 final File outputFile = new File(getOutputFilePath());
-
                 final File outputFolder = new File(outputFile.getParent());
+                
                 List<ICompilationUnit> reachableCompilationUnits = project
                         .getReachableCompilationUnitsInSWFOrder(ImmutableSet
                                 .of(mainCU));
                 for (final ICompilationUnit cu : reachableCompilationUnits)
                 {
                     if (cu.getCompilationUnitType() == ICompilationUnit.UnitType.AS_UNIT
-                            && cu != mainCU)
+                            /* && cu != mainCU */)
                     {
-                        final File outputClassFile = new File(
-                                outputFolder.getAbsolutePath() + File.separator
-                                        + cu.getShortNames().get(0) + ".js");
-                        System.out.println(outputClassFile.getAbsolutePath());
+                        final File outputClassFile = 
+                        		getOutputClassFile(cu.getQualifiedNames().get(0), 
+                        				outputFolder);
 
-                        for (ICompilationUnit unit : reachableCompilationUnits)
-                        {
+                        //for (ICompilationUnit unit : reachableCompilationUnits)
+                        //{
+                        	ICompilationUnit unit = cu;
                             IASWriter jswriter = JSSharedData.backend
                                     .createWriter(project,
                                             (List<ICompilerProblem>) errors,
                                             unit, false);
 
-                            if (unit.getCompilationUnitType() != ICompilationUnit.UnitType.AS_UNIT)
-                                continue;
+                            //if (unit.getCompilationUnitType() != ICompilationUnit.UnitType.AS_UNIT)
+                                //continue;
 
                             // XXX hack what is CountingOutputStream?
-                            BufferedOutputStream out = new BufferedOutputStream(
-                                    new FileOutputStream(outputClassFile));
+                            BufferedOutputStream out = 
+                            		new BufferedOutputStream(
+                            				new FileOutputStream(outputClassFile));
                             jswriter.writeTo(out);
                             out.flush();
                             out.close();
                             jswriter.close();
-                        }
+                        //}
                     }
                 }
                 compilationSuccess = true;
@@ -389,6 +391,40 @@ public class MXMLJSC
         }
         else
             return config.getOutput();
+    }
+
+    /**
+     * @author Erik de Bruin
+     * 
+     * Get the output class file. This includes the (sub)directory in which the
+     * original class file lives. If the directory structure doesn't exist, it
+     * is created.
+     * 
+     * @param qname
+     * @param outputFolder
+     * @return output class file path
+     */
+    private File getOutputClassFile(String qname, File outputFolder)
+    {
+    	String[] cname = qname.split("\\.");
+    	String sdirPath = outputFolder.getAbsolutePath() + File.separator;
+        if (cname.length > 0)
+        {
+        	for (int i = 0, n = cname.length - 1; i < n; i++)
+        	{
+        		sdirPath += cname[i] + File.separator;
+        	}
+        	
+        	//System.out.println(sdirPath);
+        	
+        	File sdir = new File(sdirPath);
+        	if (!sdir.exists())
+        		sdir.mkdirs();
+        	
+        	qname = cname[cname.length - 1];
+        }
+        
+        return new File(sdirPath + qname + "." + JSSharedData.OUTPUT_EXTENSION);
     }
 
     /**
