@@ -27,6 +27,7 @@ import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
+import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
@@ -159,13 +160,38 @@ public interface IASEmitter
     void emitSetAccessor(ISetterNode node);
 
     void emitParameter(IParameterNode node);
-    
+
     /**
      * Emit a namespace member.
      * 
      * @param node The {@link INamespaceNode} class member.
      */
     void emitNamespace(INamespaceNode node);
+
+    //--------------------------------------------------------------------------
+    // Statements
+    //--------------------------------------------------------------------------
+
+    /**
+     * Emit a statement found within an {@link IBlockNode}.
+     * 
+     * @param node The {@link IASNode} statement.
+     */
+    void emitStatement(IASNode node);
+
+    /**
+     * Emit a <code>for each</code> statement.
+     * 
+     * @param node The {@link IForLoopNode} node.
+     */
+    void emitForEachLoop(IForLoopNode node);
+
+    /**
+     * Emit a <code>for</code> statement.
+     * 
+     * @param node The {@link IForLoopNode} node.
+     */
+    void emitForLoop(IForLoopNode node);
 
     //--------------------------------------------------------------------------
     // Expressions
@@ -186,28 +212,21 @@ public interface IASEmitter
      * @param node The anonymous {@link FunctionObjectNode}.
      */
     void emitFunctionObject(IExpressionNode node);
-    
+
     /**
      * Emit a header at the start of a function block.
      * 
      * @param node The {@link IFunctionNode} node.
      */
     void emitFunctionBlockHeader(IFunctionNode node);
-    
+
     /**
      * Emit a function call like <code>new Foo()</code> or <code>foo(42)</code>.
      * 
      * @param node The {@link IFunctionCallNode} node.
      */
     void emitFunctionCall(IFunctionCallNode node);
-    
-    /**
-     * Emit a statement found within an {@link IBlockNode}.
-     * 
-     * @param node The {@link IASNode} statement.
-     */
-    void emitStatement(IASNode node);
-    
+
     //--------------------------------------------------------------------------
     // Operators
     //--------------------------------------------------------------------------
@@ -218,9 +237,5 @@ public interface IASEmitter
      * @param node The {@link IBinaryOperatorNode} or chain of variable nodes.
      */
     void emitBinaryOperator(IBinaryOperatorNode node);
-
-    
-
-    
 
 }

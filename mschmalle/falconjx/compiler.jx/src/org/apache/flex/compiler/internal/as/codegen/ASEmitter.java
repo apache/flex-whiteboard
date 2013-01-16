@@ -41,8 +41,10 @@ import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IAccessorNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
+import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
+import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
@@ -56,6 +58,7 @@ import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IStatementNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
+import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.visitor.IASBlockWalker;
 
 /**
@@ -712,6 +715,10 @@ public class ASEmitter implements IASEmitter
         emitMethodScope(node);
     }
 
+    //--------------------------------------------------------------------------
+    // Statements
+    //--------------------------------------------------------------------------
+
     @Override
     public void emitStatement(IASNode node)
     {
@@ -727,8 +734,55 @@ public class ASEmitter implements IASEmitter
             write("\n");
     }
 
+    @Override
+    public void emitForEachLoop(IForLoopNode node)
+    {
+        IContainerNode xnode = (IContainerNode) node.getChild(1);
+        write("for");
+        write(" ");
+        write("each");
+        write(" ");
+        write("(");
+
+        IContainerNode cnode = node.getConditionalsContainerNode();
+        getWalker().walk(cnode.getChild(0));
+
+        write(")");
+        if (!isImplicit(xnode))
+            write(" ");
+
+        getWalker().walk(node.getStatementContentsNode());
+    }
+
+    @Override
+    public void emitForLoop(IForLoopNode node)
+    {
+        IContainerNode xnode = (IContainerNode) node.getChild(1);
+
+        write("for");
+        write(" ");
+        write("(");
+
+        IContainerNode cnode = node.getConditionalsContainerNode();
+        final IASNode node0 = cnode.getChild(0);
+        if (node0.getNodeID() == ASTNodeID.Op_InID)
+        {
+            getWalker().walk(cnode.getChild(0));
+        }
+        else
+        {
+            visitForBody(cnode);
+        }
+
+        write(")");
+        if (!isImplicit(xnode))
+            write(" ");
+
+        getWalker().walk(node.getStatementContentsNode());
+    }
+
     //--------------------------------------------------------------------------
-    // 
+    // Expressions
     //--------------------------------------------------------------------------
 
     @Override
@@ -824,5 +878,40 @@ public class ASEmitter implements IASEmitter
                 return i;
         }
         return -1;
+    }
+
+    private static final boolean isImplicit(IContainerNode node)
+    {
+        return node.getContainerType() == ContainerType.IMPLICIT
+                || node.getContainerType() == ContainerType.SYNTHESIZED;
+    }
+
+    protected void visitForBody(IContainerNode node)
+    {
+        final IASNode node0 = node.getChild(0);
+        final IASNode node1 = node.getChild(1);
+        final IASNode node2 = node.getChild(2);
+
+        // initializer
+        if (node0 != null)
+        {
+            getWalker().walk(node0);
+            write(";");
+            if (node1.getNodeID() != ASTNodeID.NilID)
+                write(" ");
+        }
+        // condition or target
+        if (node1 != null)
+        {
+            getWalker().walk(node1);
+            write(";");
+            if (node2.getNodeID() != ASTNodeID.NilID)
+                write(" ");
+        }
+        // iterator
+        if (node2 != null)
+        {
+            getWalker().walk(node2);
+        }
     }
 }

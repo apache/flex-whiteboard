@@ -72,7 +72,6 @@ import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IReturnNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
-import org.apache.flex.compiler.tree.as.IStatementNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
 import org.apache.flex.compiler.tree.as.ITerminalNode;
 import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
@@ -369,82 +368,13 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     protected void visitForEach(IForLoopNode node)
     {
         debug("visitForEach()");
-        IContainerNode xnode = (IContainerNode) node.getChild(1);
-        emitter.write("for");
-        emitter.write(" ");
-        emitter.write("each");
-        emitter.write(" ");
-        emitter.write("(");
-
-        IContainerNode cnode = node.getConditionalsContainerNode();
-        visitForInBody(cnode);
-
-        emitter.write(")");
-        if (!isImplicit(xnode))
-            emitter.write(" ");
-
-        walk(node.getStatementContentsNode());
+        emitter.emitForEachLoop(node);
     }
 
     protected void visitFor(IForLoopNode node)
     {
         debug("visitFor()");
-        IContainerNode xnode = (IContainerNode) node.getChild(1);
-
-        emitter.write("for");
-        emitter.write(" ");
-        emitter.write("(");
-
-        IContainerNode cnode = node.getConditionalsContainerNode();
-        final IASNode node0 = cnode.getChild(0);
-        if (node0.getNodeID() == ASTNodeID.Op_InID)
-        {
-            visitForInBody(cnode);
-        }
-        else
-        {
-            visitForBody(cnode);
-        }
-
-        emitter.write(")");
-        if (!isImplicit(xnode))
-            emitter.write(" ");
-
-        walk(node.getStatementContentsNode());
-    }
-
-    protected void visitForInBody(IContainerNode node)
-    {
-        walk(node.getChild(0));
-    }
-
-    protected void visitForBody(IContainerNode node)
-    {
-        final IASNode node0 = node.getChild(0);
-        final IASNode node1 = node.getChild(1);
-        final IASNode node2 = node.getChild(2);
-
-        // initializer
-        if (node0 != null)
-        {
-            walk(node0);
-            emitter.write(";");
-            if (node1.getNodeID() != ASTNodeID.NilID)
-                emitter.write(" ");
-        }
-        // condition or target
-        if (node1 != null)
-        {
-            walk(node1);
-            emitter.write(";");
-            if (node2.getNodeID() != ASTNodeID.NilID)
-                emitter.write(" ");
-        }
-        // iterator
-        if (node2 != null)
-        {
-            walk(node2);
-        }
+        emitter.emitForLoop(node);
     }
 
     @Override
