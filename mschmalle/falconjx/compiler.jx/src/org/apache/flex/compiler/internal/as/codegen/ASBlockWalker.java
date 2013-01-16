@@ -27,7 +27,6 @@ import org.apache.flex.compiler.definitions.IDefinition;
 import org.apache.flex.compiler.definitions.IInterfaceDefinition;
 import org.apache.flex.compiler.internal.semantics.SemanticUtils;
 import org.apache.flex.compiler.internal.tree.as.BaseLiteralContainerNode;
-import org.apache.flex.compiler.internal.tree.as.ContainerNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
 import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.internal.tree.as.NamespaceAccessExpressionNode;
@@ -42,7 +41,6 @@ import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
-import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IEmbedNode;
@@ -141,6 +139,10 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         emitter.setWalker(this);
     }
 
+    //--------------------------------------------------------------------------
+    // File level
+    //--------------------------------------------------------------------------
+
     @Override
     public void walk(IASNode node)
     {
@@ -188,6 +190,10 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
         emitter.emitPackageContents(node);
         emitter.emitPackageFooter(node);
     }
+
+    //--------------------------------------------------------------------------
+    // Type level
+    //--------------------------------------------------------------------------
 
     @Override
     public void visitClass(IClassNode node)
@@ -279,16 +285,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     }
 
     @Override
-    public void visitContainer(IContainerNode node)
-    {
-        debug("visitContainer()");
-        emitter.write(toPrefix(node.getContainerType()));
-        for (int i = 0; i < node.getChildCount(); i++)
-            walk(node.getChild(i));
-        emitter.write(toPostfix(node.getContainerType()));
-    }
-
-    @Override
     public void visitIf(IIfNode node)
     {
         debug("visitIf()");
@@ -315,19 +311,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     {
         debug("visitFor()");
         emitter.emitForLoop(node);
-    }
-
-    @Override
-    public void visitIterationFlow(IIterationFlowNode node)
-    {
-        debug("visitIterationFlow()");
-        emitter.write(node.getKind().toString().toLowerCase());
-        IIdentifierNode lnode = node.getLabelNode();
-        if (lnode != null)
-        {
-            emitter.write(" ");
-            walk(lnode);
-        }
     }
 
     @Override
@@ -380,18 +363,24 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     }
 
     @Override
+    public void visitIterationFlow(IIterationFlowNode node)
+    {
+        debug("visitIterationFlow()");
+        emitter.emitIterationFlow(node);
+    }
+
+    @Override
     public void visitIdentifier(IIdentifierNode node)
     {
         debug("visitIdentifier(" + node.getName() + ")");
-        String name = node.getName();
-        emitter.write(name);
+        emitter.emitIdentifier(node);
     }
 
     @Override
     public void visitNumericLiteral(INumericLiteralNode node)
     {
         debug("visitNumericLiteral(" + node.getNumericValue() + ")");
-        emitter.write(node.getNumericValue().toString());
+        emitter.emitNumericLiteral(node);
     }
 
     @Override
@@ -406,7 +395,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitKeyword(IKeywordNode node)
     {
         debug("visitKeyword(" + node.getNodeID().getParaphrase() + ")");
-        emitter.write(node.getNodeID().getParaphrase());
+        emitter.emitKeyword(node);
     }
 
     @Override
@@ -422,38 +411,22 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
                 || node.getLiteralType() == LiteralType.STRING
                 || node.getLiteralType() == LiteralType.VOID)
         {
-            emitter.write(node.getValue(true));
+            emitter.emitLiteral(node);
         }
         else if (node.getLiteralType() == LiteralType.ARRAY
                 || node.getLiteralType() == LiteralType.OBJECT)
         {
             BaseLiteralContainerNode anode = (BaseLiteralContainerNode) node;
-            ContainerNode cnode = anode.getContentsNode();
-            visitLiteralContainer(cnode);
+            IContainerNode cnode = anode.getContentsNode();
+            emitter.emitLiteralContainer(cnode);
         }
-    }
-
-    public void visitLiteralContainer(IContainerNode node)
-    {
-        emitter.write(toPrefix(node.getContainerType()));
-        final int len = node.getChildCount();
-        for (int i = 0; i < len; i++)
-        {
-            IASNode child = node.getChild(i);
-            walk(child);
-            if (i < len - 1)
-                emitter.write(",");
-        }
-        emitter.write(toPostfix(node.getContainerType()));
     }
 
     @Override
     public void visitMemberAccessExpression(IMemberAccessExpressionNode node)
     {
         debug("visitMemberAccessExpression()");
-        walk(node.getLeftOperandNode());
-        emitter.write(node.getOperator().getOperatorText());
-        walk(node.getRightOperandNode());
+        emitter.emitMemberAccessExpression(node);
     }
 
     @Override
@@ -470,20 +443,14 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitDynamicAccess(IDynamicAccessNode node)
     {
         debug("visitDynamicAccess()");
-        walk(node.getLeftOperandNode());
-        emitter.write("[");
-        walk(node.getRightOperandNode());
-        emitter.write("]");
+        emitter.emitDynamicAccess(node);
     }
 
     @Override
     public void visitTypedExpression(ITypedExpressionNode node)
     {
         debug("visitITypedExpression()");
-        walk(node.getCollectionNode());
-        emitter.write(".<");
-        walk(node.getTypeNode());
-        emitter.write(">");
+        emitter.emitTypedExpression(node);
     }
 
     @Override
@@ -588,6 +555,7 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitEmbed(IEmbedNode node)
     {
         debug("visitEmbed(" + node.getAttributes()[0].getValue() + ")");
+        // TODO (mschmalle) visitEmbed() 
     }
 
     @Override
@@ -607,35 +575,21 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     public void visitTernaryOperator(ITernaryOperatorNode node)
     {
         debug("visitTernaryOperator()");
-        walk(node.getConditionalNode());
-        emitter.write(" ");
-        emitter.write("?");
-        emitter.write(" ");
-        walk(node.getLeftOperandNode());
-        emitter.write(" ");
-        emitter.write(":");
-        emitter.write(" ");
-        walk(node.getRightOperandNode());
+        emitter.emitTernaryOperator(node);
     }
 
     @Override
     public void visitLabeledStatement(LabeledStatementNode node)
     {
         debug("visitLabeledStatement()");
-        emitter.write(node.getLabel());
-        emitter.write(" ");
-        emitter.write(":");
-        emitter.write(" ");
-        walk(node.getLabeledStatement());
+        emitter.emitLabelStatement(node);
     }
 
     @Override
-    public void visitIObjectLiteralValuePair(IObjectLiteralValuePairNode node)
+    public void visitObjectLiteralValuePair(IObjectLiteralValuePairNode node)
     {
         debug("visitIObjectLiteralValuePair()");
-        walk(node.getNameNode());
-        emitter.write(":");
-        walk(node.getValueNode());
+        emitter.emitObjectLiteralValuePair(node);
     }
 
     @Override
@@ -670,32 +624,6 @@ public class ASBlockWalker implements IASBlockVisitor, IASBlockWalker
     protected void debug(String message)
     {
         System.out.println(message);
-    }
-
-    private String toPrefix(ContainerType type)
-    {
-        if (type == ContainerType.BRACES)
-            return "{";
-        else if (type == ContainerType.BRACKETS)
-            return "[";
-        else if (type == ContainerType.IMPLICIT)
-            return "";
-        else if (type == ContainerType.PARENTHESIS)
-            return "(";
-        return null;
-    }
-
-    private String toPostfix(ContainerType type)
-    {
-        if (type == ContainerType.BRACES)
-            return "}";
-        else if (type == ContainerType.BRACKETS)
-            return "]";
-        else if (type == ContainerType.IMPLICIT)
-            return "";
-        else if (type == ContainerType.PARENTHESIS)
-            return ")";
-        return null;
     }
 
     //--------------------------------------------------------------------------

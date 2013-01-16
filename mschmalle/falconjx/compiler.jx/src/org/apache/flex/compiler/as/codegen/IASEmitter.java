@@ -22,25 +22,37 @@ package org.apache.flex.compiler.as.codegen;
 import java.io.Writer;
 
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.tree.as.IASNode;
 import org.apache.flex.compiler.tree.as.IBinaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
+import org.apache.flex.compiler.tree.as.IContainerNode;
+import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IIdentifierNode;
 import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
+import org.apache.flex.compiler.tree.as.IIterationFlowNode;
+import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.ILiteralNode;
+import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
+import org.apache.flex.compiler.tree.as.INumericLiteralNode;
+import org.apache.flex.compiler.tree.as.IObjectLiteralValuePairNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
+import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
+import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IWhileLoopNode;
 import org.apache.flex.compiler.tree.as.IWithNode;
@@ -256,6 +268,13 @@ public interface IASEmitter
      */
     void emitCatch(ICatchNode node);
 
+    /**
+     * Emit a <code>foo:{}</code> statement.
+     * 
+     * @param node The {@link LabeledStatementNode} node.
+     */
+    void emitLabelStatement(LabeledStatementNode node);
+
     //--------------------------------------------------------------------------
     // Expressions
     //--------------------------------------------------------------------------
@@ -290,6 +309,24 @@ public interface IASEmitter
      */
     void emitFunctionCall(IFunctionCallNode node);
 
+    void emitIterationFlow(IIterationFlowNode node);
+
+    void emitMemberAccessExpression(IMemberAccessExpressionNode node);
+
+    void emitDynamicAccess(IDynamicAccessNode node);
+
+    void emitTypedExpression(ITypedExpressionNode node);
+
+    void emitObjectLiteralValuePair(IObjectLiteralValuePairNode node);
+
+    void emitIdentifier(IIdentifierNode node);
+
+    void emitLiteral(ILiteralNode node);
+
+    void emitLiteralContainer(IContainerNode node);
+
+    void emitNumericLiteral(INumericLiteralNode node);
+
     //--------------------------------------------------------------------------
     // Operators
     //--------------------------------------------------------------------------
@@ -301,4 +338,11 @@ public interface IASEmitter
      */
     void emitBinaryOperator(IBinaryOperatorNode node);
 
+    void emitTernaryOperator(ITernaryOperatorNode node);
+
+    //--------------------------------------------------------------------------
+    // Node
+    //--------------------------------------------------------------------------
+
+    void emitKeyword(IKeywordNode node);
 }

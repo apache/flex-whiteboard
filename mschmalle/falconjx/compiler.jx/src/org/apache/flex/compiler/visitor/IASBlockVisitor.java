@@ -29,7 +29,6 @@ import org.apache.flex.compiler.tree.as.IBlockNode;
 import org.apache.flex.compiler.tree.as.ICatchNode;
 import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IConditionalNode;
-import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IDefaultXMLNamespaceNode;
 import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IEmbedNode;
@@ -149,7 +148,7 @@ public interface IASBlockVisitor
     // is a IVariableNode
     void visitParameter(IParameterNode node);
 
-    void visitIObjectLiteralValuePair(IObjectLiteralValuePairNode node);
+    void visitObjectLiteralValuePair(IObjectLiteralValuePairNode node);
 
     //--------------------------------------------------------------------------
     // Expression Statement nodes
@@ -175,9 +174,6 @@ public interface IASBlockVisitor
     //--------------------------------------------------------------------------
     // Container nodes
     //--------------------------------------------------------------------------
-
-    // TODO (mschmalle) make sure IContainerNode and IBlock are explicitly different and independent 
-    void visitContainer(IContainerNode node);
 
     void visitBlock(IBlockNode node);
 

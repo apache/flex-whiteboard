@@ -35,6 +35,7 @@ import org.apache.flex.compiler.definitions.IVariableDefinition;
 import org.apache.flex.compiler.internal.tree.as.ChainedVariableNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionNode;
 import org.apache.flex.compiler.internal.tree.as.FunctionObjectNode;
+import org.apache.flex.compiler.internal.tree.as.LabeledStatementNode;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.tree.ASTNodeID;
 import org.apache.flex.compiler.tree.as.IASNode;
@@ -46,15 +47,22 @@ import org.apache.flex.compiler.tree.as.IClassNode;
 import org.apache.flex.compiler.tree.as.IConditionalNode;
 import org.apache.flex.compiler.tree.as.IContainerNode;
 import org.apache.flex.compiler.tree.as.IDefinitionNode;
+import org.apache.flex.compiler.tree.as.IDynamicAccessNode;
 import org.apache.flex.compiler.tree.as.IExpressionNode;
 import org.apache.flex.compiler.tree.as.IForLoopNode;
 import org.apache.flex.compiler.tree.as.IFunctionCallNode;
 import org.apache.flex.compiler.tree.as.IFunctionNode;
 import org.apache.flex.compiler.tree.as.IGetterNode;
+import org.apache.flex.compiler.tree.as.IIdentifierNode;
 import org.apache.flex.compiler.tree.as.IIfNode;
 import org.apache.flex.compiler.tree.as.IInterfaceNode;
+import org.apache.flex.compiler.tree.as.IIterationFlowNode;
 import org.apache.flex.compiler.tree.as.IKeywordNode;
+import org.apache.flex.compiler.tree.as.ILiteralNode;
+import org.apache.flex.compiler.tree.as.IMemberAccessExpressionNode;
 import org.apache.flex.compiler.tree.as.INamespaceNode;
+import org.apache.flex.compiler.tree.as.INumericLiteralNode;
+import org.apache.flex.compiler.tree.as.IObjectLiteralValuePairNode;
 import org.apache.flex.compiler.tree.as.IPackageNode;
 import org.apache.flex.compiler.tree.as.IParameterNode;
 import org.apache.flex.compiler.tree.as.IScopedNode;
@@ -62,9 +70,11 @@ import org.apache.flex.compiler.tree.as.ISetterNode;
 import org.apache.flex.compiler.tree.as.IStatementNode;
 import org.apache.flex.compiler.tree.as.ISwitchNode;
 import org.apache.flex.compiler.tree.as.ITerminalNode;
+import org.apache.flex.compiler.tree.as.ITernaryOperatorNode;
 import org.apache.flex.compiler.tree.as.IThrowNode;
 import org.apache.flex.compiler.tree.as.ITryNode;
 import org.apache.flex.compiler.tree.as.ITypeNode;
+import org.apache.flex.compiler.tree.as.ITypedExpressionNode;
 import org.apache.flex.compiler.tree.as.IVariableNode;
 import org.apache.flex.compiler.tree.as.IContainerNode.ContainerType;
 import org.apache.flex.compiler.tree.as.IWhileLoopNode;
@@ -1056,6 +1066,32 @@ public class ASEmitter implements IASEmitter
     // Static Utility
     //--------------------------------------------------------------------------
 
+    private static String toPrefix(ContainerType type)
+    {
+        if (type == ContainerType.BRACES)
+            return "{";
+        else if (type == ContainerType.BRACKETS)
+            return "[";
+        else if (type == ContainerType.IMPLICIT)
+            return "";
+        else if (type == ContainerType.PARENTHESIS)
+            return "(";
+        return null;
+    }
+
+    private static String toPostfix(ContainerType type)
+    {
+        if (type == ContainerType.BRACES)
+            return "}";
+        else if (type == ContainerType.BRACKETS)
+            return "]";
+        else if (type == ContainerType.IMPLICIT)
+            return "";
+        else if (type == ContainerType.PARENTHESIS)
+            return ")";
+        return null;
+    }
+
     protected static IFunctionNode getConstructor(IDefinitionNode[] members)
     {
         for (IDefinitionNode node : members)
@@ -1158,5 +1194,114 @@ public class ASEmitter implements IASEmitter
         }
 
         return null;
+    }
+
+    @Override
+    public void emitLiteral(ILiteralNode node)
+    {
+        write(node.getValue(true));
+    }
+
+    @Override
+    public void emitLiteralContainer(IContainerNode node)
+    {
+        write(toPrefix(node.getContainerType()));
+        final int len = node.getChildCount();
+        for (int i = 0; i < len; i++)
+        {
+            IASNode child = node.getChild(i);
+            getWalker().walk(child);
+            if (i < len - 1)
+                write(",");
+        }
+        write(toPostfix(node.getContainerType()));
+    }
+
+    @Override
+    public void emitIdentifier(IIdentifierNode node)
+    {
+        write(node.getName());
+    }
+
+    @Override
+    public void emitNumericLiteral(INumericLiteralNode node)
+    {
+        write(node.getNumericValue().toString());
+    }
+
+    @Override
+    public void emitKeyword(IKeywordNode node)
+    {
+        write(node.getNodeID().getParaphrase());
+    }
+
+    @Override
+    public void emitIterationFlow(IIterationFlowNode node)
+    {
+        write(node.getKind().toString().toLowerCase());
+        IIdentifierNode lnode = node.getLabelNode();
+        if (lnode != null)
+        {
+            write(" ");
+            getWalker().walk(lnode);
+        }
+    }
+
+    @Override
+    public void emitMemberAccessExpression(IMemberAccessExpressionNode node)
+    {
+        getWalker().walk(node.getLeftOperandNode());
+        write(node.getOperator().getOperatorText());
+        getWalker().walk(node.getRightOperandNode());
+    }
+
+    @Override
+    public void emitDynamicAccess(IDynamicAccessNode node)
+    {
+        getWalker().walk(node.getLeftOperandNode());
+        write("[");
+        getWalker().walk(node.getRightOperandNode());
+        write("]");
+    }
+
+    @Override
+    public void emitTypedExpression(ITypedExpressionNode node)
+    {
+        getWalker().walk(node.getCollectionNode());
+        write(".<");
+        getWalker().walk(node.getTypeNode());
+        write(">");
+    }
+
+    @Override
+    public void emitTernaryOperator(ITernaryOperatorNode node)
+    {
+        getWalker().walk(node.getConditionalNode());
+        write(" ");
+        write("?");
+        write(" ");
+        getWalker().walk(node.getLeftOperandNode());
+        write(" ");
+        write(":");
+        write(" ");
+        getWalker().walk(node.getRightOperandNode());
+    }
+
+    @Override
+    public void emitObjectLiteralValuePair(IObjectLiteralValuePairNode node)
+    {
+        getWalker().walk(node.getNameNode());
+        write(":");
+        getWalker().walk(node.getValueNode());
+    }
+
+    @Override
+    public void emitLabelStatement(LabeledStatementNode node)
+    {
+        write(node.getLabel());
+        write(" ");
+        write(":");
+        write(" ");
+        getWalker().walk(node.getLabeledStatement());
     }
 }
