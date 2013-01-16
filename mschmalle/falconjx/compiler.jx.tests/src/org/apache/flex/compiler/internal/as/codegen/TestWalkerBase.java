@@ -4,7 +4,6 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 import org.apache.flex.compiler.clients.IBackend;
-import org.apache.flex.compiler.internal.as.codegen.ASFilterWriter;
 import org.apache.flex.compiler.internal.as.driver.ASBackend;
 import org.apache.flex.compiler.visitor.IASBlockVisitor;
 import org.junit.After;
@@ -45,17 +44,6 @@ public class TestWalkerBase extends TestBase
     protected void assertOut(String code)
     {
         mCode = writer.toString();
-        assertThat(writer.toString(), is(code));
-    }
-    
-    // (erikdebruin) this helps me debug the tests in a way that fits my
-    //               'normal' workflow better...
-    protected void assertOutDebug(String code)
-    {
-        mCode = writer.toString();
-        
-        System.out.println(mCode);
-        
         assertThat(writer.toString(), is(code));
     }
 }

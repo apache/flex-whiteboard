@@ -52,7 +52,7 @@ public class TestAMDEmiter extends TestWalkerBase
                 + "return \"Don't \" + _privateVar + value; }";
         IFileNode node = getFileNode(code);
         visitor.visitFile(node);
-        assertOutDebug("package com.example.components {\n\tpublic class MyTextButton extends TextButton {\n\t\tcom.example.components.MyTextButton = function() {\n\t\t\tif (foo() != 42) {\n\t\t\t\tbar();\n\t\t\t}\n\t\t}\n\t\tprivate var _privateVar:String = \"do \";\n\t\tpublic var publicProperty:Number = 100;\n\t\tcom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\t\t\treturn \"Don't \" + _privateVar + value;\n\t\t}\n\t}\n}");
+        assertOut("package com.example.components {\n\tpublic class MyTextButton extends TextButton {\n\t\tcom.example.components.MyTextButton = function() {\n\t\t\tif (foo() != 42) {\n\t\t\t\tbar();\n\t\t\t}\n\t\t}\n\t\tprivate var _privateVar:String = \"do \";\n\t\tpublic var publicProperty:Number = 100;\n\t\tcom.example.components.MyTextButton.prototype.myFunction = function(value) {\n\t\t\treturn \"Don't \" + _privateVar + value;\n\t\t}\n\t}\n}");
     }
 
     @Test

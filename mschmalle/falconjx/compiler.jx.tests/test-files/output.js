@@ -19,4 +19,3 @@ goog.inherits(org.apache.flex.A, spark.components.Button);
  * @type {ArgumentError}
  */
 org.apache.flex.A.prototype._a = new ArgumentError();
-

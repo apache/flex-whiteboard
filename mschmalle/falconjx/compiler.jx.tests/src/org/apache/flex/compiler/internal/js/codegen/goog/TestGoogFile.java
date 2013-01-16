@@ -37,7 +37,7 @@ public class TestGoogFile extends TestWalkerBase
     {
         IFileNode node = getFileNode("input", true);
         visitor.visitFile(node);
-        assertOutDebug(getCodeFromFile("output", true));
+        assertOut(getCodeFromFile("output", true));
     }
 
     @Override
