@@ -1,0 +1,563 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="downloads" default="main" basedir=".">
+	<property name="FLEX_HOME" location=".."/>
+
+	<!-- properties -->
+	<property file="${FLEX_HOME}/build.properties"/>
+
+    <property name="lib.dir" value="${FLEX_HOME}/lib"/>
+    
+    <!-- 
+        If you change either lib.ext.dir or lib.opt.dir you need to change
+        classpaths in compiler build.xml.
+        
+        If you change lib.ext.dir you also need to change paths in
+        MxmlScanner.getXercesClassLoader() and classpath in xerces-path build.xml.
+    --> 
+    <property name="lib.ext.dir" value="${lib.dir}/external"/>      
+    <property name="lib.opt.dir" value="${lib.ext.dir}/optional"/>
+
+	<property name="download.dir" value="${FLEX_HOME}/in"/>
+
+    <property name="batik.zip.dir" value="batik-1.7"/>
+    <property name="batik.dir" value="thirdparty/batik"/>
+    <property name="velocity.zip.dir" value="velocity-1.4"/>
+    <property name="velocity.dir" value="thirdparty/velocity"/>
+    
+	<!-- 
+	   Notes:
+	       For Apache, the JARS must be removed from the repository.
+	       Every attempt was made to use the same versions that were used for Flex 4.6 even
+	       if those version are far from the most current versions.
+	       
+	       Flex 4.6 used commons-collections v2.1 but checkintests blew up with either the 
+	       2.1 and 2.1.1 jars from http://archive.apache.org/dist/commons/collections/binaries/.
+	       
+	       Licenses:
+	        commons-collections (3.0) - Apache 1.1
+	        commons-discovery (0.2) - Apache 1.1
+	        commons-logging (1.0.4) - Apache 2.0
+	        batik (1.6) - Apache 2.0
+	        flex-messaging-common.jar - GNU Lesser General Public License, Version 3 
+	                                    which is not an Apache compatible licenses
+	        saxon9 (9.1.0.8) - MPLv1
+	        xalan (2.6.0) - Apache 2.0
+	        xercesImpl and xml-apis (2.9.1.2) - Apache 2.0
+	        javacc (5.0) - BSD - http://en.wikipedia.org/wiki/BSD_licenses
+	        velocity (1.4) - Apache 2.0
+	        
+	        OSMF - Mozilla Public License, version 1.1 (MPL)      
+	-->
+	
+    <property name="commons-collections.name" value="commons-collections-3.0"/>
+    <property name="commons-discovery.name" value="commons-discovery-0.2"/>	
+    <property name="commons-logging.name" value="commons-logging-1.0.4"/>
+	
+    <property name="saxon9.bin.zip" value="saxonb9-1-0-8j.zip"/>
+    <property name="saxon9.jar.dir" value="saxonb9-1-0-8j"/>
+    
+    <property name="xerces.dir" value="xerces-2_9_1"/>
+     
+    <!-- 
+        Because the downloads requires a network connection and the JARs don't change very often, 
+        they are each downloaded only if they don't already exist. 
+    -->
+    
+	<target name="main" depends="batik-jars, commons-jars, javacc-jar, saxon9-jar, velocity-jars, xalan-jar, xerces-jars" 
+		description="Downloads all the required thirdparty JARs"/>
+
+    <!--
+		Cleanup
+	-->
+	
+    <target name="clean" depends="batik-jars-clean,velocity-jars-clean"
+        description="Removes thirdparty downloads.">
+        
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${download.dir}">
+                <include name="commons-collections*/**"/>
+                <include name="commons-discovery*/**"/>
+                <include name="commons-logging*/**"/>
+                <include name="javacc*/**"/>
+                <include name="saxon*/**"/>
+                <include name="xalan*/**"/>
+                <include name="xerces*/**"/>
+                <include name="Xerces*/**"/>
+            </fileset>
+        </delete>
+
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${lib.ext.dir}">
+                <include name="*/**"/>
+                <!-- don't delete optional dir since this file doesn't populate it -->
+                <exclude name="optional/**"/>
+            </fileset>
+        </delete>
+    </target>
+    
+    <!--
+	    Download thirdparty JARs    
+	-->
+
+    <!--
+        Download a zip or gz file, extracts the jar file, and optionally copies the jar
+        file to a different location and optinally verifies the checksum.  
+        If the checksum fails, this script fails.
+
+        Params are:
+            srcUrl
+            zipFile - a .gz file for untar with gzip, else unzip
+            [md5]
+            [srcJarPath] - both src and dest required for the copy
+            [destJarFile]
+
+        Note: This is purposely coded without <if><else><then> so that a dependency on
+        ant-contrib.jar isn't required.        
+    -->
+    
+    <target name="download-zip"
+        description="Downloads tar/zip, and optionally verifies checksum and copies extracted jar.">                
+        
+        <mkdir dir="${download.dir}"/>        
+
+        <available file="${download.dir}/${zipFile}" property="zip.exists"/>
+        <antcall target="get-zip"/>
+
+        <condition property="zip.compressed">
+            <matches string="${zipFile}" pattern="^*.zip$"/>      
+        </condition>
+ 
+        <antcall target="untar-file"/>
+        <antcall target="unzip-file"/>
+        
+        <condition property="destination.known">
+            <and>
+                <isset property="srcJarPath"/>
+                <isset property="destJarFile"/>
+            </and>
+        </condition> 
+        <antcall target="copy-downloaded-jar"/>
+     </target>   	
+     
+    <target name="get-zip" unless="zip.exists" description="Get zip and verify checksum.">
+        <get src="${srcUrl}/${zipFile}" dest="${download.dir}/${zipFile}"/>
+        
+        <antcall target="check-sum">
+            <param name="message" value="Checksum mismatch for ${download.dir}/${zipFile}"/>
+        </antcall>
+    </target>
+    
+    <!--
+        Download a jar file and optionally verify the checksum.
+        If the checksum fails, this script fails.
+        
+        Params are:
+            srcUrl
+            srcJarFile
+            destJarFile
+            [md5]
+    -->
+    <target name="download-jar" 
+        description="Downloads jar, and optionally verifies checksum.">                
+     
+        <get src="${srcUrl}/${srcJarFile}" dest="${destJarFile}"/>
+        <antcall target="check-sum">
+            <param name="message" value="Checksum mismatch for ${destJarFile}"/>
+        </antcall>
+    </target>
+
+    <target name="untar-file" unless="zip.compressed" description="Untars zipFile">
+        <untar src="${download.dir}/${zipFile}" dest="${download.dir}" compression="gzip"/> 
+    </target>
+    
+    <target name="unzip-file" if="zip.compressed" description="Unzips zipFile">
+        <unzip src="${download.dir}/${zipFile}" dest="${download.dir}"/>    
+    </target>
+    
+    <macrodef name="bundle-clean">
+		<attribute name="locale"/>
+		<sequential>
+			<delete failonerror="false">
+				<fileset dir="${FLEX_HOME}/frameworks/locale">
+					<include name="@{locale}/framework_rb.swc"/>
+					<include name="@{locale}/framework_rb.swc.incr"/>
+				</fileset>
+			</delete>
+		</sequential>
+	</macrodef>	
+
+    <target name="check-sum" if="md5"
+        description="Verifies MD5 checksum, and fails if checksum doesn't match">
+        
+        <checksum file="${download.dir}/${zipFile}" algorithm="MD5" property="${md5}" verifyProperty="isMD5ok"/>
+
+        <condition property="we.failed">
+            <isfalse value="${isMD5ok}"/>
+        </condition>
+        
+        <antcall target="fail-with-message">
+            <param name="message" value="${message}"/>
+        </antcall>
+    </target>
+    
+    <target name="copy-downloaded-jar" if="destination.known">
+        <mkdir dir="${lib.ext.dir}"/>
+        <copy file="${download.dir}/${srcJarPath}" toFile="${destJarFile}" verbose="true"/>
+    </target>
+    
+    <target name="fail-with-message" if="we.failed" 
+        description="Conditionally fails with the specified message">                
+        <fail message="${message}"/>
+    </target>
+        
+    <!--
+        batik - SVG toolkit - need the jars for our forked version
+    -->
+    
+    <target name="batik-jars-check" description="Checks if batik jars exists.">
+        <condition property="batik.jars.exists">
+            <and>
+                <!-- this implies the lib dir and its jars also exist -->
+    	        <available file="${basedir}/${batik.dir}/lib/build" type="dir" />
+    	        <available file="${lib.ext.dir}/xml-apis-ext.jar"/>
+    	    </and>
+    	</condition>
+    </target>
+    
+    <target name="batik-jars" depends="batik-jars-check" unless="batik.jars.exists"
+        description="Copies the batik jars to the batik build directory.">
+
+        <antcall target="download-zip">
+            <param name="srcUrl" value="http://archive.apache.org/dist/xmlgraphics/batik"/>
+            <param name="zipFile" value="batik-src-1.7.zip"/>
+            <param name="md5" value="c117ca2241907f62a2b3031167ebf917"/>
+        </antcall>
+
+        <!-- 
+            Make sure any left-over batik 1.6 libraries are removed to avoid compile errors.  
+            (super-clean/batik-jars-clean would take also take care of this.)
+        -->
+     	<delete dir="${basedir}/${batik.dir}/lib/**" failonerror="false"/>
+
+        <copy todir="${basedir}/${batik.dir}/lib" failonerror="true">
+            <fileset dir="${download.dir}/${batik.zip.dir}/lib">
+                <include name="**/**"/>
+            </fileset>            
+        </copy>
+        
+        <!-- Copy the unique runtime jars to the lib directory.  -->
+        <!-- Also need xalan, xerces and xml-api jars.  -->
+        <copy todir="${lib.ext.dir}" failonerror="true" verbose="true">
+            <fileset dir="${download.dir}/${batik.zip.dir}/lib">
+                <include name="xml-apis-ext.jar"/>
+                <include name="LICENSE.xml-apis-ext*"/>
+                <include name="README.xml-apis-ext*"/>
+            </fileset>            
+        </copy>
+
+        <delete dir="${download.dir}/${batik.zip.dir}"/>
+    </target>
+    
+	<target name="batik-jars-clean">
+	    <!-- leave the lib directory itself since batik build.xml expects it -->
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${basedir}/${batik.dir}/lib">
+                <include name="**/**"/>
+            </fileset>            
+        </delete>
+        <delete includeEmptyDirs="true" failonerror="fasle">
+            <fileset dir="${download.dir}">
+                <include name="batik*/**"/>
+            </fileset>            
+        </delete>
+    </target>
+    
+    <!--
+	    commons
+	-->
+	
+	<target name="commons-jars" depends="commons-collections-jar,commons-discovery-jar,commons-logging-jar" />
+
+    <!--
+	    commons-collections
+	-->
+	
+    <target name="commons-collections-jar-check" description="Checks if common-collections.jar has been downloaded.">
+        <available file="${lib.ext.dir}/commons-collections.jar" property="commons.collections.jar.exists"/>
+    </target>
+    
+    <target name="commons-collections-jar" depends="commons-collections-jar-check" unless="commons.collections.jar.exists" 
+        description="Downloads and copies common-collections.jar to the lib directory.">
+                
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://archive.apache.org/dist/commons/collections/binaries"/>
+          <param name="zipFile" value="${commons-collections.name}.tar.gz"/>
+          <param name="md5" value="a1df53801d2c73670314958fa0aeec8b"/>
+          <param name="srcJarPath" value="${commons-collections.name}/${commons-collections.name}.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/commons-collections.jar"/>
+        </antcall>
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/${commons-collections.name}">
+                <include name="LICENSE.txt"/>
+            </fileset>            
+            <globmapper from="*" to="commons-collections-*"/>
+        </copy>
+        <delete dir="${download.dir}/${commons-collections.name}"/>
+    </target>
+
+    <!--
+        commons-discovery
+    -->
+    
+    <target name="commons-discovery-jar-check" description="Checks if commons-discovery.jar is in lib directory.">
+        <available file="${lib.ext.dir}/commons-discovery.jar" property="commons.discovery.jar.exists"/>
+    </target>
+    
+    <target name="commons-discovery-jar" depends="commons-discovery-jar-check" 
+        unless="commons.discovery.jar.exists" 
+        description="Copies commons-discovery.jar to the lib directory.">
+                
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://archive.apache.org/dist/commons/discovery/binaries"/>
+          <param name="zipFile" value="${commons-discovery.name}.tar.gz"/>
+          <param name="md5" value="2273f5f83a477f4f18fccf3a00e2b48c"/>
+          <param name="srcJarPath" value="${commons-discovery.name}/commons-discovery.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/commons-discovery.jar"/>
+        </antcall>
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/${commons-discovery.name}">
+                <include name="LICENSE"/>
+            </fileset>            
+            <globmapper from="*" to="commons-discovery-*"/>
+        </copy>
+        <delete dir="${download.dir}/${commons-discovery.name}"/>
+    </target>
+	
+    <!--
+        commons-logging
+    -->
+    
+    <target name="commons-logging-jar-check" description="Checks if commons-logging.jar is in lib directory.">
+        <available file="${lib.ext.dir}/commons-logging.jar" property="commons.logging.jar.exists"/>
+    </target>
+    
+    <target name="commons-logging-jar" depends="commons-logging-jar-check" 
+    	unless="commons.logging.jar.exists" 
+        description="Downloads and copies commons.logging.jar to the lib directory.">
+
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://archive.apache.org/dist/commons/logging/binaries"/>
+          <param name="zipFile" value="${commons-logging.name}.tar.gz"/>
+          <param name="md5" value="6f80ac1fb5f568feb94dd4fdb6b9f7de"/>
+          <param name="srcJarPath" value="${commons-logging.name}/commons-logging.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/commons-logging.jar"/>
+        </antcall>
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/${commons-logging.name}">
+                <include name="LICENSE.txt"/>
+                <include name="NOTICE.txt"/>
+            </fileset>            
+            <globmapper from="*" to="commons-logging-*"/>
+        </copy>
+        <delete dir="${download.dir}/${commons-logging.name}"/>
+    </target>
+
+	<!--
+        javacc - parser for mxmlc compiler
+        
+        The version used for Flex 4.6 is so old that it is no longer available.
+        See "HACK" in Gramer.jj that was made so a newer version of this jar could be used.
+    -->
+    
+    <target name="javacc-jar-check" description="Checks if javacc.jar is in lib directory.">
+        <available file="${lib.ext.dir}/javacc.jar" property="javacc.jar.exists"/>
+    </target>
+    
+    <target name="javacc-jar" depends="javacc-jar-check" 
+        unless="javacc.jar.exists" 
+        description="Downloads and copies javacc.jar to the lib directory.">
+
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://java.net/projects/javacc/downloads/download"/>
+          <param name="zipFile" value="javacc-5.0.tar.gz"/>
+          <param name="srcJarPath" value="javacc-5.0/bin/lib/javacc.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/javacc.jar"/>
+        </antcall>
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/javacc-5.0">
+                <include name="LICENSE"/>
+            </fileset>            
+            <globmapper from="*" to="javacc-*"/>
+        </copy>
+        <delete dir="${download.dir}/javacc-5.0"/>
+    </target>
+
+	<!--
+        saxon9 - for xslt 2.0 transformations in asDoc
+    -->
+    
+    <target name="saxon9-jar-check" description="Checks if saxon9.jar is in lib directory.">
+        <available file="${lib.ext.dir}/saxon9.jar" property="saxon9.jar.exists"/>
+    </target>
+    
+    <target name="saxon9-jar" depends="saxon9-jar-check" unless="saxon9.jar.exists" 
+        description="Copies sax9.jar to the lib directory.">
+
+        <get src="http://sourceforge.net/projects/saxon/files/Saxon-B/9.1.0.8/${saxon9.bin.zip}/download" 
+            dest="${download.dir}/${saxon9.bin.zip}" 
+            verbose="false"/>   
+
+    	<unzip src="${download.dir}/${saxon9.bin.zip}" 
+    		dest="${download.dir}/${saxon9.jar.dir}"/>
+        
+        <copy file="${download.dir}/${saxon9.jar.dir}/saxon9.jar" toDir="${lib.ext.dir}" verbose="true"/>
+        
+        <copy todir="${lib.ext.dir}/saxon9-NOTICES">
+            <fileset dir="${download.dir}/${saxon9.jar.dir}/notices" includes="**"/>
+        </copy>
+        
+        <delete dir="${download.dir}/${saxon9.jar.dir}"/>
+    </target>
+    	
+    <!--
+        velocity - templates to generate code for -keep option
+    -->
+    
+    <target name="velocity-zip-check" description="Checks if velocity expanded zip exists.">
+    	<condition property="velocity.zip.exists">
+            <and>
+                <available file="${download.dir}/${velocity.zip.dir}/build/lib/commons-collections.jar"/>
+                <available file="${download.dir}/${velocity.zip.dir}/build/lib/oro.jar"/>
+            </and>
+        </condition>
+    </target>
+
+    <target name="velocity-jars-check" description="Checks if velocity build lib exists.">
+    	<condition property="velocity.jars.exists">
+            <and>
+                <available file="${basedir}/${velocity.dir}/build/lib/commons-collections.jar"/>
+                <available file="${basedir}/${velocity.dir}/build/lib/oro.jar"/>
+            </and>
+        </condition>
+    </target>
+    
+	<target name="velocity-jars" depends="velocity-jars-check" unless="velocity.jars.exists" 
+        description="Copies the velocity build jars.">
+        <antcall target="velocity-download-zip"/>
+        <copy todir="${basedir}/${velocity.dir}/build/lib" failonerror="true">
+            <fileset dir="${download.dir}/${velocity.zip.dir}/build/lib">
+                <include name="**/**"/>
+            </fileset>            
+        </copy>
+        <delete dir="${download.dir}/${velocity.zip.dir}"/>
+    </target>
+    
+    <target name="velocity-download-zip" depends="velocity-zip-check" unless="velocity.zip.exists">
+        <antcall target="download-zip">
+            <param name="srcUrl" value="http://archive.apache.org/dist/velocity/engine/1.4"/>
+        	<param name="zipFile" value="${velocity.zip.dir}.tar.gz"/>
+        	<param name="md5" value="f280fee7ddb5eac5b354f6dea39a2f51"/>
+        </antcall>
+    </target>
+    
+	<target name="velocity-jars-clean">
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${basedir}/${velocity.dir}/build/lib">
+                <include name="**/**"/>
+            </fileset>            
+        </delete>
+        <delete includeEmptyDirs="true" failonerror="false">
+            <fileset dir="${download.dir}">
+                <include name="${velocity.zip.dir}*/**"/>
+            </fileset>            
+        </delete>
+    </target>
+    	        	    
+    <!--
+        xalan - Java API for XML Processing
+    -->
+    			
+    <target name="xalan-jar-check" description="Checks if xalan.jar is in lib directory.">
+        <available file="${lib.ext.dir}/xalan.jar" property="xalan.jar.exists"/>
+    </target>
+    
+    <target name="xalan-jar" depends="xalan-jar-check" unless="xalan.jar.exists" 
+        description="Downloads and copies xalan.jar to the lib directory.">
+                
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://archive.apache.org/dist/xml/xalan-j/binaries"/>
+          <param name="zipFile" value="xalan-j_2_6_0-bin.tar.gz"/>
+          <param name="srcJarPath" value="xalan-j_2_6_0/bin/xalan.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/xalan.jar"/>
+        </antcall>
+        
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/xalan-j_2_6_0">
+                <include name="LICENSE"/>
+                <include name="NOTICE"/>
+            </fileset>            
+            <globmapper from="*" to="xalan-*"/>
+        </copy>
+        <delete dir="${download.dir}/xalan-j_2_6_0"/>
+    </target>
+
+    <!--
+        xercesImpl and xmlParserAPIs
+    -->
+    
+    <target name="xerces-jars-check" description="Checks if xercesImpl.jar and and xml-api.jars are in lib directory.">
+        <condition property="xercesImpl.jar.exists">
+            <and>
+                <available file="${lib.ext.dir}/xercesImpl.jar"/>
+                <available file="${lib.ext.dir}/xml-apis.jar"/>
+            </and>
+        </condition>
+    </target>
+    
+    <target name="xerces-jars" depends="xerces-jars-check" unless="xercesImpl.jar.exists" 
+        description="Downloads and copies xercesImpl.jar and xml-api.jars to the lib directory.">
+          
+        <antcall target="download-zip">
+          <param name="srcUrl" value="http://archive.apache.org/dist/xerces/j"/>
+          <param name="zipFile" value="Xerces-J-bin.2.9.1.zip"/>
+          <param name="srcJarPath" value="${xerces.dir}/xercesImpl.jar"/>
+          <param name="destJarFile" value="${lib.ext.dir}/xercesImpl.jar"/>
+          <param name="md5" value="a0e07ede1c3bd5231fe15eae24032b2e"/>
+        </antcall>
+
+        <copy toDir="${lib.ext.dir}" file="${download.dir}/${xerces.dir}/xml-apis.jar" />
+        
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/${xerces.dir}">
+                <include name="*NOTICE*"/>
+            </fileset>            
+            <globmapper from="*" to="xerces-NOTICES/*"/>
+        </copy>
+        <copy todir="${lib.ext.dir}">
+            <fileset dir="${download.dir}/${xerces.dir}">
+                <include name="*LICENSE*"/>
+            </fileset>            
+            <globmapper from="*" to="xerces-LICENSE/*"/>
+        </copy>
+        <delete dir="${download.dir}/${xerces.dir}"/>
+    </target>    
+</project>

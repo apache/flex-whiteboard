@@ -1,0 +1,55 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+<languageVersion : 1.0;>
+
+kernel Bool2ULUR
+<   namespace : "testing";
+    vendor : "Apache";
+    version : 1;
+    description : "This accepts a bool2 as a parameter.  The appropriate corners will turn black when true.";
+>
+{
+    parameter bool2 allBools;
+    input image4 src;
+    output pixel4 dst;
+
+    void
+    evaluatePixel()
+    {
+        float2 pos   = outCoord();    
+        float x      = pos.x;
+        float y      = pos.y;
+        bool upperLeft = allBools.x;
+        bool upperRight = allBools.y;
+        
+        dst.a = float(1);
+        
+        if(upperLeft && x < float(50) && y < float(50)){
+            dst.r = float(0);
+            dst.g = float(0);
+            dst.b = float(0);
+        }else if(upperRight && x > float(50) && y < float(50)){
+            dst.r = float(0);
+            dst.g = float(0);
+            dst.b = float(0);            
+        }else{
+            dst.r = float(1);
+            dst.g = float(1);
+            dst.b = float(1);
+        }
+    }
+}

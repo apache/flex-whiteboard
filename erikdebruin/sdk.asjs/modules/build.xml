@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+-->
+
+<project name="modules" default="main" basedir=".">
+
+	<property name="FLEX_HOME" location=".."/>
+
+	<!-- properties -->
+	<property file="${FLEX_HOME}/build.properties"/>
+
+	<property name="FLEX_LIB" value="${FLEX_HOME}/lib"/>
+	<property name="javac.src" value="1.5"/>
+	
+	<!-- Property for the platform.  -->
+    <condition property="isMac" value="true">
+        <os family="mac"/>
+    </condition>
+    <condition property="isWindows">
+        <os family="windows" />
+    </condition>	
+    <condition property="isLnx">
+        <and>
+          <os family="unix"/>    
+          <not>
+            <os family="mac"/>    
+          </not>
+        </and>
+    </condition>
+
+	<!--
+		Notes: If you're running the main target, then there is no need to call clean first.
+		Each of the main targets for the modules will call clean themselves before proceeding.
+	-->
+
+	<target name="main" depends="thirdparty-downloads,modules" description="Full build" />
+
+	<target name="dev" depends="modules-dev" description="Runs src.depend build for development"/>
+
+    <target name="super-clean" depends="thirdparty-clean,clean" description="Cleans everything including thirdparty downloads."/>
+    
+    <!-- 
+       To clean these you must call thirdparty-clean or super-clean to clean everything.  
+       clean does not remove these since they don't change often and the downloads take time.
+    -->
+    <target name="thirdparty-downloads" unless="downloads.jar.done" 
+        description="Downloads all the required thirdparty JARs.">
+        <ant antfile="${basedir}/downloads.xml" target="main" dir="${basedir}"/>
+        <echo message="Use thirdparty-clean or super-clean to remove these."/> 
+        <property name="downloads.jar.done" value="true"/>
+    </target>
+    
+    <!--
+		Cleanup
+	-->
+	
+    <target name="thirdparty-clean" description="Removes all thirdparty JAR downloads.">
+        <ant antfile="${basedir}/downloads.xml" target="clean" dir="${basedir}"/>
+    </target>
+
+    <target name="clean" depends="batik-clean,velocity-clean">
+		<ant dir="${basedir}/asc/build/java" target="clean"/>
+		<ant dir="${basedir}/swfutils" target="clean"/>
+		<ant dir="${basedir}/fxgutils" target="clean"/>
+		<ant dir="${basedir}/debugger" target="clean"/>
+		<ant dir="${basedir}/compiler" target="clean"/>
+		<ant dir="${basedir}/antTasks" target="clean"/>
+        <ant dir="${basedir}/asc/build/java" target="clean"/>
+        <ant dir="${basedir}/thirdparty/xerces-patch" target="clean"/>
+        <delete includeemptydirs="true" failonerror="false">
+            <fileset dir="${FLEX_LIB}">
+                <include name="*" />
+                <exclude name="adt.jar"/>
+            </fileset>
+        </delete>
+	</target>
+
+	<!--
+		Build Java module JARs.
+	-->
+
+	<target name="modules" depends="thirdparty,asc,swfutils,fxgutils,compiler,debugger,antTasks" description="Full build of all JARs"/>
+
+	<!--
+	   dev does not do a clean first and the batik and velocity libraries are not rebuilt.
+	-->
+	<target name="modules-dev" depends="asc-dev,swfutils-dev,fxgutils-dev,compiler-dev,debugger-dev,antTasks-dev" description="Build src.depend JARs"/>
+
+	<target name="asc" description="Full build of asc.jar">
+		<ant dir="${basedir}/asc/build/java"/>
+		<copy file="${basedir}/asc/lib/asc.jar" tofile="${FLEX_LIB}/asc.jar"/>
+	</target>
+
+	<target name="asc-dev" description="Build src.depend asc">
+		<ant dir="${basedir}/asc/build/java" target="dev"/>
+	</target>
+
+	<target name="swfutils" description="Full build of swfutils.jar">
+		<ant dir="${basedir}/swfutils"/>
+	</target>
+
+	<target name="swfutils-dev" description="Build src.depend swfutils">
+		<ant dir="${basedir}/swfutils" target="dev"/>
+	</target>
+
+	<target name="fxgutils" description="Full build of fxgutils.jar">
+		<ant dir="${basedir}/fxgutils"/>
+	</target>
+
+	<target name="fxgutils-dev" description="Build src.depend fxgutils">
+		<ant dir="${basedir}/fxgutils" target="dev"/>
+	</target>
+
+	<target name="debugger" description="Full build of fdb.jar">
+		<ant dir="${basedir}/debugger"/>
+	</target>
+
+	<target name="debugger-dev" description="Build src.depend debugger">
+		<ant dir="${basedir}/debugger" target="dev"/>
+	</target>
+
+	<target name="compiler" depends="thirdparty" description="Full build of compiler JARs">
+		<ant dir="${basedir}/compiler"/>
+	</target>
+
+	<target name="compiler-dev" depends="thirdparty" description="Build src.depend compiler JARs">
+		<ant dir="${basedir}/compiler" target="dev"/>
+	</target>
+
+	<target name="antTasks" description="Full build of antTasks" unless="antTasks.compiled" >
+		<ant dir="${basedir}/antTasks"/>
+		<property name="antTasks.compiled" value="true"/>
+	</target>
+
+	<target name="antTasks-dev" description="Build src.depend antTasks" >
+		<ant dir="${basedir}/antTasks" target="dev"/>
+	</target>
+
+    <target name="thirdparty" depends="xerces-patch,batik,velocity" />
+    
+	<target name="xerces-patch" description="Build xercesPatch.jar based on xerces 2.9.1" >
+        <ant dir="${basedir}/thirdparty/xerces-patch"/>
+    </target>
+	
+	<target name="batik" description="Build batik-all-flex.jar">
+        <ant antfile="${basedir}/downloads.xml" target="batik-jars" dir="${basedir}"/>
+		<ant dir="${basedir}/thirdparty/batik" target="batik-all-flex-jar">
+	        <property name="deprecation" value="off"/>
+	        <property name="sun-codecs.disabled" value="true"/>
+	    </ant>
+	</target>
+
+	<target name="batik-clean">
+		<ant dir="${basedir}/thirdparty/batik" target="batik-all-flex-clean"/>
+	</target>
+	
+    <target name="velocity" description="Build velocity-dep-1.4-flex.jar">
+		
+		<echo message="This target should be run with Java 1.4.2_14. It doesn't work with Java 1.5."/>
+		<echo message="Note that velocity builds with several 'enum' is a keyword warnings."/>
+
+        <ant antfile="${basedir}/downloads.xml" target="velocity-jars" dir="${basedir}"/>
+		<ant dir="${basedir}/thirdparty/velocity/build" target="jar-dep-flex"/>
+	</target>
+
+    <target name="velocity-clean">
+	    <mkdir dir="${basedir}/thirdparty/velocity/build/lib"/>
+		<ant dir="${basedir}/thirdparty/velocity/build" target="jar-dep-flex-clean"/>
+	    <delete dir="${basedir}/thirdparty/velocity/build/lib"/>
+    </target>
+
+</project>
