@@ -36,11 +36,10 @@ package org.apache.components
 	import flash.system.Capabilities;
 	import flash.utils.ByteArray;
 
-	import spark.components.Image;
+	import spark.primitives.BitmapImage;
 
-	public class ImageGate extends Image
+	public class BitmapImageGate extends BitmapImage
 	{
-
 		private var _urlRequest:URLRequest;
 		private var _urlLoader:URLLoader;
 		private var _loader:Loader;
@@ -50,14 +49,14 @@ package org.apache.components
 		private var _filename:String;
 		private var _file:File;
 
-		private var _assetURL:String;
+		private var _assetURLallDPI:String;
 		private var _assetURL160:String;
 		private var _assetURL240:String;
 		private var _assetURL320:String;
 
-		private var _localFolder:String;
+		private var _cacheFolder:String = "imageCache";
 
-		public function ImageGate()
+		public function BitmapImageGate()
 		{
 			super();
 		}
@@ -66,9 +65,9 @@ package org.apache.components
 		{
 
 			/**
-			 *     The _localFolder must be set in order to proceed.
+			 *     The _cacheFolder must be set in order to proceed.
 			 */
-			if (_localFolder == null)
+			if (_cacheFolder == null)
 			{
 				return;
 			}
@@ -87,12 +86,12 @@ package org.apache.components
 			 *     If we don't have either of the _assetURL or all of the
 			 *     multi-screen URLs then we can not proceed.
 			 */
-			if (_assetURL == null && !gotAllMultiScreenURLs)
+			if (_assetURLallDPI == null && !gotAllMultiScreenURLs)
 			{
 				return
 			}
 
-			if (_assetURL == '')
+			if (_assetURLallDPI == '')
 			{
 				return
 			}
@@ -103,9 +102,9 @@ package org.apache.components
 			 *  -Otherwise find the correct _url based on the current screen resolution.
 			 */
 
-			if (_assetURL != null)
+			if (_assetURLallDPI != null)
 			{
-				_url = _assetURL;
+				_url = _assetURLallDPI;
 			}
 			else if (Capabilities.screenDPI >= 280)
 			{
@@ -126,12 +125,12 @@ package org.apache.components
 			{
 				// Store the downloaded files in the Cache directory on iOS devices only. This is to comply with the
 				// new AppStore guidelines that are in effect as of iOS 5.1
-				_file = new File(File.applicationDirectory.nativePath + "/\.\./Library/Caches").resolvePath(_localFolder + '/' + _filename);
+				_file = new File(File.applicationDirectory.nativePath + "/\.\./Library/Caches").resolvePath(_cacheFolder + '/' + _filename);
 			}
 			else
 			{
 				// Store the downloaded files in the applicationStorage Directory.
-				_file = File.applicationStorageDirectory.resolvePath(_localFolder + '/' + _filename);
+				_file = File.applicationStorageDirectory.resolvePath(_cacheFolder + '/' + _filename);
 			}
 
 			if (_file.exists)
@@ -188,7 +187,17 @@ package org.apache.components
 			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onBytesLoaded);
 			_loader.loadBytes(byteArray);
 
-			// Cleanup
+			cleanupAfterDownload();
+		}
+
+		private function onIOerror(e:IOErrorEvent):void
+		{
+			throw("image download error : " + _url + " : " + _filename);
+			cleanupAfterDownload();
+		}
+
+		private function cleanupAfterDownload():void
+		{
 			_urlLoader.close();
 			_urlLoader = null;
 			_fileStream = null;
@@ -196,108 +205,97 @@ package org.apache.components
 			_url = null;
 		}
 
-		private function onIOerror(e:IOErrorEvent):void
-		{
-			trace("image download error : " + _url + " : " + _filename);
-
-			// Cleanup
-			_urlLoader.close();
-			_urlLoader = null;
-			_fileStream = null;
-			_filename = null;
-		}
-
 		/*	************************************************************
 		 *	Setters
 		 *	************************************************************ */
-		public function set assetURL(value:String):void
+		override public function set source(value:Object):void
 		{
-			if (_assetURL == value)
+			//super.source = value;
+			if (_assetURLallDPI != value)
 			{
-				return;
+				_assetURLallDPI = String(value);
+				findImage();
 			}
-			_assetURL = value;
-
-			findImage();
 		}
 
-
-		public function set localFolder(value:String):void
+		public function setMultiDPIsource(value:String, dpi:Number = 0):void
 		{
-			if (_localFolder == value)
+			if (dpi == 0)
 			{
+				source = value;
+			}
+			if (dpi > 280)
+			{
+				_assetURL160 = value;
+				findImage();
 				return;
 			}
-
-			_localFolder = value;
-
-			findImage();
+			if (dpi > 200)
+			{
+				_assetURL240 = value;
+				findImage();
+				return;
+			}
+			if (dpi <= 200)
+			{
+				_assetURL160 = value;
+				findImage();
+			}
 		}
 
-		public function set assetURL160(value:String):void
+		public function set cacheFolder(value:String):void
 		{
-			if (_assetURL160 == value)
+			if (_cacheFolder == value)
 			{
 				return;
 			}
-
-			_assetURL160 = value;
-
-			findImage();
-		}
-
-
-		public function set assetURL240(value:String):void
-		{
-			if (_assetURL240 == value)
-			{
-				return;
-			}
-
-			_assetURL240 = value;
-
-			findImage();
-		}
-
-
-		public function set assetURL320(value:String):void
-		{
-			if (_assetURL320 == value)
-			{
-				return;
-			}
-
-			_assetURL320 = value;
-
+			_cacheFolder = value;
 			findImage();
 		}
 
 		/*	************************************************************
 		 *	Getters
 		 *	************************************************************ */
-		public function get assetURL():String
+
+		public function get cacheFolder():String
 		{
-			return _assetURL;
+			return _cacheFolder;
 		}
 
-		public function get localFolder():String
+		public function getMultiDPIsource(dpi:Number = 0):String
 		{
-			return _localFolder;
-		}
-
-		public function get assetURL160():String
-		{
+			if (dpi == 0)
+			{
+				return _assetURLallDPI;
+			}
+			if (dpi > 280)
+			{
+				return _assetURL320;
+			}
+			if (dpi > 200)
+			{
+				return _assetURL240;
+			}
 			return _assetURL160;
 		}
 
-		public function get assetURL240():String
+		[Inspectable(category="General")]
+		[Bindable("sourceChanged")]
+		override public function get source():Object
 		{
-			return _assetURL240;
-		}
-
-		public function get assetURL320():String
-		{
-			return _assetURL320;
+			if ((Capabilities.screenDPI > 280 )&&(_assetURL320 != null))
+			{
+				return _assetURL320;
+			}
+			if ((Capabilities.screenDPI > 200 )&&(_assetURL240 != null))
+			{
+				return _assetURL240;
+			}
+			if ((Capabilities.screenDPI <= 200 )&&(_assetURL160 != null))
+			{
+				return _assetURL160;
+			}
+			return _assetURLallDPI;
 		}
 	}
 }
