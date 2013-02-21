@@ -23,15 +23,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
 
     public class SettingModel implements ISettingsModel {
 
-        public function get availableLanguages():ArrayCollection {
-            return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
-        }
-
-        public function get currentLanguage():Object {
-            return LocaleUtil.getDefaultLanguage(_locale);
-        }
-
         private var _environmentVariables:Dictionary;
+
+        private var _dbVersion:uint;
 
         private var _locale:String;
 
@@ -50,6 +44,23 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
 
         private var _appBounds:String;
         private var _appDisplayState:String;
+
+        public function get availableLanguages():ArrayCollection {
+            return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
+        }
+
+        public function get currentLanguage():Object {
+            return LocaleUtil.getDefaultLanguage(_locale);
+        }
+
+        public function get dbVersion():uint {
+            return _dbVersion;
+        }
+
+        [Bindable]
+        public function set dbVersion(value:uint):void {
+            _dbVersion = value;
+        }
 
         public function get environmentVariables():Dictionary {
             return _environmentVariables;

@@ -17,10 +17,10 @@ limitations under the License.
 -->
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
                        xmlns:s="library://ns.adobe.com/flex/spark"
-                       xmlns:mx="library://ns.adobe.com/flex/mx"
                        xmlns:parsley="http://www.spicefactory.org/parsley"
                        title="Apache Flex Developer Tool Suite"
                        width="800" height="550"
+                       displayStateChange="displayStateChangeHandler(event)"
                        closing="closingHandler(event)">
 
     <fx:Declarations>
@@ -49,19 +49,16 @@ limitations under the License.
         import mx.logging.targets.TraceTarget;
         import mx.managers.PopUpManager;
 
+        import org.apache.flex.utilities.developerToolSuite.application.config.SettingsContext;
+        import org.apache.flex.utilities.developerToolSuite.executor.application.config.ExecutorContext;
+        import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.config.ExecutorContext;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.ApplicationExitReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.message.LaunchUIMessage;
-        import org.apache.flex.utilities.developerToolSuite.presentation.config.SettingsContext;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.RequestExitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
 
         [Inject]
@@ -75,10 +72,11 @@ limitations under the License.
         public var dispatch:Function;
 
         private var alert:Alert;
+        private var appBounds:Rectangle;
 
         [Init]
         public function init():void {
-            addLog();
+            addLogTargets();
             LogUtil.getLogger(this).info('Application initialization');
 
             dispatch(new InitApplicationMessage());
@@ -92,18 +90,18 @@ limitations under the License.
             PopUpManager.removePopUp(alert);
             menu = applicationMenu;
 
-            if (applicationSettings.appDisplayState) {
-                if (applicationSettings.appDisplayState == NativeWindowDisplayState.MAXIMIZED) {
-                    nativeWindow.maximize();
-                } else {
-                    nativeWindow.restore();
-                    if (applicationSettings.appBounds) {
-                        var bounds:Array = applicationSettings.appBounds.split(",");
-                        nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
-                    }
-                }
+            if (applicationSettings.appBounds) {
+                var bounds:Array = applicationSettings.appBounds.split(",");
+                appBounds = nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
             } else {
-                nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
+                appBounds = nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
+            }
+
+            if (applicationSettings.appDisplayState) {
+                (applicationSettings.appDisplayState == NativeWindowDisplayState.MAXIMIZED) ? nativeWindow.maximize() : nativeWindow.restore();
+                if (applicationSettings.appDisplayState == NativeWindowDisplayState.NORMAL) {
+                    addMoveAndResizeListeners();
+                }
             }
 
             LogUtil.getLogger(this).info('Application ready');
@@ -121,12 +119,48 @@ limitations under the License.
             menu = applicationMenu;
         }
 
-        private function closingHandler(event:Event):void {
-            dispatch(new SaveSettingMessage("appBounds", nativeWindow.x + "," + nativeWindow.y + "," + nativeWindow.width + "," + nativeWindow.height));
-            dispatch(new SaveSettingMessage("appDisplayState", nativeWindow.displayState));
+        private function displayStateChangeHandler(event:NativeWindowDisplayStateEvent):void {
+            if (event.afterDisplayState == NativeWindowDisplayState.NORMAL) {
+                addMoveAndResizeListeners();
+            } else {
+                removeMoveAndResizeListeners();
+            }
         }
 
-        private function addLog():void {
+        private function addMoveAndResizeListeners():void {
+            nativeWindow.addEventListener(NativeWindowBoundsEvent.RESIZE, moveAndResizeHandler);
+            nativeWindow.addEventListener(NativeWindowBoundsEvent.MOVE, moveAndResizeHandler);
+
+        }
+
+        private function removeMoveAndResizeListeners():void {
+            nativeWindow.removeEventListener(NativeWindowBoundsEvent.RESIZE, moveAndResizeHandler);
+            nativeWindow.removeEventListener(NativeWindowBoundsEvent.MOVE, moveAndResizeHandler);
+
+        }
+
+        private function moveAndResizeHandler(event:NativeWindowBoundsEvent):void {
+            appBounds = event.afterBounds;
+        }
+
+        private function closingHandler(event:Event):void {
+            LogUtil.getLogger(this).info('Application Exit requested');
+            event.preventDefault();
+
+            var settingsToSave:Object = {};
+            settingsToSave.appBounds = appBounds.x + "," + appBounds.y + "," + appBounds.width + "," + appBounds.height;
+            settingsToSave.appDisplayState = nativeWindow.displayState;
+
+            dispatch(new RequestExitApplicationMessage(settingsToSave));
+        }
+
+        [MessageHandler]
+        public function applicationExitReady(msg:ApplicationExitReadyMessage):void {
+            LogUtil.getLogger(this).info('Application Exiting');
+            this.exit();
+        }
+
+        private static function addLogTargets():void {
             var parsleyLogger:TraceTarget = new TraceTarget();
             parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
             parsleyLogger.level = LogEventLevel.ERROR;

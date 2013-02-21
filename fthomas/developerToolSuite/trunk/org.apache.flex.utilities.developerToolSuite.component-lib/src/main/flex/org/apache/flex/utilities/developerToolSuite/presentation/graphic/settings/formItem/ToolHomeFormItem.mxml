@@ -53,10 +53,12 @@ limitations under the License.
         </s:VGroup>
     </s:helpContent>
     <fx:Script><![CDATA[
+        import flash.filesystem.File;
+
         import mx.events.FlexEvent;
 
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingMessage;
-        import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
+        import org.apache.flex.utilities.developerToolSuite.executor.application.nativeProcess.NativeShellHelper;
 
         import spark.events.TextOperationEvent;
 
@@ -72,7 +74,7 @@ limitations under the License.
         [Bindable]
         public var helpLabelResourcesString:String;
         [Bindable]
-        public var helpUrlText:String
+        public var helpUrlText:String;
         [Bindable]
         public var helpUrl:String;
         [Bindable]

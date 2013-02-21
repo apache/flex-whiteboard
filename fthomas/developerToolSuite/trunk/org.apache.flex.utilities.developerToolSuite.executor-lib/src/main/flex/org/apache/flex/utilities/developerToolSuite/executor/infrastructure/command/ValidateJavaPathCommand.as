@@ -23,7 +23,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
     public class ValidateJavaPathCommand extends AbstractShellCommand {
 
@@ -37,14 +37,14 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         private var _done:Boolean;
 
         public function execute(msg:ValidateJavaPathMessage):void {
-            LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
+            LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
             settings.javaEnabled = false;
             executeCommand();
         }
 
         override protected function executeCommand():void {
-            LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
+            LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(_msg));
 
             var file:File;
 
@@ -66,7 +66,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 result(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
-            ;
 
             var java:String = shell.formatPath(file.resolvePath("bin/java.exe").nativePath);
 

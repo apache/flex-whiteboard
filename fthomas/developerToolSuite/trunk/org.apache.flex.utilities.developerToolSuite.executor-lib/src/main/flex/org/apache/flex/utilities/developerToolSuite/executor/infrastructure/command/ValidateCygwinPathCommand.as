@@ -22,8 +22,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.nativeProcess.NativeShellHelper;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
     public class ValidateCygwinPathCommand {
 
@@ -36,17 +36,15 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         public var callback:Function;
 
-        private var _done:Boolean;
-
         public function execute(msg:ValidateCygwinPathMessage):void {
-            LOG.debug("Executing Command with message: " + ObjectUtil.toString(msg));
+            LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
             settings.cygwinEnabled = false;
             executeCommand();
         }
 
         protected function executeCommand():void {
-            LOG.debug("Executing Command with message: " + ObjectUtil.toString(_msg));
+            LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(_msg));
 
             var file:File;
 
@@ -71,8 +69,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 callback(CommandCallBack.DEFAULT_ERROR);
                 return;
             }
-            ;
-            LOG.debug("Ending Command with result: " + file.nativePath);
+
+            LOG.debug("Ending Command with result: {0}", file.nativePath);
             callback(CommandCallBack.DEFAULT_RESULT);
         }
     }

@@ -18,13 +18,12 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import flash.data.SQLResult;
     import flash.data.SQLStatement;
     import flash.errors.SQLError;
-    import flash.net.Responder;
 
     import mx.logging.ILogger;
     import mx.utils.ObjectUtil;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
     public class AbstractDBCommand {
 
@@ -42,28 +41,27 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         protected var stmt:SQLStatement = new SQLStatement();
 
         protected function executeAsync():void {
-            if (!db.DBReady) {
-                db.connect();
-            }
-
-            prepareSql();
+            db.connect(prepareSql);
         }
 
         protected function prepareSql():void {
-            var responder:Responder = new Responder(result, error);
             stmt.text = sql;
-            db.executeSqlStatement(stmt, responder);
+            db.executeSqlStatement(stmt, result, error);
         }
 
-        protected function result(result:SQLResult):void {
+        protected function result(result:SQLResult, terminateCommand:Boolean = true):void {
             var resultMessage:String = (result.data != null) ? ObjectUtil.toString(result.data) : result.rowsAffected + " affected row(s)";
-            log.debug("Successfully executed shell: " + resultMessage);
-            callback(new CommandCallBackResult(result));
+            log.debug("Successfully executed DB Command: {0}", resultMessage);
+            if (terminateCommand) {
+                callback(new CommandCallBackResult(result));
+            }
         }
 
-        protected function error(error:SQLError):void {
-            log.error("Error executing shell: " + ObjectUtil.toString(error));
-            callback(new CommandCallBackError(error.message, error.detailID));
+        protected function error(error:SQLError, terminateCommand:Boolean = true):void {
+            log.error("Error executing DB Command: {0}", ObjectUtil.toString(error));
+            if (terminateCommand) {
+                callback(new CommandCallBackError(error.message, error.detailID));
+            }
         }
     }
 }

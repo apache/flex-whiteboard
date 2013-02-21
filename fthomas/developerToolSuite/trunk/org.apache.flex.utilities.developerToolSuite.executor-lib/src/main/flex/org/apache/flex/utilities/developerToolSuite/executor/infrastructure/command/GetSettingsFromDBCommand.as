@@ -35,11 +35,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         override protected function prepareSql():void {
-            sql = "SELECT name, value FROM settings;";
+            sql = "SELECT name, value FROM setting;";
             super.prepareSql();
         }
 
-        override protected function result(result:SQLResult):void {
+        override protected function result(result:SQLResult, terminateCommand:Boolean = true):void {
             var row:Object;
 
             if (result.data) {
@@ -56,10 +56,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             ResourceManager.getInstance().localeChain = LocaleUtil.getOrderedLocalChain(settings.locale);
             dispatch(new ApplicationReadyMessage());
 
-            var resultMessage:String = (result.data != null) ? ObjectUtil.toString(result.data) : result.rowsAffected + " affected row(s)";
-            log.debug("Successfully executed shell: " + resultMessage);
+            log.debug("Got settings: {0}", ObjectUtil.toString(result.data));
 
-            callback(new CommandCallBackResult(settings));
+            if (terminateCommand) {
+                callback(new CommandCallBackResult(settings));
+            }
         }
     }
 }

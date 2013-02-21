@@ -7,7 +7,7 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
     import org.apache.flex.utilities.developerToolSuite.infrastructure.message.LaunchUIMessage;
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsWindow;
     import org.spicefactory.parsley.core.context.Context;
@@ -43,28 +43,53 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         [CommandComplete]
         public function validateJavaPathCommandError(trigger:ValidateJavaPathMessage):void {
             _javaCompleted = true;
-            if(_antCompleted && _mavenCompleted && _cygwinCompleted)
-                launchUI();
+            checkValidationsCompleted();
+        }
+
+        [CommandError]
+        public function validateJavaPathCommand(trigger:ValidateJavaPathMessage):void {
+            _javaCompleted = true;
+            checkValidationsCompleted();
         }
 
         [CommandComplete]
+        public function validateAntPathCommand(trigger:ValidateAntPathMessage):void {
+            _antCompleted = true;
+            checkValidationsCompleted();
+        }
+
+        [CommandError]
         public function validateAntPathCommandError(trigger:ValidateAntPathMessage):void {
             _antCompleted = true;
-            if (_javaCompleted && _mavenCompleted && _cygwinCompleted)
-                launchUI();
+            checkValidationsCompleted();
         }
 
         [CommandComplete]
-        public function validateMavenPathCommandError(trigger:ValidateMavenPathMessage):void {
+        public function validateMavenPathCommand(trigger:ValidateMavenPathMessage):void {
             _mavenCompleted = true;
-            if (_antCompleted && _javaCompleted && _cygwinCompleted)
-                launchUI();
+            checkValidationsCompleted();
+        }
+
+        [CommandError]
+        public function validateMavenPathCommandError(fault:Error, trigger:ValidateMavenPathMessage):void {
+            _mavenCompleted = true;
+            checkValidationsCompleted();
         }
 
         [CommandComplete]
-        public function validateCygwinPathCommandError(trigger:ValidateCygwinPathMessage):void {
+        public function validateCygwinPathCommand(trigger:ValidateCygwinPathMessage):void {
             _cygwinCompleted = true;
-            if (_antCompleted && _mavenCompleted && _javaCompleted)
+            checkValidationsCompleted();
+        }
+
+        [CommandError]
+        public function validateCygwinPathCommandError(fault:Error, trigger:ValidateCygwinPathMessage):void {
+            _cygwinCompleted = true;
+            checkValidationsCompleted();
+        }
+
+        private function checkValidationsCompleted():void {
+            if (_antCompleted && _mavenCompleted && _javaCompleted && _cygwinCompleted)
                 launchUI();
         }
 

@@ -38,7 +38,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         override protected function prepareSql():void {
             ResourceManager.getInstance().localeChain = LocaleUtil.getOrderedLocalChain(_msg.locale);
             settings.locale = _msg.locale;
-            sql = "UPDATE settings SET value='" + _msg.locale + "' WHERE name='locale';";
+            sql = "UPDATE setting SET value='" + _msg.locale + "' WHERE name='locale';";
 
             super.prepareSql();
         }

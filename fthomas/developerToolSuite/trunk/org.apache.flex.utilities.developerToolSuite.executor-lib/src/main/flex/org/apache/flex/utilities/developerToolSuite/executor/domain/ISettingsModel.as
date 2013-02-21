@@ -6,6 +6,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
     [Bindable]
     public interface ISettingsModel {
 
+        function get dbVersion():uint;
+
         function get appBounds():String;
 
         function get appDisplayState():String;

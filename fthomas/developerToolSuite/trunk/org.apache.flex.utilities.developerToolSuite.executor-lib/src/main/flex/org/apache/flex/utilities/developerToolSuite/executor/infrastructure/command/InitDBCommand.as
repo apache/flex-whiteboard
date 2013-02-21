@@ -16,6 +16,7 @@
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
     import flash.data.SQLConnection;
+    import flash.data.SQLResult;
     import flash.data.SQLSchemaResult;
     import flash.data.SQLStatement;
     import flash.data.SQLTableSchema;
@@ -26,9 +27,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.LocaleUtil;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.database.ApplicationDB;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
 
     public class InitDBCommand {
 
@@ -38,8 +39,15 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         private static var _conn:SQLConnection;
 
-        private static const SETTINGS_TABLE_SQL:String = "create table if not exists settings(id integer primary key autoincrement, name text, value text);";
-        private static var settingsDataSql:String;
+        private static const DB_VERSION_SQL:String = "SELECT value FROM setting WHERE name='dbVersion'";
+
+        private static const SETTING_TABLE_SQL:String = "create table if not exists setting(id integer primary key autoincrement, name text, value text);";
+        private static var settingDataSql:String;
+
+        private static const PROJECT_TABLE_SQL:String = "create table if not exists project(id integer primary key autoincrement, name text, location text, vcsType text, flexSdkVersion text, airSdkVersion text, fpVersion text, creationDate numeric);";
+        private static var projectDataSql:String;
+
+        private var _dbVersion:uint;
 
         public function execute(msg:InitApplicationMessage):void {
             _conn = new SQLConnection();
@@ -48,17 +56,44 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             var folder:File = File.applicationStorageDirectory;
             var dbFile:File = folder.resolvePath(ApplicationDB.DATABASE_NAME);
 
-            LOG.debug("Connecting DB: " + ApplicationDB.DATABASE_NAME);
+            LOG.debug("Connecting DB: {0}", ApplicationDB.DATABASE_NAME);
             _conn.open(dbFile);
 
             if (!settingsTableCreated()) {
                 buildDatabaseTables();
+            } else {
+                _dbVersion = getDBVersion();
+                if (_dbVersion < ApplicationDB.DB_VERSION)
+                updateSchema();
             }
 
             _conn.close();
-            LOG.debug("Closing DB: " + ApplicationDB.DATABASE_NAME);
+            LOG.debug("Closing DB: {0}", ApplicationDB.DATABASE_NAME);
 
-            callback(true);
+            callback(CommandCallBack.DEFAULT_RESULT);
+        }
+
+        private function updateSchema():void {
+            LOG.debug("Updating DB Schema from version {0} to {1}", _dbVersion, ApplicationDB.DB_VERSION);
+        }
+
+        private function getDBVersion():uint {
+
+            LOG.debug("looking for dbVersion");
+
+            var getDbVersionStmt:SQLStatement = new SQLStatement();
+            getDbVersionStmt.sqlConnection = _conn;
+            getDbVersionStmt.text = DB_VERSION_SQL;
+            getDbVersionStmt.execute();
+
+            var dbVersionResult:SQLResult = getDbVersionStmt.getResult();
+            if (dbVersionResult.data && dbVersionResult.data.length) {
+                LOG.debug("DB version is {0}", dbVersionResult.data[0].value);
+                return parseInt(dbVersionResult.data[0].value);
+            }
+
+            // Shouldn't happen.
+            return 0;
         }
 
         private function settingsTableCreated():Boolean {
@@ -73,7 +108,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             var schema:SQLSchemaResult = _conn.getSchemaResult();
 
             for each(var currentTable:SQLTableSchema in schema.tables) {
-                if (currentTable.name == "settings") {
+                if (currentTable.name == "setting") {
                     LOG.debug("Schema was already created");
                     return true;
                 }
@@ -87,12 +122,14 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             try {
                 LOG.debug("Start schema creation");
                 _conn.begin();
+
                 createSettingsTable();
                 insertSettingsTable();
+
                 _conn.commit();
                 LOG.debug("Schema creation ok");
             } catch (err:SQLError) {
-                LOG.error("Error during schema creation: " + ObjectUtil.toString(err) + " : Rolling back !");
+                LOG.error("Error during schema creation: {0}\n:: Rolling back !", ObjectUtil.toString(err));
                 _conn.rollback();
             }
             ;
@@ -101,28 +138,29 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
                 var stmtCreateSettingsTable:SQLStatement;
                 stmtCreateSettingsTable = new SQLStatement();
                 stmtCreateSettingsTable.sqlConnection = _conn;
-                stmtCreateSettingsTable.text = SETTINGS_TABLE_SQL;
+                stmtCreateSettingsTable.text = SETTING_TABLE_SQL;
                 stmtCreateSettingsTable.execute();
             }
 
             function insertSettingsTable():void {
                 LOG.debug("Inserting data");
-                prepareSettingsData();
+                prepareInsertSettingsData();
                 var stmtInsertSettingsTable:SQLStatement;
                 stmtInsertSettingsTable = new SQLStatement();
                 stmtInsertSettingsTable.sqlConnection = _conn;
-                stmtInsertSettingsTable.text = settingsDataSql;
+                stmtInsertSettingsTable.text = settingDataSql;
                 stmtInsertSettingsTable.execute();
             }
 
-            function prepareSettingsData():void {
-                settingsDataSql = "INSERT INTO 'settings' SELECT '1' AS 'id', 'locale' AS 'name', '" + LocaleUtil.getDefaultLanguage().data + "' AS 'value' ";
-                settingsDataSql += "UNION SELECT '2', 'appDisplayState', '' ";
-                settingsDataSql += "UNION SELECT '3', 'appBounds', '' ";
-                settingsDataSql += "UNION SELECT '4', 'JAVA_HOME', '' ";
-                settingsDataSql += "UNION SELECT '5', 'ANT_HOME', '' ";
-                settingsDataSql += "UNION SELECT '6', 'MAVEN_HOME', '' ";
-                settingsDataSql += "UNION SELECT '7', 'CYGWIN_HOME', '';";
+            function prepareInsertSettingsData():void {
+                settingDataSql = "INSERT INTO 'setting' SELECT '1' AS 'id', 'dbVersion' AS 'name', '1' AS 'value' ";
+                settingDataSql += "UNION SELECT '2', 'locale', '" + LocaleUtil.getDefaultLanguage().data + "' ";
+                settingDataSql += "UNION SELECT '3', 'appDisplayState', '' ";
+                settingDataSql += "UNION SELECT '4', 'appBounds', '' ";
+                settingDataSql += "UNION SELECT '5', 'JAVA_HOME', '' ";
+                settingDataSql += "UNION SELECT '6', 'ANT_HOME', '' ";
+                settingDataSql += "UNION SELECT '7', 'MAVEN_HOME', '' ";
+                settingDataSql += "UNION SELECT '8', 'CYGWIN_HOME', '';";
             }
         }
     }

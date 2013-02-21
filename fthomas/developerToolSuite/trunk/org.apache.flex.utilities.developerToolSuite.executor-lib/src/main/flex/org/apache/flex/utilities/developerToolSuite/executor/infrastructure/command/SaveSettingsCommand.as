@@ -34,9 +34,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         override protected function prepareSql():void {
             var classInfo:ClassInfo = ClassInfo.forInstance(_msg.settings);
             sql = "";
-            for (var i:uint; i < classInfo.getProperties().length; i++) {
+            for (var i:uint=0; i < classInfo.getProperties().length; i++) {
                 var property:Property = classInfo.getProperties()[i] as Property;
-                sql += "UPDATE settings SET value='" + _msg.settings[property.name] + "' WHERE name='" + property.name + "';";
+                sql += "UPDATE setting SET value='" + _msg.settings[property.name] + "' WHERE name='" + property.name + "';";
             }
 
             super.prepareSql();

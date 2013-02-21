@@ -21,8 +21,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     import mx.logging.ILogger;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.nativeProcess.NativeShellHelper;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.nativeProcess.NativeShellHelper;
+    import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
     public class AbstractShellCommand {
 

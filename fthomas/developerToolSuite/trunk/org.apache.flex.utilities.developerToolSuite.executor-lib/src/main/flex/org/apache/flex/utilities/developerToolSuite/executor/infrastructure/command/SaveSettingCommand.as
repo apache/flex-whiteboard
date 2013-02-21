@@ -35,7 +35,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         override protected function prepareSql():void {
             settings[_msg.name] = _msg.value;
-            sql = "UPDATE settings SET value='" + _msg.value + "' WHERE name='" + _msg.name + "';";
+            sql = "UPDATE setting SET value='" + _msg.value + "' WHERE name='" + _msg.name + "';";
 
             super.prepareSql();
         }
