@@ -1,6 +1,7 @@
 package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     import flash.data.SQLResult;
     import flash.errors.SQLError;
+    import flash.events.SQLEvent;
 
     import mx.utils.ObjectUtil;
 
@@ -13,6 +14,7 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     public class ExitUICommand extends AbstractDBCommand {
 
         private var _msg:RequestExitApplicationMessage;
+        private var _terminateCommand:Function;
 
         public function execute(msg:RequestExitApplicationMessage):void {
             log.debug("Executing Command with message: " + ObjectUtil.toString(msg));
@@ -32,10 +34,12 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         override protected function result(result:SQLResult, terminateCommand:Boolean = true):void {
             super.result(result, false);
 
-            dispatch(new ApplicationExitReadyMessage());
+            db.addEventListener(SQLEvent.CLOSE, onDBClosed);
 
             if (terminateCommand) {
-                callback(new CommandCallBackResult(result));
+                _terminateCommand = function ():void {
+                    callback(new CommandCallBackResult(result));
+                }
             }
         }
 
@@ -46,6 +50,14 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
 
             if (terminateCommand) {
                 callback(new CommandCallBackError(error.message, error.detailID));
+            }
+        }
+
+        private function onDBClosed(event:SQLEvent):void {
+            dispatch(new ApplicationExitReadyMessage());
+
+            if (_terminateCommand) {
+                _terminateCommand();
             }
         }
     }

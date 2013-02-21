@@ -19,6 +19,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.databa
     import flash.data.SQLResult;
     import flash.data.SQLStatement;
     import flash.errors.SQLError;
+    import flash.events.EventDispatcher;
     import flash.events.SQLErrorEvent;
     import flash.events.SQLEvent;
     import flash.filesystem.File;
@@ -29,7 +30,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.databa
 
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
-    public class ApplicationDB {
+    public class ApplicationDB extends EventDispatcher{
 
         public static const DB_VERSION:uint = 1;
 
@@ -82,6 +83,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.databa
 
         protected function closedHandler(event:SQLEvent):void {
             LOG.debug("the database was closed successfully");
+            dispatchEvent(event);
         }
 
         protected function errorHandler(event:SQLErrorEvent):void {
@@ -100,7 +102,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.databa
         }
 
         private function result(result:SQLResult):void {
-            _isBusy = false
+            _isBusy = false;
             if (_resultCallback) {
                 _resultCallback(result);
                 _resultCallback = null;
@@ -126,14 +128,6 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.databa
                     close();
                 }
             }
-        }
-
-        public function get isReady():Boolean {
-            return _isReady;
-        }
-
-        public function get isBusy():Boolean {
-            return _isBusy;
         }
     }
 }

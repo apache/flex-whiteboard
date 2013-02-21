@@ -27,7 +27,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
     public class AbstractDBCommand {
 
-        protected var log:ILogger = LogUtil.getLogger(this);
+        protected var log:ILogger;
 
         [MessageDispatcher]
         public var dispatch:Function;
@@ -39,6 +39,10 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         protected var sql:String;
         protected var stmt:SQLStatement = new SQLStatement();
+
+        function AbstractDBCommand():void {
+            log = LogUtil.getLogger(this);
+        }
 
         protected function executeAsync():void {
             db.connect(prepareSql);
