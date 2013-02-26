@@ -16,9 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <mx:FlexNativeMenu xmlns:fx="http://ns.adobe.com/mxml/2009"
-                   xmlns:s="library://ns.adobe.com/flex/spark"
-                   xmlns:mx="library://ns.adobe.com/flex/mx"
-                   xmlns:parsley="http://www.spicefactory.org/parsley">
+                   xmlns:mx="library://ns.adobe.com/flex/mx">
 
     <fx:Script><![CDATA[
         import mx.events.FlexNativeMenuEvent;
@@ -40,14 +38,14 @@ limitations under the License.
             labelFunction = model.getMenuItemLabel;
             dataProvider = model.dataProvider;
             addEventListener(FlexNativeMenuEvent.ITEM_CLICK, menu_itemClickHandler);
-            ResourceManager.getInstance().addEventListener(Event.CHANGE, localeChangeHandler);
+            ResourceManager.getInstance().addEventListener(Event.CHANGE, resourceManager_changeHandler);
         }
 
         private function menu_itemClickHandler(event:FlexNativeMenuEvent):void {
             dispatch(new MenuActionMessage(event.item));
         }
 
-        private function localeChangeHandler(event:Event):void {
+        private function resourceManager_changeHandler(event:Event):void {
             dataProvider = model.dataProvider;
         }
         ]]></fx:Script>

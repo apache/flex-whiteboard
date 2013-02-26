@@ -31,21 +31,28 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.valid
         //doValidation method should accept an Object type parameter
         override protected function doValidation(value:Object):Array {
             // create an array to return.
-            var ValidatorResults:Array = new Array();
+            var validatorResults:Array = [];
             // Call base class doValidation().
-            ValidatorResults = super.doValidation(value);
+            validatorResults = super.doValidation(value);
             // Return if there are errors.
-            if (ValidatorResults.length > 0) {
-                return ValidatorResults;
+            if (validatorResults.length > 0) {
+                return validatorResults;
             }
 
             if (Boolean(value) == false) {
-                ValidatorResults.push(new ValidationResult(true, null, "Tool Home Path Error",
+                validatorResults.push(new ValidationResult(true, null, "Tool Home Path Error",
                                                            resourceManager.getString('SettingsWindow', errorStringResourceString)));
-                return ValidatorResults;
+                return validatorResults;
             }
 
-            return ValidatorResults;
+            return validatorResults;
+        }
+
+        override protected function resourcesChanged():void {
+            super.resourcesChanged();
+
+            // Re-validate to get the localized error string displayed correctly.
+            validate();
         }
     }
 }

@@ -23,7 +23,11 @@ limitations under the License.
         <parsley:DynamicObject type="{GeneralMenu}"/>
 
         <parsley:MapCommand type="{MenuActionCommand}"/>
-        <parsley:MapCommand type="{LaunchUICommand}"/>
+
+        <parsley:CommandFactory id="launchUICommand">
+            <parsley:Command type="{LaunchUICommand}"/>
+        </parsley:CommandFactory>
+
         <parsley:MapCommand type="{ExitUICommand}"/>
 
         <menu:ApplicationMenuPM/>

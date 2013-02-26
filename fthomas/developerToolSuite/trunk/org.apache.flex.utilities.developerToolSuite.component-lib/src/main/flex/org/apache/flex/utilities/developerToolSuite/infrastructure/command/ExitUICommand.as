@@ -9,14 +9,14 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackError;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackResult;
     import org.apache.flex.utilities.developerToolSuite.infrastructure.message.ApplicationExitReadyMessage;
-    import org.apache.flex.utilities.developerToolSuite.infrastructure.message.RequestExitApplicationMessage;
+    import org.apache.flex.utilities.developerToolSuite.infrastructure.message.ExitApplicationMessage;
 
     public class ExitUICommand extends AbstractDBCommand {
 
-        private var _msg:RequestExitApplicationMessage;
+        private var _msg:ExitApplicationMessage;
         private var _terminateCommand:Function;
 
-        public function execute(msg:RequestExitApplicationMessage):void {
+        public function execute(msg:ExitApplicationMessage):void {
             log.debug("Executing Command with message: " + ObjectUtil.toString(msg));
             this._msg = msg;
             executeAsync();

@@ -31,8 +31,8 @@ limitations under the License.
     </fx:Declarations>
 
     <fx:Metadata>
-        [Event(name="opened", type="org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent")]
-        [Event(name="closed", type="org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent")]
+        [Event(name="opened", type="org.apache.flex.utilities.developerToolSuite.infrastructure.event.SettingsWindowEvent")]
+        [Event(name="closed", type="org.apache.flex.utilities.developerToolSuite.infrastructure.event.SettingsWindowEvent")]
         [ManagedEvents("opened,closed")]
     </fx:Metadata>
 
@@ -62,7 +62,7 @@ limitations under the License.
         import mx.events.ResizeEvent;
         import mx.managers.PopUpManager;
 
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.event.SettingsWindowEvent;
         import org.spicefactory.parsley.core.context.Context;
 
         private static var __window:SettingsWindow;
@@ -85,7 +85,7 @@ limitations under the License.
 
         [Init]
         public function init():void {
-            dispatchEvent(new ModalWindowEvent(ModalWindowEvent.OPENED));
+            dispatchEvent(new SettingsWindowEvent(SettingsWindowEvent.OPENED));
         }
 
         private function addedToStageHandler(event:Event):void {
@@ -102,7 +102,7 @@ limitations under the License.
 
         private function closeWindow():void {
             PopUpManager.removePopUp(this);
-            dispatchEvent(new ModalWindowEvent(ModalWindowEvent.CLOSED));
+            dispatchEvent(new SettingsWindowEvent(SettingsWindowEvent.CLOSED));
             __window = null;
         }
         ]]></fx:Script>

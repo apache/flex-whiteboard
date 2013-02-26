@@ -27,7 +27,7 @@ limitations under the License.
         <parsley:ContextBuilder>
             <parsley:ViewSettings autowireComponents="true"/>
             <parsley:FlexConfig type="{ApplicationContext}"/>
-            <parsley:FlexConfig type="{SettingsContext}"/>
+            <parsley:FlexConfig type="{UIContext}"/>
             <parsley:FlexConfig type="{ExecutorContext}"/>
         </parsley:ContextBuilder>
         <parsley:Configure/>
@@ -49,17 +49,24 @@ limitations under the License.
         import mx.logging.targets.TraceTarget;
         import mx.managers.PopUpManager;
 
-        import org.apache.flex.utilities.developerToolSuite.application.config.SettingsContext;
+        import org.apache.flex.utilities.developerToolSuite.application.config.UIContext;
         import org.apache.flex.utilities.developerToolSuite.executor.application.config.ExecutorContext;
         import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
         import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ApplicationReadyMessage;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.InitApplicationMessage;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.event.ModalWindowEvent;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.event.SettingsWindowEvent;
         import org.apache.flex.utilities.developerToolSuite.infrastructure.message.ApplicationExitReadyMessage;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.LaunchUIMessage;
-        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.RequestExitApplicationMessage;
+        import org.apache.flex.utilities.developerToolSuite.infrastructure.message.ExitApplicationMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu.ApplicationMenu;
+        import org.spicefactory.parsley.core.command.ManagedCommandFactory;
+        import org.spicefactory.parsley.core.context.Context;
+
+        [Inject]
+        public var context:Context;
+
+        [Inject]
+        public var launchUICommand:ManagedCommandFactory;
 
         [Inject]
         [Bindable]
@@ -106,16 +113,16 @@ limitations under the License.
 
             LogUtil.getLogger(this).info('Application ready');
 
-            dispatch(new LaunchUIMessage());
+            launchUICommand.newInstance().execute();
         }
 
         [MessageHandler(selector='opened')]
-        public function modalWindowOpenedHandler(event:ModalWindowEvent):void {
+        public function settingsWindowOpenedHandler(event:SettingsWindowEvent):void {
             menu = null;
         }
 
         [MessageHandler(selector='closed')]
-        public function modalWindowClosedHandler(event:ModalWindowEvent):void {
+        public function settingsWindowClosedHandler(event:SettingsWindowEvent):void {
             menu = applicationMenu;
         }
 
@@ -151,7 +158,7 @@ limitations under the License.
             settingsToSave.appBounds = appBounds.x + "," + appBounds.y + "," + appBounds.width + "," + appBounds.height;
             settingsToSave.appDisplayState = nativeWindow.displayState;
 
-            dispatch(new RequestExitApplicationMessage(settingsToSave));
+            dispatch(new ExitApplicationMessage(settingsToSave));
         }
 
         [MessageHandler]
