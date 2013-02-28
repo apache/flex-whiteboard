@@ -17,8 +17,8 @@
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command {
     import mx.utils.ObjectUtil;
 
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsToSave;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsValidationInProgressModel;
-
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.SaveSettingsMessage;
     import org.spicefactory.lib.reflect.ClassInfo;
     import org.spicefactory.lib.reflect.Property;
@@ -34,12 +34,10 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         override protected function prepareSql():void {
-            var classInfo:ClassInfo = ClassInfo.forInstance(_msg.settings);
+            var property:String;
             sql = "";
-            for (var i:uint=0; i < classInfo.getProperties().length; i++) {
-                var property:Property = classInfo.getProperties()[i] as Property;
-                if (!(property.type is ISettingsValidationInProgressModel))
-                    sql += "UPDATE setting SET value='" + _msg.settings[property.name] + "' WHERE name='" + property.name + "';";
+            for (property in _msg.settings) {
+                sql += "UPDATE setting SET value='" + _msg.settings[property] + "' WHERE name='" + property + "';";
             }
 
             super.prepareSql();

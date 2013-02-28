@@ -47,8 +47,6 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
             _progress.currentStepLabel = "VALIDATING_JAVA_HOME";
             _progress.currentStep = 1;
 
-            settings.validationInProgress = _progress;
-
             dispatch(new ValidateJavaPathMessage(settings.JAVA_HOME));
             dispatch(new ValidateAntPathMessage(settings.ANT_HOME));
             dispatch(new ValidateMavenPathMessage(settings.MAVEN_HOME));

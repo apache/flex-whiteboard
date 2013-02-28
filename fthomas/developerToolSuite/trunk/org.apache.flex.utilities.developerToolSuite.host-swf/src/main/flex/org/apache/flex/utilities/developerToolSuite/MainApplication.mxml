@@ -75,6 +75,8 @@ limitations under the License.
         import org.spicefactory.parsley.core.command.ManagedCommandFactory;
         import org.spicefactory.parsley.core.context.Context;
 
+        private const APP_DEFAULT_SIZE:Rectangle = new Rectangle(120, 120, 1200, 825);
+
         [Inject]
         public var context:Context;
 
@@ -115,7 +117,7 @@ limitations under the License.
                 var bounds:Array = applicationSettings.appBounds.split(",");
                 _appBounds = nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
             } else {
-                _appBounds = nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
+                _appBounds = nativeWindow.bounds = APP_DEFAULT_SIZE;
             }
 
             if (applicationSettings.appDisplayState) {
@@ -183,12 +185,12 @@ limitations under the License.
         [MessageHandler]
         public function applicationExitReady(msg:ApplicationExitReadyMessage):void {
             LogUtil.getLogger(this).info('Application Exiting');
-            this.exit();
+            exit();
         }
 
         private static function addLogTargets():void {
             var parsleyLogger:TraceTarget = new TraceTarget();
-            parsleyLogger.filters = ["org.spicefactory.*", "mx.*"];
+            parsleyLogger.filters = ["org.spicefactory.*"];
             parsleyLogger.level = LogEventLevel.ERROR;
             parsleyLogger.includeCategory = true;
             parsleyLogger.includeLevel = true;

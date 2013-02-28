@@ -15,17 +15,17 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message {
-    import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsToSave;
 
     public class SaveSettingsMessage {
 
-        private var _settings:ISettingsModel;
+        private var _settings:ISettingsToSave;
 
-        public function SaveSettingsMessage(settings:ISettingsModel) {
+        public function SaveSettingsMessage(settings:ISettingsToSave) {
             this._settings = settings;
         }
 
-        public function get settings():ISettingsModel {
+        public function get settings():ISettingsToSave {
             return _settings;
         }
     }
