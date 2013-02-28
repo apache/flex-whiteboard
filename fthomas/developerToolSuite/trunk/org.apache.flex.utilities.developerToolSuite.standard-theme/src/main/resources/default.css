@@ -16,20 +16,11 @@ limitations under the License.
 */
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
-@namespace asf "org.apache.flex.utilities.developerToolSuite.*";
+@namespace app "org.apache.flex.utilities.developerToolSuite.*";
 
-asf|MainApplication {
+app|MainApplication {
     backgroundColor: #DDDDDD;
     skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.ApplicationSkin");
-}
-
-asf|SettingsValidationInProgressWindow {
-    borderAlpha: 1;
-    borderThickness: 2;
-    borderVisible: true;
-    borderStyle: outset;
-    backgroundAlpha: 1;
-    backgroundColor: #ffffff;
 }
 
 
