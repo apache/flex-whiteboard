@@ -21,9 +21,10 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.logging.ILogger;
     import mx.utils.ObjectUtil;
 
-    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
-    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateJavaPathMessage;
 
     public class ValidateJavaPathCommand extends AbstractShellCommand {
 
@@ -39,7 +40,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         public function execute(msg:ValidateJavaPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
+
             settings.javaEnabled = false;
+
             executeCommand();
         }
 
@@ -84,8 +87,8 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             if (_done) {
                 return;
             }
-
             _done = true;
+
             if (output.indexOf("1.6.") > -1) {
                 settings.javaEnabled = true;
                 result(CommandCallBack.DEFAULT_RESULT);

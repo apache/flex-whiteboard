@@ -53,6 +53,8 @@ limitations under the License.
         <s:layout>
             <s:HorizontalLayout horizontalAlign="center" paddingBottom="16"/>
         </s:layout>
+        <s:Button label="{resourceManager.getString('SettingsWindow', 'REFRESH_ALL')}"
+                  click="refreshAll()"/>
         <s:Button label="{resourceManager.getString('SettingsWindow', 'CLOSE')}"
                   click="closeWindow()"/>
     </s:Group>
@@ -63,6 +65,7 @@ limitations under the License.
         import mx.managers.PopUpManager;
 
         import org.apache.flex.utilities.developerToolSuite.infrastructure.event.SettingsWindowEvent;
+        import org.spicefactory.parsley.core.command.ManagedCommandFactory;
         import org.spicefactory.parsley.core.context.Context;
 
         private static var __window:SettingsWindow;
@@ -82,6 +85,9 @@ limitations under the License.
 
         [Inject]
         public var context:Context;
+
+        [Inject]
+        public var launchUICommand:ManagedCommandFactory;
 
         [Init]
         public function init():void {
@@ -104,6 +110,10 @@ limitations under the License.
             PopUpManager.removePopUp(this);
             dispatchEvent(new SettingsWindowEvent(SettingsWindowEvent.CLOSED));
             __window = null;
+        }
+
+        private function refreshAll():void {
+            launchUICommand.newInstance().execute();
         }
         ]]></fx:Script>
 </s:TitleWindow>

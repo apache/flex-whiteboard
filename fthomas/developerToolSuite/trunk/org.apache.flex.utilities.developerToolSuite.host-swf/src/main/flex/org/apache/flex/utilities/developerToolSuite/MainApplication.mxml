@@ -18,12 +18,15 @@ limitations under the License.
 <s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
                        xmlns:s="library://ns.adobe.com/flex/spark"
                        xmlns:parsley="http://www.spicefactory.org/parsley"
+                       xmlns:behavior="org.apache.flex.utilities.developerToolSuite.presentation.behavior.setting.*"
+                       xmlns:mx="library://ns.adobe.com/flex/mx"
                        title="Apache Flex Developer Tool Suite"
                        width="800" height="550"
                        displayStateChange="displayStateChangeHandler(event)"
                        closing="closingHandler(event)">
 
     <fx:Declarations>
+
         <parsley:ContextBuilder>
             <parsley:ViewSettings autowireComponents="true"/>
             <parsley:FlexConfig type="{ApplicationContext}"/>
@@ -31,6 +34,16 @@ limitations under the License.
             <parsley:FlexConfig type="{ExecutorContext}"/>
         </parsley:ContextBuilder>
         <parsley:Configure/>
+
+        <parsley:PopUp open="{applicationSettings.validationInProgress.isStarted}" center="true" modal="true">
+            <parsley:behaviors>
+                <behavior:KeepCenteredBehavior/>
+            </parsley:behaviors>
+            <mx:ProgressBar id="progressBar" mode="event" source="{applicationSettings.validationInProgress}"
+                            textAlign="center" labelPlacement="center" width="350"
+                            progress="progressBar_progressHandler(event)"/>
+        </parsley:PopUp>
+
     </fx:Declarations>
 
     <fx:Metadata>
@@ -73,13 +86,14 @@ limitations under the License.
         public var applicationMenu:ApplicationMenu;
 
         [Inject]
+        [Bindable]
         public var applicationSettings:ISettingsModel;
 
         [MessageDispatcher]
         public var dispatch:Function;
 
-        private var alert:Alert;
-        private var appBounds:Rectangle;
+        private var _alert:Alert;
+        private var _appBounds:Rectangle;
 
         [Init]
         public function init():void {
@@ -88,20 +102,20 @@ limitations under the License.
 
             dispatch(new InitApplicationMessage());
 
-            alert = Alert.show(resourceManager.getString('Application', 'WELCOME_MSG'), resourceManager.getString('Application', 'WELCOME_TITLE'));
+            _alert = Alert.show(resourceManager.getString('Application', 'WELCOME_MSG'), resourceManager.getString('Application', 'WELCOME_TITLE'));
         }
 
         [MessageHandler]
         public function applicationReady(msg:ApplicationReadyMessage):void {
 
-            PopUpManager.removePopUp(alert);
+            PopUpManager.removePopUp(_alert);
             menu = applicationMenu;
 
             if (applicationSettings.appBounds) {
                 var bounds:Array = applicationSettings.appBounds.split(",");
-                appBounds = nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
+                _appBounds = nativeWindow.bounds = new Rectangle(bounds[0], bounds[1], bounds[2], bounds[3]);
             } else {
-                appBounds = nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
+                _appBounds = nativeWindow.bounds = new Rectangle(120, 120, 1200, 825);
             }
 
             if (applicationSettings.appDisplayState) {
@@ -126,6 +140,11 @@ limitations under the License.
             menu = applicationMenu;
         }
 
+        private function progressBar_progressHandler(event:ProgressEvent):void {
+            if (applicationSettings.validationInProgress.currentStepLabel)
+                progressBar.label = resourceManager.getString('SettingsWindow', applicationSettings.validationInProgress.currentStepLabel) + " ( %1 / %2 )";
+        }
+
         private function displayStateChangeHandler(event:NativeWindowDisplayStateEvent):void {
             if (event.afterDisplayState == NativeWindowDisplayState.NORMAL) {
                 addMoveAndResizeListeners();
@@ -147,7 +166,7 @@ limitations under the License.
         }
 
         private function moveAndResizeHandler(event:NativeWindowBoundsEvent):void {
-            appBounds = event.afterBounds;
+            _appBounds = event.afterBounds;
         }
 
         private function closingHandler(event:Event):void {
@@ -155,7 +174,7 @@ limitations under the License.
             event.preventDefault();
 
             var settingsToSave:Object = {};
-            settingsToSave.appBounds = appBounds.x + "," + appBounds.y + "," + appBounds.width + "," + appBounds.height;
+            settingsToSave.appBounds = _appBounds.x + "," + _appBounds.y + "," + _appBounds.width + "," + _appBounds.height;
             settingsToSave.appDisplayState = nativeWindow.displayState;
 
             dispatch(new ExitApplicationMessage(settingsToSave));

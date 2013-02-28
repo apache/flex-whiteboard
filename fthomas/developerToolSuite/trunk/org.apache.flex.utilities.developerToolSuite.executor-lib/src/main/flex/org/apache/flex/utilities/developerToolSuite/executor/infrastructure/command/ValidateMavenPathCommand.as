@@ -22,6 +22,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateMavenPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
@@ -39,7 +40,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         public function execute(msg:ValidateMavenPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
+
             settings.mavenEnabled = false;
+
             executeCommand();
         }
 

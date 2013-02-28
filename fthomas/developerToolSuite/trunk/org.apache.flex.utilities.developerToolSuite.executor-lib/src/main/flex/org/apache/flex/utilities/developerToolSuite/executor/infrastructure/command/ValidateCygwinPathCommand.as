@@ -21,6 +21,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.nativeProcess.NativeShellHelper;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
@@ -39,7 +40,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         public function execute(msg:ValidateCygwinPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
+
             settings.cygwinEnabled = false;
+
             executeCommand();
         }
 

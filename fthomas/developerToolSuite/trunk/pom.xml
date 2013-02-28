@@ -115,35 +115,43 @@ limitations under the License.
             <artifactId>spicelib-reflect</artifactId>
             <version>3.0.0</version>
             <type>swc</type>
-            <scope>internal</scope>
         </dependency>
         <dependency>
             <groupId>org.spicefactory.spicelib</groupId>
             <artifactId>spicelib-util</artifactId>
             <version>3.1.0</version>
             <type>swc</type>
-            <scope>internal</scope>
         </dependency>
         <dependency>
             <groupId>org.spicefactory.spicelib</groupId>
             <artifactId>spicelib-commands</artifactId>
             <version>3.1.0</version>
             <type>swc</type>
-            <scope>internal</scope>
         </dependency>
         <dependency>
             <groupId>org.spicefactory.spicelib</groupId>
             <artifactId>parsley-core</artifactId>
             <version>3.0.0</version>
             <type>swc</type>
-            <scope>internal</scope>
         </dependency>
         <dependency>
             <groupId>org.spicefactory.spicelib</groupId>
             <artifactId>parsley-flex</artifactId>
             <version>3.0.0</version>
             <type>swc</type>
-            <scope>internal</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spicefactory.spicelib</groupId>
+            <artifactId>parsley-popup</artifactId>
+            <version>3.0.2</version>
+            <type>swc</type>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.abobe.cairngorm</groupId>
+            <artifactId>cairngorm-popup</artifactId>
+            <version>1.7</version>
+            <type>swc</type>
+            <classifier>flex4</classifier>
         </dependency>
     </dependencies>
 

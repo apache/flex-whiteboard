@@ -23,6 +23,16 @@ asf|MainApplication {
     skinClass: ClassReference("org.apache.flex.utilities.developerToolSuite.ApplicationSkin");
 }
 
+asf|SettingsValidationInProgressWindow {
+    borderAlpha: 1;
+    borderThickness: 2;
+    borderVisible: true;
+    borderStyle: outset;
+    backgroundAlpha: 1;
+    backgroundColor: #ffffff;
+}
+
+
 .stackedForm {
     skinClass: ClassReference("spark.skins.spark.StackedFormSkin");
 }

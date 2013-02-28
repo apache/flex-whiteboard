@@ -21,6 +21,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateSvnPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
@@ -35,7 +36,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         public function execute(msg:ValidateSvnPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
+
             settings.svnEnabled = false;
+
             executeCommand();
         }
 
@@ -58,6 +61,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
 
             _done = true;
+
             if (output.indexOf("Subversion command-line client") > -1) {
                 settings.svnEnabled = true;
                 result(CommandCallBack.DEFAULT_RESULT);

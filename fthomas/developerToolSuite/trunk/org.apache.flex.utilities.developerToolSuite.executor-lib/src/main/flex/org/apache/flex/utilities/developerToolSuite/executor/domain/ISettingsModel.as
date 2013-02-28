@@ -39,5 +39,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         function get svnEnabled():Boolean;
 
         function get gitEnabled():Boolean;
+
+        function get validationInProgress():ISettingsValidationInProgressModel;
     }
 }

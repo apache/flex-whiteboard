@@ -21,6 +21,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateGitPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
@@ -35,7 +36,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
 
         public function execute(msg:ValidateGitPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
+
             settings.gitEnabled = false;
+
             executeCommand();
         }
 
@@ -58,6 +61,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
 
             _done = true;
+
             if (output.indexOf("git version") > -1) {
                 settings.gitEnabled = true;
                 result(CommandCallBack.DEFAULT_RESULT);

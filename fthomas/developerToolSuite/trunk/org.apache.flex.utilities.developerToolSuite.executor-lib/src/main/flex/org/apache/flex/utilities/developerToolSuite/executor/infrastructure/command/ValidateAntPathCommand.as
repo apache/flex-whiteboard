@@ -22,6 +22,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
     import mx.utils.ObjectUtil;
 
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
+    import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.application.util.LogUtil;
 
@@ -39,7 +40,9 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         public function execute(msg:ValidateAntPathMessage):void {
             LOG.debug("Executing Command with message: {0}", ObjectUtil.toString(msg));
             _msg = msg;
+
             settings.antEnabled = false;
+
             executeCommand();
         }
 
@@ -86,6 +89,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
             }
 
             _done = true;
+
             if (output.indexOf("Apache Ant(TM) version") > -1) {
                 settings.antEnabled = true;
                 result(CommandCallBack.DEFAULT_RESULT);

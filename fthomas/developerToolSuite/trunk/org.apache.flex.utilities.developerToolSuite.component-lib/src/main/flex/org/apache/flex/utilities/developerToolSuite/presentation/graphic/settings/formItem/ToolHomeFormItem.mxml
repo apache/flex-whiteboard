@@ -88,7 +88,7 @@ limitations under the License.
 
         private function creationCompleteHandler(event:FlexEvent):void {
             validator.validate();
-            dispatch(new validateToolMessageClass(propertyValue));
+            //dispatch(new validateToolMessageClass(propertyValue));
         }
 
         private function browseButton_clickHandler(event:MouseEvent):void {
@@ -120,7 +120,7 @@ limitations under the License.
             _installationPathValidated = value;
             validator.validate();
 
-            if (_installationPathValidated) {
+            if (_installationPathValidated && toolHomeLocation.text) {
                 dispatch(new SaveSettingMessage(propertyName, toolHomeLocation.text));
             }
         }

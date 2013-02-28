@@ -44,6 +44,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
 
         private var _appBounds:String;
         private var _appDisplayState:String;
+        private var _validationInProgress:ISettingsValidationInProgressModel;
+
+        function SettingModel() {
+            _validationInProgress = new SettingsValidationProgressModel();
+        }
 
         public function get availableLanguages():ArrayCollection {
             return new ArrayCollection(LocaleUtil.AVAILABLE_LANGUAGES);
@@ -186,6 +191,15 @@ package org.apache.flex.utilities.developerToolSuite.executor.domain {
         [Bindable]
         public function set appDisplayState(value:String):void {
             _appDisplayState = value;
+        }
+
+        public function get validationInProgress():ISettingsValidationInProgressModel {
+            return _validationInProgress;
+        }
+
+        [Bindable]
+        public function set validationInProgress(value:ISettingsValidationInProgressModel):void {
+            _validationInProgress = value;
         }
     }
 }
