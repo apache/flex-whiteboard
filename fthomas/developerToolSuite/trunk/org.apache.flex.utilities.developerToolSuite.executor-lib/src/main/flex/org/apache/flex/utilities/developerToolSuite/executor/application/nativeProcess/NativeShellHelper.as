@@ -77,11 +77,11 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.native
             try {
                 _process.start(nativeProcessStartupInfo);
             } catch (error:IllegalOperationError) {
-                LOG.debug("Illegal Operation: {0}", error.toString());
+                LOG.error("Illegal Operation: {0}", error.toString());
             } catch (error:ArgumentError) {
-                LOG.debug("Argument Error: {0}", error.toString());
+                LOG.error("Argument Error: {0}", error.toString());
             } catch (error:Error) {
-                LOG.debug("Error: {0}", error.toString());
+                LOG.error("Error: {0}", error.toString());
             }
         }
 
