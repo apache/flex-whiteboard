@@ -1,6 +1,7 @@
 package org.apache.flex.utilities.developerToolSuite.executor.application.nativeProcess {
     import flash.desktop.NativeProcess;
     import flash.desktop.NativeProcessStartupInfo;
+    import flash.errors.IllegalOperationError;
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.events.IOErrorEvent;
@@ -72,7 +73,16 @@ package org.apache.flex.utilities.developerToolSuite.executor.application.native
             _process.addEventListener(IOErrorEvent.STANDARD_OUTPUT_IO_ERROR, dispatch2, false, 0, true);
             _process.addEventListener(IOErrorEvent.STANDARD_ERROR_IO_ERROR, dispatch2, false, 0, true);
             _process.addEventListener(NativeProcessExitEvent.EXIT, exitHandler, false, -100, true);
-            _process.start(nativeProcessStartupInfo);
+
+            try {
+                _process.start(nativeProcessStartupInfo);
+            } catch (error:IllegalOperationError) {
+                LOG.debug("Illegal Operation: {0}", error.toString());
+            } catch (error:ArgumentError) {
+                LOG.debug("Argument Error: {0}", error.toString());
+            } catch (error:Error) {
+                LOG.debug("Error: {0}", error.toString());
+            }
         }
 
         public function logMessages():void {

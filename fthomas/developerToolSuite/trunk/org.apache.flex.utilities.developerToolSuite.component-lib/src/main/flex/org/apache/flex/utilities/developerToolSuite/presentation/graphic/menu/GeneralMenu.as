@@ -15,6 +15,7 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
+    import mx.core.FlexGlobals;
     import mx.resources.ResourceManager;
 
     import org.apache.flex.utilities.developerToolSuite.presentation.graphic.settings.SettingsWindow;
@@ -40,12 +41,12 @@ package org.apache.flex.utilities.developerToolSuite.presentation.graphic.menu {
             return getLocalizedLabel('QUIT');
         }
 
-        function GeneralMenu():void {
-
-        }
-
         public function openSettings(item:Object):void {
             SettingsWindow.show(context);
+        }
+
+        public function quit(item:Object):void {
+            FlexGlobals.topLevelApplication.exitApplication();
         }
     }
 }

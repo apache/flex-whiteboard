@@ -15,6 +15,8 @@
  limitations under the License.
  */
 package org.apache.flex.utilities.developerToolSuite.presentation.behavior.validator {
+    import mx.core.UIComponent;
+    import mx.managers.IFocusManagerComponent;
     import mx.validators.ValidationResult;
     import mx.validators.Validator;
 
@@ -42,6 +44,9 @@ package org.apache.flex.utilities.developerToolSuite.presentation.behavior.valid
             if (Boolean(value) == false) {
                 validatorResults.push(new ValidationResult(true, null, "Tool Home Path Error",
                                                            resourceManager.getString('SettingsWindow', errorStringResourceString)));
+
+                IFocusManagerComponent(trigger).setFocus();
+
                 return validatorResults;
             }
 

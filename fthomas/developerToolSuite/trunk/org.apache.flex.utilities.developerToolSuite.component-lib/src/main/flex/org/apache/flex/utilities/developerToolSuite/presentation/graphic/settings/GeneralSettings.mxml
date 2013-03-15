@@ -38,7 +38,7 @@ limitations under the License.
                                         gap="16"/>
                 </component:layout>
                 <s:DropDownList id="languageComboBox"
-                                change="localeComboBox_changeHandler(event)" width="100%"/>
+                                change="languageComboBox_changeHandler(event)" width="100%"/>
             </component:Frame>
         </mx:GridItem>
         <mx:GridItem rowSpan="4">
@@ -84,7 +84,7 @@ limitations under the License.
     <mx:GridRow/>
 
     <fx:Script><![CDATA[
-        import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsToSave;
+        import org.apache.flex.utilities.developerToolSuite.executor.domain.ISettingsModel;
         import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ChangeLanguageMessage;
         import org.apache.flex.utilities.developerToolSuite.presentation.graphic.component.FrameSkin;
 
@@ -95,7 +95,7 @@ limitations under the License.
 
         [Inject]
         [Bindable]
-        public var model:ISettingsToSave;
+        public var model:ISettingsModel;
 
         [Init]
         public function init():void {
@@ -106,7 +106,7 @@ limitations under the License.
                     = mavenHomeFormItem.dispatch = dispatch;
         }
 
-        private function localeComboBox_changeHandler(event:IndexChangeEvent):void {
+        private function languageComboBox_changeHandler(event:IndexChangeEvent):void {
             dispatch(new ChangeLanguageMessage(languageComboBox.selectedItem.data));
         }
         ]]></fx:Script>

@@ -60,7 +60,9 @@ limitations under the License.
         public var dispatch:Function;
 
         private function creationCompleteHandler(event:FlexEvent):void {
-            dispatch(new validateVcsMessageClass());
+            if (dispatch) {
+                dispatch(new validateVcsMessageClass());
+            }
         }
         ]]></fx:Script>
 </s:FormItem>

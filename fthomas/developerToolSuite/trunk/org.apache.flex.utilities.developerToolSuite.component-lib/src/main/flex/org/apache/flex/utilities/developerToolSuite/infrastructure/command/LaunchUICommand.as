@@ -6,6 +6,8 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingModel;
     import org.apache.flex.utilities.developerToolSuite.executor.domain.SettingsValidationProgressModel;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBack;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackError;
+    import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.command.CommandCallBackResult;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateAntPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateCygwinPathMessage;
     import org.apache.flex.utilities.developerToolSuite.executor.infrastructure.message.ValidateGitPathMessage;
@@ -55,8 +57,9 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
             dispatch(new ValidateGitPathMessage());
         }
 
-        [CommandComplete]
-        public function validateJavaPathCommandCompleted(trigger:ValidateJavaPathMessage):void {
+        [CommandResult]
+        public function validateJavaPathCommandResult(result:CommandCallBackResult, trigger:ValidateJavaPathMessage):void {
+            LOG.debug("Java path validation completed");
             _javaCompleted = true;
             _progress.currentStepLabel = "VALIDATING_ANT_HOME";
             _progress.currentStep += 1;
@@ -64,15 +67,17 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         }
 
         [CommandError]
-        public function validateJavaPathCommandError(trigger:ValidateJavaPathMessage):void {
+        public function validateJavaPathCommandError(fault:CommandCallBackError, trigger:ValidateJavaPathMessage):void {
+            LOG.debug("Java path validation error");
             _javaCompleted = true;
             _progress.currentStepLabel = "VALIDATING_ANT_HOME";
             _progress.currentStep += 1;
             checkValidationsCompleted();
         }
 
-        [CommandComplete]
-        public function validateAntPathCommandCompleted(trigger:ValidateAntPathMessage):void {
+        [CommandResult]
+        public function validateAntPathCommandResult(result:CommandCallBackResult, trigger:ValidateAntPathMessage):void {
+            LOG.debug("Ant path validation completed");
             _antCompleted = true;
             _progress.currentStepLabel = "VALIDATING_MAVEN_HOME";
             _progress.currentStep += 1;
@@ -80,15 +85,17 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         }
 
         [CommandError]
-        public function validateAntPathCommandError(trigger:ValidateAntPathMessage):void {
+        public function validateAntPathCommandError(fault:CommandCallBackError, trigger:ValidateAntPathMessage):void {
+            LOG.debug("Ant path validation error");
             _antCompleted = true;
             _progress.currentStepLabel = "VALIDATING_MAVEN_HOME";
             _progress.currentStep += 1;
             checkValidationsCompleted();
         }
 
-        [CommandComplete]
-        public function validateMavenPathCommandCompleted(trigger:ValidateMavenPathMessage):void {
+        [CommandResult]
+        public function validateMavenPathCommandResult(result:CommandCallBackResult, trigger:ValidateMavenPathMessage):void {
+            LOG.debug("Maven path validation completed");
             _mavenCompleted = true;
             _progress.currentStepLabel = "VALIDATING_CYGWIN_HOME";
             _progress.currentStep += 1;
@@ -96,15 +103,17 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         }
 
         [CommandError]
-        public function validateMavenPathCommandError(fault:Error, trigger:ValidateMavenPathMessage):void {
+        public function validateMavenPathCommandError(fault:CommandCallBackError, trigger:ValidateMavenPathMessage):void {
+            LOG.debug("Maven path validation error");
             _mavenCompleted = true;
             _progress.currentStepLabel = "VALIDATING_CYGWIN_HOME";
             _progress.currentStep += 1;
             checkValidationsCompleted();
         }
 
-        [CommandComplete]
-        public function validateCygwinPathCommandCompleted(trigger:ValidateCygwinPathMessage):void {
+        [CommandResult]
+        public function validateCygwinPathCommandResult(result:CommandCallBackResult, trigger:ValidateCygwinPathMessage):void {
+            LOG.debug("Cygwin path validation completed");
             _cygwinCompleted = true;
             _progress.currentStepLabel = "VALIDATING_SVN_HOME";
             _progress.currentStep += 1;
@@ -112,15 +121,17 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         }
 
         [CommandError]
-        public function validateCygwinPathCommandError(fault:Error, trigger:ValidateCygwinPathMessage):void {
+        public function validateCygwinPathCommandError(fault:CommandCallBackError, trigger:ValidateCygwinPathMessage):void {
+            LOG.debug("Cygwin path validation error");
             _cygwinCompleted = true;
             _progress.currentStepLabel = "VALIDATING_SVN_HOME";
             _progress.currentStep += 1;
             checkValidationsCompleted();
         }
 
-        [CommandComplete]
-        public function validateSvnPathCommandCompleted(trigger:ValidateSvnPathMessage):void {
+        [CommandResult]
+        public function validateSvnPathCommandResult(result:CommandCallBackResult, trigger:ValidateSvnPathMessage):void {
+            LOG.debug("SVN path validation completed");
             _svnCompleted = true;
             _progress.currentStepLabel = "VALIDATING_GIT_HOME";
             _progress.currentStep += 1;
@@ -128,21 +139,24 @@ package org.apache.flex.utilities.developerToolSuite.infrastructure.command {
         }
 
         [CommandError]
-        public function validateSvnPathCommandError(fault:Error, trigger:ValidateSvnPathMessage):void {
+        public function validateSvnPathCommandError(fault:CommandCallBackError, trigger:ValidateSvnPathMessage):void {
+            LOG.debug("SVN path validation error");
             _svnCompleted = true;
             _progress.currentStepLabel = "VALIDATING_GIT_HOME";
             _progress.currentStep += 1;
             checkValidationsCompleted();
         }
 
-        [CommandComplete]
-        public function validateGitPathCommandCompleted(trigger:ValidateGitPathMessage):void {
+        [CommandResult]
+        public function validateGitPathCommandResult(result:CommandCallBackResult, trigger:ValidateGitPathMessage):void {
+            LOG.debug("GIT path validation completed");
             _gitCompleted = true;
             checkValidationsCompleted();
         }
 
         [CommandError]
-        public function validateGiyPathCommandError(fault:Error, trigger:ValidateGitPathMessage):void {
+        public function validateGitPathCommandError(fault:CommandCallBackError, trigger:ValidateGitPathMessage):void {
+            LOG.debug("GIT path validation error");
             _gitCompleted = true;
             checkValidationsCompleted();
         }

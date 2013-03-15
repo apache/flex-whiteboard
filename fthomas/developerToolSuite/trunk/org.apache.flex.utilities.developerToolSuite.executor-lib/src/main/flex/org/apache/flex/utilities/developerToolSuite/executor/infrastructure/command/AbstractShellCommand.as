@@ -82,7 +82,7 @@ package org.apache.flex.utilities.developerToolSuite.executor.infrastructure.com
         }
 
         protected function exitHandler(event:NativeProcessExitEvent):void {
-            log.debug("Process exited with ", event.exitCode.toString());
+            log.debug("Process exited with: {0}", event.exitCode);
             removeShellListeners();
         }
 

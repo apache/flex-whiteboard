@@ -175,6 +175,10 @@ limitations under the License.
             LogUtil.getLogger(this).info('Application Exit requested');
             event.preventDefault();
 
+            exitApplication();
+        }
+
+        public function exitApplication():void {
             var settingsToSave:Object = {};
             settingsToSave.appBounds = _appBounds.x + "," + _appBounds.y + "," + _appBounds.width + "," + _appBounds.height;
             settingsToSave.appDisplayState = nativeWindow.displayState;

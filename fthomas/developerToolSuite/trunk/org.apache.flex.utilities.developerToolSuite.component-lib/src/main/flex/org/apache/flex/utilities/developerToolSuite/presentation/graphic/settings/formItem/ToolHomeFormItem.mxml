@@ -48,8 +48,12 @@ limitations under the License.
     <s:helpContent>
         <s:VGroup>
             <s:Label text="{resourceManager.getString('SettingsWindow', helpLabelResourcesString)}"/>
-            <mx:LinkButton label="{helpUrlText}"
-                           click="navigateToURL(new URLRequest(helpUrl));"/>
+            <s:HGroup>
+                <mx:LinkButton label="{helpUrlText}"
+                               click="navigateToURL(new URLRequest(helpUrl));"/>
+                <mx:LinkButton label="Install"
+                               click="navigateToURL(new URLRequest(helpUrl));"/>
+            </s:HGroup>
         </s:VGroup>
     </s:helpContent>
     <fx:Script><![CDATA[
@@ -88,7 +92,7 @@ limitations under the License.
 
         private function creationCompleteHandler(event:FlexEvent):void {
             validator.validate();
-            //dispatch(new validateToolMessageClass(propertyValue));
+            dispatch(new validateToolMessageClass(propertyValue));
         }
 
         private function browseButton_clickHandler(event:MouseEvent):void {
